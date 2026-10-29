@@ -1,0 +1,58 @@
+[
+  {
+    "path": "/",
+    "violations": []
+  },
+  {
+    "path": "/home",
+    "violations": []
+  },
+  {
+    "path": "/chat",
+    "violations": []
+  },
+  {
+    "path": "/create/image",
+    "violations": []
+  },
+  {
+    "path": "/settings",
+    "violations": []
+  },
+  {
+    "path": "/admin/users",
+    "violations": []
+  },
+  {
+    "path": "/create/video-factory",
+    "violations": []
+  },
+  {
+    "path": "/business/crm/invoices",
+    "violations": []
+  },
+  {
+    "path": "/admin/roles",
+    "violations": []
+  },
+  {
+    "path": "/ [light]",
+    "violations": []
+  },
+  {
+    "path": "/home [light]",
+    "violations": []
+  },
+  {
+    "path": "/chat [light]",
+    "violations": []
+  },
+  {
+    "path": "/create/image [light]",
+    "violations": []
+  },
+  {
+    "path": "/admin/users [light]",
+    "violations": []
+  }
+]

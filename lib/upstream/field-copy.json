@@ -1,0 +1,566 @@
+{
+  "5": [
+    "پایداری صدا",
+    "Stability"
+  ],
+  "promoCode": [
+    "کد دعوت / Promo (اختیاری)",
+    "Invitation / promo code (optional)"
+  ],
+  "accountType": [
+    "نوع حساب",
+    "Account type"
+  ],
+  "show": [
+    "نمایش",
+    "Show"
+  ],
+  "required": [
+    "اجباری",
+    "Required"
+  ],
+  "autoAudit": [
+    "تحلیل خودکار",
+    "Auto re-audit"
+  ],
+  "directFallback": [
+    "پاسخ ثابت پیش‌فرض برای همهٔ پیام‌ها",
+    "Fixed fallback reply for all messages"
+  ],
+  "directAiFallback": [
+    "پاسخ AI وقتی هیچ کلمه‌ای تطبیق ندارد",
+    "AI reply when no keyword matches"
+  ],
+  "directDelayRange": [
+    "تأخیر تصادفی ارسال",
+    "Randomized delivery delay"
+  ],
+  "language": [
+    "زبان",
+    "Language"
+  ],
+  "timezone": [
+    "منطقهٔ زمانی",
+    "Timezone"
+  ],
+  "openingHour": [
+    "ساعت شروع",
+    "Opening hour"
+  ],
+  "closingHour": [
+    "ساعت پایان",
+    "Closing hour"
+  ],
+  "appointmentMinutes": [
+    "مدت نوبت (دقیقه)",
+    "Appointment length (minutes)"
+  ],
+  "prompt": [
+    "موضوع، سؤال، rubic یا بخشی از پیش‌نویس",
+    "Topic, question, rubric, or draft excerpt"
+  ],
+  "organizationId": [
+    "سازمان",
+    "Organization"
+  ],
+  "industry": [
+    "صنعت",
+    "Industry"
+  ],
+  "country": [
+    "کشور",
+    "Country"
+  ],
+  "currency": [
+    "ارز پرداخت",
+    "Ödeme para birimi"
+  ],
+  "enabled": [
+    "فعال‌سازی تولید",
+    "Enable generation"
+  ],
+  "discoveryEnabled": [
+    "پیشنهاد اختیاری ماژول پس از پاسخ",
+    "Optional module suggestions after answers"
+  ],
+  "discoveryThreshold": [
+    "حداقل اطمینان",
+    "Minimum confidence"
+  ],
+  "discoveryFrequency": [
+    "حداقل فاصله پیشنهاد · پاسخ موفق",
+    "Minimum spacing · successful answers"
+  ],
+  "days": [
+    "مدت دسترسی",
+    "Access duration"
+  ],
+  "credits": [
+    "اعتبار ماه هدیه",
+    "Bonus credits"
+  ],
+  "provider": [
+    "منبع نرخ",
+    "Rate source"
+  ],
+  "hours": [
+    "اعتبار (ساعت)",
+    "Validity (hours)"
+  ],
+  "status": [
+    "وضعیت نرخ‌نامه",
+    "Tariff status"
+  ],
+  "speed": [
+    "سرعت",
+    "Speed"
+  ],
+  "points": [
+    "ضریب امتیاز",
+    "Point multiplier"
+  ],
+  "referralDiscountPercent": [
+    "درصد تخفیف اولین خرید",
+    "First purchase discount %"
+  ],
+  "note": [
+    "یادداشت بررسی، حداقل ۲۰ نویسه",
+    "Review note, at least 20 characters"
+  ],
+  "settlementCurrency": [
+    "ارز پرداخت",
+    "Payment currency"
+  ],
+  "apiKey": [
+    "کلید API (خالی = حفظ کلید قبلی)",
+    "API key (blank keeps existing key)"
+  ],
+  "difficulty": [
+    "سطح دوره",
+    "Difficulty"
+  ],
+  "durationMinutes": [
+    "مدت دوره (دقیقه)",
+    "Duration (minutes)"
+  ],
+  "topic": [
+    "موضوع",
+    "Topic"
+  ],
+  "skills": [
+    "مهارت‌ها — هر خط یک مورد",
+    "Skills (one per line)"
+  ],
+  "prerequisites": [
+    "پیش‌نیازها",
+    "Prerequisites"
+  ],
+  "config": [
+    "اهداف، سبک تدریس و قوانین تکمیل — JSON",
+    "Audience, teaching style & completion rules — JSON"
+  ],
+  "fromDate": [
+    "از تاریخ",
+    "From date"
+  ],
+  "toDate": [
+    "تا تاریخ",
+    "To date"
+  ],
+  "reissueReason": [
+    "دلیل صدور مجدد؛ شناسه و تاریخ اصلی حفظ می‌شود",
+    "Reason for reissue; original ID and date are preserved"
+  ],
+  "reason": [
+    "دلیل و نتیجه بررسی",
+    "Reason & review result"
+  ],
+  "overview": [
+    "معرفی دوره",
+    "Course overview"
+  ],
+  "instructions": [
+    "پروژه پایانی",
+    "Final project"
+  ],
+  "ci": [
+    "فصل",
+    "Chapter"
+  ],
+  "li": [
+    "درس",
+    "Lesson"
+  ],
+  "content": [
+    "خلاصهٔ درس",
+    "Lesson summary"
+  ],
+  "activity": [
+    "تمرین عملی",
+    "Practice task"
+  ],
+  "commission": [
+    "کمیسیون بازار از فروشنده (%)",
+    "Marketplace seller commission (%) setCommission"
+  ],
+  "reference": [
+    "شماره مرجع انتقال یا ارسال واقعی",
+    "Actual transfer / delivery reference"
+  ],
+  "useCustomColors": [
+    "رنگ‌های سفارشی (وگرنه پالت مناسب سبک به‌صورت خودکار انتخاب می‌شود)",
+    "Custom colors (otherwise a palette matching the style is chosen automatically)"
+  ],
+  "baseUsd": [
+    "پایه هر درخواست",
+    "Base / request"
+  ],
+  "rowUsd": [
+    "هر نتیجه",
+    "Per result"
+  ],
+  "keyword": [
+    "کلمه یا کلمات محرک",
+    "Trigger keyword(s)"
+  ],
+  "postId": [
+    "این قانون روی کدام پست اجرا شود؟",
+    "Which post should trigger this rule?"
+  ],
+  "dmMessage": [
+    "متن دایرکت خصوصی",
+    "Private DM message"
+  ],
+  "linkLabel": [
+    "برچسب لینک (اختیاری)",
+    "Link label (optional)"
+  ],
+  "linkUrl": [
+    "لینک (اختیاری)",
+    "Link (optional)"
+  ],
+  "publicReply": [
+    "پاسخ عمومی زیر کامنت (اختیاری)",
+    "Public comment reply (optional)"
+  ],
+  "dueAt": [
+    "تاریخ و ساعت (اختیاری)",
+    "Date & time (optional)"
+  ],
+  "editTitle": [
+    "عنوان",
+    "Title"
+  ],
+  "editDueAt": [
+    "زمان (اختیاری)",
+    "Time (optional)"
+  ],
+  "slug": [
+    "شناسه لینک عمومی",
+    "Public profile URL"
+  ],
+  "groupCourseId": [
+    "درس گروه · اختیاری",
+    "Group course · optional"
+  ],
+  "courseId": [
+    "درس / پروژه",
+    "Course / project"
+  ],
+  "mode": [
+    "روش تولید",
+    "Production mode"
+  ],
+  "description": [
+    "توضیحات و فصل‌ها",
+    "Description & chapters"
+  ],
+  "flashcardQuestion": [
+    "پرسش / روی کارت",
+    "Question / front"
+  ],
+  "flashcardAnswer": [
+    "پاسخ / پشت کارت",
+    "Answer / back"
+  ],
+  "examAt": [
+    "تاریخ و ساعت",
+    "Date and time"
+  ],
+  "confirmBulk": [
+    "عملیات گروهی را برای پروژه‌های انتخاب‌شده تأیید می‌کنم.",
+    "I confirm the bulk action on selected projects."
+  ],
+  "id": [
+    "شناسه",
+    "ID"
+  ],
+  "adapter": [
+    "اتصال API",
+    "API adapter"
+  ],
+  "model": [
+    "مدل مبنای هزینه",
+    "Cost model"
+  ],
+  "maxConcurrent": [
+    "هم‌زمانی",
+    "Concurrency"
+  ],
+  "defaultVoiceId": [
+    "شناسه صدای پیش‌فرض ElevenLabs",
+    "Default ElevenLabs voice ID"
+  ],
+  "requestsPerMinute": [
+    "درخواست در دقیقه",
+    "Requests per minute"
+  ],
+  "resourceName": [
+    "نام",
+    "Name"
+  ],
+  "resourceId": [
+    "شناسه",
+    "ID"
+  ],
+  "resourceEnabled": [
+    "فعال",
+    "Enabled"
+  ],
+  "durationSeconds": [
+    "مدت هدف",
+    "Target duration"
+  ],
+  "mediaMode": [
+    "نوع خروجی",
+    "Output type"
+  ],
+  "styleBible": [
+    "راهنمای سبک و پیوستگی شخصیت‌ها",
+    "Style & character continuity bible"
+  ],
+  "publishingEnabled": [
+    "فعال‌سازی انتشار تأییدشده",
+    "Enable consented publishing"
+  ],
+  "sample": [
+    "نمونه صوتی اسکن‌شده",
+    "Scanned audio sample"
+  ],
+  "statement": [
+    "متن رضایت",
+    "Consent statement"
+  ],
+  "consent": [
+    "این صدای من است؛ حق استفاده دارم و ارسال نمونه برای شبیه‌سازی و روایت این پروژه را تأیید می‌کنم.",
+    "This is my voice; I hold the rights and consent to sending this sample for cloning and narration in this project."
+  ],
+  "voiceProfileId": [
+    "صدای پروژه",
+    "Project voice"
+  ],
+  "removeRemote": [
+    "هنگام لغو رضایت، پروفایل صدای ساخته‌شده را از ارائه‌دهنده هم حذف کن",
+    "When revoking consent, also delete this generated voice profile from the provider"
+  ],
+  "narration": [
+    "روایت با صدای هوش مصنوعی",
+    "AI-generated narration"
+  ],
+  "forcedAlignment": [
+    "زمان‌بندی دقیق کلمات از صوت",
+    "Forced word alignment from audio"
+  ],
+  "semanticReview": [
+    "بررسی معنایی فریم‌ها و پشتیبانی منابع",
+    "Semantic frame and source-support review"
+  ],
+  "transcriptionAssetId": [
+    "صوت برای پیاده‌سازی و تفکیک گوینده",
+    "Audio for transcription & speaker diarization"
+  ],
+  "lexicon": [
+    "فرهنگ تلفظ: واژه=تلفظ، هر خط یک مورد",
+    "Pronunciation: word=replacement, one per line"
+  ],
+  "exportStems": [
+    "خروجی جداگانه روایت، موسیقی و لایه‌های اضافه",
+    "Export separate narration, music and additional layer stems"
+  ],
+  "assetId": [
+    "فایل",
+    "File"
+  ],
+  "kind": [
+    "نوع لایه",
+    "Layer type"
+  ],
+  "estimated": [
+    "نرخ تخمینی",
+    "Estimated rates"
+  ],
+  "baseSeconds": [
+    "مدت پایه / ثانیه",
+    "Base duration / seconds"
+  ],
+  "referencePlanCode": [
+    "مبنای تبدیل کردیت فعلی AIFekr",
+    "Current AIFekr credit conversion reference"
+  ],
+  "renderer": [
+    "موتور صحنه‌های کدنویسی‌شده",
+    "Code scene renderer"
+  ],
+  "remotionLicenseApproved": [
+    "مجوز استفاده Remotion بررسی و تأیید شده است",
+    "Remotion licensing reviewed and approved"
+  ],
+  "sourceUrl": [
+    "نشانی مقاله",
+    "Article URL"
+  ],
+  "script": [
+    "متن پروژه",
+    "Project script"
+  ],
+  "motion": [
+    "حرکت تصویر",
+    "Image motion"
+  ],
+  "search": [
+    "جستجو",
+    "Search"
+  ],
+  "rights": [
+    "حق استفاده و رضایت اشخاص حاضر در فایل را دارم.",
+    "I hold usage rights and consent from people represented in the file."
+  ],
+  "privacy": [
+    "دسترسی",
+    "Visibility"
+  ],
+  "madeForKids": [
+    "مخصوص کودکان است",
+    "Made for kids"
+  ],
+  "when": [
+    "زمان انتشار به وقت دستگاه شما",
+    "Publish time in your device timezone"
+  ],
+  "publishConsent": [
+    "حق انتشار دارم و انتشار این خروجی با تنظیمات بالا را تأیید می‌کنم.",
+    "I hold publishing rights and authorize publication of this output with the settings above."
+  ],
+  "ratio": [
+    "نسبت تصویر",
+    "Aspect ratio"
+  ],
+  "checkedAt": [
+    "تاریخ بررسی",
+    "Reviewed date"
+  ],
+  "billingRoute": [
+    "مسیر پرداخت API",
+    "API billing route"
+  ],
+  "motionModel": [
+    "مدل طراحی انیمیشن Gemini / شناسه ثبت‌شده",
+    "Gemini scene animation / registered provider ID"
+  ],
+  "pipeline": [
+    "گردش تولید",
+    "Production pipeline"
+  ],
+  "source": [
+    "لینک تعرفه رسمی",
+    "Official pricing source"
+  ],
+  "longFormEnabled": [
+    "فعال‌سازی ویدیوی بلند",
+    "Enable long-form"
+  ],
+  "approvedModelId": [
+    "مدل مجاز",
+    "Approved model"
+  ],
+  "brief": [
+    "ایده یا متن آماده",
+    "Idea or existing script"
+  ],
+  "quality": [
+    "سطح تولید",
+    "Production preset"
+  ],
+  "resolution": [
+    "اندازه خروجی",
+    "Output resolution"
+  ],
+  "voice": [
+    "صدای راوی",
+    "Narrator voice"
+  ],
+  "music": [
+    "موسیقی بی‌کلام پس‌زمینه",
+    "Instrumental background music"
+  ],
+  "musicPrompt": [
+    "توصیف موسیقی",
+    "Music direction"
+  ],
+  "ideaLab": [
+    "ایده‌پردازی و طرح اولیه در بودجه پروژه",
+    "Include ideation & outline in project budget"
+  ],
+  "shotsPerChapter": [
+    "حداکثر نما در هر فصل",
+    "Maximum shots per chapter"
+  ],
+  "budgetCap": [
+    "سقف اعتبار",
+    "Credit budget cap"
+  ],
+  "audience": [
+    "مخاطب",
+    "Audience"
+  ],
+  "genre": [
+    "ژانر",
+    "Genre"
+  ],
+  "segment": [
+    "کدام بخش ساخته شود؟",
+    "Which part to generate?"
+  ],
+  "showArchived": [
+    "آرشیو",
+    "Archived"
+  ],
+  "modelId": [
+    "مدل",
+    "Model"
+  ],
+  "presetId": [
+    "تنظیمات ذخیره‌شده",
+    "Saved presets"
+  ],
+  "secret": [
+    "کلید جدید ElevenLabs؛ خالی یعنی بدون تغییر",
+    "New ElevenLabs key; leave blank to keep current"
+  ],
+  "creditsPerInterval": [
+    "کردیت هر بازه",
+    "Credits per interval"
+  ],
+  "billingInterval": [
+    "بازهٔ صورتحساب (ثانیه)",
+    "Billing interval (seconds)"
+  ],
+  "filter": [
+    "فیلتر کاربر، وضعیت یا شناسه",
+    "Filter user, status or ID"
+  ],
+  "confirmed": [
+    "نبود خروجی قابل تحویل را بررسی و تأیید کردم.",
+    "I checked and confirmed there is no deliverable."
+  ]
+}

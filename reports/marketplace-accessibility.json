@@ -1,0 +1,32 @@
+[
+  {
+    "path": "/fitness/marketplace",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/fitness/marketplace?tab=apply",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/admin/fitness/marketplace",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/fitness/marketplace",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/fitness/marketplace?tab=apply",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/admin/fitness/marketplace",
+    "width": 360,
+    "violations": []
+  }
+]

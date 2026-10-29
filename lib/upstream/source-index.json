@@ -1,0 +1,1197 @@
+[
+  {
+    "route": "/login",
+    "source": "src/app/(auth)/login/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": [
+      "input",
+      "phone",
+      "email",
+      "otp"
+    ]
+  },
+  {
+    "route": "/register",
+    "source": "src/app/(auth)/register/page.tsx",
+    "fieldCount": 3,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/accounts/[code]",
+    "source": "src/app/(dashboard)/(business)/accounting/accounts/[code]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/assistant",
+    "source": "src/app/(dashboard)/(business)/accounting/assistant/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/automation",
+    "source": "src/app/(dashboard)/(business)/accounting/automation/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/bank",
+    "source": "src/app/(dashboard)/(business)/accounting/bank/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/close-period",
+    "source": "src/app/(dashboard)/(business)/accounting/close-period/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/expenses",
+    "source": "src/app/(dashboard)/(business)/accounting/expenses/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/ledger-setup",
+    "source": "src/app/(dashboard)/(business)/accounting/ledger-setup/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/owner-statements",
+    "source": "src/app/(dashboard)/(business)/accounting/owner-statements/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 14,
+    "tabs": []
+  },
+  {
+    "route": "/accounting",
+    "source": "src/app/(dashboard)/(business)/accounting/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 5,
+    "tabs": []
+  },
+  {
+    "route": "/accounting/payroll",
+    "source": "src/app/(dashboard)/(business)/accounting/payroll/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/business-doctor",
+    "source": "src/app/(dashboard)/(business)/business-doctor/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/ceo/orchestrator",
+    "source": "src/app/(dashboard)/(business)/ceo/orchestrator/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/ceo",
+    "source": "src/app/(dashboard)/(business)/ceo/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/crm",
+    "source": "src/app/(dashboard)/(business)/crm/page.tsx",
+    "fieldCount": 5,
+    "actionCount": 42,
+    "tabs": [
+      "contacts",
+      "invoices",
+      "contracts",
+      "projects",
+      "properties",
+      "owners",
+      "viewings",
+      "board",
+      "matches",
+      "performance",
+      "automation",
+      "agent",
+      "calendar",
+      "analytics",
+      "products",
+      "profile",
+      "deals",
+      "tasks",
+      "activity",
+      "notesFiles"
+    ]
+  },
+  {
+    "route": "/lead-gen",
+    "source": "src/app/(dashboard)/(business)/lead-gen/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 14,
+    "tabs": []
+  },
+  {
+    "route": "/meeting",
+    "source": "src/app/(dashboard)/(business)/meeting/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/sales",
+    "source": "src/app/(dashboard)/(business)/sales/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/seo/agent-pipeline",
+    "source": "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 5,
+    "tabs": [
+      "run",
+      "lessons",
+      "posts"
+    ]
+  },
+  {
+    "route": "/seo/intelligence",
+    "source": "src/app/(dashboard)/(business)/seo/intelligence/page.tsx",
+    "fieldCount": 7,
+    "actionCount": 5,
+    "tabs": []
+  },
+  {
+    "route": "/seo",
+    "source": "src/app/(dashboard)/(business)/seo/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 5,
+    "tabs": [
+      "url",
+      "keyword",
+      "content",
+      "meta"
+    ]
+  },
+  {
+    "route": "/seo/sites",
+    "source": "src/app/(dashboard)/(business)/seo/sites/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 12,
+    "tabs": []
+  },
+  {
+    "route": "/social",
+    "source": "src/app/(dashboard)/(business)/social/page.tsx",
+    "fieldCount": 17,
+    "actionCount": 48,
+    "tabs": [
+      "ai",
+      "recreate",
+      "manual",
+      "calendar"
+    ]
+  },
+  {
+    "route": "/voice-agent",
+    "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx",
+    "fieldCount": 6,
+    "actionCount": 11,
+    "tabs": [
+      "knowledge",
+      "properties",
+      "calls",
+      "appointments",
+      "agents"
+    ]
+  },
+  {
+    "route": "/website-designer",
+    "source": "src/app/(dashboard)/(business)/website-designer/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": [
+      "preview",
+      "code"
+    ]
+  },
+  {
+    "route": "/agents",
+    "source": "src/app/(dashboard)/agents/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/assistants/[type]",
+    "source": "src/app/(dashboard)/assistants/[type]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 10,
+    "tabs": [
+      "puter",
+      "credits"
+    ]
+  },
+  {
+    "route": "/chat/[id]",
+    "source": "src/app/(dashboard)/chat/[id]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 10,
+    "tabs": [
+      "puter",
+      "credits"
+    ]
+  },
+  {
+    "route": "/checkout/[id]",
+    "source": "src/app/(dashboard)/checkout/[id]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/create",
+    "source": "src/app/(dashboard)/create/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/credits",
+    "source": "src/app/(dashboard)/credits/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/gallery",
+    "source": "src/app/(dashboard)/gallery/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/home",
+    "source": "src/app/(dashboard)/home/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/image/gallery",
+    "source": "src/app/(dashboard)/image/gallery/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/image/generate",
+    "source": "src/app/(dashboard)/image/generate/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/learn",
+    "source": "src/app/(dashboard)/learn/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 17,
+    "tabs": []
+  },
+  {
+    "route": "/music/generate",
+    "source": "src/app/(dashboard)/music/generate/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/organization/onboarding",
+    "source": "src/app/(dashboard)/organization/onboarding/page.tsx",
+    "fieldCount": 7,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/payments",
+    "source": "src/app/(dashboard)/payments/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 8,
+    "tabs": []
+  },
+  {
+    "route": "/plans",
+    "source": "src/app/(dashboard)/plans/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/play",
+    "source": "src/app/(dashboard)/play/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 7,
+    "tabs": []
+  },
+  {
+    "route": "/referral",
+    "source": "src/app/(dashboard)/referral/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 5,
+    "tabs": [
+      "invite",
+      "stats",
+      "wallet",
+      "transactions",
+      "payout"
+    ]
+  },
+  {
+    "route": "/settings",
+    "source": "src/app/(dashboard)/settings/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 7,
+    "tabs": []
+  },
+  {
+    "route": "/startup/builder",
+    "source": "src/app/(dashboard)/startup/builder/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/startup/contact",
+    "source": "src/app/(dashboard)/startup/contact/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/student/chat",
+    "source": "src/app/(dashboard)/student/chat/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 11,
+    "tabs": [
+      "puter",
+      "credits"
+    ]
+  },
+  {
+    "route": "/student",
+    "source": "src/app/(dashboard)/student/page.tsx",
+    "fieldCount": 25,
+    "actionCount": 66,
+    "tabs": [
+      "notes",
+      "exams"
+    ]
+  },
+  {
+    "route": "/tools/business-ideas",
+    "source": "src/app/(dashboard)/tools/business-ideas/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/tools/drop-shipping",
+    "source": "src/app/(dashboard)/tools/drop-shipping/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/tools/healthy-diet",
+    "source": "src/app/(dashboard)/tools/healthy-diet/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/tools/math",
+    "source": "src/app/(dashboard)/tools/math/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/tools/trading",
+    "source": "src/app/(dashboard)/tools/trading/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/tools/try-free-ai",
+    "source": "src/app/(dashboard)/tools/try-free-ai/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/video/generate",
+    "source": "src/app/(dashboard)/video/generate/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/video-factory",
+    "source": "src/app/(dashboard)/video-factory/page.tsx",
+    "fieldCount": 124,
+    "actionCount": 52,
+    "tabs": [
+      "production",
+      "advanced",
+      "history",
+      "script",
+      "timeline",
+      "assets",
+      "overview",
+      "jobs",
+      "providers",
+      "users",
+      "queue",
+      "agents",
+      "templates",
+      "credits",
+      "quality",
+      "security",
+      "flags"
+    ]
+  },
+  {
+    "route": "/voice-studio",
+    "source": "src/app/(dashboard)/voice-studio/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 16,
+    "tabs": []
+  },
+  {
+    "route": "/about",
+    "source": "src/app/about/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/academy",
+    "source": "src/app/admin/academy/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 12,
+    "tabs": [
+      "dashboard",
+      "majors",
+      "students",
+      "certificates",
+      "paths"
+    ]
+  },
+  {
+    "route": "/admin/admins",
+    "source": "src/app/admin/admins/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/affiliate",
+    "source": "src/app/admin/affiliate/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/admin/ai-chat",
+    "source": "src/app/admin/ai-chat/page.tsx",
+    "fieldCount": 6,
+    "actionCount": 2,
+    "tabs": [
+      "overview",
+      "policy",
+      "discovery"
+    ]
+  },
+  {
+    "route": "/admin/ai-courses",
+    "source": "src/app/admin/ai-courses/page.tsx",
+    "fieldCount": 34,
+    "actionCount": 41,
+    "tabs": []
+  },
+  {
+    "route": "/admin/ai-courses/[id]/preview",
+    "source": "src/app/admin/ai-courses/[id]/preview/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/analytics",
+    "source": "src/app/admin/analytics/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/billing/promotions",
+    "source": "src/app/admin/billing/promotions/page.tsx",
+    "fieldCount": 5,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/billing/rates",
+    "source": "src/app/admin/billing/rates/page.tsx",
+    "fieldCount": 7,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/categories",
+    "source": "src/app/admin/categories/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/chats",
+    "source": "src/app/admin/chats/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/cloudflare",
+    "source": "src/app/admin/cloudflare/page.tsx",
+    "fieldCount": 3,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/companies",
+    "source": "src/app/admin/companies/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/credit-tiers",
+    "source": "src/app/admin/credit-tiers/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/crm",
+    "source": "src/app/admin/crm/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "source": "src/app/admin/dashboard/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/financial/customers",
+    "source": "src/app/admin/financial/customers/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 7,
+    "tabs": [
+      "extend"
+    ]
+  },
+  {
+    "route": "/admin/financial/invoices/[id]",
+    "source": "src/app/admin/financial/invoices/[id]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/financial",
+    "source": "src/app/admin/financial/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 11,
+    "tabs": []
+  },
+  {
+    "route": "/admin/fitness/marketplace",
+    "source": "src/app/admin/fitness/marketplace/page.tsx",
+    "fieldCount": 3,
+    "actionCount": 0,
+    "tabs": [
+      "applications",
+      "products",
+      "orders",
+      "ledger",
+      "reviews"
+    ]
+  },
+  {
+    "route": "/admin/fitness",
+    "source": "src/app/admin/fitness/page.tsx",
+    "fieldCount": 3,
+    "actionCount": 3,
+    "tabs": [
+      "exercises",
+      "trainers",
+      "programs"
+    ]
+  },
+  {
+    "route": "/admin/fitness/users",
+    "source": "src/app/admin/fitness/users/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/admin/games",
+    "source": "src/app/admin/games/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/generated-websites",
+    "source": "src/app/admin/generated-websites/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/industry-packs",
+    "source": "src/app/admin/industry-packs/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/invites/manage",
+    "source": "src/app/admin/invites/manage/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/invites",
+    "source": "src/app/admin/invites/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 7,
+    "tabs": []
+  },
+  {
+    "route": "/admin/lead-connectors",
+    "source": "src/app/admin/lead-connectors/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/llm",
+    "source": "src/app/admin/llm/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 7,
+    "tabs": []
+  },
+  {
+    "route": "/admin/logs",
+    "source": "src/app/admin/logs/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": [
+      "api"
+    ]
+  },
+  {
+    "route": "/admin/models",
+    "source": "src/app/admin/models/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/module-access",
+    "source": "src/app/admin/module-access/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": [
+      "packs",
+      "customers"
+    ]
+  },
+  {
+    "route": "/admin/modules",
+    "source": "src/app/admin/modules/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/packages",
+    "source": "src/app/admin/packages/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/admin",
+    "source": "src/app/admin/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/play",
+    "source": "src/app/admin/play/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 9,
+    "tabs": [
+      "overview",
+      "games",
+      "players",
+      "competitions",
+      "questions"
+    ]
+  },
+  {
+    "route": "/admin/prompts",
+    "source": "src/app/admin/prompts/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/provider-fallback",
+    "source": "src/app/admin/provider-fallback/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/public-share",
+    "source": "src/app/admin/public-share/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/referrals",
+    "source": "src/app/admin/referrals/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/revenue",
+    "source": "src/app/admin/revenue/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/seo-intelligence",
+    "source": "src/app/admin/seo-intelligence/page.tsx",
+    "fieldCount": 7,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/settings",
+    "source": "src/app/admin/settings/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/startup-inquiries",
+    "source": "src/app/admin/startup-inquiries/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/admin/student",
+    "source": "src/app/admin/student/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/subscriptions",
+    "source": "src/app/admin/subscriptions/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": [
+      "general",
+      "industry"
+    ]
+  },
+  {
+    "route": "/admin/system",
+    "source": "src/app/admin/system/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/admin/tools",
+    "source": "src/app/admin/tools/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/admin/usage",
+    "source": "src/app/admin/usage/page.tsx",
+    "fieldCount": 3,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/admin/users",
+    "source": "src/app/admin/users/page.tsx",
+    "fieldCount": 5,
+    "actionCount": 9,
+    "tabs": []
+  },
+  {
+    "route": "/admin/users/[id]",
+    "source": "src/app/admin/users/[id]/page.tsx",
+    "fieldCount": 9,
+    "actionCount": 21,
+    "tabs": [
+      "academy",
+      "dashboard",
+      "majors",
+      "students",
+      "certificates",
+      "paths"
+    ]
+  },
+  {
+    "route": "/admin/video-factory",
+    "source": "src/app/admin/video-factory/page.tsx",
+    "fieldCount": 124,
+    "actionCount": 52,
+    "tabs": [
+      "production",
+      "advanced",
+      "history",
+      "script",
+      "timeline",
+      "assets",
+      "overview",
+      "jobs",
+      "providers",
+      "users",
+      "queue",
+      "agents",
+      "templates",
+      "credits",
+      "quality",
+      "security",
+      "flags"
+    ]
+  },
+  {
+    "route": "/admin/voice-agent",
+    "source": "src/app/admin/voice-agent/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 13,
+    "tabs": []
+  },
+  {
+    "route": "/admin/voice-studio",
+    "source": "src/app/admin/voice-studio/page.tsx",
+    "fieldCount": 9,
+    "actionCount": 5,
+    "tabs": []
+  },
+  {
+    "route": "/ai-chat",
+    "source": "src/app/ai-chat/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/ai-team",
+    "source": "src/app/ai-team/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/chat",
+    "source": "src/app/chat/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 73,
+    "tabs": [
+      "puter",
+      "credits"
+    ]
+  },
+  {
+    "route": "/choose-plan",
+    "source": "src/app/choose-plan/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/contact",
+    "source": "src/app/contact/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/explore",
+    "source": "src/app/explore/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 26,
+    "tabs": []
+  },
+  {
+    "route": "/f/[slug]",
+    "source": "src/app/f/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/features/[slug]",
+    "source": "src/app/features/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/fit",
+    "source": "src/app/fit/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 8,
+    "tabs": []
+  },
+  {
+    "route": "/fitness/checkout/[id]",
+    "source": "src/app/fitness/checkout/[id]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/fitness/credits",
+    "source": "src/app/fitness/credits/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/fitness/marketplace",
+    "source": "src/app/fitness/marketplace/page.tsx",
+    "fieldCount": 8,
+    "actionCount": 13,
+    "tabs": [
+      "store",
+      "trainers",
+      "slots",
+      "orders",
+      "apply",
+      "seller"
+    ]
+  },
+  {
+    "route": "/fitness",
+    "source": "src/app/fitness/page.tsx",
+    "fieldCount": 16,
+    "actionCount": 18,
+    "tabs": [
+      "gym",
+      "history",
+      "plans",
+      "reports",
+      "overview",
+      "programs",
+      "trainers",
+      "profile",
+      "nutrition"
+    ]
+  },
+  {
+    "route": "/fitness/payments",
+    "source": "src/app/fitness/payments/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 8,
+    "tabs": []
+  },
+  {
+    "route": "/guides",
+    "source": "src/app/guides/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/guides/[slug]",
+    "source": "src/app/guides/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/industry",
+    "source": "src/app/industry/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/industry/[slug]",
+    "source": "src/app/industry/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/o/[token]",
+    "source": "src/app/o/[token]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/owner/login",
+    "source": "src/app/owner/login/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/owner",
+    "source": "src/app/owner/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/p/[id]",
+    "source": "src/app/p/[id]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 1,
+    "tabs": []
+  },
+  {
+    "route": "/",
+    "source": "src/app/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/pricing",
+    "source": "src/app/pricing/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 6,
+    "tabs": []
+  },
+  {
+    "route": "/privacy",
+    "source": "src/app/privacy/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/security",
+    "source": "src/app/security/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/share/1980s",
+    "source": "src/app/share/1980s/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/share/[token]",
+    "source": "src/app/share/[token]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/solutions/[slug]",
+    "source": "src/app/solutions/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/start",
+    "source": "src/app/start/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/student/[slug]",
+    "source": "src/app/student/[slug]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 4,
+    "tabs": []
+  },
+  {
+    "route": "/terms",
+    "source": "src/app/terms/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 2,
+    "tabs": []
+  },
+  {
+    "route": "/verify-certificate/[code]",
+    "source": "src/app/verify-certificate/[code]/page.tsx",
+    "fieldCount": 0,
+    "actionCount": 0,
+    "tabs": []
+  },
+  {
+    "route": "/welcome",
+    "source": "src/app/welcome/page.tsx",
+    "fieldCount": 1,
+    "actionCount": 3,
+    "tabs": []
+  },
+  {
+    "route": "/[locale]",
+    "source": "src/app/[locale]/page.tsx",
+    "fieldCount": 2,
+    "actionCount": 4,
+    "tabs": []
+  }
+]

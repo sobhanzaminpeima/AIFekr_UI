@@ -1,0 +1,10 @@
+[
+  {
+    "route": "/crm?tab=board",
+    "violations": []
+  },
+  {
+    "route": "/accounting?tab=overview",
+    "violations": []
+  }
+]

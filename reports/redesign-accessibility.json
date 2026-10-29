@@ -1,0 +1,26 @@
+[
+  {
+    "route": "/about",
+    "violations": []
+  },
+  {
+    "route": "/contact",
+    "violations": []
+  },
+  {
+    "route": "/guides",
+    "violations": []
+  },
+  {
+    "route": "/privacy",
+    "violations": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "violations": []
+  },
+  {
+    "route": "/admin/student",
+    "violations": []
+  }
+]

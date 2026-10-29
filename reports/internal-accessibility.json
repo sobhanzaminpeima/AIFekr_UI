@@ -1,0 +1,102 @@
+[
+  {
+    "path": "/admin/users",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/admin/users/1",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/admin/ai-courses/missing/preview",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/voice-studio?tab=voice",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/organization/onboarding",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/agents",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/meeting",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/student?view=reports",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/learn?tab=lesson",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/fitness/marketplace",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "path": "/admin/users",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/admin/users/1",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/admin/ai-courses/missing/preview",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/voice-studio?tab=voice",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/organization/onboarding",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/agents",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/meeting",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/student?view=reports",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/learn?tab=lesson",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "path": "/fitness/marketplace",
+    "width": 360,
+    "violations": []
+  }
+]

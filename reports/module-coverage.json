@@ -1,0 +1,3101 @@
+{
+  "repository": "https://github.com/sobhanzaminpeima/AIFekr",
+  "commit": "b89eea53ec1e78a117718356d319aff3ac837b7f",
+  "sourcePages": 147,
+  "modules": [
+    {
+      "id": "crm",
+      "base": "/crm",
+      "title": "روابط مشتریان",
+      "group": "business",
+      "views": [
+        {
+          "id": "board",
+          "title": "مسیر فروش",
+          "kind": "board",
+          "model": "CrmDeal",
+          "related": [
+            "CrmPipeline",
+            "CrmStage",
+            "CrmTask"
+          ]
+        },
+        {
+          "id": "contacts",
+          "title": "مخاطبان",
+          "kind": "records",
+          "model": "CrmContact",
+          "related": [
+            "CrmDeal",
+            "CrmTask",
+            "CrmActivity",
+            "CrmNote",
+            "CrmDocument"
+          ]
+        },
+        {
+          "id": "automation",
+          "title": "اتوماسیون",
+          "kind": "records",
+          "model": "CrmAutomationRule",
+          "related": []
+        },
+        {
+          "id": "agent",
+          "title": "دستیار فروش",
+          "kind": "chat",
+          "model": "CrmInsight",
+          "related": [
+            "CrmAnalysisRun"
+          ]
+        },
+        {
+          "id": "calendar",
+          "title": "تقویم تیم",
+          "kind": "calendar",
+          "model": "CrmTask",
+          "related": []
+        },
+        {
+          "id": "analytics",
+          "title": "تحلیل فروش",
+          "kind": "report",
+          "model": "CrmDeal",
+          "related": []
+        },
+        {
+          "id": "products",
+          "title": "محصولات",
+          "kind": "records",
+          "model": "CrmProduct",
+          "related": []
+        },
+        {
+          "id": "invoices",
+          "title": "فاکتورها",
+          "kind": "records",
+          "model": "CrmInvoice",
+          "related": [
+            "CrmInvoiceItem",
+            "CrmInvoiceRevision"
+          ]
+        },
+        {
+          "id": "contracts",
+          "title": "قراردادها",
+          "kind": "records",
+          "model": "CrmContract",
+          "related": [
+            "CrmContractTemplate",
+            "CrmContractRevision"
+          ]
+        },
+        {
+          "id": "projects",
+          "title": "پروژه‌ها",
+          "kind": "board",
+          "model": "CrmProject",
+          "related": []
+        },
+        {
+          "id": "properties",
+          "title": "ملک‌ها",
+          "kind": "gallery",
+          "model": "Property",
+          "related": [
+            "PropertyBooking",
+            "CrmDocument"
+          ]
+        },
+        {
+          "id": "owners",
+          "title": "مالکین",
+          "kind": "records",
+          "model": "CrmContact",
+          "related": [
+            "Property",
+            "AccountingOwnerStatement"
+          ]
+        },
+        {
+          "id": "viewings",
+          "title": "بازدیدها",
+          "kind": "calendar",
+          "model": "PropertyViewing",
+          "related": []
+        },
+        {
+          "id": "matches",
+          "title": "تطبیق خریدار و ملک",
+          "kind": "report",
+          "model": "PropertyInterest",
+          "related": [
+            "Property"
+          ]
+        },
+        {
+          "id": "performance",
+          "title": "عملکرد مشاوران",
+          "kind": "report",
+          "model": "CrmDeal",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "base": "/social",
+      "title": "استودیوی شبکه‌های اجتماعی",
+      "group": "business",
+      "views": [
+        {
+          "id": "publish",
+          "title": "حساب و انتشار",
+          "kind": "overview",
+          "model": "ScheduledPost",
+          "related": [
+            "InstagramConnection"
+          ]
+        },
+        {
+          "id": "content",
+          "title": "ساخت محتوا",
+          "kind": "studio",
+          "model": "SocialPost",
+          "related": []
+        },
+        {
+          "id": "analytics",
+          "title": "آمار و رشد",
+          "kind": "report",
+          "model": "InstagramFollowerSnapshot",
+          "related": [
+            "SocialCompetitorSnapshot"
+          ]
+        },
+        {
+          "id": "messages",
+          "title": "صندوق پیام",
+          "kind": "inbox",
+          "model": "InstagramDirectMessageLog",
+          "related": []
+        },
+        {
+          "id": "campaigns",
+          "title": "کامنت به دایرکت",
+          "kind": "wizard",
+          "model": "InstagramCommentCampaign",
+          "related": [
+            "InstagramCommentReplyLog"
+          ]
+        },
+        {
+          "id": "direct-rules",
+          "title": "پاسخ خودکار دایرکت",
+          "kind": "records",
+          "model": "InstagramDirectRule",
+          "related": []
+        },
+        {
+          "id": "brand",
+          "title": "هویت برند",
+          "kind": "form",
+          "model": "SocialBrandProfile",
+          "related": []
+        },
+        {
+          "id": "competitors",
+          "title": "رقبای من",
+          "kind": "records",
+          "model": "SocialCompetitor",
+          "related": []
+        },
+        {
+          "id": "calendar",
+          "title": "تقویم محتوا",
+          "kind": "calendar",
+          "model": "ScheduledPost",
+          "related": []
+        },
+        {
+          "id": "queue",
+          "title": "صف انتشار",
+          "kind": "records",
+          "model": "ScheduledPost",
+          "related": []
+        },
+        {
+          "id": "growth-report",
+          "title": "گزارش رشد هوشمند",
+          "kind": "wizard",
+          "model": "InstagramFollowerSnapshot",
+          "related": []
+        },
+        {
+          "id": "connections",
+          "title": "اتصال و وبهوک",
+          "kind": "connections",
+          "model": "InstagramConnection",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "seo",
+      "base": "/seo",
+      "title": "کارگاه سئو و محتوا",
+      "group": "business",
+      "views": [
+        {
+          "id": "overview",
+          "title": "نمای کلی",
+          "kind": "overview",
+          "model": "SeoSite",
+          "related": []
+        },
+        {
+          "id": "url",
+          "title": "بررسی نشانی",
+          "kind": "wizard",
+          "model": "SeoAudit",
+          "related": []
+        },
+        {
+          "id": "keyword",
+          "title": "پژوهش کلیدواژه",
+          "kind": "wizard",
+          "model": "SeoResearchJob",
+          "related": []
+        },
+        {
+          "id": "content",
+          "title": "نویسنده محتوا",
+          "kind": "studio",
+          "model": "ContentPost",
+          "related": []
+        },
+        {
+          "id": "meta",
+          "title": "عنوان و متا",
+          "kind": "editor",
+          "model": "SeoContentPlan",
+          "related": []
+        },
+        {
+          "id": "sites",
+          "title": "وب‌سایت‌های من",
+          "kind": "records",
+          "model": "SeoSite",
+          "related": []
+        },
+        {
+          "id": "intelligence",
+          "title": "داده و رقابت",
+          "kind": "wizard",
+          "model": "SeoResearchJob",
+          "related": []
+        },
+        {
+          "id": "rankings",
+          "title": "پایش رتبه",
+          "kind": "report",
+          "model": "SeoRankSnapshot",
+          "related": []
+        },
+        {
+          "id": "backlinks",
+          "title": "بک‌لینک‌ها",
+          "kind": "report",
+          "model": "SeoResearchJob",
+          "related": []
+        },
+        {
+          "id": "competitors",
+          "title": "رقبای جستجو",
+          "kind": "wizard",
+          "model": "SeoResearchJob",
+          "related": []
+        },
+        {
+          "id": "agent-pipeline",
+          "title": "تیم محتوای سئو",
+          "kind": "board",
+          "model": "ContentPipelineRun",
+          "related": [
+            "ContentPipelineStep",
+            "ContentAgentLesson",
+            "ContentPost"
+          ]
+        },
+        {
+          "id": "lessons",
+          "title": "حافظه و درس‌ها",
+          "kind": "records",
+          "model": "ContentAgentLesson",
+          "related": []
+        },
+        {
+          "id": "posts",
+          "title": "کتابخانه محتوا",
+          "kind": "records",
+          "model": "ContentPost",
+          "related": []
+        },
+        {
+          "id": "plan",
+          "title": "برنامه تولید محتوا",
+          "kind": "form",
+          "model": "SeoContentPlan",
+          "related": []
+        },
+        {
+          "id": "wordpress",
+          "title": "اتصال وردپرس",
+          "kind": "connections",
+          "model": "SeoConnection",
+          "related": []
+        },
+        {
+          "id": "search-console",
+          "title": "کنسول جستجوی گوگل",
+          "kind": "connections",
+          "model": "GscConnection",
+          "related": []
+        },
+        {
+          "id": "verify",
+          "title": "تأیید مالکیت سایت",
+          "kind": "wizard",
+          "model": "SeoSite",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "accounting",
+      "base": "/accounting",
+      "title": "دفتر مالی",
+      "group": "business",
+      "views": [
+        {
+          "id": "overview",
+          "title": "نمای مالی",
+          "kind": "overview",
+          "model": "AccountingJournalEntry",
+          "related": [
+            "AccountingExpense",
+            "CrmInvoice"
+          ]
+        },
+        {
+          "id": "journal",
+          "title": "اسناد و آرتیکل‌ها",
+          "kind": "records",
+          "model": "AccountingJournalEntry",
+          "related": [
+            "AccountingJournalEntryLine"
+          ]
+        },
+        {
+          "id": "accounts",
+          "title": "دفتر حساب‌ها",
+          "kind": "records",
+          "model": "AccountingAccount",
+          "related": []
+        },
+        {
+          "id": "ledger-setup",
+          "title": "کدینگ، بودجه و مالیات",
+          "kind": "records",
+          "model": "AccountingAccount",
+          "related": [
+            "AccountingBudget",
+            "AccountingTaxRate"
+          ]
+        },
+        {
+          "id": "expenses",
+          "title": "هزینه‌ها و تأمین‌کنندگان",
+          "kind": "records",
+          "model": "AccountingExpense",
+          "related": [
+            "AccountingVendor"
+          ]
+        },
+        {
+          "id": "bank",
+          "title": "بانک و تطبیق",
+          "kind": "records",
+          "model": "AccountingBankTransaction",
+          "related": [
+            "AccountingBankAccount"
+          ]
+        },
+        {
+          "id": "payroll",
+          "title": "حقوق و دستمزد",
+          "kind": "records",
+          "model": "AccountingPayrollRun",
+          "related": [
+            "AccountingEmployee",
+            "AccountingPayslip"
+          ]
+        },
+        {
+          "id": "owner-statements",
+          "title": "تسویه با مالک",
+          "kind": "records",
+          "model": "AccountingOwnerStatement",
+          "related": [
+            "AccountingOwnerStatementEntry",
+            "AccountingManagementFeeRule",
+            "AccountingCommissionRecord",
+            "AccountingCommissionSplit"
+          ]
+        },
+        {
+          "id": "close-period",
+          "title": "بستن دورهٔ مالی",
+          "kind": "wizard",
+          "model": "AccountingFiscalPeriod",
+          "related": []
+        },
+        {
+          "id": "assistant",
+          "title": "دستیار مالی",
+          "kind": "chat",
+          "model": "AccountingAiProposal",
+          "related": []
+        },
+        {
+          "id": "automation",
+          "title": "گزارش خودکار و خروجی",
+          "kind": "records",
+          "model": "AccountingScheduledReport",
+          "related": [
+            "AccountingApiToken"
+          ]
+        },
+        {
+          "id": "budgets",
+          "title": "بودجه‌بندی",
+          "kind": "records",
+          "model": "AccountingBudget",
+          "related": []
+        },
+        {
+          "id": "tax",
+          "title": "مالیات و ارزش افزوده",
+          "kind": "records",
+          "model": "AccountingTaxRate",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "leads",
+      "base": "/lead-gen",
+      "title": "رشد و جذب مشتری",
+      "group": "business",
+      "views": [
+        {
+          "id": "overview",
+          "title": "نمای جذب",
+          "kind": "overview",
+          "model": "LeadFormSubmission",
+          "related": []
+        },
+        {
+          "id": "forms",
+          "title": "فرم‌های جذب",
+          "kind": "records",
+          "model": "LeadForm",
+          "related": [
+            "LeadFormSubmission"
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "منابع و کانال‌ها",
+          "kind": "records",
+          "model": "LeadSource",
+          "related": []
+        },
+        {
+          "id": "inbox",
+          "title": "صندوق سرنخ‌ها",
+          "kind": "records",
+          "model": "LeadFormSubmission",
+          "related": []
+        },
+        {
+          "id": "reports",
+          "title": "تبدیل بر اساس کانال",
+          "kind": "report",
+          "model": "LeadSource",
+          "related": []
+        },
+        {
+          "id": "builder",
+          "title": "سازندهٔ فرم",
+          "kind": "editor",
+          "model": "LeadForm",
+          "related": []
+        },
+        {
+          "id": "connectors",
+          "title": "اتصال‌های تبلیغاتی",
+          "kind": "connections",
+          "model": "LeadSource",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "voice-agent",
+      "base": "/voice-agent",
+      "title": "مرکز تماس هوشمند",
+      "group": "business",
+      "views": [
+        {
+          "id": "agents",
+          "title": "منشی‌ها",
+          "kind": "records",
+          "model": "VoiceAgent",
+          "related": []
+        },
+        {
+          "id": "setup",
+          "title": "راه‌اندازی منشی",
+          "kind": "wizard",
+          "model": "VoiceAgent",
+          "related": []
+        },
+        {
+          "id": "knowledge",
+          "title": "دانش منشی",
+          "kind": "records",
+          "model": "VoiceKnowledgeBase",
+          "related": []
+        },
+        {
+          "id": "properties",
+          "title": "فایل‌های املاک",
+          "kind": "records",
+          "model": "Property",
+          "related": []
+        },
+        {
+          "id": "calls",
+          "title": "گزارش تماس‌ها",
+          "kind": "records",
+          "model": "VoiceCallLog",
+          "related": []
+        },
+        {
+          "id": "appointments",
+          "title": "قرارهای ثبت‌شده",
+          "kind": "calendar",
+          "model": "VoiceAppointment",
+          "related": []
+        },
+        {
+          "id": "numbers",
+          "title": "شماره‌ها و اتصال",
+          "kind": "connections",
+          "model": "VoiceAgent",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "doctor",
+      "base": "/business-doctor",
+      "title": "دکتر کسب‌وکار",
+      "group": "business",
+      "views": [
+        {
+          "id": "assessment",
+          "title": "ارزیابی کسب‌وکار",
+          "kind": "wizard",
+          "model": "BusinessAnalysis",
+          "related": []
+        },
+        {
+          "id": "swot",
+          "title": "قوت‌ها و فرصت‌ها",
+          "kind": "report",
+          "model": "BusinessAnalysis",
+          "related": []
+        },
+        {
+          "id": "action-plan",
+          "title": "برنامهٔ اقدام",
+          "kind": "board",
+          "model": "CeoTask",
+          "related": []
+        },
+        {
+          "id": "kpis",
+          "title": "شاخص‌های پیشنهادی",
+          "kind": "report",
+          "model": "BusinessAnalysis",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "ارزیابی‌های قبلی",
+          "kind": "records",
+          "model": "BusinessAnalysis",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "ceo",
+      "base": "/ceo",
+      "title": "اتاق فرمان مدیرعامل",
+      "group": "business",
+      "views": [
+        {
+          "id": "advisor",
+          "title": "مشاور استراتژیک",
+          "kind": "chat",
+          "model": "CeoTask",
+          "related": []
+        },
+        {
+          "id": "orchestrator",
+          "title": "هماهنگ‌کنندهٔ تیم",
+          "kind": "board",
+          "model": "OrchestratorAction",
+          "related": [
+            "CeoTask",
+            "BusinessMemory"
+          ]
+        },
+        {
+          "id": "goals",
+          "title": "هدف‌های من",
+          "kind": "records",
+          "model": "CeoTask",
+          "related": []
+        },
+        {
+          "id": "approvals",
+          "title": "اقدام‌های منتظر تأیید",
+          "kind": "records",
+          "model": "OrchestratorAction",
+          "related": []
+        },
+        {
+          "id": "memory",
+          "title": "حافظهٔ کسب‌وکار",
+          "kind": "records",
+          "model": "BusinessMemory",
+          "related": []
+        },
+        {
+          "id": "knowledge",
+          "title": "دانش کسب‌وکار",
+          "kind": "records",
+          "model": "KbDocument",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "agents",
+      "base": "/agents",
+      "title": "تیم هوش مصنوعی",
+      "group": "business",
+      "views": [
+        {
+          "id": "overview",
+          "title": "اعضای تیم",
+          "kind": "gallery",
+          "model": "CeoTask",
+          "related": []
+        },
+        {
+          "id": "industry",
+          "title": "دستیاران صنفی",
+          "kind": "gallery",
+          "model": "IndustryPack",
+          "related": []
+        },
+        {
+          "id": "runs",
+          "title": "گزارش اجراها",
+          "kind": "records",
+          "model": "OrchestratorAction",
+          "related": []
+        },
+        {
+          "id": "create",
+          "title": "ساخت دستیار",
+          "kind": "form",
+          "model": "CustomAiProvider",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "meeting",
+      "base": "/meeting",
+      "title": "اتاق مشاوران",
+      "group": "business",
+      "views": [
+        {
+          "id": "room",
+          "title": "جلسهٔ تازه",
+          "kind": "wizard",
+          "model": "BoardroomSession",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "جلسات من",
+          "kind": "records",
+          "model": "BoardroomSession",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "website",
+      "base": "/website-designer",
+      "title": "طراح وب‌سایت",
+      "group": "business",
+      "views": [
+        {
+          "id": "projects",
+          "title": "وب‌سایت‌های من",
+          "kind": "gallery",
+          "model": "GeneratedWebsite",
+          "related": []
+        },
+        {
+          "id": "brief",
+          "title": "شرح پروژه",
+          "kind": "wizard",
+          "model": "GeneratedWebsite",
+          "related": []
+        },
+        {
+          "id": "preview",
+          "title": "پیش‌نمایش و بخش‌ها",
+          "kind": "editor",
+          "model": "GeneratedWebsite",
+          "related": []
+        },
+        {
+          "id": "code",
+          "title": "کد و دریافت فایل",
+          "kind": "editor",
+          "model": "GeneratedWebsite",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "startup",
+      "base": "/startup/builder",
+      "title": "از فکر تا استارتاپ",
+      "group": "business",
+      "views": [
+        {
+          "id": "idea",
+          "title": "ایده و مسئله",
+          "kind": "wizard",
+          "model": "StartupProject",
+          "related": []
+        },
+        {
+          "id": "canvas",
+          "title": "بوم ناب",
+          "kind": "editor",
+          "model": "StartupProject",
+          "related": []
+        },
+        {
+          "id": "mvp",
+          "title": "مسیر محصول اولیه",
+          "kind": "board",
+          "model": "StartupProject",
+          "related": []
+        },
+        {
+          "id": "pitch",
+          "title": "ارائهٔ سرمایه‌گذار",
+          "kind": "editor",
+          "model": "StartupProject",
+          "related": []
+        },
+        {
+          "id": "contact",
+          "title": "ارتباط با تیم متخصص",
+          "kind": "form",
+          "model": "StartupInquiry",
+          "related": []
+        },
+        {
+          "id": "projects",
+          "title": "پروژه‌های من",
+          "kind": "records",
+          "model": "StartupProject",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "organization",
+      "base": "/organization/onboarding",
+      "title": "فضای کسب‌وکار و تیم",
+      "group": "business",
+      "views": [
+        {
+          "id": "identity",
+          "title": "هویت کسب‌وکار",
+          "kind": "wizard",
+          "model": "Organization",
+          "related": [
+            "BusinessWorkspace"
+          ]
+        },
+        {
+          "id": "workspaces",
+          "title": "کسب‌وکارهای من",
+          "kind": "records",
+          "model": "BusinessWorkspace",
+          "related": []
+        },
+        {
+          "id": "members",
+          "title": "اعضای تیم",
+          "kind": "records",
+          "model": "BusinessMember",
+          "related": []
+        },
+        {
+          "id": "invites",
+          "title": "دعوت همکاران",
+          "kind": "records",
+          "model": "TeamInvite",
+          "related": []
+        },
+        {
+          "id": "roles",
+          "title": "نقش‌ها و دسترسی",
+          "kind": "matrix",
+          "model": "BusinessMember",
+          "related": []
+        },
+        {
+          "id": "modules",
+          "title": "ماژول‌های فعال",
+          "kind": "matrix",
+          "model": "OrganizationFeatureFlag",
+          "related": []
+        },
+        {
+          "id": "audit",
+          "title": "رویدادهای تیم",
+          "kind": "records",
+          "model": "OrganizationAuditLog",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "student",
+      "base": "/student",
+      "title": "فضای یادگیری تو",
+      "group": "learn",
+      "views": [
+        {
+          "id": "overview",
+          "title": "نمای کلی",
+          "kind": "overview",
+          "model": "StudentCourse",
+          "related": [
+            "StudentExam",
+            "StudentTask",
+            "StudentStudySession"
+          ]
+        },
+        {
+          "id": "courses",
+          "title": "درس‌های من",
+          "kind": "gallery",
+          "model": "StudentCourse",
+          "related": []
+        },
+        {
+          "id": "upload",
+          "title": "جزوه و منابع",
+          "kind": "records",
+          "model": "StudentMaterial",
+          "related": []
+        },
+        {
+          "id": "notes",
+          "title": "یادداشت‌ها",
+          "kind": "editor",
+          "model": "StudentNote",
+          "related": []
+        },
+        {
+          "id": "practice",
+          "title": "تمرین و آزمون",
+          "kind": "quiz",
+          "model": "StudentQuiz",
+          "related": [
+            "StudentQuizAttempt"
+          ]
+        },
+        {
+          "id": "review",
+          "title": "فلش‌کارت و مرور",
+          "kind": "flashcards",
+          "model": "StudentFlashcard",
+          "related": []
+        },
+        {
+          "id": "planner",
+          "title": "برنامه و امتحان‌ها",
+          "kind": "calendar",
+          "model": "StudentTask",
+          "related": [
+            "StudentExam"
+          ]
+        },
+        {
+          "id": "groups",
+          "title": "گروه‌های مطالعه",
+          "kind": "inbox",
+          "model": "StudentStudyGroup",
+          "related": [
+            "StudentStudyGroupMember",
+            "StudentStudyGroupMessage"
+          ]
+        },
+        {
+          "id": "reports",
+          "title": "گزارش مطالعه و زمان‌سنج",
+          "kind": "report",
+          "model": "StudentStudySession",
+          "related": []
+        },
+        {
+          "id": "thesis",
+          "title": "دستیار پایان‌نامه",
+          "kind": "wizard",
+          "model": "StudentNote",
+          "related": []
+        },
+        {
+          "id": "assignment",
+          "title": "دستیار تکلیف",
+          "kind": "wizard",
+          "model": "StudentNote",
+          "related": []
+        },
+        {
+          "id": "profile",
+          "title": "پروفایل دانشجو",
+          "kind": "form",
+          "model": "StudentAcademicProfile",
+          "related": []
+        },
+        {
+          "id": "business",
+          "title": "کسب‌وکار دانشجویی",
+          "kind": "overview",
+          "model": "BusinessWorkspace",
+          "related": []
+        },
+        {
+          "id": "chat",
+          "title": "گفتگو با مدرس",
+          "kind": "chat",
+          "model": "Conversation",
+          "related": []
+        },
+        {
+          "id": "path",
+          "title": "مسیر یادگیری",
+          "kind": "timeline",
+          "model": "StudentCourse",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "learn",
+      "base": "/learn",
+      "title": "آکادمی آی‌فکر",
+      "group": "learn",
+      "views": [
+        {
+          "id": "catalogue",
+          "title": "کشف دوره‌ها",
+          "kind": "gallery",
+          "model": "AiCourse",
+          "related": []
+        },
+        {
+          "id": "lesson",
+          "title": "درس و تمرین",
+          "kind": "course",
+          "model": "AiCourse",
+          "related": [
+            "AiCourseProgress",
+            "AiCourseLessonNote"
+          ]
+        },
+        {
+          "id": "paths",
+          "title": "مسیرهای یادگیری",
+          "kind": "timeline",
+          "model": "AcademyLearningPath",
+          "related": []
+        },
+        {
+          "id": "tutor",
+          "title": "دستیار درس",
+          "kind": "chat",
+          "model": "Conversation",
+          "related": []
+        },
+        {
+          "id": "notes",
+          "title": "یادداشت‌های درس",
+          "kind": "editor",
+          "model": "AiCourseLessonNote",
+          "related": []
+        },
+        {
+          "id": "assessment",
+          "title": "آزمون پایانی",
+          "kind": "quiz",
+          "model": "AiCourseAssessmentAttempt",
+          "related": []
+        },
+        {
+          "id": "certificates",
+          "title": "گواهی‌ها و دستاوردها",
+          "kind": "gallery",
+          "model": "AiCourseCertificate",
+          "related": []
+        },
+        {
+          "id": "profile",
+          "title": "پروفایل تحصیلی",
+          "kind": "form",
+          "model": "StudentAcademicProfile",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "fitness",
+      "base": "/fitness",
+      "title": "فیتنس آی‌فکر",
+      "group": "fit",
+      "views": [
+        {
+          "id": "overview",
+          "title": "نمای کلی",
+          "kind": "overview",
+          "model": "FitnessProfile",
+          "related": [
+            "FitnessSession",
+            "FitnessProgram"
+          ]
+        },
+        {
+          "id": "trainers",
+          "title": "مربی‌ها",
+          "kind": "gallery",
+          "model": "FitnessTrainer",
+          "related": []
+        },
+        {
+          "id": "programs",
+          "title": "برنامه‌های تمرین",
+          "kind": "gallery",
+          "model": "FitnessProgram",
+          "related": []
+        },
+        {
+          "id": "gym",
+          "title": "حالت باشگاه",
+          "kind": "gym",
+          "model": "FitnessSession",
+          "related": [
+            "FitnessSetLog",
+            "FitnessExercise"
+          ]
+        },
+        {
+          "id": "nutrition",
+          "title": "تغذیه و یادداشت روزانه",
+          "kind": "records",
+          "model": "FitnessDiary",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "تاریخچهٔ تمرین",
+          "kind": "records",
+          "model": "FitnessSession",
+          "related": []
+        },
+        {
+          "id": "profile",
+          "title": "پروفایل ورزشی",
+          "kind": "form",
+          "model": "FitnessProfile",
+          "related": []
+        },
+        {
+          "id": "reports",
+          "title": "گزارش پیشرفت",
+          "kind": "report",
+          "model": "FitnessSession",
+          "related": []
+        },
+        {
+          "id": "plans",
+          "title": "عضویت فیتنس",
+          "kind": "gallery",
+          "model": "Package",
+          "related": []
+        },
+        {
+          "id": "athlete-card",
+          "title": "کارت ورزشکار",
+          "kind": "editor",
+          "model": "FitnessProfile",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "marketplace",
+      "base": "/fitness/marketplace",
+      "title": "بازار مربیان و رزرو",
+      "group": "fit",
+      "views": [
+        {
+          "id": "trainers",
+          "title": "مربیان",
+          "kind": "gallery",
+          "model": "FitnessTrainer",
+          "related": []
+        },
+        {
+          "id": "store",
+          "title": "فروشگاه برنامه‌ها",
+          "kind": "gallery",
+          "model": "FitnessProduct",
+          "related": []
+        },
+        {
+          "id": "slots",
+          "title": "وقت‌های مشاوره",
+          "kind": "calendar",
+          "model": "FitnessAvailability",
+          "related": [
+            "FitnessBooking"
+          ]
+        },
+        {
+          "id": "orders",
+          "title": "سفارش‌های من",
+          "kind": "records",
+          "model": "FitnessMarketOrder",
+          "related": []
+        },
+        {
+          "id": "apply",
+          "title": "درخواست مربیگری",
+          "kind": "wizard",
+          "model": "FitnessTrainerApplication",
+          "related": []
+        },
+        {
+          "id": "seller",
+          "title": "پنل فروشنده",
+          "kind": "records",
+          "model": "FitnessSellerLedger",
+          "related": [
+            "FitnessProduct",
+            "FitnessAvailability",
+            "FitnessBooking",
+            "FitnessVerifiedReview"
+          ]
+        },
+        {
+          "id": "reviews",
+          "title": "نظرهای تأییدشده",
+          "kind": "records",
+          "model": "FitnessVerifiedReview",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "image",
+      "base": "/image/generate",
+      "title": "استودیوی تصویر",
+      "group": "create",
+      "views": [
+        {
+          "id": "generate",
+          "title": "ساخت تصویر",
+          "kind": "studio",
+          "model": "GeneratedImage",
+          "related": []
+        },
+        {
+          "id": "reference",
+          "title": "تصویر مرجع",
+          "kind": "studio",
+          "model": "GeneratedImage",
+          "related": []
+        },
+        {
+          "id": "characters",
+          "title": "طراحی شخصیت",
+          "kind": "editor",
+          "model": "GeneratedImage",
+          "related": []
+        },
+        {
+          "id": "gallery",
+          "title": "گالری تصاویر",
+          "kind": "gallery",
+          "model": "GeneratedImage",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "video",
+      "base": "/video/generate",
+      "title": "استودیوی ویدیو",
+      "group": "create",
+      "views": [
+        {
+          "id": "generate",
+          "title": "ساخت ویدیو",
+          "kind": "studio",
+          "model": "GeneratedVideo",
+          "related": []
+        },
+        {
+          "id": "reference",
+          "title": "تصویر به ویدیو",
+          "kind": "studio",
+          "model": "GeneratedVideo",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "ویدیوهای من",
+          "kind": "gallery",
+          "model": "GeneratedVideo",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "base": "/music/generate",
+      "title": "استودیوی موسیقی",
+      "group": "create",
+      "views": [
+        {
+          "id": "generate",
+          "title": "ساخت موسیقی",
+          "kind": "studio",
+          "model": "GeneratedMusic",
+          "related": []
+        },
+        {
+          "id": "lyrics",
+          "title": "ترانه و بی‌کلام",
+          "kind": "editor",
+          "model": "GeneratedMusic",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "آهنگ‌های من",
+          "kind": "gallery",
+          "model": "GeneratedMusic",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "voice",
+      "base": "/voice-studio",
+      "title": "استودیوی صدا",
+      "group": "create",
+      "views": [
+        {
+          "id": "text",
+          "title": "متن و بخش‌بندی",
+          "kind": "editor",
+          "model": "VoiceStudioProject",
+          "related": []
+        },
+        {
+          "id": "voice",
+          "title": "کتابخانه صدا",
+          "kind": "gallery",
+          "model": "VoiceStudioProject",
+          "related": []
+        },
+        {
+          "id": "generate",
+          "title": "ساخت و شنیدن",
+          "kind": "studio",
+          "model": "VoiceStudioGeneration",
+          "related": []
+        },
+        {
+          "id": "projects",
+          "title": "پروژه‌های صوتی",
+          "kind": "records",
+          "model": "VoiceStudioProject",
+          "related": []
+        },
+        {
+          "id": "presets",
+          "title": "تنظیمات ذخیره‌شده",
+          "kind": "form",
+          "model": "VoiceStudioProject",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "فایل‌های صوتی",
+          "kind": "records",
+          "model": "VoiceStudioGeneration",
+          "related": []
+        },
+        {
+          "id": "archive",
+          "title": "بایگانی",
+          "kind": "records",
+          "model": "VoiceStudioProject",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "factory",
+      "base": "/video-factory",
+      "title": "کارخانهٔ ویدیو",
+      "group": "create",
+      "views": [
+        {
+          "id": "projects",
+          "title": "پروژه‌های من",
+          "kind": "gallery",
+          "model": "VideoFactoryProject",
+          "related": []
+        },
+        {
+          "id": "production",
+          "title": "تولید فصل‌به‌فصل",
+          "kind": "wizard",
+          "model": "VideoFactoryProject",
+          "related": [
+            "VideoFactoryJob",
+            "VideoFactoryStep"
+          ]
+        },
+        {
+          "id": "ideas",
+          "title": "ایده و منابع",
+          "kind": "editor",
+          "model": "VideoFactoryProject",
+          "related": []
+        },
+        {
+          "id": "script",
+          "title": "متن و استوری‌بورد",
+          "kind": "editor",
+          "model": "VideoFactoryProject",
+          "related": []
+        },
+        {
+          "id": "characters",
+          "title": "شخصیت و پیوستگی",
+          "kind": "editor",
+          "model": "VideoFactoryResource",
+          "related": []
+        },
+        {
+          "id": "timeline",
+          "title": "تایم‌لاین",
+          "kind": "timeline",
+          "model": "VideoFactoryStep",
+          "related": []
+        },
+        {
+          "id": "edit",
+          "title": "ویرایش نماها",
+          "kind": "editor",
+          "model": "VideoFactoryProject",
+          "related": []
+        },
+        {
+          "id": "library",
+          "title": "کتابخانهٔ دارایی‌ها",
+          "kind": "gallery",
+          "model": "VideoFactoryAsset",
+          "related": []
+        },
+        {
+          "id": "assets",
+          "title": "خروجی‌ها",
+          "kind": "gallery",
+          "model": "VideoFactoryArtifact",
+          "related": []
+        },
+        {
+          "id": "publishing",
+          "title": "انتشار و زمان‌بندی",
+          "kind": "form",
+          "model": "VideoFactoryPublishJob",
+          "related": [
+            "VideoFactoryChannel"
+          ]
+        },
+        {
+          "id": "advanced",
+          "title": "صدا و کیفیت",
+          "kind": "form",
+          "model": "VideoFactoryQualityReport",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "نسخه‌ها و بازگردانی",
+          "kind": "records",
+          "model": "VideoFactoryVersion",
+          "related": []
+        },
+        {
+          "id": "packages",
+          "title": "پکیج‌های تولید",
+          "kind": "gallery",
+          "model": "Package",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "play",
+      "base": "/play",
+      "title": "زمین بازی آی‌فکر",
+      "group": "create",
+      "views": [
+        {
+          "id": "arcade",
+          "title": "بازی‌ها",
+          "kind": "game",
+          "model": "PlayGame",
+          "related": []
+        },
+        {
+          "id": "profile",
+          "title": "پروفایل بازی من",
+          "kind": "form",
+          "model": "PlayProfile",
+          "related": []
+        },
+        {
+          "id": "rankings",
+          "title": "رتبه‌بندی",
+          "kind": "records",
+          "model": "PlayProfile",
+          "related": []
+        },
+        {
+          "id": "history",
+          "title": "تاریخچه من",
+          "kind": "records",
+          "model": "PlaySession",
+          "related": []
+        },
+        {
+          "id": "achievements",
+          "title": "دستاوردها",
+          "kind": "gallery",
+          "model": "PlayAchievementGrant",
+          "related": []
+        },
+        {
+          "id": "competitions",
+          "title": "مسابقه‌ها و پاداش‌ها",
+          "kind": "gallery",
+          "model": "PlayTournament",
+          "related": [
+            "PlayTournamentEntry",
+            "PlayRewardGrant"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "referral",
+      "base": "/referral",
+      "title": "دعوت و درآمد",
+      "group": "account",
+      "views": [
+        {
+          "id": "invite",
+          "title": "دعوت دوستان",
+          "kind": "editor",
+          "model": "ReferralCodeAlias",
+          "related": []
+        },
+        {
+          "id": "stats",
+          "title": "آمار دعوت‌ها",
+          "kind": "report",
+          "model": "User",
+          "related": []
+        },
+        {
+          "id": "wallet",
+          "title": "کیف پول درآمد",
+          "kind": "overview",
+          "model": "WalletTransaction",
+          "related": []
+        },
+        {
+          "id": "transactions",
+          "title": "تراکنش‌ها",
+          "kind": "records",
+          "model": "WalletTransaction",
+          "related": []
+        },
+        {
+          "id": "payout",
+          "title": "درخواست برداشت",
+          "kind": "form",
+          "model": "WalletPayoutRequest",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "owner",
+      "base": "/owner",
+      "title": "فضای مالک",
+      "group": "account",
+      "views": [
+        {
+          "id": "statements",
+          "title": "گزارش‌های تسویه",
+          "kind": "records",
+          "model": "AccountingOwnerStatement",
+          "related": [
+            "AccountingOwnerStatementEntry"
+          ]
+        },
+        {
+          "id": "properties",
+          "title": "ملک‌های من",
+          "kind": "gallery",
+          "model": "Property",
+          "related": []
+        },
+        {
+          "id": "bookings",
+          "title": "تقویم رزروها",
+          "kind": "calendar",
+          "model": "PropertyBooking",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-dashboard",
+      "base": "/admin/dashboard",
+      "title": "داشبورد مدیریت",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "داشبورد مدیریت",
+          "kind": "overview",
+          "model": "Payment",
+          "related": [
+            "User",
+            "UsageLog"
+          ]
+        },
+        {
+          "id": "user",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "User",
+          "related": []
+        },
+        {
+          "id": "usage-log",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "UsageLog",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-users",
+      "base": "/admin/users",
+      "title": "کاربران",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "کاربران",
+          "kind": "records",
+          "model": "User",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-users-[id]",
+      "base": "/admin/users/[id]",
+      "title": "پروندهٔ کاربر",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "پروندهٔ کاربر",
+          "kind": "records",
+          "model": "User",
+          "related": [
+            "Payment",
+            "WalletTransaction",
+            "Conversation",
+            "OrganizationMember",
+            "StudentAcademicProfile",
+            "FitnessProfile"
+          ]
+        },
+        {
+          "id": "payment",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "Payment",
+          "related": []
+        },
+        {
+          "id": "wallet-transaction",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "WalletTransaction",
+          "related": []
+        },
+        {
+          "id": "conversation",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "Conversation",
+          "related": []
+        },
+        {
+          "id": "organization-member",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "OrganizationMember",
+          "related": []
+        },
+        {
+          "id": "student-academic-profile",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "StudentAcademicProfile",
+          "related": []
+        },
+        {
+          "id": "fitness-profile",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessProfile",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-admins",
+      "base": "/admin/admins",
+      "title": "مدیران و دسترسی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیران و دسترسی",
+          "kind": "matrix",
+          "model": "User",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-crm",
+      "base": "/admin/crm",
+      "title": "CRM کسب‌وکارها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "CRM کسب‌وکارها",
+          "kind": "records",
+          "model": "CrmContact",
+          "related": [
+            "CrmDeal",
+            "BusinessWorkspace"
+          ]
+        },
+        {
+          "id": "crm-deal",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "CrmDeal",
+          "related": []
+        },
+        {
+          "id": "business-workspace",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "BusinessWorkspace",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-companies",
+      "base": "/admin/companies",
+      "title": "شرکت‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "شرکت‌ها",
+          "kind": "records",
+          "model": "Company",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-financial",
+      "base": "/admin/financial",
+      "title": "خریدها و فاکتورها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "خریدها و فاکتورها",
+          "kind": "records",
+          "model": "Payment",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-financial-customers",
+      "base": "/admin/financial/customers",
+      "title": "حساب خریداران",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "حساب خریداران",
+          "kind": "records",
+          "model": "User",
+          "related": [
+            "Package"
+          ]
+        },
+        {
+          "id": "package",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "Package",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-financial-invoices-[id]",
+      "base": "/admin/financial/invoices/[id]",
+      "title": "فاکتور خرید",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "فاکتور خرید",
+          "kind": "records",
+          "model": "Payment",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-packages",
+      "base": "/admin/packages",
+      "title": "پکیج‌ها و قیمت‌گذاری",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "پکیج‌ها و قیمت‌گذاری",
+          "kind": "records",
+          "model": "Package",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-subscriptions",
+      "base": "/admin/subscriptions",
+      "title": "اشتراک‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "اشتراک‌ها",
+          "kind": "records",
+          "model": "User",
+          "related": [
+            "IndustryPack"
+          ]
+        },
+        {
+          "id": "industry-pack",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "IndustryPack",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-credit-tiers",
+      "base": "/admin/credit-tiers",
+      "title": "بسته‌های اعتبار",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "بسته‌های اعتبار",
+          "kind": "records",
+          "model": "CreditPricingTier",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-billing-rates",
+      "base": "/admin/billing/rates",
+      "title": "ارز و نرخ‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "ارز و نرخ‌ها",
+          "kind": "records",
+          "model": "BillingExchangeRate",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-billing-promotions",
+      "base": "/admin/billing/promotions",
+      "title": "پروموشن‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "پروموشن‌ها",
+          "kind": "records",
+          "model": "BillingPromotion",
+          "related": [
+            "BillingPromotionRedemption"
+          ]
+        },
+        {
+          "id": "billing-promotion-redemption",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "BillingPromotionRedemption",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-revenue",
+      "base": "/admin/revenue",
+      "title": "درآمد و فروش",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "درآمد و فروش",
+          "kind": "report",
+          "model": "Payment",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-affiliate",
+      "base": "/admin/affiliate",
+      "title": "همکاری و کیف پول",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "همکاری و کیف پول",
+          "kind": "records",
+          "model": "WalletPayoutRequest",
+          "related": [
+            "WalletTransaction"
+          ]
+        },
+        {
+          "id": "wallet-transaction",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "WalletTransaction",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-referrals",
+      "base": "/admin/referrals",
+      "title": "کد دعوت و اینفلوئنسر",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "کد دعوت و اینفلوئنسر",
+          "kind": "records",
+          "model": "ReferralCodeAlias",
+          "related": [
+            "InviteCard"
+          ]
+        },
+        {
+          "id": "invite-card",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "InviteCard",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-invites",
+      "base": "/admin/invites",
+      "title": "سازندهٔ دعوت‌نامه",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "سازندهٔ دعوت‌نامه",
+          "kind": "editor",
+          "model": "InviteCard",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-invites-manage",
+      "base": "/admin/invites/manage",
+      "title": "مدیریت دعوت‌نامه‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت دعوت‌نامه‌ها",
+          "kind": "records",
+          "model": "InviteCard",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-industry-packs",
+      "base": "/admin/industry-packs",
+      "title": "بسته‌های صنعتی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "بسته‌های صنعتی",
+          "kind": "records",
+          "model": "IndustryPack",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-categories",
+      "base": "/admin/categories",
+      "title": "دسته‌های کسب‌وکار",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "دسته‌های کسب‌وکار",
+          "kind": "records",
+          "model": "BusinessCategory",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-modules",
+      "base": "/admin/modules",
+      "title": "ثبت و تنظیم ماژول‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "ثبت و تنظیم ماژول‌ها",
+          "kind": "records",
+          "model": "ModuleRegistry",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-module-access",
+      "base": "/admin/module-access",
+      "title": "دسترسی بسته و مشتری",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "دسترسی بسته و مشتری",
+          "kind": "matrix",
+          "model": "IndustryModuleFlag",
+          "related": [
+            "UserModuleOverride"
+          ]
+        },
+        {
+          "id": "user-module-override",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "UserModuleOverride",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-tools",
+      "base": "/admin/tools",
+      "title": "ابزارها و دستیارها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "ابزارها و دستیارها",
+          "kind": "records",
+          "model": "ModuleRegistry",
+          "related": [
+            "Prompt"
+          ]
+        },
+        {
+          "id": "prompt",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "Prompt",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-llm",
+      "base": "/admin/llm",
+      "title": "مدیریت API و مسیریابی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت API و مسیریابی",
+          "kind": "records",
+          "model": "CustomAiProvider",
+          "related": [
+            "LlmModel"
+          ]
+        },
+        {
+          "id": "llm-model",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "LlmModel",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-models",
+      "base": "/admin/models",
+      "title": "تعرفه و مدل‌های AI",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "تعرفه و مدل‌های AI",
+          "kind": "records",
+          "model": "AiModelPricing",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-provider-fallback",
+      "base": "/admin/provider-fallback",
+      "title": "رویدادهای جایگزینی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "رویدادهای جایگزینی",
+          "kind": "report",
+          "model": "ProviderFallbackLog",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-usage",
+      "base": "/admin/usage",
+      "title": "مصرف و اقتصاد واحد",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مصرف و اقتصاد واحد",
+          "kind": "report",
+          "model": "UsageLog",
+          "related": [
+            "AiModelPricing"
+          ]
+        },
+        {
+          "id": "ai-model-pricing",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiModelPricing",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-analytics",
+      "base": "/admin/analytics",
+      "title": "تحلیل امکانات",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "تحلیل امکانات",
+          "kind": "report",
+          "model": "UsageLog",
+          "related": [
+            "PublicPageVisit"
+          ]
+        },
+        {
+          "id": "public-page-visit",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "PublicPageVisit",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-prompts",
+      "base": "/admin/prompts",
+      "title": "کتابخانه پرامپت",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "کتابخانه پرامپت",
+          "kind": "records",
+          "model": "Prompt",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-ai-chat",
+      "base": "/admin/ai-chat",
+      "title": "سیاست‌های چت و کشف",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "سیاست‌های چت و کشف",
+          "kind": "form",
+          "model": "AiChatQuota",
+          "related": [
+            "AiChatDiscoveryPreference"
+          ]
+        },
+        {
+          "id": "ai-chat-discovery-preference",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiChatDiscoveryPreference",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-chats",
+      "base": "/admin/chats",
+      "title": "بازبینی گفتگوها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "بازبینی گفتگوها",
+          "kind": "records",
+          "model": "Conversation",
+          "related": [
+            "Message"
+          ]
+        },
+        {
+          "id": "message",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "Message",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-public-share",
+      "base": "/admin/public-share",
+      "title": "گالری و لینک‌های عمومی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "گالری و لینک‌های عمومی",
+          "kind": "records",
+          "model": "PublicPageVisit",
+          "related": [
+            "GeneratedImage"
+          ]
+        },
+        {
+          "id": "generated-image",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "GeneratedImage",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-student",
+      "base": "/admin/student",
+      "title": "فضای دانشجویی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "فضای دانشجویی",
+          "kind": "records",
+          "model": "StudentCourse",
+          "related": [
+            "StudentMaterial",
+            "StudentStudySession"
+          ]
+        },
+        {
+          "id": "student-material",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "StudentMaterial",
+          "related": []
+        },
+        {
+          "id": "student-study-session",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "StudentStudySession",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-academy",
+      "base": "/admin/academy",
+      "title": "مدیریت آکادمی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت آکادمی",
+          "kind": "overview",
+          "model": "AiCourse",
+          "related": [
+            "AcademicMajor",
+            "StudentAcademicProfile",
+            "AiCourseCertificate",
+            "AcademyLearningPath"
+          ]
+        },
+        {
+          "id": "academic-major",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AcademicMajor",
+          "related": []
+        },
+        {
+          "id": "student-academic-profile",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "StudentAcademicProfile",
+          "related": []
+        },
+        {
+          "id": "ai-course-certificate",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiCourseCertificate",
+          "related": []
+        },
+        {
+          "id": "academy-learning-path",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AcademyLearningPath",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-ai-courses",
+      "base": "/admin/ai-courses",
+      "title": "تولید و ویرایش دوره",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "تولید و ویرایش دوره",
+          "kind": "records",
+          "model": "AiCourse",
+          "related": [
+            "AiCourseGenerationJob",
+            "AiCourseRevision"
+          ]
+        },
+        {
+          "id": "ai-course-generation-job",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiCourseGenerationJob",
+          "related": []
+        },
+        {
+          "id": "ai-course-revision",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiCourseRevision",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-ai-courses-[id]-preview",
+      "base": "/admin/ai-courses/[id]/preview",
+      "title": "پیش‌نمایش دوره",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "پیش‌نمایش دوره",
+          "kind": "course",
+          "model": "AiCourse",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-fitness",
+      "base": "/admin/fitness",
+      "title": "مدیریت فیتنس",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت فیتنس",
+          "kind": "records",
+          "model": "FitnessExercise",
+          "related": [
+            "FitnessTrainer",
+            "FitnessProgram"
+          ]
+        },
+        {
+          "id": "fitness-trainer",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessTrainer",
+          "related": []
+        },
+        {
+          "id": "fitness-program",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessProgram",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-fitness-users",
+      "base": "/admin/fitness/users",
+      "title": "اعضا و دسترسی ورزشی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "اعضا و دسترسی ورزشی",
+          "kind": "records",
+          "model": "FitnessProfile",
+          "related": [
+            "User"
+          ]
+        },
+        {
+          "id": "user",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "User",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-fitness-marketplace",
+      "base": "/admin/fitness/marketplace",
+      "title": "بازار مربیان و سفارش‌ها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "بازار مربیان و سفارش‌ها",
+          "kind": "records",
+          "model": "FitnessTrainerApplication",
+          "related": [
+            "FitnessProduct",
+            "FitnessMarketOrder",
+            "FitnessSellerLedger",
+            "FitnessVerifiedReview"
+          ]
+        },
+        {
+          "id": "fitness-product",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessProduct",
+          "related": []
+        },
+        {
+          "id": "fitness-market-order",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessMarketOrder",
+          "related": []
+        },
+        {
+          "id": "fitness-seller-ledger",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessSellerLedger",
+          "related": []
+        },
+        {
+          "id": "fitness-verified-review",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "FitnessVerifiedReview",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-video-factory",
+      "base": "/admin/video-factory",
+      "title": "مرکز عملیات تولید ویدیو",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مرکز عملیات تولید ویدیو",
+          "kind": "overview",
+          "model": "VideoFactoryJob",
+          "related": [
+            "VideoFactoryProvider",
+            "VideoFactoryResource",
+            "VideoFactoryStorageQuota",
+            "VideoFactoryQualityReport",
+            "VideoFactoryApproval",
+            "VideoFactoryAsset",
+            "VideoFactoryConfigVersion"
+          ]
+        },
+        {
+          "id": "video-factory-provider",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryProvider",
+          "related": []
+        },
+        {
+          "id": "video-factory-resource",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryResource",
+          "related": []
+        },
+        {
+          "id": "video-factory-storage-quota",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryStorageQuota",
+          "related": []
+        },
+        {
+          "id": "video-factory-quality-report",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryQualityReport",
+          "related": []
+        },
+        {
+          "id": "video-factory-approval",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryApproval",
+          "related": []
+        },
+        {
+          "id": "video-factory-asset",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryAsset",
+          "related": []
+        },
+        {
+          "id": "video-factory-config-version",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VideoFactoryConfigVersion",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-voice-studio",
+      "base": "/admin/voice-studio",
+      "title": "مدیریت استودیوی صدا",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت استودیوی صدا",
+          "kind": "overview",
+          "model": "VoiceStudioGeneration",
+          "related": [
+            "AiModelPricing",
+            "VoiceStudioProject"
+          ]
+        },
+        {
+          "id": "ai-model-pricing",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AiModelPricing",
+          "related": []
+        },
+        {
+          "id": "voice-studio-project",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VoiceStudioProject",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-voice-agent",
+      "base": "/admin/voice-agent",
+      "title": "مدیریت مرکز تماس",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت مرکز تماس",
+          "kind": "overview",
+          "model": "VoiceAgent",
+          "related": [
+            "VoiceCallLog",
+            "VoiceAppointment"
+          ]
+        },
+        {
+          "id": "voice-call-log",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VoiceCallLog",
+          "related": []
+        },
+        {
+          "id": "voice-appointment",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "VoiceAppointment",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-seo-intelligence",
+      "base": "/admin/seo-intelligence",
+      "title": "تعرفه و پژوهش سئو",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "تعرفه و پژوهش سئو",
+          "kind": "records",
+          "model": "SeoResearchJob",
+          "related": [
+            "SeoSite"
+          ]
+        },
+        {
+          "id": "seo-site",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "SeoSite",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-lead-connectors",
+      "base": "/admin/lead-connectors",
+      "title": "اتصال‌های تبلیغاتی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "اتصال‌های تبلیغاتی",
+          "kind": "records",
+          "model": "LeadSource",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-generated-websites",
+      "base": "/admin/generated-websites",
+      "title": "وب‌سایت‌های تولیدشده",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "وب‌سایت‌های تولیدشده",
+          "kind": "records",
+          "model": "GeneratedWebsite",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-play",
+      "base": "/admin/play",
+      "title": "مدیریت زمین بازی",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "مدیریت زمین بازی",
+          "kind": "overview",
+          "model": "PlayGame",
+          "related": [
+            "PlayProfile",
+            "PlayTournament",
+            "PlayQuestion",
+            "PlaySession"
+          ]
+        },
+        {
+          "id": "play-profile",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "PlayProfile",
+          "related": []
+        },
+        {
+          "id": "play-tournament",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "PlayTournament",
+          "related": []
+        },
+        {
+          "id": "play-question",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "PlayQuestion",
+          "related": []
+        },
+        {
+          "id": "play-session",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "PlaySession",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-games",
+      "base": "/admin/games",
+      "title": "بازی‌ها و بانک سؤال",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "بازی‌ها و بانک سؤال",
+          "kind": "records",
+          "model": "Game",
+          "related": [
+            "GameQuestion",
+            "GameSession"
+          ]
+        },
+        {
+          "id": "game-question",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "GameQuestion",
+          "related": []
+        },
+        {
+          "id": "game-session",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "GameSession",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-startup-inquiries",
+      "base": "/admin/startup-inquiries",
+      "title": "درخواست‌های استارتاپ",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "درخواست‌های استارتاپ",
+          "kind": "records",
+          "model": "StartupInquiry",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-settings",
+      "base": "/admin/settings",
+      "title": "هویت و تنظیمات سایت",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "هویت و تنظیمات سایت",
+          "kind": "form",
+          "model": "SiteSetting",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-cloudflare",
+      "base": "/admin/cloudflare",
+      "title": "زیرساخت و Workers AI",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "زیرساخت و Workers AI",
+          "kind": "connections",
+          "model": "SiteSetting",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-system",
+      "base": "/admin/system",
+      "title": "سلامت سیستم",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "سلامت سیستم",
+          "kind": "report",
+          "model": "ErrorLog",
+          "related": []
+        }
+      ]
+    },
+    {
+      "id": "admin-logs",
+      "base": "/admin/logs",
+      "title": "لاگ و رویدادها",
+      "group": "admin",
+      "views": [
+        {
+          "id": "overview",
+          "title": "لاگ و رویدادها",
+          "kind": "records",
+          "model": "ErrorLog",
+          "related": [
+            "AuditLog"
+          ]
+        },
+        {
+          "id": "audit-log",
+          "title": "بخش‌های مرتبط",
+          "kind": "records",
+          "model": "AuditLog",
+          "related": []
+        }
+      ]
+    }
+  ],
+  "views": 299,
+  "models": [
+    "CrmDeal",
+    "CrmPipeline",
+    "CrmStage",
+    "CrmTask",
+    "CrmContact",
+    "CrmActivity",
+    "CrmNote",
+    "CrmDocument",
+    "CrmAutomationRule",
+    "CrmInsight",
+    "CrmAnalysisRun",
+    "CrmProduct",
+    "CrmInvoice",
+    "CrmInvoiceItem",
+    "CrmInvoiceRevision",
+    "CrmContract",
+    "CrmContractTemplate",
+    "CrmContractRevision",
+    "CrmProject",
+    "Property",
+    "PropertyBooking",
+    "AccountingOwnerStatement",
+    "PropertyViewing",
+    "PropertyInterest",
+    "ScheduledPost",
+    "InstagramConnection",
+    "SocialPost",
+    "InstagramFollowerSnapshot",
+    "SocialCompetitorSnapshot",
+    "InstagramDirectMessageLog",
+    "InstagramCommentCampaign",
+    "InstagramCommentReplyLog",
+    "InstagramDirectRule",
+    "SocialBrandProfile",
+    "SocialCompetitor",
+    "SeoSite",
+    "SeoAudit",
+    "SeoResearchJob",
+    "ContentPost",
+    "SeoContentPlan",
+    "SeoRankSnapshot",
+    "ContentPipelineRun",
+    "ContentPipelineStep",
+    "ContentAgentLesson",
+    "SeoConnection",
+    "GscConnection",
+    "AccountingJournalEntry",
+    "AccountingExpense",
+    "AccountingJournalEntryLine",
+    "AccountingAccount",
+    "AccountingBudget",
+    "AccountingTaxRate",
+    "AccountingVendor",
+    "AccountingBankTransaction",
+    "AccountingBankAccount",
+    "AccountingPayrollRun",
+    "AccountingEmployee",
+    "AccountingPayslip",
+    "AccountingOwnerStatementEntry",
+    "AccountingManagementFeeRule",
+    "AccountingCommissionRecord",
+    "AccountingCommissionSplit",
+    "AccountingFiscalPeriod",
+    "AccountingAiProposal",
+    "AccountingScheduledReport",
+    "AccountingApiToken",
+    "LeadFormSubmission",
+    "LeadForm",
+    "LeadSource",
+    "VoiceAgent",
+    "VoiceKnowledgeBase",
+    "VoiceCallLog",
+    "VoiceAppointment",
+    "BusinessAnalysis",
+    "CeoTask",
+    "OrchestratorAction",
+    "BusinessMemory",
+    "KbDocument",
+    "IndustryPack",
+    "CustomAiProvider",
+    "BoardroomSession",
+    "GeneratedWebsite",
+    "StartupProject",
+    "StartupInquiry",
+    "Organization",
+    "BusinessWorkspace",
+    "BusinessMember",
+    "TeamInvite",
+    "OrganizationFeatureFlag",
+    "OrganizationAuditLog",
+    "StudentCourse",
+    "StudentExam",
+    "StudentTask",
+    "StudentStudySession",
+    "StudentMaterial",
+    "StudentNote",
+    "StudentQuiz",
+    "StudentQuizAttempt",
+    "StudentFlashcard",
+    "StudentStudyGroup",
+    "StudentStudyGroupMember",
+    "StudentStudyGroupMessage",
+    "StudentAcademicProfile",
+    "Conversation",
+    "AiCourse",
+    "AiCourseProgress",
+    "AiCourseLessonNote",
+    "AcademyLearningPath",
+    "AiCourseAssessmentAttempt",
+    "AiCourseCertificate",
+    "FitnessProfile",
+    "FitnessSession",
+    "FitnessProgram",
+    "FitnessTrainer",
+    "FitnessSetLog",
+    "FitnessExercise",
+    "FitnessDiary",
+    "Package",
+    "FitnessProduct",
+    "FitnessAvailability",
+    "FitnessBooking",
+    "FitnessMarketOrder",
+    "FitnessTrainerApplication",
+    "FitnessSellerLedger",
+    "FitnessVerifiedReview",
+    "GeneratedImage",
+    "GeneratedVideo",
+    "GeneratedMusic",
+    "VoiceStudioProject",
+    "VoiceStudioGeneration",
+    "VideoFactoryProject",
+    "VideoFactoryJob",
+    "VideoFactoryStep",
+    "VideoFactoryResource",
+    "VideoFactoryAsset",
+    "VideoFactoryArtifact",
+    "VideoFactoryPublishJob",
+    "VideoFactoryChannel",
+    "VideoFactoryQualityReport",
+    "VideoFactoryVersion",
+    "PlayGame",
+    "PlayProfile",
+    "PlaySession",
+    "PlayAchievementGrant",
+    "PlayTournament",
+    "PlayTournamentEntry",
+    "PlayRewardGrant",
+    "ReferralCodeAlias",
+    "User",
+    "WalletTransaction",
+    "WalletPayoutRequest",
+    "Payment",
+    "UsageLog",
+    "OrganizationMember",
+    "Company",
+    "CreditPricingTier",
+    "BillingExchangeRate",
+    "BillingPromotion",
+    "BillingPromotionRedemption",
+    "InviteCard",
+    "BusinessCategory",
+    "ModuleRegistry",
+    "IndustryModuleFlag",
+    "UserModuleOverride",
+    "Prompt",
+    "LlmModel",
+    "AiModelPricing",
+    "ProviderFallbackLog",
+    "PublicPageVisit",
+    "AiChatQuota",
+    "AiChatDiscoveryPreference",
+    "Message",
+    "AcademicMajor",
+    "AiCourseGenerationJob",
+    "AiCourseRevision",
+    "VideoFactoryProvider",
+    "VideoFactoryStorageQuota",
+    "VideoFactoryApproval",
+    "VideoFactoryConfigVersion",
+    "PlayQuestion",
+    "Game",
+    "GameQuestion",
+    "GameSession",
+    "SiteSetting",
+    "ErrorLog",
+    "AuditLog"
+  ]
+}

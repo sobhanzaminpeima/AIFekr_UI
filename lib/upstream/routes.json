@@ -1,0 +1,4742 @@
+[
+  {
+    "route": "/login",
+    "source": "src/app/(auth)/login/page.tsx",
+    "files": [
+      "src/app/(auth)/login/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [
+      {
+        "variable": "step",
+        "id": "input",
+        "line": 135,
+        "source": "src/app/(auth)/login/page.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "phone",
+        "line": 138,
+        "source": "src/app/(auth)/login/page.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "phone",
+        "line": 141,
+        "source": "src/app/(auth)/login/page.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "email",
+        "line": 149,
+        "source": "src/app/(auth)/login/page.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "email",
+        "line": 152,
+        "source": "src/app/(auth)/login/page.tsx"
+      },
+      {
+        "variable": "step",
+        "id": "otp",
+        "line": 163,
+        "source": "src/app/(auth)/login/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/register",
+    "source": "src/app/(auth)/register/page.tsx",
+    "files": [
+      "src/app/(auth)/register/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 3,
+    "actionCount": 0
+  },
+  {
+    "route": "/accounting/accounts/[code]",
+    "source": "src/app/(dashboard)/(business)/accounting/accounts/[code]/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/accounts/[code]/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "—",
+        "line": 52
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/accounting/assistant",
+    "source": "src/app/(dashboard)/(business)/accounting/assistant/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/assistant/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دستیار هوشمند مالی | AI finance assistant",
+        "line": 89
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/accounting/automation",
+    "source": "src/app/(dashboard)/(business)/accounting/automation/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/automation/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گزارش‌های زمان‌بندی‌شده و API خروجی BI | Scheduled reports & BI export API",
+        "line": 184
+      },
+      {
+        "text": "گزارش‌های زمان‌بندی‌شده | Scheduled reports",
+        "line": 191
+      },
+      {
+        "text": "توکن‌های API برای اتصال BI خارجی | API tokens for external BI connections",
+        "line": 266
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/accounting/bank",
+    "source": "src/app/(dashboard)/(business)/accounting/bank/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/bank/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "بانک و تطبیق | Bank & reconciliation",
+        "line": 151
+      },
+      {
+        "text": "حساب‌های بانکی | Bank accounts",
+        "line": 158
+      },
+      {
+        "text": "آپلود صورتحساب بانکی (CSV) | Upload bank statement (CSV)",
+        "line": 176
+      },
+      {
+        "text": "تراکنش‌های تطبیق‌نشده | Unreconciled transactions ( )",
+        "line": 183
+      },
+      {
+        "text": "تراکنش‌های بررسی‌شده | Reviewed transactions",
+        "line": 224
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/accounting/close-period",
+    "source": "src/app/(dashboard)/(business)/accounting/close-period/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/close-period/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دوره‌های مالی و بستن حساب‌ها | Fiscal periods & closing",
+        "line": 115
+      },
+      {
+        "text": "ساخت دوره مالی جدید | Create a new fiscal period",
+        "line": 121
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/accounting/expenses",
+    "source": "src/app/(dashboard)/(business)/accounting/expenses/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/expenses/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "هزینه‌ها و تأمین‌کنندگان | Expenses & vendors",
+        "line": 200
+      },
+      {
+        "text": "تأمین‌کنندگان | Vendors ( )",
+        "line": 208
+      },
+      {
+        "text": "ثبت هزینه جدید | Record a new expense",
+        "line": 228
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/accounting/ledger-setup",
+    "source": "src/app/(dashboard)/(business)/accounting/ledger-setup/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/ledger-setup/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دفتر حساب‌ها، بودجه و مالیات | Chart of accounts, budget & tax",
+        "line": 135
+      },
+      {
+        "text": "دفتر حساب‌ها | Chart of accounts ( )",
+        "line": 142
+      },
+      {
+        "text": "بودجه‌بندی | Budgeting",
+        "line": 165
+      },
+      {
+        "text": "نرخ‌های مالیاتی و گزارش ارزش‌افزوده | Tax rates & VAT reporting",
+        "line": 193
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/accounting/owner-statements",
+    "source": "src/app/(dashboard)/(business)/accounting/owner-statements/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/owner-statements/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گزارش تسویه مالک (اجاره کوتاه‌مدت) | Owner statements (short-term rental)",
+        "line": 370
+      },
+      {
+        "text": "ردیف‌های ماه | This month's line items",
+        "line": 544
+      },
+      {
+        "text": "تاریخچه گزارش‌های این واحد | Statement history for this unit",
+        "line": 576
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 14
+  },
+  {
+    "route": "/accounting",
+    "source": "src/app/(dashboard)/(business)/accounting/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "داشبورد حسابداری | Accounting Dashboard",
+        "line": 67
+      },
+      {
+        "text": "دفاتر هنوز خالی است | Your books are still empty",
+        "line": 76
+      },
+      {
+        "text": "روند درآمد و هزینه (۶ ماه اخیر) | Revenue vs. expenses (last 6 months)",
+        "line": 101
+      },
+      {
+        "text": "ترکیب هزینه‌ها بر اساس دسته (این ماه) | Expense breakdown by category (this month)",
+        "line": 145
+      },
+      {
+        "text": "فاکتورهای معوق | Overdue invoices",
+        "line": 171
+      },
+      {
+        "text": "اجاره کوتاه‌مدت | Short-term rental",
+        "line": 192
+      },
+      {
+        "text": "وضعیت تطبیق بانکی | Bank reconciliation status",
+        "line": 204
+      },
+      {
+        "text": "کمیسیون‌های معلق پرداخت | Commissions pending payment",
+        "line": 220
+      },
+      {
+        "text": "خلاصهٔ هوشمند جریان نقدی | AI cash-flow summary",
+        "line": 292
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 5
+  },
+  {
+    "route": "/accounting/payroll",
+    "source": "src/app/(dashboard)/(business)/accounting/payroll/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/accounting/payroll/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "حقوق و دستمزد | Payroll",
+        "line": 154
+      },
+      {
+        "text": "کارمندان | Employees",
+        "line": 161
+      },
+      {
+        "text": "ساخت لیست حقوق ماهانه | Create monthly payroll run",
+        "line": 183
+      },
+      {
+        "text": "فیش حقوقی | Payslip",
+        "line": 255
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 6
+  },
+  {
+    "route": "/business-doctor",
+    "source": "src/app/(dashboard)/(business)/business-doctor/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/business-doctor/page.tsx",
+      "src/components/layout/WorkspaceError.tsx",
+      "src/components/ui/ShareButton.tsx",
+      "src/components/ui/LongRunIndicator.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 6
+  },
+  {
+    "route": "/ceo/orchestrator",
+    "source": "src/app/(dashboard)/(business)/ceo/orchestrator/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/ceo/orchestrator/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "AI-BOS",
+        "line": 317
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/ceo",
+    "source": "src/app/(dashboard)/(business)/ceo/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/ceo/page.tsx",
+      "src/components/ui/LongRunIndicator.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/crm",
+    "source": "src/app/(dashboard)/(business)/crm/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/crm/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "تاریخچه‌ی تحلیل‌ها | Analysis history",
+        "line": 1687
+      },
+      {
+        "text": "افزودن مالک جدید | Add new owner",
+        "line": 3341
+      },
+      {
+        "text": "مقایسهٔ املاک | Property comparison",
+        "line": 3699
+      },
+      {
+        "text": "تقویم اشغال | Occupancy calendar",
+        "line": 3859
+      },
+      {
+        "text": "اسناد ملک | Property documents",
+        "line": 3977
+      },
+      {
+        "text": "بازخورد پس از بازدید | Post-viewing feedback",
+        "line": 4813
+      },
+      {
+        "text": "ایجنت تطبیق لید | Lead Matcher agent",
+        "line": 4926
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "contacts",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "invoices",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "contracts",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "projects",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "properties",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "owners",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "viewings",
+        "line": 233,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "board",
+        "line": 234,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "matches",
+        "line": 237,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "performance",
+        "line": 238,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "automation",
+        "line": 239,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "board",
+        "line": 330,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "agent",
+        "line": 486,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "calendar",
+        "line": 488,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "analytics",
+        "line": 490,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "contacts",
+        "line": 491,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "products",
+        "line": 492,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "properties",
+        "line": 502,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "profile",
+        "line": 1227,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "deals",
+        "line": 1285,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "tasks",
+        "line": 1297,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "activity",
+        "line": 1341,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "notesFiles",
+        "line": 1360,
+        "source": "src/app/(dashboard)/(business)/crm/page.tsx"
+      }
+    ],
+    "fieldCount": 5,
+    "actionCount": 42
+  },
+  {
+    "route": "/lead-gen",
+    "source": "src/app/(dashboard)/(business)/lead-gen/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/lead-gen/page.tsx",
+      "src/components/layout/WorkspaceError.tsx"
+    ],
+    "headings": [
+      {
+        "text": "ماژول تولید لید | Lead Generation module",
+        "line": 284
+      },
+      {
+        "text": "تولید لید | Lead Generation",
+        "line": 306
+      },
+      {
+        "text": "کانال‌های تبلیغاتی | Ad channels",
+        "line": 469
+      },
+      {
+        "text": "تبدیل بر اساس کانال | Conversion by channel",
+        "line": 565
+      },
+      {
+        "text": "ویرایش فرم | Edit form",
+        "line": 667
+      },
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 14
+  },
+  {
+    "route": "/meeting",
+    "source": "src/app/(dashboard)/(business)/meeting/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/meeting/page.tsx",
+      "src/components/ui/LongRunIndicator.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": ": ...",
+        "line": 161
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/sales",
+    "source": "src/app/(dashboard)/(business)/sales/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/sales/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/seo/agent-pipeline",
+    "source": "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx",
+      "src/components/ui/ShareButton.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "انتخاب تصویر شاخص | Choose Hero Image",
+        "line": 674
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "run",
+        "line": 319,
+        "source": "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "lessons",
+        "line": 460,
+        "source": "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "posts",
+        "line": 525,
+        "source": "src/app/(dashboard)/(business)/seo/agent-pipeline/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 5
+  },
+  {
+    "route": "/seo/intelligence",
+    "source": "src/app/(dashboard)/(business)/seo/intelligence/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/seo/intelligence/page.tsx",
+      "src/components/seo/SeoIntelligence.tsx",
+      "src/components/seo/ResearchResult.tsx",
+      "src/components/seo/SeoMarketFields.tsx",
+      "src/components/seo/RankHistory.tsx"
+    ],
+    "headings": [
+      {
+        "text": "از داده واقعی به اقدام درست | Turn real evidence into action",
+        "line": 78
+      },
+      {
+        "text": "نتایج و تاریخچه | Results & history",
+        "line": 95
+      },
+      {
+        "text": "تاریخچه رتبه سایت | Website rank history",
+        "line": 22
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 7,
+    "actionCount": 5
+  },
+  {
+    "route": "/seo",
+    "source": "src/app/(dashboard)/(business)/seo/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/seo/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [],
+    "tabs": [
+      {
+        "variable": "activeTab",
+        "id": "url",
+        "line": 560,
+        "source": "src/app/(dashboard)/(business)/seo/page.tsx"
+      },
+      {
+        "variable": "activeTab",
+        "id": "keyword",
+        "line": 601,
+        "source": "src/app/(dashboard)/(business)/seo/page.tsx"
+      },
+      {
+        "variable": "activeTab",
+        "id": "content",
+        "line": 616,
+        "source": "src/app/(dashboard)/(business)/seo/page.tsx"
+      },
+      {
+        "variable": "activeTab",
+        "id": "meta",
+        "line": 637,
+        "source": "src/app/(dashboard)/(business)/seo/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 5
+  },
+  {
+    "route": "/seo/sites",
+    "source": "src/app/(dashboard)/(business)/seo/sites/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/seo/sites/page.tsx",
+      "src/components/ui/CreditCost.tsx",
+      "src/components/seo/SeoPlanCard.tsx",
+      "src/components/seo/ContentPlanCard.tsx",
+      "src/components/seo/RankingsCard.tsx",
+      "src/components/seo/WordPressCard.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مانیتور سئو | SEO Monitor",
+        "line": 149
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 12
+  },
+  {
+    "route": "/social",
+    "source": "src/app/(dashboard)/(business)/social/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/social/page.tsx",
+      "src/components/social/InstagramStudio.tsx",
+      "src/components/ui/JalaliDateTimePicker.tsx",
+      "src/components/social/BrandProfileCard.tsx",
+      "src/components/social/GrowthInsights.tsx",
+      "src/components/ui/CreditCost.tsx",
+      "src/components/social/InstagramCommentAutomationBuilder.tsx"
+    ],
+    "headings": [
+      {
+        "text": "آنالیز و رشد پیج | Page Analytics & Growth",
+        "line": 1691
+      },
+      {
+        "text": "@",
+        "line": 1881
+      },
+      {
+        "text": "Auto Direct — پاسخ خودکار دایرکت | Auto Direct — DM replies",
+        "line": 1957
+      },
+      {
+        "text": "صندوق پیام اینستاگرام | Instagram Inbox",
+        "line": 2010
+      },
+      {
+        "text": "پاسخ خودکار کامنت به دایرکت | Comment → DM Auto-Reply",
+        "line": 2035
+      },
+      {
+        "text": "انتخاب عکس از گالری | Choose an Image",
+        "line": 2256
+      },
+      {
+        "text": "استودیوی محتوای اینستاگرام | Instagram content studio",
+        "line": 7
+      },
+      {
+        "text": "سازندهٔ اتوماسیون کامنت به دایرکت | Comment-to-DM automation builder",
+        "line": 89
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "creationMode",
+        "id": "ai",
+        "line": 1177,
+        "source": "src/app/(dashboard)/(business)/social/page.tsx"
+      },
+      {
+        "variable": "creationMode",
+        "id": "recreate",
+        "line": 1243,
+        "source": "src/app/(dashboard)/(business)/social/page.tsx"
+      },
+      {
+        "variable": "creationMode",
+        "id": "manual",
+        "line": 1286,
+        "source": "src/app/(dashboard)/(business)/social/page.tsx"
+      },
+      {
+        "variable": "creationMode",
+        "id": "calendar",
+        "line": 1306,
+        "source": "src/app/(dashboard)/(business)/social/page.tsx"
+      }
+    ],
+    "fieldCount": 17,
+    "actionCount": 48
+  },
+  {
+    "route": "/voice-agent",
+    "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مرکز تماس هوش مصنوعی | AI Call Center",
+        "line": 258
+      },
+      {
+        "text": "راه‌اندازی در ۴ قدم | Set up in 4 steps",
+        "line": 264
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "knowledge",
+        "line": 130,
+        "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "properties",
+        "line": 131,
+        "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "calls",
+        "line": 132,
+        "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "appointments",
+        "line": 133,
+        "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "agents",
+        "line": 303,
+        "source": "src/app/(dashboard)/(business)/voice-agent/page.tsx"
+      }
+    ],
+    "fieldCount": 6,
+    "actionCount": 11
+  },
+  {
+    "route": "/website-designer",
+    "source": "src/app/(dashboard)/(business)/website-designer/page.tsx",
+    "files": [
+      "src/app/(dashboard)/(business)/website-designer/page.tsx",
+      "src/components/ui/UpgradeRequiredModal.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "این بخش نیاز به ارتقای حساب دارد | This feature requires an upgraded account",
+        "line": 31
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "View",
+        "id": "preview",
+        "line": 89,
+        "source": "src/app/(dashboard)/(business)/website-designer/page.tsx"
+      },
+      {
+        "variable": "view",
+        "id": "preview",
+        "line": 317,
+        "source": "src/app/(dashboard)/(business)/website-designer/page.tsx"
+      },
+      {
+        "variable": "View",
+        "id": "code",
+        "line": 322,
+        "source": "src/app/(dashboard)/(business)/website-designer/page.tsx"
+      },
+      {
+        "variable": "view",
+        "id": "code",
+        "line": 324,
+        "source": "src/app/(dashboard)/(business)/website-designer/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/agents",
+    "source": "src/app/(dashboard)/agents/page.tsx",
+    "files": [
+      "src/app/(dashboard)/agents/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "ایجنت‌های من | My Agents",
+        "line": 163
+      },
+      {
+        "text": "ایجنت‌های عمومی | General-Purpose Agents",
+        "line": 177
+      },
+      {
+        "text": "ایجنت‌های پک صنعتی شما | Your Industry Pack's Agents",
+        "line": 197
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/assistants/[type]",
+    "source": "src/app/(dashboard)/assistants/[type]/page.tsx",
+    "files": [
+      "src/app/(dashboard)/assistants/[type]/page.tsx",
+      "src/components/chat/ChatInterface.tsx",
+      "src/components/ui/CommandPalette.tsx",
+      "src/components/chat/OrchestratorActionCard.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گالری پرامپت‌های آماده | Prompt Gallery",
+        "line": 1509
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "mode",
+        "id": "puter",
+        "line": 735,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "credits",
+        "line": 889,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "credits",
+        "line": 1109,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "puter",
+        "line": 1126,
+        "source": "src/components/chat/ChatInterface.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 10
+  },
+  {
+    "route": "/chat/[id]",
+    "source": "src/app/(dashboard)/chat/[id]/page.tsx",
+    "files": [
+      "src/app/(dashboard)/chat/[id]/page.tsx",
+      "src/components/chat/ChatInterface.tsx",
+      "src/components/ui/CommandPalette.tsx",
+      "src/components/chat/OrchestratorActionCard.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گالری پرامپت‌های آماده | Prompt Gallery",
+        "line": 1509
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "mode",
+        "id": "puter",
+        "line": 735,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "credits",
+        "line": 889,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "credits",
+        "line": 1109,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "puter",
+        "line": 1126,
+        "source": "src/components/chat/ChatInterface.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 10
+  },
+  {
+    "route": "/checkout/[id]",
+    "source": "src/app/(dashboard)/checkout/[id]/page.tsx",
+    "files": [
+      "src/app/(dashboard)/checkout/[id]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/create",
+    "source": "src/app/(dashboard)/create/page.tsx",
+    "files": [
+      "src/app/(dashboard)/create/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/credits",
+    "source": "src/app/(dashboard)/credits/page.tsx",
+    "files": [
+      "src/app/(dashboard)/credits/page.tsx",
+      "src/components/billing/CreditsWorkspace.tsx",
+      "src/components/layout/WorkspaceError.tsx"
+    ],
+    "headings": [
+      {
+        "text": "کیف پول کردیت | Credit Wallet",
+        "line": 135
+      },
+      {
+        "text": "مصرف ۳۰ روز اخیر | Usage — last 30 days",
+        "line": 189
+      },
+      {
+        "text": "خرید کردیت | Buy Credits",
+        "line": 207
+      },
+      {
+        "text": "خریدهای کردیت | Credit purchases",
+        "line": 285
+      },
+      {
+        "text": "مصرف کردیت | Credit usage",
+        "line": 350
+      },
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/gallery",
+    "source": "src/app/(dashboard)/gallery/page.tsx",
+    "files": [
+      "src/app/(dashboard)/gallery/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گالری من | My Gallery",
+        "line": 50
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/home",
+    "source": "src/app/(dashboard)/home/page.tsx",
+    "files": [
+      "src/app/(dashboard)/home/page.tsx",
+      "src/components/layout/WorkspaceError.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اتاق فرمان | Command centre",
+        "line": 149
+      },
+      {
+        "text": "وضعیت کسب‌وکار | Business at a glance",
+        "line": 190
+      },
+      {
+        "text": "نیاز به توجه شما | Needs your attention",
+        "line": 224
+      },
+      {
+        "text": "تیم شما این هفته | Your team this week",
+        "line": 264
+      },
+      {
+        "text": "سه کار اصلی روزانه | Your three core daily jobs",
+        "line": 314
+      },
+      {
+        "text": "SEO Intelligence",
+        "line": 336
+      },
+      {
+        "text": "AIFekr FIT",
+        "line": 337
+      },
+      {
+        "text": "ایجنت دانشجویی شما فعال است | Your Student Agent is active",
+        "line": 341
+      },
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/image/gallery",
+    "source": "src/app/(dashboard)/image/gallery/page.tsx",
+    "files": [
+      "src/app/(dashboard)/image/gallery/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گالری تصاویر | Image Gallery",
+        "line": 81
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/image/generate",
+    "source": "src/app/(dashboard)/image/generate/page.tsx",
+    "files": [
+      "src/app/(dashboard)/image/generate/page.tsx",
+      "src/components/image/CharacterCreationPanel.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 3
+  },
+  {
+    "route": "/learn",
+    "source": "src/app/(dashboard)/learn/page.tsx",
+    "files": [
+      "src/app/(dashboard)/learn/page.tsx",
+      "src/components/courses/LearnCourses.tsx",
+      "src/components/courses/AssessmentQuestion.tsx",
+      "src/components/courses/LearningBlocks.tsx",
+      "src/components/courses/AcademicProfile.tsx",
+      "src/components/courses/CourseNotes.tsx",
+      "src/components/courses/CourseTutor.tsx",
+      "src/components/courses/LearningPaths.tsx"
+    ],
+    "headings": [
+      {
+        "text": "آکادمی دوره‌ها | Course Academy",
+        "line": 37
+      },
+      {
+        "text": "✓ دوره را کامل کردی! | ✓ Course completed!",
+        "line": 41
+      },
+      {
+        "text": "· v",
+        "line": 41
+      },
+      {
+        "text": "تمرین | Practice",
+        "line": 41
+      },
+      {
+        "text": ".",
+        "line": 41
+      },
+      {
+        "text": "پروفایل تحصیلی و دستاوردها | Academic profile & achievements",
+        "line": 14
+      },
+      {
+        "text": "✓",
+        "line": 14
+      },
+      {
+        "text": "مسیرهای یادگیری | Learning paths",
+        "line": 5
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 8,
+    "actionCount": 17
+  },
+  {
+    "route": "/music/generate",
+    "source": "src/app/(dashboard)/music/generate/page.tsx",
+    "files": [
+      "src/app/(dashboard)/music/generate/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/organization/onboarding",
+    "source": "src/app/(dashboard)/organization/onboarding/page.tsx",
+    "files": [
+      "src/app/(dashboard)/organization/onboarding/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "فضای کاری هوشمند شما آماده است | Your AI Business Workspace is ready",
+        "line": 49
+      },
+      {
+        "text": "افزودن کسب‌وکار | Add a business",
+        "line": 50
+      },
+      {
+        "text": "هویت کسب‌وکار | Business identity",
+        "line": 52
+      },
+      {
+        "text": "اطلاعات کسب‌وکار | Business information",
+        "line": 53
+      },
+      {
+        "text": "ماژول‌ها | Modules",
+        "line": 58
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 7,
+    "actionCount": 3
+  },
+  {
+    "route": "/payments",
+    "source": "src/app/(dashboard)/payments/page.tsx",
+    "files": [
+      "src/app/(dashboard)/payments/page.tsx",
+      "src/components/billing/PaymentsView.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پرداخت‌ها و فعال‌سازی | Payments & activation",
+        "line": 54
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 8
+  },
+  {
+    "route": "/plans",
+    "source": "src/app/(dashboard)/plans/page.tsx",
+    "files": [
+      "src/app/(dashboard)/plans/page.tsx",
+      "src/components/billing/DynamicPlans.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پکیج‌های تولید ویدیو | Video creation packages | یک پلتفرم؛ پکیج مناسب شما | One platform. The right plan for you.",
+        "line": 8
+      },
+      {
+        "text": "تأیید مبلغ پرداخت | Confirm payment amount",
+        "line": 8
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 3
+  },
+  {
+    "route": "/play",
+    "source": "src/app/(dashboard)/play/page.tsx",
+    "files": [
+      "src/app/(dashboard)/play/page.tsx",
+      "src/components/play/PlayArcade.tsx",
+      "src/components/play/Competitions.tsx",
+      "src/components/play/ShareResult.tsx"
+    ],
+    "headings": [
+      {
+        "text": "بازی کن، بهتر شو | Play. Improve. Repeat.",
+        "line": 280
+      },
+      {
+        "text": "پروفایل بازی من | My player profile",
+        "line": 654
+      },
+      {
+        "text": "رتبه‌بندی | Leaderboard",
+        "line": 692
+      },
+      {
+        "text": "تاریخچه من | My history",
+        "line": 733
+      },
+      {
+        "text": "دستاوردها | Achievements",
+        "line": 742
+      },
+      {
+        "text": "مسابقه‌ها و پاداش‌ها | Competitions & rewards",
+        "line": 51
+      },
+      {
+        "text": "مسابقهٔ رایگان آغاز AIFekr | AIFekr free launch competition | چالش روزانه | Daily challenge | چالش هفتگی | Weekly challenge",
+        "line": 73
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 7
+  },
+  {
+    "route": "/referral",
+    "source": "src/app/(dashboard)/referral/page.tsx",
+    "files": [
+      "src/app/(dashboard)/referral/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دعوت کن، کمیسیون بگیر | Invite & Earn",
+        "line": 188
+      },
+      {
+        "text": "دوستت را به AiFekr دعوت کن | Invite your friend to AiFekr",
+        "line": 222
+      },
+      {
+        "text": "دوستان دعوت‌شده | Invited Friends",
+        "line": 281
+      },
+      {
+        "text": "استفاده از موجودی | Using your balance",
+        "line": 340
+      },
+      {
+        "text": "همه تراکنش‌ها | All transactions",
+        "line": 351
+      },
+      {
+        "text": "درخواست برداشت جدید | New payout request",
+        "line": 382
+      },
+      {
+        "text": "درخواست‌های برداشت | Payout requests",
+        "line": 440
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "invite",
+        "line": 217,
+        "source": "src/app/(dashboard)/referral/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "stats",
+        "line": 262,
+        "source": "src/app/(dashboard)/referral/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "wallet",
+        "line": 321,
+        "source": "src/app/(dashboard)/referral/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "transactions",
+        "line": 349,
+        "source": "src/app/(dashboard)/referral/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "payout",
+        "line": 377,
+        "source": "src/app/(dashboard)/referral/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 5
+  },
+  {
+    "route": "/settings",
+    "source": "src/app/(dashboard)/settings/page.tsx",
+    "files": [
+      "src/app/(dashboard)/settings/page.tsx",
+      "src/components/student/StudentActivationLink.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/ui/ThemeSwitcher.tsx",
+      "src/components/layout/WorkspaceLoading.tsx",
+      "src/components/layout/WorkspaceError.tsx",
+      "src/components/settings/CloudflareStatus.tsx"
+    ],
+    "headings": [
+      {
+        "text": "بسته‌ها و ایجنت‌های حساب من | My packages and agents",
+        "line": 238
+      },
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      },
+      {
+        "text": "Cloudflare",
+        "line": 5
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 7
+  },
+  {
+    "route": "/startup/builder",
+    "source": "src/app/(dashboard)/startup/builder/page.tsx",
+    "files": [
+      "src/app/(dashboard)/startup/builder/page.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "سازنده استارتاپ با AI | AI Startup Builder",
+        "line": 276
+      },
+      {
+        "text": "در صورت نیاز برای پیاده‌سازی استارتاپ توسط تیم حرفه‌ای و کامل AIFekr کلیک کنید | Need professional implementation? Click to connect with the AIFekr team",
+        "line": 498
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/startup/contact",
+    "source": "src/app/(dashboard)/startup/contact/page.tsx",
+    "files": [
+      "src/app/(dashboard)/startup/contact/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/student/chat",
+    "source": "src/app/(dashboard)/student/chat/page.tsx",
+    "files": [
+      "src/app/(dashboard)/student/chat/page.tsx",
+      "src/components/student/StudentTutorChat.tsx",
+      "src/components/chat/ChatInterface.tsx",
+      "src/components/ui/CommandPalette.tsx",
+      "src/components/chat/OrchestratorActionCard.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گالری پرامپت‌های آماده | Prompt Gallery",
+        "line": 1509
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "mode",
+        "id": "puter",
+        "line": 735,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "credits",
+        "line": 889,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "credits",
+        "line": 1109,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "puter",
+        "line": 1126,
+        "source": "src/components/chat/ChatInterface.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 11
+  },
+  {
+    "route": "/student",
+    "source": "src/app/(dashboard)/student/page.tsx",
+    "files": [
+      "src/app/(dashboard)/student/page.tsx",
+      "src/components/student/StudentWorkspace.tsx",
+      "src/components/student/StudyAnswer.tsx",
+      "src/components/student/StudentFeatureFinder.tsx",
+      "src/components/student/StudentLearningPath.tsx",
+      "src/components/billing/BillingPeriods.tsx",
+      "src/components/student/StudentPlanner.tsx",
+      "src/components/student/StudentAssignmentHelper.tsx",
+      "src/components/student/StudentProfileCard.tsx",
+      "src/components/student/StudentBrandCard.tsx",
+      "src/components/courses/AcademicProfile.tsx",
+      "src/components/courses/AcademyOverview.tsx",
+      "src/components/student/StudentStudyGroups.tsx",
+      "src/components/student/StudentStudyReport.tsx",
+      "src/components/student/StudentThesisAssistant.tsx"
+    ],
+    "headings": [
+      {
+        "text": "رسیدت ثبت شده؛ منتظر تأیید هستیم | Receipt received · awaiting approval | خرید دانشجویی‌ات را ادامه بده | Continue your student purchase | فضای یادگیری تو از اینجا شروع می‌شود | Your learning space starts here",
+        "line": 25
+      },
+      {
+        "text": "ادامهٔ یادگیری | Continue learning",
+        "line": 468
+      },
+      {
+        "text": "نزدیک‌ترین امتحان‌ها | Upcoming exams",
+        "line": 469
+      },
+      {
+        "text": "دانشجو هستی و بیزنس هم داری؟ | A student with a business too?",
+        "line": 518
+      },
+      {
+        "text": "با یک درس شروع کن | Start with one course | امروز چطور کمکت کنم؟ | How can I help you today?",
+        "line": 29
+      },
+      {
+        "text": "تا امتحان، قدم‌به‌قدم | Step by step to your exam",
+        "line": 110
+      },
+      {
+        "text": "تکلیف‌ها و برنامهٔ مطالعه | Assignments & study plan",
+        "line": 115
+      },
+      {
+        "text": "تغییر جلسه | Edit session",
+        "line": 132
+      },
+      {
+        "text": "راهنمای تکلیف با تمرکز بر یادگیری | Learning-focused assignment helper",
+        "line": 48
+      },
+      {
+        "text": "کارت دانشجویی | Student card",
+        "line": 56
+      },
+      {
+        "text": "پروفایل تحصیلی و دستاوردها | Academic profile & achievements",
+        "line": 14
+      },
+      {
+        "text": "✓",
+        "line": 14
+      },
+      {
+        "text": "آکادمی دانشجویی AIFekr | AIFekr Student Academy",
+        "line": 5
+      },
+      {
+        "text": "زمان‌سنج و گزارش مطالعه | Study timer & progress report",
+        "line": 113
+      },
+      {
+        "text": "روزهای اخیر | Recent days",
+        "line": 124
+      },
+      {
+        "text": "زمان به تفکیک درس · کل بازه | Time by course · full range",
+        "line": 125
+      },
+      {
+        "text": "جلسه‌های اخیر | Recent sessions",
+        "line": 125
+      },
+      {
+        "text": "راهنمای پژوهش، پایان‌نامه و تز | Thesis & research coach",
+        "line": 42
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "Tab",
+        "id": "notes",
+        "line": 126,
+        "source": "src/components/student/StudentWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "exams",
+        "line": 512,
+        "source": "src/components/student/StudentWorkspace.tsx"
+      }
+    ],
+    "fieldCount": 25,
+    "actionCount": 66
+  },
+  {
+    "route": "/tools/business-ideas",
+    "source": "src/app/(dashboard)/tools/business-ideas/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/business-ideas/page.tsx",
+      "src/components/chat/ToolPage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اطلاعات شما | Your information",
+        "line": 89
+      },
+      {
+        "text": "نتیجه | Result",
+        "line": 119
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/tools/drop-shipping",
+    "source": "src/app/(dashboard)/tools/drop-shipping/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/drop-shipping/page.tsx",
+      "src/components/chat/ToolPage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اطلاعات شما | Your information",
+        "line": 89
+      },
+      {
+        "text": "نتیجه | Result",
+        "line": 119
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/tools/healthy-diet",
+    "source": "src/app/(dashboard)/tools/healthy-diet/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/healthy-diet/page.tsx",
+      "src/components/chat/ToolPage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اطلاعات شما | Your information",
+        "line": 89
+      },
+      {
+        "text": "نتیجه | Result",
+        "line": 119
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/tools/math",
+    "source": "src/app/(dashboard)/tools/math/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/math/page.tsx",
+      "src/components/chat/ToolPage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اطلاعات شما | Your information",
+        "line": 89
+      },
+      {
+        "text": "نتیجه | Result",
+        "line": 119
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/tools/trading",
+    "source": "src/app/(dashboard)/tools/trading/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/trading/page.tsx",
+      "src/components/chat/ToolPage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اطلاعات شما | Your information",
+        "line": 89
+      },
+      {
+        "text": "نتیجه | Result",
+        "line": 119
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/tools/try-free-ai",
+    "source": "src/app/(dashboard)/tools/try-free-ai/page.tsx",
+    "files": [
+      "src/app/(dashboard)/tools/try-free-ai/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "امتحان AI رایگان (آزمایشی) | Try Free AI (Experimental)",
+        "line": 81
+      },
+      {
+        "text": "تولید متن | Text Generation",
+        "line": 98
+      },
+      {
+        "text": "تولید تصویر | Image Generation",
+        "line": 117
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/video/generate",
+    "source": "src/app/(dashboard)/video/generate/page.tsx",
+    "files": [
+      "src/app/(dashboard)/video/generate/page.tsx",
+      "src/components/ui/UpgradeRequiredModal.tsx",
+      "src/components/ui/CreditCost.tsx"
+    ],
+    "headings": [
+      {
+        "text": "این بخش نیاز به ارتقای حساب دارد | This feature requires an upgraded account",
+        "line": 31
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/video-factory",
+    "source": "src/app/(dashboard)/video-factory/page.tsx",
+    "files": [
+      "src/app/(dashboard)/video-factory/page.tsx",
+      "src/components/video-factory/VideoFactory.tsx",
+      "src/components/video-factory/VideoPackages.tsx",
+      "src/components/billing/DynamicPlans.tsx",
+      "src/components/video-factory/CommercialPanel.tsx",
+      "src/components/video-factory/client.ts",
+      "src/components/video-factory/RateCardEditor.tsx",
+      "src/components/video-factory/AdminControlCenter.tsx",
+      "src/components/video-factory/ProjectStudios.tsx",
+      "src/components/video-factory/AdvancedStudio.tsx",
+      "src/components/video-factory/ProjectHistory.tsx",
+      "src/components/video-factory/QuickCreate.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مرکز کنترل کارخانه ویدیو | Video Factory control center | کارخانه ویدیو | Video Factory",
+        "line": 73
+      },
+      {
+        "text": "دسترسی، مدل و تعرفه‌ها | Access, approved model & pricing",
+        "line": 81
+      },
+      {
+        "text": "کارهای تولید | Production jobs",
+        "line": 90
+      },
+      {
+        "text": "ایده‌ات را به یک روایت تصویری تبدیل کن. | Give your idea a visual story.",
+        "line": 93
+      },
+      {
+        "text": "پروژه‌های شما | Your projects",
+        "line": 93
+      },
+      {
+        "text": "اولین داستان از اینجا شروع می‌شود | Your first story starts here",
+        "line": 93
+      },
+      {
+        "text": "پروژه جدید | New project",
+        "line": 94
+      },
+      {
+        "text": "برآورد، پیش از رزرو | Estimate before reservation",
+        "line": 127
+      },
+      {
+        "text": ".",
+        "line": 128
+      },
+      {
+        "text": "زمان‌بندی قطعی · ۲۴ فریم بر ثانیه | Deterministic timeline · 24 fps",
+        "line": 129
+      },
+      {
+        "text": "پیش‌نمایش خروجی پروژه | Project film preview",
+        "line": 130
+      },
+      {
+        "text": "دانلود خروجی‌های خصوصی | Private deliverables",
+        "line": 131
+      },
+      {
+        "text": "پکیج‌های تولید ویدیو | Video creation packages | یک پلتفرم؛ پکیج مناسب شما | One platform. The right plan for you.",
+        "line": 8
+      },
+      {
+        "text": "تأیید مبلغ پرداخت | Confirm payment amount",
+        "line": 8
+      },
+      {
+        "text": "نرخ‌نامه مستقل Video Factory · AI Credits | Independent Video Factory price book · AI Credits",
+        "line": 12
+      },
+      {
+        "text": "هزینه هر دقیقه و منابع تعرفه | Per-minute cost and tariff sources",
+        "line": 12
+      },
+      {
+        "text": "مرکز عملیات تولید | Production operations center",
+        "line": 34
+      },
+      {
+        "text": "هشدارهای فعال | Active alerts",
+        "line": 37
+      },
+      {
+        "text": "ثبت یا ویرایش ارائه‌دهنده | Register or edit provider",
+        "line": 40
+      },
+      {
+        "text": "پیکربندی نسخه‌دار | Versioned configuration",
+        "line": 53
+      },
+      {
+        "text": "ابزارهای مجاز | Allowed tools",
+        "line": 56
+      },
+      {
+        "text": "گزارش‌های کنترل کیفیت | Quality reports",
+        "line": 65
+      },
+      {
+        "text": "انتخاب مسیرهای مجاز و عرضه تدریجی | Approved routes & staged rollout",
+        "line": 67
+      },
+      {
+        "text": "آزمایشگاه ایده و منابع | Idea lab & sources",
+        "line": 29
+      },
+      {
+        "text": "عنوان‌ها و شروع‌های پیشنهادی | Suggested titles & hooks",
+        "line": 31
+      },
+      {
+        "text": "متن آماده یا فایل متنی | Existing script or text file",
+        "line": 32
+      },
+      {
+        "text": "راهنمای شخصیت‌ها و پیوستگی | Character & continuity bible",
+        "line": 33
+      },
+      {
+        "text": "ویرایش زمان‌بندی و ترتیب نماها | Edit shot timing & order",
+        "line": 34
+      },
+      {
+        "text": "کتابخانه دارایی‌های خصوصی | Private asset library",
+        "line": 35
+      },
+      {
+        "text": "آماده‌سازی و زمان‌بندی انتشار | Publishing workspace",
+        "line": 36
+      },
+      {
+        "text": "استودیوی صدا و کنترل معنایی | Audio & semantic review studio",
+        "line": 14
+      },
+      {
+        "text": "صدای شخصی با رضایت | Consented personal voice",
+        "line": 15
+      },
+      {
+        "text": "لایه‌های صوتی | Audio layers",
+        "line": 17
+      },
+      {
+        "text": "گزارش‌های کیفیت و پیشنهاد اصلاح | Quality reports & targeted repairs",
+        "line": 18
+      },
+      {
+        "text": "تاریخچه نسخه‌های متن و پروژه | Script & project version history",
+        "line": 9
+      },
+      {
+        "text": "v",
+        "line": 9
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "Tab",
+        "id": "production",
+        "line": 57,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "advanced",
+        "line": 118,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "history",
+        "line": 119,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "production",
+        "line": 120,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "script",
+        "line": 128,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "timeline",
+        "line": 129,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "assets",
+        "line": 130,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "overview",
+        "line": 37,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "jobs",
+        "line": 38,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "providers",
+        "line": 39,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "users",
+        "line": 51,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "queue",
+        "line": 52,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "agents",
+        "line": 53,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "templates",
+        "line": 53,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "credits",
+        "line": 63,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "assets",
+        "line": 64,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "quality",
+        "line": 65,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "security",
+        "line": 66,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "flags",
+        "line": 67,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      }
+    ],
+    "fieldCount": 124,
+    "actionCount": 52
+  },
+  {
+    "route": "/voice-studio",
+    "source": "src/app/(dashboard)/voice-studio/page.tsx",
+    "files": [
+      "src/app/(dashboard)/voice-studio/page.tsx",
+      "src/components/voice-studio/VoiceStudio.tsx",
+      "src/components/voice-studio/GeneratePanel.tsx",
+      "src/components/voice-studio/GenerationProgress.tsx"
+    ],
+    "headings": [
+      {
+        "text": "استودیوی هوش مصنوعی صدا | AI Voice Studio",
+        "line": 157
+      },
+      {
+        "text": "متن | Text",
+        "line": 162
+      },
+      {
+        "text": "صدا | Voice",
+        "line": 174
+      },
+      {
+        "text": "فایل‌های صوتی | Audio files",
+        "line": 188
+      },
+      {
+        "text": "ساخت فایل صوتی | Create audio",
+        "line": 7
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 8,
+    "actionCount": 16
+  },
+  {
+    "route": "/about",
+    "source": "src/app/about/page.tsx",
+    "files": [
+      "src/app/about/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/academy",
+    "source": "src/app/admin/academy/page.tsx",
+    "files": [
+      "src/app/admin/academy/page.tsx",
+      "src/components/courses/AdminAcademy.tsx"
+    ],
+    "headings": [
+      {
+        "text": "آکادمی دانشجویی | Student Academy",
+        "line": 17
+      },
+      {
+        "text": "تاریخچه آزمون‌ها | Assessment history",
+        "line": 20
+      },
+      {
+        "text": "·",
+        "line": 21
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "dashboard",
+        "line": 18,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "majors",
+        "line": 19,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "students",
+        "line": 20,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "certificates",
+        "line": 21,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "paths",
+        "line": 22,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      }
+    ],
+    "fieldCount": 8,
+    "actionCount": 12
+  },
+  {
+    "route": "/admin/admins",
+    "source": "src/app/admin/admins/page.tsx",
+    "files": [
+      "src/app/admin/admins/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/affiliate",
+    "source": "src/app/admin/affiliate/page.tsx",
+    "files": [
+      "src/app/admin/affiliate/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "افیلیت مارکتینگ و ولت",
+        "line": 125
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/admin/ai-chat",
+    "source": "src/app/admin/ai-chat/page.tsx",
+    "files": [
+      "src/app/admin/ai-chat/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت چت هوش مصنوعی | AI Chat management",
+        "line": 63
+      },
+      {
+        "text": "مصرف و نتیجه درخواست‌ها · ۷ روز | Usage & request results · 7 days",
+        "line": 167
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "overview",
+        "line": 127,
+        "source": "src/app/admin/ai-chat/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "policy",
+        "line": 231,
+        "source": "src/app/admin/ai-chat/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "discovery",
+        "line": 349,
+        "source": "src/app/admin/ai-chat/page.tsx"
+      }
+    ],
+    "fieldCount": 6,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/ai-courses",
+    "source": "src/app/admin/ai-courses/page.tsx",
+    "files": [
+      "src/app/admin/ai-courses/page.tsx",
+      "src/components/courses/AdminCourses.tsx",
+      "src/components/courses/AcademyCourseSettings.tsx",
+      "src/components/courses/AcademyImageUpload.tsx",
+      "src/components/courses/BlueprintEditor.tsx",
+      "src/components/courses/CompletionSettings.tsx",
+      "src/components/courses/CourseRevisionHistory.tsx",
+      "src/components/courses/CourseSourceEditor.tsx",
+      "src/components/courses/StructuredCourseEditor.tsx",
+      "src/components/courses/LearningBlocks.tsx",
+      "src/components/courses/SelectiveRegeneration.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دوره‌های هوش مصنوعی | AI courses",
+        "line": 115
+      },
+      {
+        "text": "سابقهٔ تولید و اعتبار | Generation & credit history",
+        "line": 127
+      },
+      {
+        "text": "بازبینی محتوا | Review content",
+        "line": 131
+      },
+      {
+        "text": "تنظیمات آکادمی | Academy configuration",
+        "line": 17
+      },
+      {
+        "text": "رشته‌های هدف | Target majors",
+        "line": 17
+      },
+      {
+        "text": "بازبینی طرح درس قبل از تولید محتوا | Review blueprint before lesson generation",
+        "line": 18
+      },
+      {
+        "text": "فصل | Chapter",
+        "line": 7
+      },
+      {
+        "text": "قبل / پیش‌نمایش جدید | Before / new preview",
+        "line": 15
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 34,
+    "actionCount": 41
+  },
+  {
+    "route": "/admin/ai-courses/[id]/preview",
+    "source": "src/app/admin/ai-courses/[id]/preview/page.tsx",
+    "files": [
+      "src/app/admin/ai-courses/[id]/preview/page.tsx",
+      "src/components/courses/LearningBlocks.tsx"
+    ],
+    "headings": [
+      {
+        "text": "تمرین | Practice",
+        "line": 29
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/analytics",
+    "source": "src/app/admin/analytics/page.tsx",
+    "files": [
+      "src/app/admin/analytics/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "آنالیتیکس فیچرها",
+        "line": 94
+      },
+      {
+        "text": "پرکاربردترین فیچرها (کل)",
+        "line": 114
+      },
+      {
+        "text": "کاربران فعال روزانه (۱۴ روز)",
+        "line": 138
+      },
+      {
+        "text": "استفاده از فیچرها — ۳۰ روز اخیر",
+        "line": 161
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/billing/promotions",
+    "source": "src/app/admin/billing/promotions/page.tsx",
+    "files": [
+      "src/app/admin/billing/promotions/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پروموشن اولین اشتراک | First subscription promotions",
+        "line": 3
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 5,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/billing/rates",
+    "source": "src/app/admin/billing/rates/page.tsx",
+    "files": [
+      "src/app/admin/billing/rates/page.tsx",
+      "src/components/billing/XeProviderSettings.tsx"
+    ],
+    "headings": [
+      {
+        "text": "ارزها و نرخ‌های تأییدشده | Currencies & approved rates",
+        "line": 4
+      },
+      {
+        "text": "USD →",
+        "line": 4
+      },
+      {
+        "text": "اتصال خودکار XE | Automatic XE connection",
+        "line": 10
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 7,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/categories",
+    "source": "src/app/admin/categories/page.tsx",
+    "files": [
+      "src/app/admin/categories/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دسته‌بندی کسب‌وکار",
+        "line": 57
+      },
+      {
+        "text": "ویرایش دسته | دسته جدید",
+        "line": 93
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/chats",
+    "source": "src/app/admin/chats/page.tsx",
+    "files": [
+      "src/app/admin/chats/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت چت‌ها",
+        "line": 64
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/cloudflare",
+    "source": "src/app/admin/cloudflare/page.tsx",
+    "files": [
+      "src/app/admin/cloudflare/page.tsx",
+      "src/components/settings/WorkersAiStatus.tsx"
+    ],
+    "headings": [
+      {
+        "text": "Cloudflare و زیرساخت | Cloudflare infrastructure",
+        "line": 13
+      },
+      {
+        "text": "Workers AI",
+        "line": 4
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 3,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/companies",
+    "source": "src/app/admin/companies/page.tsx",
+    "files": [
+      "src/app/admin/companies/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت شرکت‌ها",
+        "line": 39
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/credit-tiers",
+    "source": "src/app/admin/credit-tiers/page.tsx",
+    "files": [
+      "src/app/admin/credit-tiers/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "تعرفه‌های خرید کردیت",
+        "line": 86
+      },
+      {
+        "text": "افزودن تعرفه جدید",
+        "line": 92
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/crm",
+    "source": "src/app/admin/crm/page.tsx",
+    "files": [
+      "src/app/admin/crm/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "نمای کلی CRM مستأجران",
+        "line": 62
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/dashboard",
+    "source": "src/app/admin/dashboard/page.tsx",
+    "files": [
+      "src/app/admin/dashboard/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "داشبورد مدیریت",
+        "line": 84
+      },
+      {
+        "text": "درآمد ۳۰ روز گذشته",
+        "line": 142
+      },
+      {
+        "text": "توزیع پلن‌ها",
+        "line": 159
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/financial/customers",
+    "source": "src/app/admin/financial/customers/page.tsx",
+    "files": [
+      "src/app/admin/financial/customers/page.tsx",
+      "src/components/admin/ExpiryAdjustment.tsx"
+    ],
+    "headings": [
+      {
+        "text": "حساب خریداران و اشتراک‌ها | Customers & subscriptions",
+        "line": 7
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "mode",
+        "id": "extend",
+        "line": 5,
+        "source": "src/components/admin/ExpiryAdjustment.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 7
+  },
+  {
+    "route": "/admin/financial/invoices/[id]",
+    "source": "src/app/admin/financial/invoices/[id]/page.tsx",
+    "files": [
+      "src/app/admin/financial/invoices/[id]/page.tsx",
+      "src/components/admin/PrintInvoice.tsx"
+    ],
+    "headings": [
+      {
+        "text": "AIFekr",
+        "line": 5
+      },
+      {
+        "text": "فاکتور خرید | Purchase invoice | جزئیات سفارش | Order details",
+        "line": 5
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/financial",
+    "source": "src/app/admin/financial/page.tsx",
+    "files": [
+      "src/app/admin/financial/page.tsx",
+      "src/components/admin/GatewayRecheck.tsx",
+      "src/components/admin/UnpaidOrderActions.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پرداخت‌ها و حسابداری | Payments and accounting",
+        "line": 18
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 11
+  },
+  {
+    "route": "/admin/fitness/marketplace",
+    "source": "src/app/admin/fitness/marketplace/page.tsx",
+    "files": [
+      "src/app/admin/fitness/marketplace/page.tsx",
+      "src/components/fitness/MarketplaceAdmin.tsx"
+    ],
+    "headings": [
+      {
+        "text": "بازار مربیان، رزرو و فروشگاه | Trainer marketplace, bookings & store",
+        "line": 5
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "applications",
+        "line": 5,
+        "source": "src/components/fitness/MarketplaceAdmin.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "products",
+        "line": 5,
+        "source": "src/components/fitness/MarketplaceAdmin.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "orders",
+        "line": 5,
+        "source": "src/components/fitness/MarketplaceAdmin.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "ledger",
+        "line": 5,
+        "source": "src/components/fitness/MarketplaceAdmin.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "reviews",
+        "line": 5,
+        "source": "src/components/fitness/MarketplaceAdmin.tsx"
+      }
+    ],
+    "fieldCount": 3,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/fitness",
+    "source": "src/app/admin/fitness/page.tsx",
+    "files": [
+      "src/app/admin/fitness/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت فیتنس | Fitness control center",
+        "line": 3
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "exercises",
+        "line": 3,
+        "source": "src/app/admin/fitness/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "trainers",
+        "line": 3,
+        "source": "src/app/admin/fitness/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "programs",
+        "line": 3,
+        "source": "src/app/admin/fitness/page.tsx"
+      }
+    ],
+    "fieldCount": 3,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/fitness/users",
+    "source": "src/app/admin/fitness/users/page.tsx",
+    "files": [
+      "src/app/admin/fitness/users/page.tsx",
+      "src/components/admin/FitnessUsers.tsx",
+      "src/components/admin/AdminFitnessAccess.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت کاربران فیتنس | Fitness members",
+        "line": 10
+      },
+      {
+        "text": "دسترسی فیتنس | Fitness access",
+        "line": 12
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 6
+  },
+  {
+    "route": "/admin/games",
+    "source": "src/app/admin/games/page.tsx",
+    "files": [
+      "src/app/admin/games/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت بازی‌ها",
+        "line": 49
+      },
+      {
+        "text": "جدول رتبه‌بندی",
+        "line": 66
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/generated-websites",
+    "source": "src/app/admin/generated-websites/page.tsx",
+    "files": [
+      "src/app/admin/generated-websites/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "وبسایت‌های تولیدشده",
+        "line": 48
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/industry-packs",
+    "source": "src/app/admin/industry-packs/page.tsx",
+    "files": [
+      "src/app/admin/industry-packs/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت بسته‌های صنعتی",
+        "line": 71
+      },
+      {
+        "text": "ویرایش بسته | بسته جدید",
+        "line": 116
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/invites/manage",
+    "source": "src/app/admin/invites/manage/page.tsx",
+    "files": [
+      "src/app/admin/invites/manage/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت دعوتنامه‌ها",
+        "line": 72
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/invites",
+    "source": "src/app/admin/invites/page.tsx",
+    "files": [
+      "src/app/admin/invites/page.tsx",
+      "src/components/admin/InviteCardCanvas.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دعوت به AiFekr",
+        "line": 283
+      },
+      {
+        "text": "دعوت دانشجویی",
+        "line": 320
+      },
+      {
+        "text": "اطلاعات ورود",
+        "line": 324
+      },
+      {
+        "text": "لینک رفرال اختصاصی",
+        "line": 347
+      },
+      {
+        "text": "متن دعوت",
+        "line": 358
+      },
+      {
+        "text": "پیش‌نمایش کارت دعوت",
+        "line": 387
+      },
+      {
+        "text": "کارت‌های ذخیره‌شدهٔ قبلی",
+        "line": 414
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 7
+  },
+  {
+    "route": "/admin/lead-connectors",
+    "source": "src/app/admin/lead-connectors/page.tsx",
+    "files": [
+      "src/app/admin/lead-connectors/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "اتصال‌های Meta Lead Ads",
+        "line": 79
+      },
+      {
+        "text": "در انتظار ( )",
+        "line": 89
+      },
+      {
+        "text": "همه‌ی اتصال‌ها ( )",
+        "line": 122
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/llm",
+    "source": "src/app/admin/llm/page.tsx",
+    "files": [
+      "src/app/admin/llm/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت LLM",
+        "line": 141
+      },
+      {
+        "text": "جدول روتینگ هوشمند",
+        "line": 175
+      },
+      {
+        "text": "همه مدل‌ها",
+        "line": 201
+      },
+      {
+        "text": "افزودن API سفارشی",
+        "line": 431
+      },
+      {
+        "text": "مدل‌های تصویر و ویدیو",
+        "line": 507
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 7
+  },
+  {
+    "route": "/admin/logs",
+    "source": "src/app/admin/logs/page.tsx",
+    "files": [
+      "src/app/admin/logs/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "لاگ‌ها و مانیتورینگ",
+        "line": 80
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "api",
+        "line": 105,
+        "source": "src/app/admin/logs/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/models",
+    "source": "src/app/admin/models/page.tsx",
+    "files": [
+      "src/app/admin/models/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت مدل‌های AI",
+        "line": 70
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/module-access",
+    "source": "src/app/admin/module-access/page.tsx",
+    "files": [
+      "src/app/admin/module-access/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت دسترسی ماژول‌ها",
+        "line": 18
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "Tab",
+        "id": "packs",
+        "line": 25,
+        "source": "src/app/admin/module-access/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "packs",
+        "line": 27,
+        "source": "src/app/admin/module-access/page.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "customers",
+        "line": 30,
+        "source": "src/app/admin/module-access/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "customers",
+        "line": 32,
+        "source": "src/app/admin/module-access/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/modules",
+    "source": "src/app/admin/modules/page.tsx",
+    "files": [
+      "src/app/admin/modules/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت ماژول‌ها",
+        "line": 65
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/packages",
+    "source": "src/app/admin/packages/page.tsx",
+    "files": [
+      "src/app/admin/packages/page.tsx",
+      "src/components/billing/FixedPriceEditor.tsx",
+      "src/components/ui/AccessibleDialog.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت پکیج و قیمت‌گذاری | Packages & pricing",
+        "line": 11
+      },
+      {
+        "text": "ویرایش پکیج | Edit package | پکیج جدید | New package",
+        "line": 12
+      },
+      {
+        "text": "قیمت کل دوره | Whole-term prices",
+        "line": 12
+      },
+      {
+        "text": "دسترسی و محدودیت | Access & limits",
+        "line": 12
+      },
+      {
+        "text": "قیمت ثابت هر ارز | Fixed retail prices",
+        "line": 6
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 8,
+    "actionCount": 6
+  },
+  {
+    "route": "/admin",
+    "source": "src/app/admin/page.tsx",
+    "files": [
+      "src/app/admin/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/play",
+    "source": "src/app/admin/play/page.tsx",
+    "files": [
+      "src/app/admin/play/page.tsx",
+      "src/components/play/CompetitionManager.tsx",
+      "src/components/play/QuestionManager.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت بازی‌ها | Game management",
+        "line": 63
+      },
+      {
+        "text": "کنترل بازی‌ها در یک نگاه | Your arcade at a glance",
+        "line": 186
+      },
+      {
+        "text": "بازیکنان و تاریخچه | Players & history",
+        "line": 305
+      },
+      {
+        "text": "مسابقه رایگان و پاداش | Free competitions & rewards",
+        "line": 64
+      },
+      {
+        "text": "بانک سؤال و بررسی انتشار | Question bank & publication review",
+        "line": 71
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "overview",
+        "line": 183,
+        "source": "src/app/admin/play/page.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "games",
+        "line": 203,
+        "source": "src/app/admin/play/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "players",
+        "line": 303,
+        "source": "src/app/admin/play/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "competitions",
+        "line": 383,
+        "source": "src/app/admin/play/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "questions",
+        "line": 384,
+        "source": "src/app/admin/play/page.tsx"
+      }
+    ],
+    "fieldCount": 8,
+    "actionCount": 9
+  },
+  {
+    "route": "/admin/prompts",
+    "source": "src/app/admin/prompts/page.tsx",
+    "files": [
+      "src/app/admin/prompts/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پرامپت‌های آماده",
+        "line": 148
+      },
+      {
+        "text": "ویرایش پرامپت | افزودن پرامپت جدید",
+        "line": 228
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/provider-fallback",
+    "source": "src/app/admin/provider-fallback/page.tsx",
+    "files": [
+      "src/app/admin/provider-fallback/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "AI Provider Fallback Log",
+        "line": 81
+      },
+      {
+        "text": "Failures by Provider",
+        "line": 155
+      },
+      {
+        "text": "Failures by Category",
+        "line": 186
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/public-share",
+    "source": "src/app/admin/public-share/page.tsx",
+    "files": [
+      "src/app/admin/public-share/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "لینک عمومی دهه ۸۰",
+        "line": 55
+      },
+      {
+        "text": "بازدید روزانه (۱۴ روز اخیر)",
+        "line": 82
+      },
+      {
+        "text": "سقف روزانه‌ی ساخت عکس",
+        "line": 103
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/referrals",
+    "source": "src/app/admin/referrals/page.tsx",
+    "files": [
+      "src/app/admin/referrals/page.tsx",
+      "src/components/admin/AdminReferralCodes.tsx"
+    ],
+    "headings": [
+      {
+        "text": "کد دعوت و اینفلوئنسرها | Invitation codes & influencers",
+        "line": 8
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/revenue",
+    "source": "src/app/admin/revenue/page.tsx",
+    "files": [
+      "src/app/admin/revenue/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/seo-intelligence",
+    "source": "src/app/admin/seo-intelligence/page.tsx",
+    "files": [
+      "src/app/admin/seo-intelligence/page.tsx",
+      "src/components/seo/SeoProviderAdmin.tsx"
+    ],
+    "headings": [
+      {
+        "text": "SEO Intelligence",
+        "line": 52
+      },
+      {
+        "text": "تعرفه واقعی سرویس (دلار) | Provider rates (USD)",
+        "line": 68
+      },
+      {
+        "text": "درخواست‌ها و هزینه گزارش‌شده | Jobs and reported expenses",
+        "line": 74
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 7,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/settings",
+    "source": "src/app/admin/settings/page.tsx",
+    "files": [
+      "src/app/admin/settings/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "تنظیمات سایت",
+        "line": 177
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/startup-inquiries",
+    "source": "src/app/admin/startup-inquiries/page.tsx",
+    "files": [
+      "src/app/admin/startup-inquiries/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "استعلام‌های استارتاپ",
+        "line": 112
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/admin/student",
+    "source": "src/app/admin/student/page.tsx",
+    "files": [
+      "src/app/admin/student/page.tsx",
+      "src/components/admin/StudentAdminDashboard.tsx"
+    ],
+    "headings": [
+      {
+        "text": "دانشگاه هوش مصنوعی — کنترل مدیریتی",
+        "line": 50
+      },
+      {
+        "text": "هزینهٔ راهنمایی پایان‌نامه",
+        "line": 51
+      },
+      {
+        "text": "درس‌های تازه‌فعالیت",
+        "line": 53
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/subscriptions",
+    "source": "src/app/admin/subscriptions/page.tsx",
+    "files": [
+      "src/app/admin/subscriptions/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت اشتراک‌ها",
+        "line": 69
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "general",
+        "line": 45,
+        "source": "src/app/admin/subscriptions/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "industry",
+        "line": 52,
+        "source": "src/app/admin/subscriptions/page.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/system",
+    "source": "src/app/admin/system/page.tsx",
+    "files": [
+      "src/app/admin/system/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت سیستم",
+        "line": 58
+      },
+      {
+        "text": "دیتابیس و سرویس‌ها",
+        "line": 95
+      },
+      {
+        "text": "آخرین خطاهای ثبت‌شده",
+        "line": 135
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/admin/tools",
+    "source": "src/app/admin/tools/page.tsx",
+    "files": [
+      "src/app/admin/tools/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت ابزارها و دستیارها",
+        "line": 35
+      },
+      {
+        "text": "ابزارها",
+        "line": 38
+      },
+      {
+        "text": "دستیارها",
+        "line": 45
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/admin/usage",
+    "source": "src/app/admin/usage/page.tsx",
+    "files": [
+      "src/app/admin/usage/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مصرف و هزینهٔ هوش مصنوعی",
+        "line": 187
+      },
+      {
+        "text": "اکونومیک واحد (Unit Economics)",
+        "line": 228
+      },
+      {
+        "text": "محاسبه‌گر هزینه (نرخ‌ها رو با قیمت مدل واقعی خودتون جایگزین کنید)",
+        "line": 362
+      },
+      {
+        "text": "مصرف به تفکیک نوع",
+        "line": 395
+      },
+      {
+        "text": "مصرف به تفکیک مدل",
+        "line": 420
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 3,
+    "actionCount": 3
+  },
+  {
+    "route": "/admin/users",
+    "source": "src/app/admin/users/page.tsx",
+    "files": [
+      "src/app/admin/users/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت کاربران",
+        "line": 241
+      },
+      {
+        "text": "افزودن کاربر جدید",
+        "line": 412
+      },
+      {
+        "text": "فعال‌سازی دعوت Pro",
+        "line": 473
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 5,
+    "actionCount": 9
+  },
+  {
+    "route": "/admin/users/[id]",
+    "source": "src/app/admin/users/[id]/page.tsx",
+    "files": [
+      "src/app/admin/users/[id]/page.tsx",
+      "src/components/admin/AdminFitnessAccess.tsx",
+      "src/components/admin/GatewayRecheck.tsx",
+      "src/components/courses/AdminAcademy.tsx"
+    ],
+    "headings": [
+      {
+        "text": "بدون نام",
+        "line": 292
+      },
+      {
+        "text": "حساب دانشجویی",
+        "line": 432
+      },
+      {
+        "text": "تاریخچهٔ حساب",
+        "line": 556
+      },
+      {
+        "text": "دسترسی فیتنس | Fitness access",
+        "line": 12
+      },
+      {
+        "text": "آکادمی دانشجویی | Student Academy",
+        "line": 17
+      },
+      {
+        "text": "تاریخچه آزمون‌ها | Assessment history",
+        "line": 20
+      },
+      {
+        "text": "·",
+        "line": 21
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "academy",
+        "line": 326,
+        "source": "src/app/admin/users/[id]/page.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "dashboard",
+        "line": 18,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "majors",
+        "line": 19,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "students",
+        "line": 20,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "certificates",
+        "line": 21,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "paths",
+        "line": 22,
+        "source": "src/components/courses/AdminAcademy.tsx"
+      }
+    ],
+    "fieldCount": 9,
+    "actionCount": 21
+  },
+  {
+    "route": "/admin/video-factory",
+    "source": "src/app/admin/video-factory/page.tsx",
+    "files": [
+      "src/app/admin/video-factory/page.tsx",
+      "src/components/video-factory/VideoFactory.tsx",
+      "src/components/video-factory/VideoPackages.tsx",
+      "src/components/billing/DynamicPlans.tsx",
+      "src/components/video-factory/CommercialPanel.tsx",
+      "src/components/video-factory/client.ts",
+      "src/components/video-factory/RateCardEditor.tsx",
+      "src/components/video-factory/AdminControlCenter.tsx",
+      "src/components/video-factory/ProjectStudios.tsx",
+      "src/components/video-factory/AdvancedStudio.tsx",
+      "src/components/video-factory/ProjectHistory.tsx",
+      "src/components/video-factory/QuickCreate.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مرکز کنترل کارخانه ویدیو | Video Factory control center | کارخانه ویدیو | Video Factory",
+        "line": 73
+      },
+      {
+        "text": "دسترسی، مدل و تعرفه‌ها | Access, approved model & pricing",
+        "line": 81
+      },
+      {
+        "text": "کارهای تولید | Production jobs",
+        "line": 90
+      },
+      {
+        "text": "ایده‌ات را به یک روایت تصویری تبدیل کن. | Give your idea a visual story.",
+        "line": 93
+      },
+      {
+        "text": "پروژه‌های شما | Your projects",
+        "line": 93
+      },
+      {
+        "text": "اولین داستان از اینجا شروع می‌شود | Your first story starts here",
+        "line": 93
+      },
+      {
+        "text": "پروژه جدید | New project",
+        "line": 94
+      },
+      {
+        "text": "برآورد، پیش از رزرو | Estimate before reservation",
+        "line": 127
+      },
+      {
+        "text": ".",
+        "line": 128
+      },
+      {
+        "text": "زمان‌بندی قطعی · ۲۴ فریم بر ثانیه | Deterministic timeline · 24 fps",
+        "line": 129
+      },
+      {
+        "text": "پیش‌نمایش خروجی پروژه | Project film preview",
+        "line": 130
+      },
+      {
+        "text": "دانلود خروجی‌های خصوصی | Private deliverables",
+        "line": 131
+      },
+      {
+        "text": "پکیج‌های تولید ویدیو | Video creation packages | یک پلتفرم؛ پکیج مناسب شما | One platform. The right plan for you.",
+        "line": 8
+      },
+      {
+        "text": "تأیید مبلغ پرداخت | Confirm payment amount",
+        "line": 8
+      },
+      {
+        "text": "نرخ‌نامه مستقل Video Factory · AI Credits | Independent Video Factory price book · AI Credits",
+        "line": 12
+      },
+      {
+        "text": "هزینه هر دقیقه و منابع تعرفه | Per-minute cost and tariff sources",
+        "line": 12
+      },
+      {
+        "text": "مرکز عملیات تولید | Production operations center",
+        "line": 34
+      },
+      {
+        "text": "هشدارهای فعال | Active alerts",
+        "line": 37
+      },
+      {
+        "text": "ثبت یا ویرایش ارائه‌دهنده | Register or edit provider",
+        "line": 40
+      },
+      {
+        "text": "پیکربندی نسخه‌دار | Versioned configuration",
+        "line": 53
+      },
+      {
+        "text": "ابزارهای مجاز | Allowed tools",
+        "line": 56
+      },
+      {
+        "text": "گزارش‌های کنترل کیفیت | Quality reports",
+        "line": 65
+      },
+      {
+        "text": "انتخاب مسیرهای مجاز و عرضه تدریجی | Approved routes & staged rollout",
+        "line": 67
+      },
+      {
+        "text": "آزمایشگاه ایده و منابع | Idea lab & sources",
+        "line": 29
+      },
+      {
+        "text": "عنوان‌ها و شروع‌های پیشنهادی | Suggested titles & hooks",
+        "line": 31
+      },
+      {
+        "text": "متن آماده یا فایل متنی | Existing script or text file",
+        "line": 32
+      },
+      {
+        "text": "راهنمای شخصیت‌ها و پیوستگی | Character & continuity bible",
+        "line": 33
+      },
+      {
+        "text": "ویرایش زمان‌بندی و ترتیب نماها | Edit shot timing & order",
+        "line": 34
+      },
+      {
+        "text": "کتابخانه دارایی‌های خصوصی | Private asset library",
+        "line": 35
+      },
+      {
+        "text": "آماده‌سازی و زمان‌بندی انتشار | Publishing workspace",
+        "line": 36
+      },
+      {
+        "text": "استودیوی صدا و کنترل معنایی | Audio & semantic review studio",
+        "line": 14
+      },
+      {
+        "text": "صدای شخصی با رضایت | Consented personal voice",
+        "line": 15
+      },
+      {
+        "text": "لایه‌های صوتی | Audio layers",
+        "line": 17
+      },
+      {
+        "text": "گزارش‌های کیفیت و پیشنهاد اصلاح | Quality reports & targeted repairs",
+        "line": 18
+      },
+      {
+        "text": "تاریخچه نسخه‌های متن و پروژه | Script & project version history",
+        "line": 9
+      },
+      {
+        "text": "v",
+        "line": 9
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "Tab",
+        "id": "production",
+        "line": 57,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "advanced",
+        "line": 118,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "history",
+        "line": 119,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "production",
+        "line": 120,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "script",
+        "line": 128,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "timeline",
+        "line": 129,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "assets",
+        "line": 130,
+        "source": "src/components/video-factory/VideoFactory.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "overview",
+        "line": 37,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "jobs",
+        "line": 38,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "providers",
+        "line": 39,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "users",
+        "line": 51,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "queue",
+        "line": 52,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "agents",
+        "line": 53,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "templates",
+        "line": 53,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "credits",
+        "line": 63,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "assets",
+        "line": 64,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "quality",
+        "line": 65,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "security",
+        "line": 66,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "flags",
+        "line": 67,
+        "source": "src/components/video-factory/AdminControlCenter.tsx"
+      }
+    ],
+    "fieldCount": 124,
+    "actionCount": 52
+  },
+  {
+    "route": "/admin/voice-agent",
+    "source": "src/app/admin/voice-agent/page.tsx",
+    "files": [
+      "src/app/admin/voice-agent/page.tsx",
+      "src/components/billing/VoiceServiceAdmin.tsx",
+      "src/components/billing/TelnyxAdmin.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مرکز تماس هوش مصنوعی — مدیریت",
+        "line": 67
+      },
+      {
+        "text": "راه‌اندازی سرویس تماس · تنظیمات کامل | نیازمند تنظیم",
+        "line": 42
+      },
+      {
+        "text": "Telnyx · شماره‌های تماس | Phone numbers",
+        "line": 6
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 13
+  },
+  {
+    "route": "/admin/voice-studio",
+    "source": "src/app/admin/voice-studio/page.tsx",
+    "files": [
+      "src/app/admin/voice-studio/page.tsx",
+      "src/components/voice-studio/VoiceStudioAdmin.tsx"
+    ],
+    "headings": [
+      {
+        "text": "مدیریت استودیوی صدا | Voice Studio management",
+        "line": 60
+      },
+      {
+        "text": "آمادگی اتصال | Readiness",
+        "line": 61
+      },
+      {
+        "text": "تنظیمات و نسخهٔ تعرفه | Settings and pricing version ·",
+        "line": 62
+      },
+      {
+        "text": "مدل‌های مجاز | Approved models",
+        "line": 62
+      },
+      {
+        "text": "مصرف و هزینه | Usage and cost",
+        "line": 68
+      },
+      {
+        "text": "بررسی نتیجهٔ نامشخص | Reconcile uncertain outcome",
+        "line": 69
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 9,
+    "actionCount": 5
+  },
+  {
+    "route": "/ai-chat",
+    "source": "src/app/ai-chat/page.tsx",
+    "files": [
+      "src/app/ai-chat/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/ai-team",
+    "source": "src/app/ai-team/page.tsx",
+    "files": [
+      "src/app/ai-team/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/landing/AiTeamPipeline.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/chat",
+    "source": "src/app/chat/page.tsx",
+    "files": [
+      "src/app/chat/page.tsx",
+      "src/components/ai-chat/ChatStudio.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/ai-chat/DiscoveryCard.tsx",
+      "src/components/ai-chat/PlatformPreview.tsx",
+      "src/components/ui/AccessibleDialog.tsx",
+      "src/components/chat/ChatInterface.tsx",
+      "src/components/ui/CommandPalette.tsx",
+      "src/components/chat/OrchestratorActionCard.tsx",
+      "src/components/ui/CreditCost.tsx",
+      "src/components/layout/PlatformShell.tsx",
+      "src/components/billing/PendingPaymentNotice.tsx",
+      "src/components/layout/SubscriptionGate.tsx",
+      "src/components/layout/Sidebar.tsx",
+      "src/components/ui/ThemeSwitcher.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/layout/NotificationBell.tsx",
+      "src/components/organization/OrganizationSwitcher.tsx",
+      "src/components/layout/MobileNavShell.tsx",
+      "src/components/layout/WorkspaceHeader.tsx",
+      "src/components/layout/WorkspaceGuide.tsx",
+      "src/components/support/FloatingSupportWidget.tsx",
+      "src/components/layout/SessionWatchdog.tsx",
+      "src/components/layout/TrialBanner.tsx",
+      "src/components/student/StudentTimerDock.tsx",
+      "src/components/layout/DashboardPullToRefresh.tsx"
+    ],
+    "headings": [
+      {
+        "text": "چه کمکی از من برمی‌آید؟ | How can I help?",
+        "line": 444
+      },
+      {
+        "text": "برای ادامه ثبت‌نام کن | Sign up to continue",
+        "line": 683
+      },
+      {
+        "text": "گالری پرامپت‌های آماده | Prompt Gallery",
+        "line": 1509
+      },
+      {
+        "text": "اشتراک شما منقضی شده است | Your subscription has expired",
+        "line": 18
+      },
+      {
+        "text": "حذف کسب‌وکار | Delete business",
+        "line": 111
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "mode",
+        "id": "puter",
+        "line": 735,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "credits",
+        "line": 889,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "mode",
+        "id": "credits",
+        "line": 1109,
+        "source": "src/components/chat/ChatInterface.tsx"
+      },
+      {
+        "variable": "Mode",
+        "id": "puter",
+        "line": 1126,
+        "source": "src/components/chat/ChatInterface.tsx"
+      }
+    ],
+    "fieldCount": 0,
+    "actionCount": 73
+  },
+  {
+    "route": "/choose-plan",
+    "source": "src/app/choose-plan/page.tsx",
+    "files": [
+      "src/app/choose-plan/page.tsx",
+      "src/components/ai-chat/EntryPlans.tsx",
+      "src/components/ai-chat/PlanChoice.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/marketing/StarterCheckout.tsx"
+    ],
+    "headings": [
+      {
+        "text": "رایگان | Free",
+        "line": 16
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/contact",
+    "source": "src/app/contact/page.tsx",
+    "files": [
+      "src/app/contact/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [
+      {
+        "text": "تماس با ما | Contact Us",
+        "line": 80
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/explore",
+    "source": "src/app/explore/page.tsx",
+    "files": [
+      "src/app/explore/page.tsx",
+      "src/components/ai-chat/ChatStudio.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/ai-chat/DiscoveryCard.tsx",
+      "src/components/ai-chat/PlatformPreview.tsx",
+      "src/components/ui/AccessibleDialog.tsx"
+    ],
+    "headings": [
+      {
+        "text": "چه کمکی از من برمی‌آید؟ | How can I help?",
+        "line": 444
+      },
+      {
+        "text": "برای ادامه ثبت‌نام کن | Sign up to continue",
+        "line": 683
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 26
+  },
+  {
+    "route": "/f/[slug]",
+    "source": "src/app/f/[slug]/page.tsx",
+    "files": [
+      "src/app/f/[slug]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/features/[slug]",
+    "source": "src/app/features/[slug]/page.tsx",
+    "files": [
+      "src/app/features/[slug]/page.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/marketing/Ecosystem.tsx",
+      "src/components/marketing/FeaturePreview.tsx",
+      "src/components/marketing/Sections.tsx",
+      "src/components/marketing/MotionReveal.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 3
+  },
+  {
+    "route": "/fit",
+    "source": "src/app/fit/page.tsx",
+    "files": [
+      "src/app/fit/page.tsx",
+      "src/components/seo/JsonLd.tsx",
+      "src/components/billing/DynamicPlans.tsx"
+    ],
+    "headings": [
+      {
+        "text": "FIT",
+        "line": 53
+      },
+      {
+        "text": "پکیج‌های تولید ویدیو | Video creation packages | یک پلتفرم؛ پکیج مناسب شما | One platform. The right plan for you.",
+        "line": 8
+      },
+      {
+        "text": "تأیید مبلغ پرداخت | Confirm payment amount",
+        "line": 8
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 8
+  },
+  {
+    "route": "/fitness/checkout/[id]",
+    "source": "src/app/fitness/checkout/[id]/page.tsx",
+    "files": [
+      "src/app/fitness/checkout/[id]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/fitness/credits",
+    "source": "src/app/fitness/credits/page.tsx",
+    "files": [
+      "src/app/fitness/credits/page.tsx",
+      "src/components/billing/CreditsWorkspace.tsx",
+      "src/components/layout/WorkspaceError.tsx"
+    ],
+    "headings": [
+      {
+        "text": "کیف پول کردیت | Credit Wallet",
+        "line": 135
+      },
+      {
+        "text": "مصرف ۳۰ روز اخیر | Usage — last 30 days",
+        "line": 189
+      },
+      {
+        "text": "خرید کردیت | Buy Credits",
+        "line": 207
+      },
+      {
+        "text": "خریدهای کردیت | Credit purchases",
+        "line": 285
+      },
+      {
+        "text": "مصرف کردیت | Credit usage",
+        "line": 350
+      },
+      {
+        "text": "این بخش بارگذاری نشد | This section couldn't load",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/fitness/marketplace",
+    "source": "src/app/fitness/marketplace/page.tsx",
+    "files": [
+      "src/app/fitness/marketplace/page.tsx",
+      "src/components/fitness/MarketplaceWorkspace.tsx"
+    ],
+    "headings": [
+      {
+        "text": "title",
+        "line": 12
+      },
+      {
+        "text": "slots",
+        "line": 19
+      },
+      {
+        "text": "store",
+        "line": 19
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "tab",
+        "id": "store",
+        "line": 13,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "trainers",
+        "line": 14,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "slots",
+        "line": 14,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "store",
+        "line": 14,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "slots",
+        "line": 16,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "orders",
+        "line": 17,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "apply",
+        "line": 18,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "seller",
+        "line": 19,
+        "source": "src/components/fitness/MarketplaceWorkspace.tsx"
+      }
+    ],
+    "fieldCount": 8,
+    "actionCount": 13
+  },
+  {
+    "route": "/fitness",
+    "source": "src/app/fitness/page.tsx",
+    "files": [
+      "src/app/fitness/page.tsx",
+      "src/components/fitness/FitnessWorkspace.tsx",
+      "src/components/fitness/AthleteCard.tsx",
+      "src/components/fitness/FitnessDashboard.tsx",
+      "src/components/fitness/FitnessReports.tsx",
+      "src/components/billing/DynamicPlans.tsx"
+    ],
+    "headings": [
+      {
+        "text": "برنامه شخصی با مربی هوشمند | Personal AI workout",
+        "line": 20
+      },
+      {
+        "text": "کارت ورزشکار و دعوت دوستان | Athlete card & invite friends",
+        "line": 27
+      },
+      {
+        "text": "دعوت سریع | Quick invitation",
+        "line": 28
+      },
+      {
+        "text": "پکیج‌های تولید ویدیو | Video creation packages | یک پلتفرم؛ پکیج مناسب شما | One platform. The right plan for you.",
+        "line": 8
+      },
+      {
+        "text": "تأیید مبلغ پرداخت | Confirm payment amount",
+        "line": 8
+      }
+    ],
+    "tabs": [
+      {
+        "variable": "Tab",
+        "id": "gym",
+        "line": 14,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "history",
+        "line": 14,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "plans",
+        "line": 16,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "reports",
+        "line": 16,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "overview",
+        "line": 17,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "programs",
+        "line": 17,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "trainers",
+        "line": 17,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "profile",
+        "line": 17,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "profile",
+        "line": 18,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "Tab",
+        "id": "overview",
+        "line": 18,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "trainers",
+        "line": 19,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "programs",
+        "line": 20,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "gym",
+        "line": 21,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "nutrition",
+        "line": 22,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "history",
+        "line": 23,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "reports",
+        "line": 23,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      },
+      {
+        "variable": "tab",
+        "id": "plans",
+        "line": 23,
+        "source": "src/components/fitness/FitnessWorkspace.tsx"
+      }
+    ],
+    "fieldCount": 16,
+    "actionCount": 18
+  },
+  {
+    "route": "/fitness/payments",
+    "source": "src/app/fitness/payments/page.tsx",
+    "files": [
+      "src/app/fitness/payments/page.tsx",
+      "src/components/billing/PaymentsView.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پرداخت‌ها و فعال‌سازی | Payments & activation",
+        "line": 54
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 8
+  },
+  {
+    "route": "/guides",
+    "source": "src/app/guides/page.tsx",
+    "files": [
+      "src/app/guides/page.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/guides/[slug]",
+    "source": "src/app/guides/[slug]/page.tsx",
+    "files": [
+      "src/app/guides/[slug]/page.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx",
+      "src/components/marketing/Sections.tsx",
+      "src/components/marketing/MotionReveal.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/industry",
+    "source": "src/app/industry/page.tsx",
+    "files": [
+      "src/app/industry/page.tsx",
+      "src/components/student/StudentActivationLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [
+      {
+        "text": "فضای دانشجویی AIFekr | AIFekr Student Workspace",
+        "line": 99
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/industry/[slug]",
+    "source": "src/app/industry/[slug]/page.tsx",
+    "files": [
+      "src/app/industry/[slug]/page.tsx",
+      "src/components/student/StudentActivationLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx",
+      "src/components/industry/ActivateButton.tsx"
+    ],
+    "headings": [
+      {
+        "text": "( )",
+        "line": 141
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/o/[token]",
+    "source": "src/app/o/[token]/page.tsx",
+    "files": [
+      "src/app/o/[token]/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "جزئیات | Details",
+        "line": 121
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/owner/login",
+    "source": "src/app/owner/login/page.tsx",
+    "files": [
+      "src/app/owner/login/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "پنل مالک | Owner portal",
+        "line": 52
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/owner",
+    "source": "src/app/owner/page.tsx",
+    "files": [
+      "src/app/owner/page.tsx"
+    ],
+    "headings": [
+      {
+        "text": "گزارش‌ها | Statements",
+        "line": 177
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/p/[id]",
+    "source": "src/app/p/[id]/page.tsx",
+    "files": [
+      "src/app/p/[id]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 1
+  },
+  {
+    "route": "/",
+    "source": "src/app/page.tsx",
+    "files": [
+      "src/app/page.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/marketing/Ecosystem.tsx",
+      "src/components/ai-chat/EntryPlans.tsx",
+      "src/components/ai-chat/PlanChoice.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/marketing/StarterCheckout.tsx",
+      "src/components/marketing/Sections.tsx",
+      "src/components/marketing/MotionReveal.tsx",
+      "src/components/seo/JsonLd.tsx",
+      "src/components/marketing/ChatLaunch.tsx"
+    ],
+    "headings": [
+      {
+        "text": "رایگان | Free",
+        "line": 16
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 6
+  },
+  {
+    "route": "/pricing",
+    "source": "src/app/pricing/page.tsx",
+    "files": [
+      "src/app/pricing/page.tsx",
+      "src/components/seo/JsonLd.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/ai-chat/EntryPlans.tsx",
+      "src/components/ai-chat/PlanChoice.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/marketing/StarterCheckout.tsx"
+    ],
+    "headings": [
+      {
+        "text": "رایگان | Free",
+        "line": 16
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 6
+  },
+  {
+    "route": "/privacy",
+    "source": "src/app/privacy/page.tsx",
+    "files": [
+      "src/app/privacy/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [
+      {
+        "text": "Gizlilik politikası | Datenschutzrichtlinie | حریم خصوصی | Privacy Policy",
+        "line": 153
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/security",
+    "source": "src/app/security/page.tsx",
+    "files": [
+      "src/app/security/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/share/1980s",
+    "source": "src/app/share/1980s/page.tsx",
+    "files": [
+      "src/app/share/1980s/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/share/[token]",
+    "source": "src/app/share/[token]/page.tsx",
+    "files": [
+      "src/app/share/[token]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/solutions/[slug]",
+    "source": "src/app/solutions/[slug]/page.tsx",
+    "files": [
+      "src/app/solutions/[slug]/page.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/marketing/Ecosystem.tsx",
+      "src/components/marketing/Sections.tsx",
+      "src/components/marketing/MotionReveal.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [
+      {
+        "text": ".",
+        "line": 30
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/start",
+    "source": "src/app/start/page.tsx",
+    "files": [
+      "src/app/start/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/marketing/StarterCheckout.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/student/[slug]",
+    "source": "src/app/student/[slug]/page.tsx",
+    "files": [
+      "src/app/student/[slug]/page.tsx",
+      "src/components/student/StudentActivationLink.tsx",
+      "src/components/ui/LanguageSwitcher.tsx",
+      "src/components/student/StudentBrandCard.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 4
+  },
+  {
+    "route": "/terms",
+    "source": "src/app/terms/page.tsx",
+    "files": [
+      "src/app/terms/page.tsx",
+      "src/components/marketing/PublicShell.tsx",
+      "src/components/marketing/PublicLink.tsx",
+      "src/components/marketing/PublicNav.tsx",
+      "src/components/marketing/LaunchStrip.tsx",
+      "src/components/layout/SocialFooterLinks.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/ui/CurrencySelector.tsx",
+      "src/components/seo/JsonLd.tsx"
+    ],
+    "headings": [
+      {
+        "text": "AIFekr kullanım koşulları | AiFekr Nutzungsbedingungen | قوانین و مقررات استفاده از AiFekr | AiFekr Terms of Service",
+        "line": 166
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 2
+  },
+  {
+    "route": "/verify-certificate/[code]",
+    "source": "src/app/verify-certificate/[code]/page.tsx",
+    "files": [
+      "src/app/verify-certificate/[code]/page.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 0,
+    "actionCount": 0
+  },
+  {
+    "route": "/welcome",
+    "source": "src/app/welcome/page.tsx",
+    "files": [
+      "src/app/welcome/page.tsx",
+      "src/components/WelcomeLanguage.tsx"
+    ],
+    "headings": [
+      {
+        "text": "با چه زبانی وارد فضای کار می‌شوی؟ | Which language would you like to use?",
+        "line": 9
+      },
+      {
+        "text": "زبان فضای کار | Workspace language",
+        "line": 9
+      }
+    ],
+    "tabs": [],
+    "fieldCount": 1,
+    "actionCount": 3
+  },
+  {
+    "route": "/[locale]",
+    "source": "src/app/[locale]/page.tsx",
+    "files": [
+      "src/app/[locale]/page.tsx",
+      "src/components/landing/home/HomeLanding.tsx",
+      "src/components/layout/EnamadBadge.tsx",
+      "src/components/landing/home/LandingHeader.tsx",
+      "src/components/ui/ThemeSwitcher.tsx",
+      "src/components/landing/home/WorkspacePreview.tsx",
+      "src/components/landing/home/LandingPricing.tsx"
+    ],
+    "headings": [],
+    "tabs": [],
+    "fieldCount": 2,
+    "actionCount": 4
+  }
+]

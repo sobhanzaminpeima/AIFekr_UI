@@ -1,0 +1,152 @@
+[
+  {
+    "route": "/crm?tab=contacts",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/fitness?tab=profile",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/module-access",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/features/crm",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/accounting?tab=journal",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/accounting?tab=payroll",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/crm?tab=board",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/social?tab=content",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/seo?tab=content",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/website-designer?tab=brief",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/startup/builder?tab=canvas",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/fitness?tab=gym",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/voice-agent?tab=setup",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/lead-gen?tab=forms",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/packages",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/crm?tab=contacts",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/fitness?tab=profile",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/admin/module-access",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/features/crm",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/accounting?tab=journal",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/accounting?tab=payroll",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/crm?tab=board",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/social?tab=content",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/seo?tab=content",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/website-designer?tab=brief",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/startup/builder?tab=canvas",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/fitness?tab=gym",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/voice-agent?tab=setup",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/lead-gen?tab=forms",
+    "width": 360,
+    "violations": []
+  },
+  {
+    "route": "/admin/packages",
+    "width": 360,
+    "violations": []
+  }
+]
