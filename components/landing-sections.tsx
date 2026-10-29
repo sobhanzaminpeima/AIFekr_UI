@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
+import { LiveLandingGuides, LiveModuleExplorer } from "./live-public";
 import { useState } from "react";
 import { useApp } from "./providers";
 import { Icon } from "./ui";
@@ -205,6 +206,9 @@ export function LandingJourney() {
 }
 
 export function LandingModuleExplorer() {
+  return useSite() ? <LiveModuleExplorer /> : <DemoModuleExplorer />;
+}
+function DemoModuleExplorer() {
   const { fa, n } = useApp();
   const [group, setGroup] = useState("business");
   const [query, setQuery] = useState("");
@@ -294,6 +298,7 @@ export function LandingModuleExplorer() {
 
 export function LandingDetails() {
   const { fa } = useApp();
+  const live = useSite();
   return (
     <>
       <section className="public-section landing-business" id="business-tools">
@@ -421,7 +426,7 @@ export function LandingDetails() {
           ))}
         </div>
       </section>
-      <section className="public-section landing-guides" id="practical-guides">
+      {live ? <LiveLandingGuides /> : <section className="public-section landing-guides" id="practical-guides">
         <div className="row-between">
           <div>
             <span className="eyebrow orange-text">
@@ -481,7 +486,7 @@ export function LandingDetails() {
             </Link>
           ))}
         </div>
-      </section>
+      </section>}
     </>
   );
 }

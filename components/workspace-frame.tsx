@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { ModuleSpec, ViewSpec, moduleViewHref } from "@/lib/upstream/registry";
 import { examplePath } from "@/lib/upstream/coverage";
 import { useApp } from "./providers";

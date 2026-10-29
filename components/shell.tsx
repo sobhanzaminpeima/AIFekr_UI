@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -296,6 +296,7 @@ export function Shell({
 }
 export function PublicShell({ children }: { children: React.ReactNode }) {
   const { t, fa } = useApp();
+  const live = useSite();
   const [open, setOpen] = useState(false);
   return (
     <div className="public-shell">
@@ -335,14 +336,14 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
               <Icon name="ChevronDown" size={13} />
             </summary>
             <div>
-              {[
+              {(live ? live.solutions.map((s) => [s.slug, s.title, s.title]) : [
                 ["creators", "تولید محتوا", "Creators"],
                 ["real-estate", "مشاوران املاک", "Real estate"],
                 ["clinics", "کلینیک‌ها", "Clinics"],
                 ["shops", "فروشگاه‌ها", "Shops"],
                 ["agencies", "آژانس‌ها", "Agencies"],
                 ["students", "دانشجویان", "Students"],
-              ].map(([id, a, b]) => (
+              ]).map(([id, a, b]) => (
                 <Link href={"/solutions/" + id} key={id}>
                   {fa ? a : b}
                 </Link>
@@ -383,7 +384,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
               ? "یک فکر، هزار امکان."
               : "One spark. A thousand possibilities."}
           </p>
-          <small>{t("mock")}</small>
+          {!live && <small>{t("mock")}</small>}
         </div>
         <div className="footer-link-groups">
           {[
@@ -437,10 +438,10 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             {fa ? "یک فکر، هزار امکان" : "One spark. Endless possibilities."}
           </span>
           <div>
-            {[
+            {(live ? [] : [
               ["/sitemap-ui", t("sitemap")],
               ["/design-system", t("design")],
-            ].map(([url, label]) => (
+            ]).map(([url, label]) => (
               <Link key={url} href={url}>
                 {label}
               </Link>

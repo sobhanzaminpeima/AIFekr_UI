@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";

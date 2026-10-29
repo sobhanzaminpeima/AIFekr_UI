@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useEffect, useState } from "react";
 import { useLocalState } from "@/lib/use-local-state";
 import { contacts } from "@/mocks/catalog";

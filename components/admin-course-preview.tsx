@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useState } from "react";
 import { useLocalState } from "@/lib/use-local-state";
 import { useApp } from "./providers";

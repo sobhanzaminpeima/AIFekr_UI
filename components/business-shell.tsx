@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useEffect, useState } from "react";
 import { ModuleSpec, ViewSpec, moduleViewHref } from "@/lib/upstream/registry";
 import { useApp } from "./providers";

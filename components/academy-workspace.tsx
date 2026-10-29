@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useSearchParams } from "next/navigation";
 import { useLocalState } from "@/lib/use-local-state";
 import { useApp } from "./providers";

@@ -1,7 +1,8 @@
 "use client";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
+import { EditorialPage } from "./editorial-pages";
 import { useApp } from "./providers";
 import { Shell, PublicShell, Preferences } from "./shell";
 import { Dashboard } from "./dashboard";
@@ -46,10 +47,30 @@ import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { EmptyStateContext } from "./ui";
 export function Platform({ path }: { path: string }) {
+  if (useSite()) return <LivePlatform path={path} />;
   return (
     <Suspense fallback={<Skeleton />}>
       <PlatformContent path={path} />
     </Suspense>
+  );
+}
+/**
+ * aifekr.com pages served by this app (lib/live.ts V2_READY). The server
+ * already answered 404 for anything else, so no prototype screen is reachable.
+ */
+function LivePlatform({ path }: { path: string }) {
+  const { fa } = useApp();
+  const section = path.split("/")[1];
+  const content =
+    path === "/" ? <Landing />
+    : path === "/pricing" ? <section className="public-section"><Plans /></section>
+    : ["about", "contact", "guides"].includes(section) ? <EditorialPage path={path} />
+    : <PublicPage path={path} />;
+  return (
+    <>
+      <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
+      <PublicShell>{content}</PublicShell>
+    </>
   );
 }
 function PlatformContent({ path }: { path: string }) {

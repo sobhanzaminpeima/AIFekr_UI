@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useEffect, useRef, useId, createContext, useContext } from "react";
 import {
   Activity,

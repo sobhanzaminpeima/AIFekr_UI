@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
+import { LiveContact, LiveGuides } from "./live-public";
 import { useState } from "react";
 import { useApp } from "./providers";
 import { Button, Icon } from "./ui";
@@ -159,7 +160,10 @@ const legalContent: Record<
 };
 export function EditorialPage({ path }: { path: string }) {
   const { fa } = useApp();
+  const live = useSite();
   const part = path.split("/")[1];
+  if (live && part === "contact") return <LiveContact />;
+  if (live && part === "guides") return <LiveGuides slug={path.split("/")[2]} />;
   if (part === "contact") return <ContactPage />;
   if (part === "guides") return <Guides path={path} />;
   const legal = legalContent[part];

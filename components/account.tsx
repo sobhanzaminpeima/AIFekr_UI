@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
+import { LiveFAQ, LivePlans } from "./live-public";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -27,6 +28,9 @@ import {
 } from "@/lib/billing";
 import { useSearchParams } from "next/navigation";
 export function Plans() {
+  return useSite() ? <LivePlans /> : <DemoPlans />;
+}
+function DemoPlans() {
   const { fa, t, n, price } = useApp();
   const [period, setPeriod] = useState(1);
   const [planCatalog] = useLocalState<Plan[]>(
@@ -190,6 +194,9 @@ export function Plans() {
   );
 }
 export function FAQ() {
+  return useSite() ? <LiveFAQ /> : <DemoFAQ />;
+}
+function DemoFAQ() {
   const { fa } = useApp();
   return (
     <section className="faq">

@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link, { useHref, useSite } from "@/components/site-link";
+import { LiveCreditCalculator } from "./live-public";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -22,6 +23,10 @@ export function Landing() {
   const [credits, setCredits] = useState(100);
   const [prompt, setPrompt] = useState("");
   const router = useRouter();
+  const live = useSite();
+  const href = useHref();
+  // In live mode these targets are classic pages, so they load in full.
+  const go = (target: string) => (live ? location.assign(href(target)) : router.push(target));
   return (
     <>
       <section className="landing-hero">
@@ -73,7 +78,7 @@ export function Landing() {
             {fa
               ? "طراحی‌شده برای خلاقیت، به زبان فارسی"
               : "Persian at heart. Made for your imagination."}
-            <small>{t("mock")}</small>
+            {!live && <small>{t("mock")}</small>}
           </span>
         </div>
         <div className="hero-demo">
@@ -102,7 +107,7 @@ export function Landing() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  router.push(
+                  go(
                     "/create/image?prompt=" +
                       encodeURIComponent(prompt || "Warm little world"),
                   );
@@ -128,10 +133,10 @@ export function Landing() {
                 >
                   {t("image")}
                 </button>
-                <button onClick={() => router.push("/create/video")}>
+                <button onClick={() => go("/create/video")}>
                   {t("video")}
                 </button>
-                <button onClick={() => router.push("/voice-studio")}>
+                <button onClick={() => go("/voice-studio")}>
                   {t("voice")}
                 </button>
               </div>
@@ -273,7 +278,13 @@ export function Landing() {
           title={fa ? "برای آدم‌هایی شبیه تو." : "For people just like you."}
         />
         <div className="audience-grid">
-          {[
+          {live ? live.solutions.map((s) => (
+            <Link href={"/solutions/" + s.slug} className="panel" key={s.slug}>
+              <Icon name={{ business: "BriefcaseBusiness", creators: "Palette", "real-estate": "Building2", students: "GraduationCap" }[s.slug] ?? "Sparkles"} />
+              <h3>{s.title}</h3>
+              <Icon name="ArrowUpLeft" size={16} />
+            </Link>
+          )) : [
             "creators",
             "real-estate",
             "clinics",
@@ -351,7 +362,7 @@ export function Landing() {
         </div>
       </section>
       <section className="public-section">
-        <div className="panel calculator">
+        {live ? <LiveCreditCalculator /> : <div className="panel calculator">
           <div>
             <span className="eyebrow orange-text">
               {fa ? "اعتبار یعنی انتخاب" : "YOUR CREDITS. YOUR CHOICE."}
@@ -380,7 +391,7 @@ export function Landing() {
               {n(Math.floor(credits / 45))} {t("video")}
             </p>
           </div>
-        </div>
+        </div>}
       </section>
       <section className="public-section" id="pricing">
         <Plans />
@@ -394,9 +405,13 @@ export function Landing() {
               : "Your ideas deserve a little peace of mind."}
           </h3>
           <p>
-            {fa
-              ? "این نسخه داده‌ها را تنها در مرورگر نگه می‌دارد."
-              : "This demo keeps your data in your own browser."}
+            {live
+              ? fa
+                ? "هزینهٔ هر کار پیش از اجرا نمایش داده می‌شود و هیچ اقدامی بدون تأیید تو انجام نمی‌شود."
+                : "Every action shows its cost before it runs, and nothing happens without your approval."
+              : fa
+                ? "این نسخه داده‌ها را تنها در مرورگر نگه می‌دارد."
+                : "This demo keeps your data in your own browser."}
           </p>
         </div>
         <Link href="/security" className="text-link">

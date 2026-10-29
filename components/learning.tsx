@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useState, useEffect } from "react";
 import { useApp } from "./providers";
 import { Button, download, Icon, SectionTitle } from "./ui";

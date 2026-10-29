@@ -5,7 +5,7 @@ import { Button, download, Icon, Modal } from "./ui";
 import { contacts } from "@/mocks/catalog";
 import { toast } from "sonner";
 import { ListState } from "./list-state";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useLocalState } from "@/lib/use-local-state";
 export function DataTable({
   title,

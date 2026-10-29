@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link, { useSite } from "@/components/site-link";
+import { LiveFeaturePage, LiveSolutionPage } from "./live-public";
 import { useApp } from "./providers";
 import { modules } from "@/lib/upstream/registry";
 import { Icon } from "./ui";
@@ -53,7 +54,10 @@ export function ProductDirectory() {
 }
 export function ProductPage({ path }: { path: string }) {
   const { fa } = useApp();
-  const [, , slug] = path.split("/");
+  const live = useSite();
+  const [, section, slug] = path.split("/");
+  if (live && section === "features") return <LiveFeaturePage slug={slug} />;
+  if (live && section === "solutions") return <LiveSolutionPage slug={slug} />;
   const module = modules.find(
     (m) => m.id === slug || m.base.split("/")[1] === slug,
   );
