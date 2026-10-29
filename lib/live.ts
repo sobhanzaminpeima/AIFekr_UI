@@ -7,6 +7,14 @@ export type SitePlan = { code: string; name: string; category: string; minor: nu
 export type SiteFeature = { slug: string; route: string; category: "work" | "create" | "learn"; title: string; desc: string; items: string[]; requirement: string };
 export type SiteSolution = { slug: string; title: string; modules: string[]; description: string; guide: string; steps: { title: string; body: string }[] };
 export type SiteGuide = { slug: string; title: string; description: string; related: string[]; sections: { title: string; body: string }[] };
+/** Sign-in pages: the main site's own wording (its translation dictionaries) and options. */
+export type AuthData = {
+  login: Record<"subtitle" | "tabPhone" | "tabEmail" | "back" | "otpTitle" | "otpSentPrefix" | "otpSentSuffix" | "testCode" | "phoneLabel" | "sendCode" | "sending" | "verifying" | "verifyAndLogin" | "resendCode" | "emailLabel" | "passwordLabel" | "loggingIn" | "submit" | "or" | "googleLogin" | "noAccount" | "registerLink" | "errPhoneInvalid" | "otpSent" | "errSendFailed" | "errOtpLength" | "loginSuccess" | "errOtpWrong" | "errFillEmailPass" | "errEmailPassWrong", string>;
+  register: Record<"subtitle" | "selectedPack" | "firstNameLabel" | "firstNamePlaceholder" | "lastNameLabel" | "lastNamePlaceholder" | "countryLabel" | "countryPlaceholder" | "languageLabel" | "emailLabel" | "phoneLabel" | "passwordLabel" | "passwordPlaceholder" | "confirmPasswordLabel" | "agreePrefix" | "termsLink" | "and" | "privacyLink" | "agreeSuffix" | "creatingAccount" | "submit" | "googleRegister" | "haveAccount" | "loginLink" | "errName" | "errEmailOrPhone" | "errPasswordRequired" | "errPasswordMismatch" | "errPasswordShort" | "errMustAgree" | "success" | "errGeneric", string>;
+  extra: { promoLabel: string; promoHint: string; accountType: string; accountTypes: Record<"FITNESS" | "PERSONAL" | "STUDENT" | "BUSINESS", string>; phoneInvalid: string; marketingConsent: string };
+  countries: { code: string; name: string; dialCode: string }[];
+  studentPlanCode: string;
+};
 export type SiteData = {
   lang: Locale;
   /** Growth module of this path, for the same module_viewed events as the classic site. */
@@ -21,10 +29,12 @@ export type SiteData = {
   faq: { q: string; a: string }[];
   costs: { imageStandard: number; imageHd: number; video5s: number; video10s: number };
   contact: { email: string; phone: string; address: string; telegram: string };
+  /** Only on /login and /register. */
+  auth: AuthData | null;
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_READY.some((r) => (r === "/" ? clean === "/" : clean === r || clean.startsWith(r + "/")));

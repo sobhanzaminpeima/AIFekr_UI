@@ -46,6 +46,7 @@ import { PublicLeadForm } from "./leads-workspace";
 import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { EmptyStateContext } from "./ui";
+import { LiveLogin, LiveRegister } from "./live-auth";
 export function Platform({ path }: { path: string }) {
   if (useSite()) return <LivePlatform path={path} />;
   return (
@@ -64,6 +65,8 @@ function LivePlatform({ path }: { path: string }) {
   const content =
     path === "/" ? <Landing />
     : path === "/pricing" ? <section className="public-section"><Plans /></section>
+    : path === "/login" ? <LiveLogin />
+    : path === "/register" ? <LiveRegister />
     : ["about", "contact", "guides"].includes(section) ? <EditorialPage path={path} />
     : <PublicPage path={path} />;
   return (

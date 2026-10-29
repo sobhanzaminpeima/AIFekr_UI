@@ -103,8 +103,14 @@ import {
   Wallet,
   X,
   Ellipsis,
+  Mail,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 const Icons = {
+  Mail,
+  Eye,
+  EyeOff,
   Activity,
   ArrowDown,
   ArrowLeft,

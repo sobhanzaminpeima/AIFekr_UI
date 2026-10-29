@@ -6372,3 +6372,35 @@ tr:hover td {
 .admin-navigation{display:flex;flex:1;flex-direction:column;min-height:0;margin-bottom:12px}.admin-nav-search{display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:14px;background:var(--surface-1)}.admin-nav-search input{width:100%;min-width:0;border:0;box-shadow:none;background:none;font-size:11px;padding:11px 0}.admin-nav-search button{border:0;background:none;color:var(--text-secondary);cursor:pointer;padding:4px}.admin-nav-groups{overflow-y:auto;scrollbar-width:thin;display:flex;flex-direction:column;gap:6px;padding-inline-end:3px}.admin-overview-link,.admin-nav-group-toggle{display:flex;align-items:center;gap:10px;min-height:44px;width:100%;border:0;border-radius:10px;padding:11px 10px;background:transparent;color:var(--text-secondary);text-align:start;font-size:11px;cursor:pointer}.admin-overview-link span,.admin-nav-group-toggle>span{flex:1}.admin-nav-group-toggle small{font-size:10px;color:var(--text-muted)}.admin-nav-group-toggle svg{flex-shrink:0}.admin-nav-group-toggle svg:last-child{transition:transform .15s}.admin-nav-group-toggle svg.expanded{transform:rotate(180deg)}.admin-nav-group-toggle:hover,.admin-overview-link:hover{background:var(--surface-2);color:var(--text-primary)}.admin-nav-group.current-group>.admin-nav-group-toggle,.admin-overview-link.active{color:var(--orange);background:#f973160c}.admin-nav-group-items{margin:4px 18px 9px 0;border-inline-start:1px solid var(--border-strong);padding-inline-start:8px}.admin-nav-group-items[hidden]{display:none}.admin-nav-group-items a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-radius:8px;font-size:11px;min-height:38px;color:var(--text-secondary)}.admin-nav-group-items a:hover{background:var(--surface-2);color:var(--text-primary)}.admin-nav-group-items a.active{background:#f9731612;color:var(--orange);font-weight:600}.admin-nav-empty{padding:12px;color:var(--text-muted);font-size:12px}.collapsed .admin-navigation .admin-nav-search,.collapsed .admin-navigation .admin-nav-group-items,.collapsed .admin-nav-group-toggle>span,.collapsed .admin-nav-group-toggle>small,.collapsed .admin-nav-group-toggle>svg:last-child,.collapsed .admin-overview-link>span{display:none}.collapsed .admin-nav-group-toggle,.collapsed .admin-overview-link{justify-content:center;padding:12px}@media(max-width:900px){.sidebar.mobile-open .admin-nav-group-toggle>span,.sidebar.mobile-open .admin-overview-link>span{display:block}.sidebar.mobile-open .admin-navigation{min-height:180px}.sidebar.mobile-open .admin-nav-group-items{margin-inline-end:0}}
 @media(min-width:768px) and (max-width:1023px){.admin-shell:not(.collapsed){--side:240px}.admin-shell:not(.collapsed) .sidebar{padding:23px 16px 0}.admin-shell:not(.collapsed) .sidebar .brand b,.admin-shell:not(.collapsed) .sidebar .collapse-btn{display:block}.admin-shell:not(.collapsed) .sidebar-top{justify-content:space-between}.admin-shell:not(.collapsed) .sidebar .side-label{display:flex}.admin-shell:not(.collapsed) .sidebar .badge{font-size:9px}}
 .sidebar .admin-nav-search{display:flex;flex-direction:row;align-items:center;min-height:40px}.sidebar .admin-nav-search>svg{flex-shrink:0}
+/* Live sign-in and sign-up (components/live-auth.tsx) */
+.auth-form form{display:flex;flex-direction:column;gap:16px}
+.auth-form form>.btn{margin:6px 0 0}
+.auth-form .chips button{display:inline-flex;align-items:center;gap:7px}
+.auth-form label small{font-size:10px;color:var(--text-muted);line-height:1.8}
+.auth-otp-head{margin:22px 0 18px}
+.auth-otp-head h2{font-size:19px;margin:14px 0 6px}
+.auth-otp-head p{font-size:12px;line-height:2;color:var(--text-secondary)}
+.auth-otp-head .mono{font-size:12px}
+.auth-dev-code{margin-top:10px;padding:8px 14px;border:1px dashed #ea580c66;border-radius:10px;background:#ea580c12}
+.auth-dev-code strong{color:var(--orange);letter-spacing:4px;font-family:monospace;font-size:16px}
+.text-btn{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:4px 0;color:var(--text-secondary);font-size:12px;cursor:pointer}
+.text-btn:hover{color:var(--text-primary)}
+.auth-resend{align-self:center}
+.password-field,.phone-field{display:flex;align-items:center;gap:8px;position:relative}
+/* The input is always left-to-right, so the toggle sits on its physical right. */
+.password-field input{padding-right:44px}
+.password-field .icon-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%)}
+.auth-form .form-grid{align-items:end}
+.phone-field input{flex:1;min-width:0}
+.dial-code{flex-shrink:0;padding:11px 12px;border:1px solid var(--border-strong);border-radius:10px;background:var(--surface-1);color:var(--text-secondary);font-size:13px}
+.auth-langs{border:0;padding:0;margin:0;min-width:0}
+.auth-langs legend{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+.auth-langs .chips{margin:0}
+.auth-form .check-label{align-items:flex-start;line-height:1.9}
+.auth-form .check-label input{width:auto;flex-shrink:0;margin-top:5px}
+.auth-form .check-label a,.auth-switch a{color:var(--orange)}
+.auth-or{display:flex;align-items:center;gap:12px;margin:22px 0;font-size:11px;color:var(--text-muted)}
+.auth-or span{flex:1;height:1px;background:var(--border)}
+.auth-form>a.btn{display:flex;align-items:center;justify-content:center;gap:9px}
+.auth-switch{margin-top:22px;text-align:center;font-size:12px;color:var(--text-secondary)}
+.auth-pack{display:inline-flex;margin-top:14px}
