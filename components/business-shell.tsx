@@ -6,6 +6,8 @@ import { useApp } from "./providers";
 import { Button, Icon } from "./ui";
 import { useLocalState } from "@/lib/use-local-state";
 import { FinanceState, initialFinance, journalTotals } from "@/lib/finance";
+import { GATED_TABS } from "@/lib/crm";
+import { useCrmPulse, useLiveCrm } from "./live-crm-context";
 const crmGroups = [
   [
     "فروش و ارتباطات",
@@ -95,21 +97,26 @@ export function BusinessShell({
   const [menu, setMenu] = useState(false);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [deals] = useLocalState<Deal[]>("aifekr-domain:CrmDeal", []);
+  // On aifekr.com the CRM reads the account's real deals and follow-ups.
+  const live = useLiveCrm();
+  const pulse = useCrmPulse(!!live && crm);
+  const [localDeals] = useLocalState<Deal[]>("aifekr-domain:CrmDeal", []);
   const [tasks] = useLocalState<Task[]>("aifekr-crm-tasks", []);
   const [finance] = useLocalState<FinanceState>(
     "aifekr-finance-v2",
     initialFinance,
   );
-  const openDeals = deals.filter(
-    (d) => !["completed", "lost"].includes(d.status),
-  );
-  const won = deals
-    .filter((d) => d.status === "completed")
-    .reduce((s, d) => s + Number(d.value), 0);
-  const overdue = tasks.filter(
-    (t) => !t.done && new Date(t.dueDate) < new Date(),
-  );
+  const openDeals = live
+    ? (pulse?.open ?? []).map((d) => ({ value: d.value, probability: 0 }))
+    : localDeals.filter((d) => !["completed", "lost"].includes(d.status));
+  const won = live
+    ? pulse?.wonValue ?? 0
+    : localDeals
+        .filter((d) => d.status === "completed")
+        .reduce((s, d) => s + Number(d.value), 0);
+  const overdue = live
+    ? pulse?.overdue ?? []
+    : tasks.filter((t) => !t.done && new Date(t.dueDate) < new Date());
   const unmatched = finance.bank.filter((b) => !b.match);
   const pending = finance.expenses.filter((e) => e.status === "pending");
   const groups = crm ? crmGroups : financeGroups;
@@ -141,7 +148,15 @@ export function BusinessShell({
           tab: "calendar",
           icon: "CalendarDays",
         },
-        {
+        live ? {
+          title: fa ? "فروش قطعی" : "Won revenue",
+          value: price(won),
+          body: fa
+            ? "مجموع ارزش فرصت‌های برنده‌شده در قیف‌های فروش."
+            : "The total value of won opportunities across your pipelines.",
+          tab: "analytics",
+          icon: "ChartNoAxesCombined",
+        } : {
           title: fa ? "پیش‌بینی وزنی فروش" : "Weighted sales forecast",
           value: price(
             openDeals.reduce(
@@ -187,7 +202,7 @@ export function BusinessShell({
     setAnswer(
       crm
         ? fa
-          ? `از داده‌های ثبت‌شده: ${n(openDeals.length)} فرصت باز، ${price(won)} فروش قطعی و ${n(overdue.length)} پیگیری عقب‌افتاده داری. ${overdue.length ? "ابتدا پیگیری‌های عقب‌افتاده را مرور کن." : "قدم بعدی، بازبینی تاریخ و احتمال فرصت‌های باز است."}`
+          ? `از داده‌های ثبت‌شده: ${n(openDeals.length)} فرصت باز، ${price(won)} فروش قطعی و ${n(overdue.length)} پیگیری عقب‌افتاده داری. ${overdue.length ? "ابتدا پیگیری‌های عقب‌افتاده را مرور کن." : live ? "قدم بعدی، بازبینی تاریخ بستن فرصت‌های باز است." : "قدم بعدی، بازبینی تاریخ و احتمال فرصت‌های باز است."}`
           : `Your recorded data contains ${openDeals.length} open opportunities, ${price(won)} won revenue and ${overdue.length} overdue follow-ups. Review follow-ups and expected close dates next.`
         : fa
           ? `در دفتر محلی ${n(finance.journals.length)} سند ثبت شده، ${n(unmatched.length)} تراکنش بانکی تطبیق نشده و ${n(pending.length)} هزینه در انتظار تأیید است. پیش از بستن دوره، موارد باز را بررسی کن.`
@@ -216,10 +231,10 @@ export function BusinessShell({
           </Button>
         </div>
         <div className="suite-workspace">
-          <span className="suite-workspace-avatar">N</span>
+          <span className="suite-workspace-avatar">{live ? (live.shell?.user.name || "·").trim().slice(0, 1).toUpperCase() : "N"}</span>
           <div>
             <strong>{fa ? "فضای کاری من" : "My workspace"}</strong>
-            <small>{fa ? "نسخه نمایشی محلی" : "Local preview"}</small>
+            <small>{live ? live.shell?.user.planName : fa ? "نسخه نمایشی محلی" : "Local preview"}</small>
           </div>
           <Icon name="ChevronDown" size={15} />
         </div>
@@ -228,12 +243,14 @@ export function BusinessShell({
             fa ? "ناوبری تخصصی ماژول" : "Specialist module navigation"
           }
         >
-          {groups.map(([a, b, ids]) => (
+          {groups.map(([a, b, ids]) => ids.every((id) => live && GATED_TABS[id] && !live.access[GATED_TABS[id]]) ? null : (
             <section key={b}>
               <span className="suite-nav-label">{fa ? a : b}</span>
               {ids.map((id) => {
                 const v = module.views.find((v) => v.id === id);
                 if (!v) return null;
+                // Real-estate tabs exist only where that module is enabled, as in the classic CRM.
+                if (live && GATED_TABS[id] && !live.access[GATED_TABS[id]]) return null;
                 return (
                   <Link
                     key={id}
@@ -291,7 +308,7 @@ export function BusinessShell({
           <div>
             <span className="suite-live">
               <i />
-              {fa ? "اطلاعات محلی" : "Local data"}
+              {live ? (fa ? "اطلاعات زنده" : "Live data") : fa ? "اطلاعات محلی" : "Local data"}
             </span>
             <button
               className={"suite-ai-button " + (copilot ? "selected" : "")}
@@ -424,9 +441,13 @@ export function BusinessShell({
                 </div>
               )}
               <p className="suite-ai-disclosure">
-                {fa
-                  ? "بینش‌ها از داده‌های ثبت‌شده و قواعد محلی محاسبه می‌شوند. مدل هوش مصنوعی زنده متصل نیست."
-                  : "Insights are calculated from recorded data using local rules. A live AI model is not connected."}
+                {live
+                  ? fa
+                    ? "این بینش‌ها با قواعد ثابت از داده‌های ثبت‌شدهٔ تو محاسبه می‌شوند. برای تحلیل هوش مصنوعی، بخش ایجنت CRM را باز کن."
+                    : "These insights are calculated from your recorded data with fixed rules. For an AI analysis, open the CRM Agent tab."
+                  : fa
+                    ? "بینش‌ها از داده‌های ثبت‌شده و قواعد محلی محاسبه می‌شوند. مدل هوش مصنوعی زنده متصل نیست."
+                    : "Insights are calculated from recorded data using local rules. A live AI model is not connected."}
               </p>
             </aside>
           )}

@@ -27,6 +27,8 @@ export type ShellData = {
   voice: { strings: Record<string, string>; errors: Record<string, string> } | null;
   /** Only on /video-factory: the classic factory's wording, keyed by English. */
   factory: Record<string, string> | null;
+  /** Only on /crm: the classic CRM's wording, label tables and dictionary. */
+  crm: import("./crm").CrmCopy | null;
 };
 
 type Option = { value: string; label: string };
@@ -56,7 +58,7 @@ export type ChatData = {
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory"];
+export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_APP.includes(clean) || clean.startsWith("/chat/");

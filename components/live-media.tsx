@@ -14,7 +14,7 @@ export type Template = { id: string; title: string; titleEn: string | null; titl
 export type MediaSettings = { imageStyle: string; imageRatio: string; imageQuality: "standard" | "hd"; imageCount: number; imageProvider: string; videoStyle: string; videoDuration: number; videoRatio: string; videoProvider: string; musicGenre: string; musicDuration: number; puter: boolean };
 
 /** The classic chat's client-side downscale before a reference-photo upload (main site lib/image/downscaleImage). */
-async function downscale(file: File, maxEdge = 1600, quality = 0.85, skipBelow = 500 * 1024): Promise<File> {
+export async function downscale(file: File, maxEdge = 1600, quality = 0.85, skipBelow = 500 * 1024): Promise<File> {
   if (!file.type.startsWith("image/") || file.size <= skipBelow) return file;
   try {
     const bitmap: ImageBitmap | HTMLImageElement = typeof createImageBitmap === "function" ? await createImageBitmap(file).catch(() => loadImg(file)) : await loadImg(file);

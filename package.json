@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.0.0",
     "@radix-ui/react-dialog": "^1.1.0",
+    "@react-pdf/renderer": "^4.9.0",
     "@tailwindcss/postcss": "^4.1.0",
     "@tanstack/react-table": "^8.21.0",
     "clsx": "^2.1.1",
