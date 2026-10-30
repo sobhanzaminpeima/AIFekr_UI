@@ -56,8 +56,34 @@ export function Chat({ persona }: { persona?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, live]);
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, lc.messages]);
+    if (!live) bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, live]);
+  // Live: the thread scrolls inside #main. A new turn always scrolls to the
+  // answer; while it streams the view follows it unless the reader scrolled up.
+  const follow = useRef(true);
+  const turns = useRef(0);
+  useEffect(() => {
+    const el = document.getElementById("main");
+    if (!live || !el) return;
+    const onScroll = () => { follow.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120; };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [live]);
+  useEffect(() => {
+    const el = document.getElementById("main");
+    if (!live || !el) return;
+    const newTurn = lc.messages.length > turns.current;
+    turns.current = lc.messages.length;
+    if (newTurn) follow.current = true;
+    if (follow.current) requestAnimationFrame(() => el.scrollTo({ top: el.scrollHeight, behavior: newTurn ? "smooth" : "auto" }));
+  }, [live, lc.messages]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!live || !el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 200) + "px";
+  }, [live, prompt]);
   useEffect(
     () => () => {
       cancel.current = true;
@@ -293,6 +319,7 @@ export function Chat({ persona }: { persona?: string }) {
           }}
         >
           <textarea
+            ref={textareaRef}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => {
@@ -303,7 +330,7 @@ export function Chat({ persona }: { persona?: string }) {
             }}
             placeholder={live ? (lc.listening ? lc.chat!.t.listening : mode === "image" ? lc.s("What image should I create? Describe the scene, style and light...") : mode === "video" ? lc.s("What video should I create? Describe it...") : mode === "music" ? lc.s("What music should I create? Describe it...") : lc.chat!.t.placeholder) : t("placeholder")}
             aria-label={t("prompt")}
-            rows={3}
+            rows={live ? 1 : 3}
           />
           <div className="composer-bottom">
             <div>

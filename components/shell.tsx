@@ -111,7 +111,7 @@ export function Shell({
   useEffect(() => setMobile(false), [path]);
   return (
     <div
-      className={`app-shell ${admin ? "admin-shell" : ""} ${collapsed || ["/crm", "/accounting", "/sales", "/business/crm", "/business/accounting", "/business/real-estate"].some((root) => path === root || path.startsWith(root + "/")) ? "collapsed" : ""}`}
+      className={`app-shell ${admin ? "admin-shell" : ""} ${live && (path === "/chat" || path.startsWith("/chat/")) ? "chat-route" : ""} ${collapsed || ["/crm", "/accounting", "/sales", "/business/crm", "/business/accounting", "/business/real-estate"].some((root) => path === root || path.startsWith(root + "/")) ? "collapsed" : ""}`}
     >
       <aside className={`sidebar ${mobile ? "mobile-open" : ""}`}>
         <div className="sidebar-top">

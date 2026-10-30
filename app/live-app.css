@@ -136,3 +136,28 @@
 .template-guide{flex:1;padding:8px 10px;border-radius:10px;background:#ea580c14;border:1px solid #ea580c33}
 .template-guide small{display:block;font-size:10px;font-weight:600;color:var(--orange)}
 .template-guide p{font-size:11px;line-height:1.8;color:var(--text-secondary);margin:0}
+
+/* Native menus (select lists) follow the theme instead of the browser's white list. */
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light}
+select option,select optgroup{background-color:var(--surface-1);color:var(--text-primary)}
+
+/* Chat on aifekr.com: a fixed-height frame, only the thread scrolls and the composer stays at the bottom. */
+.app-shell.chat-route{height:100dvh;overflow:hidden}
+.app-shell.chat-route .main-area{height:100dvh;min-height:0}
+.app-shell.chat-route .page-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:0}
+.app-shell.chat-route .app-footer{display:none}
+.app-shell.chat-route .chat-page{min-height:100%}
+.app-shell.chat-route .chat-composer-wrap{bottom:0;padding-bottom:12px}
+.app-shell.chat-route .page-content{padding-top:14px}
+.app-shell.chat-route .chat-welcome{padding:6px 20px 10px}
+.app-shell.chat-route .chat-welcome .big-spark{margin-bottom:8px}
+.app-shell.chat-route .chat-welcome h1{margin:8px 0}
+.app-shell.chat-route .chat-composer-wrap{padding-top:8px}
+.app-shell.chat-route .chat-composer textarea{min-height:24px;max-height:200px;overflow-y:auto;resize:none}
+@media (max-width:767px){
+  .app-shell.chat-route .main-area{height:calc(100dvh - 62px - env(safe-area-inset-bottom))}
+  .app-shell.chat-route .chat-composer-wrap{bottom:0}
+  .app-shell.chat-route .chat-welcome{padding:4px 0 8px}
+  .app-shell.chat-route .page-content{padding-top:10px}
+}

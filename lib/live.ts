@@ -27,7 +27,7 @@ export type SiteData = {
   guides: SiteGuide[];
   guidesUpdatedAt: string;
   faq: { q: string; a: string }[];
-  costs: { imageStandard: number; imageHd: number; video5s: number; video10s: number };
+  costs: { imageStandard: number; imageHd: number; video5s: number; video10s: number; music30s?: number };
   contact: { email: string; phone: string; address: string; telegram: string };
   /** Only on /login and /register. */
   auth: AuthData | null;

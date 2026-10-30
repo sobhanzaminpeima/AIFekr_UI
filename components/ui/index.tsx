@@ -1,5 +1,5 @@
 "use client";
-import Link from "@/components/site-link";
+import Link, { useSite } from "@/components/site-link";
 import { useShell } from "@/components/live-shell-context";
 import { growthEvent } from "@/components/growth-tracker";
 import { useEffect, useRef, useId, createContext, useContext } from "react";
@@ -476,6 +476,10 @@ export function SectionTitle({
 }
 export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
   const { fa, t, n } = useApp();
+  // On aifekr.com the admin's real starting cost; tools priced per use (voice
+  // studio, video factory) show none rather than a sample figure.
+  const site = useSite();
+  const cost = !site ? tool.cost : ({ "create/image": site.costs.imageStandard, "create/video": site.costs.video5s, "create/music": site.costs.music30s } as Record<string, number | undefined>)[tool.slug];
   return (
     <Link className="tool-card" href={"/" + tool.slug}>
       <span className={`icon-chip ${tool.accent}`}>
@@ -484,9 +488,9 @@ export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
       <h3>{fa ? tool.fa : tool.en}</h3>
       <p>{fa ? tool.description : tool.descriptionEn}</p>
       <span className="tool-bottom">
-        <span>
-          ✦ {n(tool.cost)} {t("credits")}
-        </span>
+        {cost != null ? <span>
+          ✦ {n(cost)} {t("credits")}
+        </span> : <span />}
         <Icon name="ArrowUpLeft" size={18} className="directional" />
       </span>
     </Link>
