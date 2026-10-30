@@ -21,10 +21,9 @@ export type Creation = { id: string; type: MediaKind | "voice"; prompt: string; 
 const ART = ["/art/orbit.svg", "/art/waves.svg", "/art/voice.svg"];
 const ICON: Record<Creation["type"], string> = { image: "Image", video: "Clapperboard", music: "Music2", voice: "AudioLines" };
 
-/** Where a creation's idea is made again on aifekr.com (images are made in chat there). */
+/** Where a creation's idea is made again on aifekr.com. */
 export const remixHref = (type: Creation["type"], prompt = "") =>
-  type === "image" ? "/chat?mode=image&prompt=" + encodeURIComponent(prompt)
-  : type === "voice" ? "/voice-studio"
+  type === "voice" ? "/voice-studio"
   : `/${type}/generate${prompt ? "?prompt=" + encodeURIComponent(prompt) : ""}`;
 
 function useStrings() {

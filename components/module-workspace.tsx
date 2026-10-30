@@ -2,6 +2,7 @@
 import Link from "@/components/site-link";
 import { useShell } from "./live-shell-context";
 import { LiveMediaLibrary, LiveStudio } from "./live-create";
+import { LiveCharacters } from "./live-characters";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -408,13 +409,9 @@ function useRecords(key: string, initial: Row[]) {
   return { rows, save, ready };
 }
 
-/**
- * A module tab's address on aifekr.com. Images are generated in the chat's
- * image tab there and character sheets have their own page, so the image
- * module's tabs lead to those instead of sample screens.
- */
+/** A module tab's address on aifekr.com; the image gallery has its own page there. */
 function liveTabHref(module: ModuleSpec, view: ViewSpec) {
-  if (module.id === "image") return view.id === "gallery" ? "/image/gallery" : view.id === "characters" ? "/image/generate" : "/chat?mode=image";
+  if (module.id === "image" && view.id === "gallery") return "/image/gallery";
   return moduleViewHref(module, view);
 }
 export function ModuleWorkspace({
@@ -427,11 +424,9 @@ export function ModuleWorkspace({
   const search = useSearchParams();
   const { fa } = useApp();
   const live = !!useShell();
-  const view = resolveView(
-    module,
-    path,
-    new URLSearchParams(search.toString()),
-  );
+  const params = new URLSearchParams(search.toString());
+  if (live && module.id === "image" && params.get("tab") === "character") params.set("tab", "characters");
+  const view = resolveView(module, path, params);
   const detailRoute = sourcePage(path)?.route.includes("[");
   const tabsRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -495,7 +490,8 @@ function ViewContent({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
   // On aifekr.com the create modules show the account's real creations and generate for real.
   const live = !!useShell();
   if (live && ['image','video','music'].includes(module.id) && ['gallery','history'].includes(view.id)) return <LiveMediaLibrary type={module.id as 'image'|'video'|'music'}/>;
-  if (live && ['video','music'].includes(module.id) && view.kind === 'studio') return <LiveStudio tool={tools.find((x) => x.slug === 'create/' + module.id)!}/>;
+  if (live && ['image','video','music'].includes(module.id) && view.kind === 'studio') return <LiveStudio tool={tools.find((x) => x.slug === 'create/' + module.id)!}/>;
+  if (live && module.id === 'image' && view.id === 'characters') return <LiveCharacters/>;
   if(module.id==='admin-ai-courses')return <AdminCourses view={view.id}/>;
   if(module.id==='admin-academy'&&view.id==='overview')return <AdminCourses view="overview"/>;
   if(module.id==='doctor')return <AssessmentWorkspace view={view.id}/>;

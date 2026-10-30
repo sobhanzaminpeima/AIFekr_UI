@@ -10,6 +10,19 @@ import { v2App, type ShellData } from "@/lib/live-app";
 import { ShellProvider } from "@/components/live-shell-context";
 
 const MAIN = process.env.UI_MAIN_ORIGIN;
+
+/**
+ * The visitor's address as nginx reported it. The main site rate-limits by
+ * client IP; without this every request from this app would count against one
+ * shared bucket and, under load, answer 429 for everybody.
+ */
+function visitorIp(h: Headers): Record<string, string> {
+  const out: Record<string, string> = {};
+  const forwarded = h.get("x-forwarded-for"), real = h.get("x-real-ip");
+  if (forwarded) out["x-forwarded-for"] = forwarded;
+  if (real) out["x-real-ip"] = real;
+  return out;
+}
 type Props = { params: Promise<{ slug?: string[] }> };
 const pathOf = async (params: Props["params"]) => "/" + ((await params).slug?.join("/") ?? "");
 
@@ -17,7 +30,7 @@ const pathOf = async (params: Props["params"]) => "/" + ((await params).slug?.jo
 async function siteData(path: string): Promise<SiteData | null> {
   if (!MAIN || !(v2Ready(path) || v2App(path))) return null;
   const lang = (await headers()).get("x-ui-lang") || "fa";
-  const res = await fetch(`${MAIN}/api/public/site?lang=${encodeURIComponent(lang)}&path=${encodeURIComponent(path)}`, { next: { revalidate: 60 } });
+  const res = await fetch(`${MAIN}/api/public/site?lang=${encodeURIComponent(lang)}&path=${encodeURIComponent(path)}`, { next: { revalidate: 60 }, headers: visitorIp(await headers()) });
   // Never fall back to demo content on aifekr.com; the error page is shown instead.
   if (!res.ok) throw new Error(`Site content unavailable (${res.status})`);
   return (await res.json()) as SiteData;
@@ -31,7 +44,7 @@ const shellData = cache(async (path: string): Promise<ShellData | null> => {
   if (!MAIN || !v2App(path)) return null;
   const h = await headers();
   const requested = h.get("x-aifekr-path") || path;
-  const res = await fetch(`${MAIN}/api/app/shell?path=${encodeURIComponent(requested)}`, { cache: "no-store", headers: { cookie: h.get("cookie") || "" } });
+  const res = await fetch(`${MAIN}/api/app/shell?path=${encodeURIComponent(requested)}`, { cache: "no-store", headers: { cookie: h.get("cookie") || "", ...visitorIp(h) } });
   if (!res.ok) throw new Error(`App frame unavailable (${res.status})`);
   const data = await res.json();
   if (data.redirect) redirect(data.redirect);

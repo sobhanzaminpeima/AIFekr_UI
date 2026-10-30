@@ -47,10 +47,12 @@ export type ChatData = {
   industrySlug: string | null;
   /** The classic gallery pages' and upgrade prompt's wording, keyed by English. */
   create: Record<string, string>;
+  /** Only on /image/generate: the character creator's wording, styles and sample people. */
+  characters: { strings: Record<string, string>; genres: { value: string; label: string }[]; samples: { id: string; label: string; portraitPrompt: string }[] } | null;
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/video/generate", "/music/generate"];
+export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_APP.includes(clean) || clean.startsWith("/chat/");
