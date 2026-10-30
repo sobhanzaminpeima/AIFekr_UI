@@ -4,18 +4,19 @@
 // (platform.tsx), in the same markup. Generation goes through the shared media
 // hook (live-media.tsx); creations come from /api/gallery and are deleted
 // through /api/gallery/<id>.
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Link from "@/components/site-link";
 import { useApp } from "./providers";
 import { useShell } from "./live-shell-context";
-import { Button, Empty, ErrorState, Icon, Modal, SectionTitle } from "./ui";
+import { Button, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { useMediaTools, type Media, type MediaKind } from "./live-media";
 import { useLiveCredits } from "./live-shell-widgets";
 import { TemplateGallery } from "./live-chat";
 import { fill } from "@/lib/live-app";
 import type { Tool } from "@/mocks/catalog";
+import { failureGuidance, type MediaFailure } from "@/lib/media-outcome";
 
 export type Creation = { id: string; type: MediaKind | "voice"; prompt: string; url: string; isPublic?: boolean; createdAt: string; projectId?: string };
 const ART = ["/art/orbit.svg", "/art/waves.svg", "/art/voice.svg"];
@@ -102,7 +103,9 @@ export function LiveStudio({ tool }: { tool: Tool }) {
   const [prompt, setPrompt] = useState(query.get("prompt") || "");
   const [confirm, setConfirm] = useState(false);
   const [stage, setStage] = useState<"" | "queued" | "running" | "done" | "failed">("");
+  const submission = useRef(false);
   const [pendingLabel, setPendingLabel] = useState("");
+  const [failure, setFailure] = useState<MediaFailure>("provider");
   const [advanced, setAdvanced] = useState(false);
   const [tab, setTab] = useState("prompt");
   const [results, setResults] = useState<Creation[]>([]);
@@ -120,17 +123,20 @@ export function LiveStudio({ tool }: { tool: Tool }) {
   const blocked = !!access && ((type === "video" && !access.video) || (type === "music" && !access.music));
 
   async function run() {
+    if (submission.current || blocked || cost === null || !prompt.trim()) return;
+    submission.current = true;
     setConfirm(false);
     setStage("queued");
     setTab("results");
     setPendingLabel("");
     const attachments = type !== "music" ? media.sourceImages : [];
-    media.setSourceImages([]);
     await media.run(prompt, attachments, {
       onPending: (m) => { setStage("running"); setPendingLabel(m.pendingLabel ?? ""); },
       onDone: (m: Media) => {
+        submission.current = false;
         if (m.requiresUpgrade) { setStage(""); setUpgrade(true); return; }
-        if (m.error) { setStage("failed"); toast.error(m.error); return; }
+        if (m.error) { setFailure(m.failure ?? "provider"); setStage("failed"); toast.error(m.error); return; }
+        media.setSourceImages([]);
         const created = new Date().toISOString();
         const made: Creation[] = m.images ? m.images.map((url, i) => ({ id: "new-" + i + created, type, prompt, url, createdAt: created }))
           : [{ id: "new-" + created, type, prompt, url: (m.videoUrl || m.audioUrl)!, createdAt: created }];
@@ -165,6 +171,7 @@ export function LiveStudio({ tool }: { tool: Tool }) {
             </div>
           )}
           <label className="field-label">{t("prompt")}</label>
+          {type === "image" && !prompt.trim() && <div className="chips"><button onClick={() => setPrompt(fa ? "عکس حرفه‌ای یک فنجان قهوه روی میز چوبی با نور طبیعی کنار پنجره، بدون نوشته" : "A professional photo of a coffee cup on a wooden table by a window, natural light, no text")}>{fa ? "استفاده از یک نمونه" : "Use an example"}</button></div>}
           <textarea aria-label={t("prompt")} rows={6} value={prompt} onChange={(e) => setPrompt(e.target.value)}
             placeholder={type === "image" ? s("What image should I create? Describe the scene, style and light...") : type === "video" ? s("What video should I create? Describe it...") : s("What music should I create? Describe it...")} />
           <label className="field-label">{fa ? "سبک و حال‌وهوا" : "Style & mood"}</label>
@@ -245,17 +252,18 @@ export function LiveStudio({ tool }: { tool: Tool }) {
               )}
             </>
           )}
-          <Button variant="primary full" disabled={blocked || !prompt.trim() || stage === "running" || stage === "queued"} onClick={() => setConfirm(true)}>
+          <Button variant="primary full" disabled={blocked || cost === null || !prompt.trim() || stage === "running" || stage === "queued"} onClick={() => setConfirm(true)}>
             <Icon name="Sparkles" size={18} />
             {t("generate")}
-            <span>✦ {n(cost)}</span>
+            <span>{cost === null ? (media.costStatus === "loading" ? (fa ? "در انتظار تعرفه" : "Loading cost") : (fa ? "تعرفه در دسترس نیست" : "Cost unavailable")) : `✦ ${n(cost)}`}</span>
           </Button>
+          {cost === null && media.costStatus !== "loading" && <Button onClick={() => void media.refreshCosts()}>{fa ? "دریافت دوبارهٔ تعرفه" : "Reload cost"}</Button>}
           <p className="fine-print">
             {fa ? "اعتبار فقط برای عملیات موفق کسر می‌شود." : "Credits are refunded if generation fails."} · {t("balance")}: {n(credits)}
           </p>
         </section>
         <section className={`panel studio-canvas mobile-${tab === "results" ? "show" : "hide"}`}>
-          <div className="row-between"><h3>{t("results")}</h3></div>
+          <div className="row-between"><h3>{t("results")}</h3>{stage === "done" && type === "image" && results.length > 0 && <Link className="btn" href="/chat">{fa ? "قدم بعد: نوشتن کپشن در چت" : "Next: write a caption in chat"}</Link>}</div>
           {stage === "queued" || stage === "running" ? (
             <div className="job-progress">
               <div className="big-spark thinking">✦</div>
@@ -264,7 +272,7 @@ export function LiveStudio({ tool }: { tool: Tool }) {
               <span className="meter indeterminate"><i /></span>
             </div>
           ) : stage === "failed" ? (
-            <ErrorState retry={() => setConfirm(true)} />
+            <div role="alert"><p>{failureGuidance(failure, fa)}</p><div className="domain-actions"><Button onClick={() => setTab("prompt")}>{fa ? "بررسی متن و تنظیمات" : "Review prompt and settings"}</Button><Link className="btn" href={failure === "credits" ? "/wallet" : failure === "plan" ? "/plans" : "/gallery"}>{failure === "credits" ? (fa ? "کیف پول" : "Wallet") : failure === "plan" ? (fa ? "پکیج‌ها" : "Packages") : (fa ? "بررسی تاریخچه" : "Check history")}</Link></div></div>
           ) : shown.length ? (
             <div className="generated-grid">
               {shown.slice(0, 4).map((item) => (
@@ -296,11 +304,11 @@ export function LiveStudio({ tool }: { tool: Tool }) {
           <p>{prompt}</p>
           <dl className="cost-summary">
             <dt>{t("cost")}</dt>
-            <dd>✦ {n(cost)} {t("credits")}</dd>
+            <dd>✦ {cost === null ? "—" : n(cost)} {t("credits")}</dd>
             <dt>{t("balance")}</dt>
-            <dd>{n(Math.max(0, credits - cost))}</dd>
+            <dd>{cost === null ? "—" : n(Math.max(0, credits - cost))}</dd>
           </dl>
-          <Button variant="primary full" onClick={run}>{t("confirm")}</Button>
+          <Button variant="primary full" disabled={cost === null} onClick={run}>{t("confirm")}</Button>
         </Modal>
       )}
       {upgrade && <UpgradeModal onClose={() => setUpgrade(false)} />}

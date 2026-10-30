@@ -7,9 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { ChatData } from "@/lib/live-app";
 import type { Locale } from "@/lib/i18n";
+import { approvedMediaCost, imageOutputs, mediaFailure, type MediaFailure } from "@/lib/media-outcome";
 
 export type MediaKind = "image" | "video" | "music";
-export type Media = { images?: string[]; videoUrl?: string; audioUrl?: string; error?: string; pending?: boolean; pendingLabel?: string; requiresUpgrade?: boolean };
+export type Media = { images?: string[]; videoUrl?: string; audioUrl?: string; error?: string; failure?: MediaFailure; pending?: boolean; pendingLabel?: string; requiresUpgrade?: boolean };
 export type Template = { id: string; title: string; titleEn: string | null; titleDe?: string | null; content: string; contentEn: string | null; contentDe?: string | null; category: string; thumbnailUrl: string | null; guideFa: string | null; guideEn: string | null; guideDe?: string | null };
 export type MediaSettings = { imageStyle: string; imageRatio: string; imageQuality: "standard" | "hd"; imageCount: number; imageProvider: string; videoStyle: string; videoDuration: number; videoRatio: string; videoProvider: string; musicGenre: string; musicDuration: number; puter: boolean };
 
@@ -52,10 +53,23 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
   const [uploading, setUploading] = useState(false);
   const [plan, setPlan] = useState<string | null>(null);
   const [puterReady, setPuterReady] = useState(false);
+  const [costs, setCosts] = useState<Record<string, number> | null>(null);
+  const [costStatus, setCostStatus] = useState<"loading" | "ready" | "error">("loading");
+  async function refreshCosts() {
+    setCostStatus("loading");
+    try {
+      const r = await fetch("/api/credits/costs", { credentials: "include", cache: "no-store" });
+      if (!r.ok) throw Error();
+      const d = await r.json();
+      if (!d.costs || typeof d.costs !== "object") throw Error();
+      setCosts(d.costs); setCostStatus("ready");
+    } catch { setCosts(null); setCostStatus("error"); }
+  }
   const timers = useRef<ReturnType<typeof setInterval>[]>([]);
 
   useEffect(() => {
     if (!chat) return;
+    void refreshCosts();
     fetch("/api/user/profile", { credentials: "include" }).then((r) => r.json()).then((d) => setPlan(d?.user?.plan ?? null)).catch(() => {});
     fetch("/api/ai/image-providers", { credentials: "include" }).then((r) => r.json()).then((d) => { setImageProviders(d.providers || []); if (d.providers?.length) setSettings((v) => ({ ...v, imageProvider: d.providers[0].id })); }).catch(() => {});
     fetch("/api/ai/video-providers", { credentials: "include" }).then((r) => r.json()).then((d) => { setVideoProviders(d.providers || []); if (d.providers?.length) setSettings((v) => ({ ...v, videoProvider: d.providers[0].id })); }).catch(() => {});
@@ -79,10 +93,8 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
   const refLimit = plan && plan !== "FREE" ? 7 : 2;
   const mediaCost = () => {
     const v = settings;
-    if (kind === "image") return (v.imageQuality === "hd" ? 10 : 5) * v.imageCount;
-    if (kind === "video") return chat?.videoDurations.find((d) => d.value === v.videoDuration)?.credits ?? 20;
-    if (kind === "music") return chat?.musicDurations.find((d) => d.value === v.musicDuration)?.credits ?? 10;
-    return 0;
+    if (kind === "chat") return 0;
+    return approvedMediaCost(costs, kind, v.imageQuality, v.imageCount, kind === "video" ? v.videoDuration : v.musicDuration);
   };
   /** The settings sent with a generation, as the classic chat records them. */
   const settingsPayload = () => {
@@ -104,6 +116,7 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
   /** Runs one generation with the current settings; results arrive through the handlers. */
   async function run(text: string, attachments: string[], h: Handlers) {
     if (kind === "chat") return;
+    if (mediaCost() === null) return h.onDone({ error: lang === "fa" ? "هزینه دریافت نشد؛ صفحه را تازه کنید." : "Cost unavailable. Refresh the page.", failure: "disabled" });
     const v = settings;
     try {
       if (kind === "image") {
@@ -115,9 +128,10 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
         } else {
           const res = await fetch("/api/image/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: text, style: v.imageStyle, ratio: v.imageRatio, quality: v.imageQuality, count: v.imageCount, sourceImageUrls: attachments, provider: v.imageProvider }) });
           const d = await res.json();
-          if (!res.ok) return h.onDone({ error: d.error || s("Generation failed"), requiresUpgrade: !!d.requiresUpgrade });
-          images = (d.images || []).map((img: { url: string }) => img.url);
+          if (!res.ok) return h.onDone({ error: d.error || s("Generation failed"), failure: mediaFailure(res.status, d), requiresUpgrade: !!d.requiresUpgrade });
+          images = imageOutputs(d);
         }
+        if (!images.length) return h.onDone({ error: s("Generation failed"), failure: "provider" });
         h.onDone({ images });
       } else if (kind === "video") {
         const res = await fetch("/api/video/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: text, style: v.videoStyle, duration: v.videoDuration, ratio: v.videoRatio, sourceImageUrl: attachments[0] || null, provider: v.videoProvider }) });
@@ -133,7 +147,7 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
         else { h.onPending({ pending: true, pendingLabel: s("Generating music...") }); poll("music", d.predictionId, d.musicId, h); }
       }
     } catch (err) {
-      h.onDone({ error: err instanceof Error && err.message ? err.message : s("Generation failed") });
+      h.onDone({ error: err instanceof Error && err.message ? err.message : s("Generation failed"), failure: "provider" });
     }
   }
 
@@ -165,5 +179,5 @@ export function useMediaTools(chat: ChatData | null, kind: MediaKind | "chat", l
     return text;
   }
 
-  return { settings, setSettings, imageProviders, videoProviders, templates, pickTemplate, sourceImages, setSourceImages, uploading, uploadReference, refLimit, translate, puterReady, mediaCost, settingsPayload, run };
+  return { settings, setSettings, imageProviders, videoProviders, templates, pickTemplate, sourceImages, setSourceImages, uploading, uploadReference, refLimit, translate, puterReady, mediaCost, costStatus, refreshCosts, settingsPayload, run };
 }
