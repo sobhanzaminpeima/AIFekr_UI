@@ -128,6 +128,18 @@ export function LiveVoice({ view }: { view: string }) {
   return <ProjectsView v={v} archived={view === "archive"} />;
 }
 
+/** The design's voice stepper (studio.tsx): script, voice, generate — each step is its tab. */
+function VoiceStepper({ current }: { current: number }) {
+  const { fa, n } = useApp();
+  const steps = fa ? ["متن و زبان", "انتخاب صدا", "ساخت و شنیدن"] : ["Script", "Voice", "Generate"];
+  const href = ["/voice-studio?tab=text", "/voice-studio?tab=voice", "/voice-studio?tab=generate"];
+  return (
+    <div className="stepper">
+      {steps.map((s, i) => <Link key={s} href={href[i]} className={i === current ? "current" : i < current ? "completed" : ""} aria-current={i === current ? "step" : undefined}><span>{n(i + 1)}</span>{s}</Link>)}
+    </div>
+  );
+}
+
 // ── Voice projects / Archive ───────────────────────────────────────────────
 function ProjectsView({ v, archived }: { v: VoiceCtx; archived: boolean }) {
   const { fa, t, n } = useApp();
@@ -201,6 +213,7 @@ function ScriptView({ v }: { v: VoiceCtx }) {
   }
   return (
     <>
+      <VoiceStepper current={0} />
       <div className="domain-toolbar">
         <select aria-label={fa ? "پروژه صوتی" : "Voice project"} value={current?.id || ""} onChange={(e) => { setActive(e.target.value); setDraft(null); }}>
           <option value="">{fa ? "انتخاب پروژه" : "Choose project"}</option>
@@ -241,8 +254,8 @@ function ScriptView({ v }: { v: VoiceCtx }) {
           <div className="domain-actions">
             <Button onClick={() => edit({ segments: [...current.segments, ""] })}>{fa ? "افزودن بخش" : "Add segment"}</Button>
             <Button type="submit" variant="primary" disabled={busy}>{t("save")}</Button>
-            <Button disabled={busy} onClick={async () => { if (await commit(current)) location.assign("/voice-studio?tab=generate"); }}>
-              {fa ? "ادامه در ساخت صدا" : "Continue to audio generation"}
+            <Button disabled={busy} onClick={async () => { if (await commit(current)) location.assign("/voice-studio?tab=voice"); }}>
+              {t("next")}
               <Icon name="ArrowLeft" size={16} />
             </Button>
           </div>
@@ -300,7 +313,7 @@ function VoiceSettings({ v, language }: { v: VoiceCtx; language: string }) {
 }
 
 function LibraryView({ v }: { v: VoiceCtx }) {
-  const { fa } = useApp();
+  const { fa, t } = useApp();
   const { data, k, choice, setChoice, active, lang } = v;
   const language = data!.projects.find((p) => p.id === active)?.language || lang;
   const { voices } = catalogFor(v, language);
@@ -320,6 +333,8 @@ function LibraryView({ v }: { v: VoiceCtx }) {
     void audio.play().then(() => setPlaying(id)).catch(() => setPlaying(""));
   }
   return (
+    <>
+    <VoiceStepper current={1} />
     <div className="voice-library">
       <section>
         <div className="domain-toolbar">
@@ -361,8 +376,10 @@ function LibraryView({ v }: { v: VoiceCtx }) {
         <h3>{fa ? "تنظیمات پیش‌فرض صدا" : "Default voice settings"}</h3>
         <Notices v={v} />
         <VoiceSettings v={v} language={language} />
+        <Link className="btn primary full" href="/voice-studio?tab=generate" aria-disabled={!choice.voiceId}>{t("next")}<Icon name={fa ? "ArrowLeft" : "ArrowRight"} size={16} /></Link>
       </aside>
     </div>
+    </>
   );
 }
 
@@ -470,17 +487,10 @@ function GenerateView({ v }: { v: VoiceCtx }) {
       toast.error(err((e as Error).message));
     } finally { setSubmitting(false); }
   }
-  const steps = fa ? ["متن و زبان", "انتخاب صدا", "ساخت و شنیدن"] : ["Script", "Voice", "Generate"];
-  const stepHref = ["/voice-studio?tab=text", "/voice-studio?tab=voice", "/voice-studio?tab=generate"];
-
   return (
     <div className="studio-page">
       <SectionTitle title={fa ? tool.fa : tool.en} subtitle={fa ? tool.description : tool.descriptionEn} />
-      <div className="stepper">
-        {steps.map((s, i) => (
-          <Link key={s} href={stepHref[i]} className={i === 2 ? "current" : ""}><span>{n(i + 1)}</span>{s}</Link>
-        ))}
-      </div>
+      <VoiceStepper current={2} />
       <Notices v={v} offline={offline} />
       <div className="studio-tabs chips">
         {["prompt", "results", "history"].map((key) => <button className={tab === key ? "selected" : ""} onClick={() => setTab(key)} key={key}>{t(key as "prompt")}</button>)}
