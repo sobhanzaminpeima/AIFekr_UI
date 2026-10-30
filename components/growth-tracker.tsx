@@ -6,7 +6,7 @@ import { useSite } from "./site-link";
 // Same beacons as the classic site's GrowthTracker (aifekr.com
 // src/components/growth/GrowthTracker.tsx), so attribution and the customer
 // growth reports count new-design visits exactly like classic ones.
-function growthEvent(name: string, data: { moduleId?: string | null; metadata?: Record<string, string | number | boolean | null> } = {}) {
+export function growthEvent(name: string, data: { moduleId?: string | null; metadata?: Record<string, string | number | boolean | null> } = {}) {
   try {
     void fetch("/api/growth/event", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, ...data }), keepalive: true }).catch(() => {});
   } catch { /* tracking never affects the page */ }

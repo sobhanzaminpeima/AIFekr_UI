@@ -8,6 +8,8 @@ import { recentChats } from "@/mocks/catalog";
 import { TranslationKey, Locale } from "@/lib/i18n";
 import { AdminNavigation } from "./admin-navigation";
 import {ModuleDirectory} from './module-directory';
+import { useShell } from "./live-shell-context";
+import { LiveFrame, NotificationBell, useLiveCredits, useLiveProjects } from "./live-shell-widgets";
 const nav: [string, TranslationKey, string][] = [
   ["/home", "home", "LayoutDashboard"],
   ["/chat", "chat", "MessagesSquare"],
@@ -40,6 +42,14 @@ export function Preferences() {
     </div>
   );
 }
+/**
+ * The frame's sections on aifekr.com. /business has no page of its own there:
+ * like the classic menu, it opens the CRM for accounts with business access
+ * and the industry packs otherwise.
+ */
+function liveNavHref(href: string, business: boolean) {
+  return href === "/business" ? (business ? "/crm" : "/industry") : href;
+}
 export function Shell({
   path,
   children,
@@ -47,7 +57,14 @@ export function Shell({
   path: string;
   children: React.ReactNode;
 }) {
-  const { t, fa, n, credits } = useApp();
+  const app = useApp();
+  const { t, fa, n } = app;
+  // Live mode (signed in on aifekr.com): the same frame with the account's real data.
+  const live = useShell();
+  const liveCredits = useLiveCredits(live?.user.credits ?? 0);
+  const credits = live ? liveCredits : app.credits;
+  const projects = useLiveProjects(!!live);
+  const initial = (live?.user.name || "").trim().charAt(0) || "✦";
   const [command, setCommand] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -119,7 +136,7 @@ export function Shell({
           </>
         )}
         <div className="side-label">{admin ? t("admin") : t("workspace")}</div>
-        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.map(([href,key,icon])=><Link href={href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}</Link>)}</nav>}
+        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}</Link>)}</nav>}
         {!admin && (
           <>
             <div className="side-label recent-label">
@@ -127,7 +144,14 @@ export function Shell({
               <Link href="/chat">{t("all")}</Link>
             </div>
             <nav className="recent-nav">
-              {recentChats.map(([a, b], i) => (
+              {live
+                ? live.conversations.filter((c) => !c.projectId).slice(0, 4).map((c) => (
+                    <Link key={c.id} href={"/chat/" + c.id}>
+                      <Icon name="MessageSquare" size={15} />
+                      <span>{c.title || live.copy.untitledChat}</span>
+                    </Link>
+                  ))
+                : recentChats.map(([a, b], i) => (
                 <Link key={a} href={"/chat?id=" + i}>
                   <Icon name="MessageSquare" size={15} />
                   <span>{fa ? a : b}</span>
@@ -136,15 +160,29 @@ export function Shell({
             </nav>
             <div className="side-label">
               <span>{t("projects")}</span>
+              {live ? (
+                <button className="icon-btn" aria-label={t("add")} onClick={projects.create}>
+                  <Icon name="Plus" size={15} />
+                </button>
+              ) : (
               <Link href="/gallery" aria-label={t("add")}>
                 <Icon name="Plus" size={15} />
               </Link>
+              )}
             </div>
+            {live ? projects.list.slice(0, 3).map((p) => (
+              <Link key={p.id} href={"/chat?project=" + p.id} className="project-link">
+                <span className="tiny-dot" style={{ background: p.color }} />
+                {p.name}
+                <Icon name="ChevronDown" size={14} />
+              </Link>
+            )) : (
             <Link href="/gallery" className="project-link">
               <span className="tiny-dot" />
               {fa ? "برند استودیو نارنج" : "Narenj studio brand"}
               <Icon name="ChevronDown" size={14} />
             </Link>
+            )}
           </>
         )}
         <div className="sidebar-bottom">
@@ -165,11 +203,11 @@ export function Shell({
             </div>
           </Link>
           <Link className="user-menu" href="/settings">
-            <span className="avatar">س</span>
+            <span className="avatar">{live ? initial : "س"}</span>
             <div>
-              <strong>{fa ? "سارا محمدی" : "Sara Mohammadi"}</strong>
+              <strong>{live ? live.user.name || live.copy.nav.settings : fa ? "سارا محمدی" : "Sara Mohammadi"}</strong>
               <small>
-                {fa ? "طرح حرفه‌ای" : "Pro workspace"} <span>PRO</span>
+                {live ? live.user.planName : fa ? "طرح حرفه‌ای" : "Pro workspace"} <span>{live ? live.user.plan : "PRO"}</span>
               </small>
             </div>
             <Icon name="ChevronsUpDown" size={15} />
@@ -203,34 +241,34 @@ export function Shell({
           </div>
           <div className="top-actions">
             <button className="btn module-switcher" onClick={()=>setDirectory(true)} aria-label={fa?'انتخاب ماژول':'Choose workspace'}><Icon name="LayoutGrid" size={18}/><span>{fa?'ماژول‌ها':'Workspaces'}</span></button>
-            <span className="live-status">
+            {!live && <span className="live-status">
               <i />
               {t("mock")}
-            </span>
+            </span>}
             <Preferences />
             <Link className="credit-pill" href="/credits">
               <Icon name="Sparkles" size={14} />
               {n(credits)}
             </Link>
-            <Link
+            {live ? <NotificationBell /> : <Link
               className="icon-btn notification-btn"
               href="/notifications"
               aria-label={t("notifications")}
             >
               <Icon name="Bell" size={19} />
               <i />
-            </Link>
+            </Link>}
             <Link
               href="/settings"
               className="avatar small"
               aria-label={t("profile")}
             >
-              س
+              {live ? initial : "س"}
             </Link>
           </div>
         </header>
         <main className="page-content" id="main">
-          {children}
+          {live ? <LiveFrame path={path}>{children}</LiveFrame> : children}
         </main>
         {directory&&<Modal title={fa?'انتخاب فضای کاری':'Choose a workspace'} onClose={()=>setDirectory(false)}><ModuleDirectory compact onNavigate={()=>{setDirectory(false);setMobile(false);}}/></Modal>}
         <footer className="app-footer">
@@ -241,8 +279,8 @@ export function Shell({
               : "A little spark. Endless possibilities."}
           </span>
           <div>
-            <Link href="/sitemap-ui">{t("sitemap")}</Link>
-            <Link href="/design-system">{t("design")}</Link>
+            {!live && <Link href="/sitemap-ui">{t("sitemap")}</Link>}
+            {!live && <Link href="/design-system">{t("design")}</Link>}
             <button onClick={() => setShortcuts(true)}>⌘ ?</button>
           </div>
         </footer>
@@ -262,7 +300,7 @@ export function Shell({
           <Link
             className={`${path === href ? "active" : ""} ${key === "chat" ? "center-chat" : ""}`}
             key={href}
-            href={href}
+            href={live ? liveNavHref(href, live.access.hasBusinessAccess) : href}
           >
             <Icon name={icon} />
             <span>{t(key)}</span>

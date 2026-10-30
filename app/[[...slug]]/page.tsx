@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { cache } from "react";
+import { notFound, redirect } from "next/navigation";
 import { Platform } from "@/components/platform";
 import { SiteProvider } from "@/components/site-link";
 import GrowthTracker from "@/components/growth-tracker";
 import { v2Ready, type SiteData } from "@/lib/live";
+import { v2App, type ShellData } from "@/lib/live-app";
+import { ShellProvider } from "@/components/live-shell-context";
 
 const MAIN = process.env.UI_MAIN_ORIGIN;
 type Props = { params: Promise<{ slug?: string[] }> };
@@ -12,7 +15,7 @@ const pathOf = async (params: Props["params"]) => "/" + ((await params).slug?.jo
 
 /** Real public content from the main site, cached for a minute; null outside live mode. */
 async function siteData(path: string): Promise<SiteData | null> {
-  if (!MAIN || !v2Ready(path)) return null;
+  if (!MAIN || !(v2Ready(path) || v2App(path))) return null;
   const lang = (await headers()).get("x-ui-lang") || "fa";
   const res = await fetch(`${MAIN}/api/public/site?lang=${encodeURIComponent(lang)}&path=${encodeURIComponent(path)}`, { next: { revalidate: 60 } });
   // Never fall back to demo content on aifekr.com; the error page is shown instead.
@@ -20,11 +23,33 @@ async function siteData(path: string): Promise<SiteData | null> {
   return (await res.json()) as SiteData;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const data = await siteData(await pathOf(params));
-  if (!data?.seo) return {};
-  const { metadataBase, ...rest } = data.seo.metadata as Metadata & { metadataBase?: string };
+/**
+ * A signed-in page's frame from the main site, with the visitor's own cookies.
+ * Sends the visitor wherever the classic layout would (sign-in, onboarding...).
+ */
+const shellData = cache(async (path: string): Promise<ShellData | null> => {
+  if (!MAIN || !v2App(path)) return null;
+  const h = await headers();
+  const requested = h.get("x-aifekr-path") || path;
+  const res = await fetch(`${MAIN}/api/app/shell?path=${encodeURIComponent(requested)}`, { cache: "no-store", headers: { cookie: h.get("cookie") || "" } });
+  if (!res.ok) throw new Error(`App frame unavailable (${res.status})`);
+  const data = await res.json();
+  if (data.redirect) redirect(data.redirect);
+  // Chat-only and /play frames are never routed here by the main site.
+  if (!data.lang) throw new Error("Unsupported app frame");
+  return data as ShellData;
+});
+
+const toMetadata = (raw: Record<string, unknown>): Metadata => {
+  const { metadataBase, ...rest } = raw as Metadata & { metadataBase?: string };
   return { ...rest, metadataBase: metadataBase ? new URL(metadataBase) : undefined };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const path = await pathOf(params);
+  if (MAIN && v2App(path)) return toMetadata((await shellData(path))!.metadata);
+  const data = await siteData(path);
+  return data?.seo ? toMetadata(data.seo.metadata) : {};
 }
 
 export default async function Page({ params }: Props) {
@@ -32,11 +57,14 @@ export default async function Page({ params }: Props) {
   const data = await siteData(path);
   // Live pages exist only where the main site has the same page (same URL, same SEO).
   if (MAIN && v2Ready(path) && !data?.seo) notFound();
+  const shell = await shellData(path);
   return (
     <SiteProvider data={data}>
+      <ShellProvider data={shell}>
       {data?.seo?.jsonLd.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data.seo.jsonLd).replace(/</g, "\u003c") }} /> : null}
       <Platform path={path} />
       {data && <GrowthTracker />}
+      </ShellProvider>
     </SiteProvider>
   );
 }

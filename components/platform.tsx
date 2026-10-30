@@ -47,6 +47,7 @@ import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
+import { useShell } from "./live-shell-context";
 export function Platform({ path }: { path: string }) {
   if (useSite()) return <LivePlatform path={path} />;
   return (
@@ -61,6 +62,14 @@ export function Platform({ path }: { path: string }) {
  */
 function LivePlatform({ path }: { path: string }) {
   const { fa } = useApp();
+  // Signed-in pages bring their own frame (sidebar, banners, skip link).
+  // Signed-in pages: the design's own frame and screens, with real data.
+  if (useShell()) return (
+    <>
+      <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
+      <Shell path={path}>{path === "/home" ? <Dashboard /> : null}</Shell>
+    </>
+  );
   const section = path.split("/")[1];
   const content =
     path === "/" ? <Landing />

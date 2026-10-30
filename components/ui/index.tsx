@@ -1,5 +1,7 @@
 "use client";
 import Link from "@/components/site-link";
+import { useShell } from "@/components/live-shell-context";
+import { growthEvent } from "@/components/growth-tracker";
 import { useEffect, useRef, useId, createContext, useContext } from "react";
 import {
   Activity,
@@ -106,8 +108,73 @@ import {
   Mail,
   Eye,
   EyeOff,
+  CreditCard,
+  Zap,
+  GalleryHorizontal,
+  Gamepad2,
+  Briefcase,
+  FolderPlus,
+  Folder,
+  MoreHorizontal,
+  Settings,
+  History,
+  Crown,
+  LogOut,
+  Clock,
+  Clock3,
+  Compass,
+  ArrowUpRight,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Send,
+  Info,
+  AlertCircle,
+  AlertTriangle,
+  Handshake,
+  Factory,
+  Calculator,
+  ShoppingCart,
+  FlaskConical,
+  Stethoscope,
+  ChefHat,
+  Plane,
+  Code2,
 } from "lucide-react";
 const Icons = {
+  CreditCard,
+  Zap,
+  GalleryHorizontal,
+  Gamepad2,
+  Briefcase,
+  FolderPlus,
+  Folder,
+  MoreHorizontal,
+  Settings,
+  History,
+  Crown,
+  LogOut,
+  Clock,
+  Clock3,
+  Compass,
+  ArrowUpRight,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Send,
+  Info,
+  AlertCircle,
+  AlertTriangle,
+  Handshake,
+  Factory,
+  Calculator,
+  ShoppingCart,
+  FlaskConical,
+  Stethoscope,
+  ChefHat,
+  Plane,
+  Code2,
+
   Mail,
   Eye,
   EyeOff,
@@ -473,10 +540,23 @@ export function Command({ onClose }: { onClose: () => void }) {
   const { t, fa } = useApp();
   const input = useRef<HTMLInputElement>(null);
   const [query, setQuery] = ReactUseState("");
+  // On aifekr.com: the real destinations, and the main site's goal search
+  // (the classic command palette's) while typing.
+  const live = useShell();
+  const [found, setFound] = ReactUseState<{ href: string; label: string }[] | null>(null);
+  useEffect(() => {
+    if (!live) return;
+    if (!query.trim()) { setFound(null); return; }
+    let alive = true;
+    const id = setTimeout(() => {
+      fetch(`/api/navigation/search?lang=${live.lang}&q=${encodeURIComponent(query)}`).then((r) => (r.ok ? r.json() : { results: [] })).then((d) => { if (alive) setFound(d.results || []); }).catch(() => {});
+    }, 120);
+    return () => { alive = false; clearTimeout(id); };
+  }, [query, live]);
   useEffect(() => {
     input.current?.focus();
   }, []);
-  let results = allRoutes
+  let results: string[] = allRoutes
     .filter((p) =>
       `${RouteName(p, fa)} ${p}`.toLowerCase().includes(query.toLowerCase()),
     )
@@ -493,10 +573,10 @@ export function Command({ onClose }: { onClose: () => void }) {
         aria-label={t("search")}
       />
       <nav className="command-results">
-        {results.map((p, i) => (
-          <Link key={p + i} href={p} onClick={onClose}>
+        {(live ? (found ?? live.model.destinations).slice(0, 12) : results.map((href) => ({ href, label: RouteName(href, fa) }))).map(({ href: p, label }, i) => (
+          <Link key={p + i} href={p} onClick={() => { if (live && query.trim()) growthEvent("feature_search_used", { metadata: { found: found?.length ?? 0, picked: p.slice(0, 60) } }); onClose(); }}>
             <Icon name="ArrowUpLeft" />
-            <span>{RouteName(p, fa)}</span>
+            <span>{label}</span>
             <kbd>↵</kbd>
           </Link>
         ))}

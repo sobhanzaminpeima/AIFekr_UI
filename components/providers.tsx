@@ -39,7 +39,9 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
     try {
       const s = JSON.parse(localStorage.getItem("aifekr-ui") || "{}");
       if (!live && ["fa", "en", "de", "tr"].includes(s.locale)) setLocale(s.locale);
-      if (s.theme) setTheme(s.theme);
+      const classicTheme = live ? localStorage.getItem("theme") : null;
+      if (classicTheme === "light" || classicTheme === "dark") setTheme(classicTheme);
+      else if (s.theme) setTheme(s.theme);
       if (typeof s.credits === "number") setCredits(s.credits);
       if (Array.isArray(s.items)) setItems(s.items);
     } catch {}
@@ -63,12 +65,20 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
         locale,
         setLocale: live ? (next) => {
           document.cookie = `lang=${next}; path=/; max-age=31536000`;
+          // Like the classic switcher: saved to the account too (ignored when signed out).
+          try { localStorage.setItem("lang", next); } catch {}
+          void fetch("/api/user/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", keepalive: true, body: JSON.stringify({ language: next }) }).catch(() => {});
           const path = location.pathname.replace(/^\/(en|de|tr)(?=\/|$)/, "") || "/";
           if (isPublicRoute(path)) location.assign(localizedPath(path, next) + location.search.replace(/[?&]__lang=[^&]*/, ""));
           else location.reload();
         } : setLocale,
         theme,
-        setTheme,
+        setTheme: live ? (next) => {
+          // Shared with the classic design's theme switcher.
+          try { localStorage.setItem("theme", next); } catch {}
+          document.cookie = `theme=${next}; path=/; max-age=31536000`;
+          setTheme(next);
+        } : setTheme,
         t,
         fa: locale === "fa",
         n: (v) => num(v, locale),

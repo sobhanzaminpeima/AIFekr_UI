@@ -1,13 +1,64 @@
 "use client";
 import Link from "@/components/site-link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { Button, Icon, SectionTitle, SparkChart, ToolCard } from "./ui";
 import { projects, tools } from "@/mocks/catalog";
 import {BusinessDoctorEntry} from './module-directory';
+import { useShell } from "./live-shell-context";
+import { useLiveCredits } from "./live-shell-widgets";
+
+/** The account's own dashboard data on aifekr.com (main site /api/app/dashboard). */
+type LiveDashboard = {
+  firstName: string | null;
+  recent: { id: string; type: "image" | "video" | "music"; prompt: string; url: string; createdAt: string }[];
+  usage: { days: number[]; thisWeek: number; lastWeek: number };
+  commissionPercent: number;
+};
+type LiveCourse = { id: string; title: string; percent: number | null };
+const MEDIA_PAGE = { image: "/image/gallery", video: "/video/generate", music: "/music/generate" } as const;
+const MEDIA_ICON = { image: "Image", video: "Clapperboard", music: "AudioLines" } as const;
+
+function useLiveDashboard(enabled: boolean, student: boolean) {
+  const [data, setData] = useState<LiveDashboard | null>(null);
+  const [course, setCourse] = useState<LiveCourse | null>(null);
+  useEffect(() => {
+    if (!enabled) return;
+    fetch("/api/app/dashboard", { credentials: "include" }).then((r) => (r.ok ? r.json() : null)).then(setData).catch(() => {});
+    // The course in progress, from the same list the classic /learn page reads
+    // (only accounts with the student workspace have one).
+    if (student) fetch("/api/learn/courses?filter=progress").then((r) => (r.ok ? r.json() : null)).then((d) => {
+      const c = d?.courses?.find((x: { progress: { state: string }[] }) => x.progress.some((p) => p.state === "IN_PROGRESS"));
+      if (c) setCourse({ id: c.id, title: c.title, percent: c.progress[0]?.progressPercent ?? null });
+    }).catch(() => {});
+  }, [enabled, student]);
+  return { data, course };
+}
+
+/** The usage line from real daily credit use, drawn in the design's own chart frame. */
+function UsageChart({ days }: { days: number[] }) {
+  const max = Math.max(1, ...days);
+  const points = days.map((v, i) => `${(i * 300) / (days.length - 1)} ${64 - (v / max) * 58}`);
+  return (
+    <svg className="spark-chart" viewBox="0 0 300 70" role="img" aria-label="Usage trend">
+      <path d={"M" + points.join(" L")} fill="none" stroke="var(--brand-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 export function Dashboard() {
-  const { fa, t, n, credits, locale } = useApp();
+  const app = useApp();
+  const { fa, t, n, locale } = app;
+  const live = useShell();
+  const liveCredits = useLiveCredits(live?.user.credits ?? 0);
+  const credits = live ? liveCredits : app.credits;
+  const { data, course } = useLiveDashboard(!!live, !!live?.user.studentWorkspaceEnabled);
+  const greeting = live ? t("greeting").replace(/(سارا|Sara)$/, data?.firstName ?? live.user.name?.split(/\s+/)[0] ?? "").replace(/[،,]\s*$/, "") : t("greeting");
+  const ago = (iso: string) => {
+    const days = Math.round((new Date(iso).getTime() - Date.now()) / 86400000);
+    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day");
+  };
+  const trend = data && data.usage.lastWeek > 0 ? Math.round(((data.usage.thisWeek - data.usage.lastWeek) / data.usage.lastWeek) * 100) : null;
   const [prompt, setPrompt] = useState("");
   const [workspace, setWorkspace] = useState("all");
   const router = useRouter();
@@ -19,6 +70,8 @@ export function Dashboard() {
       ]
     : ["Create a beautiful image", "Grow my business", "Learn something new"];
   function routePrompt(value: string) {
+    // Chat is a page of the main site, so it loads in full.
+    if (live) return location.assign((/تصویر|image/i.test(value) ? "/chat?mode=image&prompt=" : "/chat?prompt=") + encodeURIComponent(value));
     router.push(
       (/تصویر|image/.test(value) ? "/create/image" : "/chat") +
         "?prompt=" +
@@ -41,10 +94,10 @@ export function Dashboard() {
             {new Intl.DateTimeFormat(
               locale === "fa" ? "fa-IR-u-ca-persian" : locale,
               { weekday: "long", day: "numeric", month: "long" },
-            ).format(new Date("2026-10-29T12:00:00Z"))}
+            ).format(live ? new Date() : new Date("2026-10-29T12:00:00Z"))}
           </span>
           <h1>
-            {t("greeting")} <span className="wave">✺</span>
+            {greeting} <span className="wave">✺</span>
           </h1>
           <p>{t("subtitle")}</p>
         </div>
@@ -155,7 +208,27 @@ export function Dashboard() {
             </Link>
           </SectionTitle>
           <div className="project-grid">
-            {projects.map((p, i) => (
+            {live ? (data?.recent.length ? data.recent.map((p) => (
+              <Link key={p.id} href={MEDIA_PAGE[p.type]} className="project-card">
+                <div className="project-art">
+                  {p.type === "image" ? <img src={p.url} alt={p.prompt} /> : <img src={p.type === "video" ? "/art/waves.svg" : "/art/voice.svg"} alt="" />}
+                  <span className="media-type">
+                    <Icon name={MEDIA_ICON[p.type]} size={13} />
+                    {t(p.type)}
+                  </span>
+                  {p.type === "video" && (
+                    <span className="play-icon">
+                      <Icon name="Play" size={18} />
+                    </span>
+                  )}
+                </div>
+                <strong>{p.prompt}</strong>
+                <small>
+                  {ago(p.createdAt)}
+                  <Icon name="ArrowUpLeft" size={14} />
+                </small>
+              </Link>
+            )) : data ? <p className="muted">{t("emptyBody")}</p> : null) : projects.map((p, i) => (
               <Link
                 key={p.id}
                 href={"/create/" + p.type + "?project=" + p.id}
@@ -203,14 +276,20 @@ export function Dashboard() {
           <strong>
             {n(credits)} <span>{t("credits")}</span>
           </strong>
-          <SparkChart />
+          {live ? <UsageChart days={data?.usage.days ?? [0, 0, 0, 0, 0, 0, 0]} /> : <SparkChart />}
           <div className="row-between">
             <span className="muted">
               {fa ? "مصرف این هفته" : "Used this week"}
             </span>
+            {live ? (
+              <span>
+                {n(data?.usage.thisWeek ?? 0)} {trend !== null && <small className={trend > 0 ? "orange-text" : "green"}>{trend > 0 ? "↗" : "↘"} {n(Math.abs(trend))}٪</small>}
+              </span>
+            ) : (
             <span>
               {n(186)} <small className="green">↘ {n(12)}٪</small>
             </span>
+            )}
           </div>
           <Link href="/credits" className="btn full">
             {t("topup")}
@@ -219,7 +298,7 @@ export function Dashboard() {
         </section>
       </div>
       <div className="bottom-bento">
-        <Link href="/learn/courses/ai-basics" className="panel learning-card">
+        <Link href={live ? (course ? "/learn?course=" + course.id : "/learn") : "/learn/courses/ai-basics"} className="panel learning-card">
           <span className="icon-chip blue">
             <Icon name="GraduationCap" size={26} />
           </span>
@@ -229,16 +308,22 @@ export function Dashboard() {
             </span>
             <h3>{fa ? "آینده را یاد بگیر" : "Learn your way forward"}</h3>
             <p>
-              {fa
+              {live
+                ? course
+                  ? fa ? `مسیر «${course.title}» را ادامه بده.` : `Continue your ${course.title} course.`
+                  : fa ? "دوره‌های آکادمی را ببین و یادگیری را شروع کن." : "Browse the academy courses and start learning."
+                : fa
                 ? "مسیر «مقدمات هوش مصنوعی» را ادامه بده."
                 : "Continue your Introduction to AI course."}
             </p>
+            {(!live || course?.percent != null) && (
             <div className="course-progress">
               <span className="meter">
-                <i style={{ width: "35%" }} />
+                <i style={{ width: (live ? course!.percent! : 35) + "%" }} />
               </span>
-              <small>{n(35)}٪</small>
+              <small>{n(live ? course!.percent! : 35)}٪</small>
             </div>
+            )}
           </div>
           <Icon name="ArrowUpLeft" className="directional" />
         </Link>
@@ -259,7 +344,11 @@ export function Dashboard() {
                 : "Share a spark. Earn credits."}
             </h3>
             <p>
-              {fa
+              {live
+                ? fa
+                  ? `از هر خرید دوستانی که دعوت می‌کنی، ${n(data?.commissionPercent ?? 0)}٪ پورسانت به کیف پولت اضافه می‌شود.`
+                  : `Earn a ${data?.commissionPercent ?? 0}% commission on every purchase your invited friends make.`
+                : fa
                 ? "برای هر دعوت موفق، ۱۰۰ اعتبار هدیه بگیر."
                 : "Earn 100 credits for every successful invitation."}
             </p>

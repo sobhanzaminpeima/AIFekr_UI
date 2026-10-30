@@ -2,6 +2,7 @@
 import NextLink from "next/link";
 import { createContext, useContext, type ComponentProps } from "react";
 import { liveHref, localizedPath, v2Ready, type SiteData } from "@/lib/live";
+import { v2App } from "@/lib/live-app";
 import type { Locale } from "@/lib/i18n";
 
 const SiteContext = createContext<SiteData | null>(null);
@@ -29,7 +30,7 @@ export default function Link({ href, ...rest }: ComponentProps<typeof NextLink>)
   const target = resolve(href);
   if (target.startsWith("#") || /^[a-z]+:/i.test(target)) return <NextLink href={target} {...rest} />;
   const path = target.replace(/^\/(en|de|tr)(?=\/|$)/, "") || "/";
-  if (v2Ready(path)) return <NextLink href={target} {...rest} />;
+  if (v2Ready(path) || v2App(path)) return <NextLink href={target} {...rest} />;
   const { prefetch: _prefetch, replace: _replace, scroll: _scroll, shallow: _shallow, passHref: _passHref, legacyBehavior: _legacy, locale: _locale, onNavigate: _onNavigate, ...anchor } = rest;
   return <a href={target} {...anchor} />;
 }
