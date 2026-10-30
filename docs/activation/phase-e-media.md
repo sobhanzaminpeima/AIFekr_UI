@@ -20,4 +20,6 @@ This increment preserves the v2 design and all approved financial rules. It does
 
 ## Rollout boundaries
 
+Released UI code `1d542ce` at `/var/www/aifekr-ui-v2-1d542ce`, port 3048. Preview and production health checks passed, as did the public homepage check. Artifact SHA-256 matched before extraction. Rollback remains `/var/www/aifekr-ui-v2-eb83908`; no release folder was deleted. Disk free after release: 6.4 GB. Source is pushed to `AIFekr_UI`, branch `codex/first-success-media`.
+
 No backend code, schema, plan, exchange rate, credit amount, trial entitlement or paid-provider setting is changed. Paused accounting changes remain uncommitted and are excluded. Remaining Phase E modules and phases F–H remain open. Voice/video trial economics still require explicit owner approval.
