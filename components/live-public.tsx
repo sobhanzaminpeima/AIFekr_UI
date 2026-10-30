@@ -37,7 +37,8 @@ export function LivePlans() {
   const [group, setGroup] = useState<(typeof GROUPS)[number]>("CHAT_STARTER");
   const labels = { CHAT_STARTER: pick(locale, "چت هوش مصنوعی", "AI Chat", "KI-Chat", "AI Sohbet"), BUSINESS: pick(locale, "بیزنس", "Business", "Business", "İşletme"), STUDENT: pick(locale, "دانشجویی", "Student", "Studium", "Öğrenci"), FITNESS: pick(locale, "فیتنس", "Fitness", "Fitness", "Fitness") };
   const rows = data.plans.filter((p) => p.category === group);
-  const choose = `/choose-plan?group=${GROUP_PARAM[group]}`;
+  // The package itself goes along, so /choose-plan opens with it marked.
+  const choose = (code: string) => `/choose-plan?group=${GROUP_PARAM[group]}&plan=${encodeURIComponent(code)}`;
   return (
     <div className="plans-page">
       <div className="center-heading">
@@ -65,7 +66,7 @@ export function LivePlans() {
             <h2>{p.name}</h2>
             <strong className="plan-price">{money(locale, p.minor, p.currency)}</strong>
             <small>{n(p.days)} {pick(locale, "روز", "days", "Tage", "gün")} · {n(p.credits)} {pick(locale, "کردیت", "credits", "Credits", "kredi")}</small>
-            <a href={choose} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
+            <a href={choose(p.code)} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
             <ul>
               {(group === "CHAT_STARTER" ? [pick(locale, "چت متنی، تاریخچه و ذخیرهٔ گفتگوها", "Text chat, history and saved conversations", "Textchat, Verlauf und gespeicherte Gespräche", "Metin sohbeti, geçmiş ve kayıtlı konuşmalar")] : p.features).concat(pick(locale, "خرید یک‌باره؛ بدون تمدید خودکار", "One-time purchase; no automatic renewal", "Einmaliger Kauf; keine automatische Verlängerung", "Tek seferlik satın alma; otomatik yenileme yok")).map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}
             </ul>
