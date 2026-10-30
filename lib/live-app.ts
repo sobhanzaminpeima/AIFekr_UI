@@ -21,11 +21,38 @@ export type ShellData = {
   conversations: Conversation[];
   copy: ShellCopy;
   model: { destinations: Link[] };
+  /** Only on /chat: the classic chat's wording and options. */
+  chat: ChatData | null;
+};
+
+type Option = { value: string; label: string };
+export type ChatData = {
+  t: { title: string; greeting: string; greetingSubtitle: string; placeholder: string; attach: string; copy: string; regenerate: string; good: string; improve: string; copied: string; thanks: string; disclaimer: string; stopGeneration: string; voiceInput: string; listening: string; readAloud: string; stopSpeaking: string; models: { auto: string } };
+  error: string;
+  /** The classic chat's strings keyed by their English text; "{n}" marks a value. */
+  strings: Record<string, string>;
+  expertModes: { id: string; label: string; color: string }[];
+  mediaTabs: { id: string; label: string }[];
+  ratios: Option[];
+  imageStyles: Option[];
+  videoRatios: Option[];
+  videoStyles: Option[];
+  videoDurations: { value: number; credits: number }[];
+  musicGenres: string[];
+  musicDurations: { value: number; credits: number }[];
+  imageCategories: { id: string; label: string }[];
+  referenceRequiredCategories: string[];
+  dataSources: Record<string, string>;
+  starters: { general: string[]; realEstate: string[] };
+  industrySlug: string | null;
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home"];
-export const v2App = (path: string) => V2_APP.includes(path.split(/[?#]/)[0].replace(/\/+$/, "") || "/");
+export const V2_APP = ["/home", "/chat"];
+export const v2App = (path: string) => {
+  const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  return V2_APP.includes(clean) || clean.startsWith("/chat/");
+};
 
 /** Fills "{n}" / "{name}" in the classic frame's wording. */
 export const fill = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ""));

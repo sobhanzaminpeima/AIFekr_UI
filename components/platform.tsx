@@ -67,7 +67,7 @@ function LivePlatform({ path }: { path: string }) {
   if (useShell()) return (
     <>
       <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
-      <Shell path={path}>{path === "/home" ? <Dashboard /> : null}</Shell>
+      <Shell path={path}>{path === "/home" ? <Dashboard /> : path === "/chat" || path.startsWith("/chat/") ? <Chat /> : null}</Shell>
     </>
   );
   const section = path.split("/")[1];

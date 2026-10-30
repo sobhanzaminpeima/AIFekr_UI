@@ -65,6 +65,16 @@ export function Shell({
   const credits = live ? liveCredits : app.credits;
   const projects = useLiveProjects(!!live);
   const initial = (live?.user.name || "").trim().charAt(0) || "✦";
+  // Recent chats follow new and renamed conversations, as in the classic sidebar.
+  const [recent, setRecent] = useState(live?.conversations ?? []);
+  useEffect(() => {
+    const onHistory = (e: Event) => {
+      const item = (e as CustomEvent<{ id: string; title?: string; updatedAt: string; projectId?: string | null }>).detail;
+      if (item?.id) setRecent((prev) => [{ ...(prev.find((c) => c.id === item.id) ?? { title: null, projectId: null }), ...item }, ...prev.filter((c) => c.id !== item.id)].slice(0, 30) as typeof prev);
+    };
+    addEventListener("aifekr:chat-history-updated", onHistory);
+    return () => removeEventListener("aifekr:chat-history-updated", onHistory);
+  }, []);
   const [command, setCommand] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -145,7 +155,7 @@ export function Shell({
             </div>
             <nav className="recent-nav">
               {live
-                ? live.conversations.filter((c) => !c.projectId).slice(0, 4).map((c) => (
+                ? recent.filter((c) => !c.projectId).slice(0, 4).map((c) => (
                     <Link key={c.id} href={"/chat/" + c.id}>
                       <Icon name="MessageSquare" size={15} />
                       <span>{c.title || live.copy.untitledChat}</span>
