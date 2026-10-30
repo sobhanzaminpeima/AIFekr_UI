@@ -33,8 +33,8 @@ export type ShellData = {
   accounting?: Record<string, string> | null;
   /** Only on /welcome: the account's onboarding answers, options, suggestions and wording. */
   welcome?: WelcomeData | null;
-  /** Only on /home: the saved goals (what comes first) and the optional invitation to set them. */
-  personal?: { goals: string[]; invite: boolean; copy: { invite: WelcomeCopy["invite"]; personalize: string } } | null;
+  /** Only on /home: the personalized workspace (main site lib/growth/workspace.ts). */
+  personal?: HomeWorkspace | null;
 };
 
 /** [Persian, English] — the onboarding options' own labels (main site lib/growth/modules.ts). */
@@ -46,6 +46,17 @@ export type WelcomeCopy = {
   next: string; back: string; skip: string; later: string; start: string; home: string;
   firstTask: string; result: string; credits: string; error: string; personalize: string;
   invite: { title: string; body: string; start: string; dismiss: string };
+};
+/** A tool on the personalized home: its real page and what it does for the user. */
+export type HomeTool = { id: string; href: string; name: string; benefit: string };
+export type HomeWorkspace = {
+  goals: string[];
+  invite: boolean;
+  /** The next useful step: the first suggested tool without a real result yet. */
+  primary: (HomeTool & { title: string; cta: string }) | null;
+  tools: HomeTool[];
+  recentModules: (HomeTool & { at: string })[];
+  copy: { invite: WelcomeCopy["invite"]; personalize: string; nextStep: string; recommended: string; recommendedHint: string; allTools: string; chat: string; opened: string };
 };
 export type WelcomeData = {
   credits: number; state: string; step: number;

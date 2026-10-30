@@ -80,6 +80,8 @@ export function Shell({
   const [collapsed, setCollapsed] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
   const [directory,setDirectory]=useState(false);
+  // The home page's "All tools" opens the same directory.
+  useEffect(()=>{const open=()=>setDirectory(true);window.addEventListener("aifekr:directory",open);return()=>window.removeEventListener("aifekr:directory",open);},[]);
   const router = useRouter();
   const admin = path.startsWith("/admin");
   useEffect(() => {

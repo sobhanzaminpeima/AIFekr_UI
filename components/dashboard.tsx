@@ -8,6 +8,7 @@ import { projects, tools } from "@/mocks/catalog";
 import {BusinessDoctorEntry} from './module-directory';
 import { useShell } from "./live-shell-context";
 import { useLiveCredits } from "./live-shell-widgets";
+import type { HomeTool } from "@/lib/live-app";
 
 /** The account's own dashboard data on aifekr.com (main site /api/app/dashboard). */
 type LiveDashboard = {
@@ -25,6 +26,20 @@ const GOAL_CHIP: Record<string, string> = {
   business: "business", crm: "business", sales: "business", real_estate: "business", seo: "business",
   education: "learn", fitness: "fit",
 };
+/** The design's icon and colour for each growth module (main site lib/growth/modules.ts ids). */
+const MODULE_LOOK: Record<string, [icon: string, accent: string, group: (typeof tools)[number]["group"]]> = {
+  "voice-studio": ["AudioLines", "purple", "create"], image: ["Image", "orange", "create"], video: ["Clapperboard", "blue", "create"],
+  "video-factory": ["Film", "pink", "create"], music: ["Music", "amber", "create"], chat: ["MessagesSquare", "blue", "create"],
+  crm: ["Users", "amber", "business"], seo: ["Search", "lime", "business"], social: ["Share2", "pink", "business"],
+  "website-designer": ["Globe", "blue", "business"], student: ["GraduationCap", "blue", "learn"], fitness: ["Dumbbell", "lime", "fit"],
+};
+/** A suggested module in the design's tool card: its real page and its benefit instead of a bare name. */
+const toolCard = (m: HomeTool) => {
+  const [icon, accent, group] = MODULE_LOOK[m.id] ?? (["Sparkles", "orange", "create"] as const);
+  return { slug: m.href.slice(1), fa: m.name, en: m.name, description: m.benefit, descriptionEn: m.benefit, icon, accent, cost: undefined as unknown as number, group };
+};
+/** Opens the frame's full module directory (components/shell.tsx). */
+const openDirectory = () => window.dispatchEvent(new Event("aifekr:directory"));
 
 function useLiveDashboard(enabled: boolean, student: boolean) {
   const [data, setData] = useState<LiveDashboard | null>(null);
@@ -67,7 +82,17 @@ export function Dashboard() {
   const trend = data && data.usage.lastWeek > 0 ? Math.round(((data.usage.thisWeek - data.usage.lastWeek) / data.usage.lastWeek) * 100) : null;
   const [prompt, setPrompt] = useState("");
   const personal = live?.personal;
-  const [workspace, setWorkspace] = useState(GOAL_CHIP[personal?.goals[0] ?? ""] ?? "all");
+  const goalChip = GOAL_CHIP[personal?.goals[0] ?? ""] ?? "all";
+  const [workspace, setWorkspace] = useState(goalChip);
+  // The goal's own workspace shows the suggested tools; any other chip shows that group's tools.
+  const suggested = !!personal?.tools.length && workspace === goalChip;
+  const primary = personal?.primary;
+  // Continue working: real creations, conversations and recently opened tools, latest first.
+  const continueItems = live ? [
+    ...(data?.recent ?? []).map((p) => ({ kind: "media" as const, at: p.createdAt, p })),
+    ...live.conversations.slice(0, 3).map((c) => ({ kind: "chat" as const, at: c.updatedAt, c })),
+    ...(personal?.recentModules ?? []).map((m) => ({ kind: "module" as const, at: m.at, m })),
+  ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 3) : [];
   const [invite, setInvite] = useState(!!personal?.invite);
   function dismissInvite() {
     setInvite(false);
@@ -142,16 +167,22 @@ export function Dashboard() {
         <div className="idea-content">
           <div className="eyebrow orange-text">
             <Icon name="Sparkles" size={15} />
-            {fa
+            {primary ? `${personal!.copy.nextStep} · ${primary.name}` : fa
               ? "اینجا، هر ایده‌ای ممکن می‌شود"
               : "YOUR NEXT BIG IDEA STARTS HERE"}
           </div>
-          <h2>{t("question")}</h2>
+          <h2>{primary ? primary.title : t("question")}</h2>
           <p>
-            {fa
+            {primary ? primary.benefit : fa
               ? "از اولین جرقه تا آخرین جزئیات، ای آی فکر کنار توست."
               : "From your first spark to the finishing touch, we’re with you."}
           </p>
+          {primary && (
+            <a className="btn primary hero-action" href={primary.href}>
+              {primary.cta}
+              <Icon name="ArrowLeft" size={16} className="directional" />
+            </a>
+          )}
           <form
             className="home-composer"
             onSubmit={(e) => {
@@ -212,20 +243,27 @@ export function Dashboard() {
         )}
       </div>
       <SectionTitle
-        title={fa ? "با یک جرقه شروع کن" : "Start with a spark"}
+        title={suggested ? personal!.copy.recommended : fa ? "با یک جرقه شروع کن" : "Start with a spark"}
         subtitle={
-          fa
+          suggested ? personal!.copy.recommendedHint : fa
             ? "ابزار درست، برای ایدهٔ بعدی تو"
             : "The right tool for your next idea"
         }
       >
+        {personal ? (
+          <button className="text-link" onClick={openDirectory}>
+            {personal.copy.allTools}
+            <Icon name="ArrowLeft" size={15} className="directional" />
+          </button>
+        ) : (
         <Link href="/create" className="text-link">
           {t("viewAll")}
           <Icon name="ArrowLeft" size={15} className="directional" />
         </Link>
+        )}
       </SectionTitle>
       <div className="quick-tools">
-        {order.slice(0, 4).map((tool) => (
+        {suggested ? personal!.tools.map((m) => <ToolCard key={m.id} tool={toolCard(m)} />) : order.slice(0, 4).map((tool) => (
           <ToolCard key={tool.slug} tool={tool} />
         ))}
       </div>
@@ -240,7 +278,25 @@ export function Dashboard() {
             </Link>
           </SectionTitle>
           <div className="project-grid">
-            {live ? (data?.recent.length ? data.recent.map((p) => (
+            {live ? (continueItems.length ? continueItems.map((item) => item.kind === "chat" ? (
+              <a key={"c" + item.c.id} href={"/chat/" + item.c.id} className="project-card">
+                <div className="project-art">
+                  <span className="project-icon"><Icon name="MessagesSquare" size={30} /></span>
+                  <span className="media-type"><Icon name="MessagesSquare" size={13} />{personal?.copy.chat ?? "Chat"}</span>
+                </div>
+                <strong>{item.c.title || personal?.copy.chat || "Chat"}</strong>
+                <small>{ago(item.at)}<Icon name="ArrowUpLeft" size={14} /></small>
+              </a>
+            ) : item.kind === "module" ? (
+              <a key={"m" + item.m.id} href={item.m.href} className="project-card">
+                <div className="project-art">
+                  <span className="project-icon"><Icon name={MODULE_LOOK[item.m.id]?.[0] ?? "Sparkles"} size={30} /></span>
+                  <span className="media-type"><Icon name="History" size={13} />{personal!.copy.opened}</span>
+                </div>
+                <strong>{item.m.name}</strong>
+                <small>{ago(item.at)}<Icon name="ArrowUpLeft" size={14} /></small>
+              </a>
+            ) : ((p) => (
               <Link key={p.id} href={MEDIA_PAGE[p.type]} className="project-card">
                 <div className="project-art">
                   {p.type === "image" ? <img src={p.url} alt={p.prompt} /> : <img src={p.type === "video" ? "/art/waves.svg" : "/art/voice.svg"} alt="" />}
@@ -260,7 +316,7 @@ export function Dashboard() {
                   <Icon name="ArrowUpLeft" size={14} />
                 </small>
               </Link>
-            )) : data ? <p className="muted">{t("emptyBody")}</p> : null) : projects.map((p, i) => (
+            ))(item.p)) : data ? <p className="muted">{t("emptyBody")}</p> : null) : projects.map((p, i) => (
               <Link
                 key={p.id}
                 href={"/create/" + p.type + "?project=" + p.id}
