@@ -48,6 +48,7 @@ import { AdminUsers } from "./admin-users";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
+import { LiveGallery } from "./live-create";
 export function Platform({ path }: { path: string }) {
   if (useSite()) return <LivePlatform path={path} />;
   return (
@@ -67,7 +68,15 @@ function LivePlatform({ path }: { path: string }) {
   if (useShell()) return (
     <>
       <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
-      <Shell path={path}>{path === "/home" ? <Dashboard /> : path === "/chat" || path.startsWith("/chat/") ? <Chat /> : null}</Shell>
+      <Shell path={path}>{
+        path === "/home" ? <Dashboard />
+        : path === "/chat" || path.startsWith("/chat/") ? <Chat />
+        : path === "/create" ? <Hub group="create" />
+        : path === "/gallery" ? <LiveGallery />
+        : path === "/image/gallery" ? <ModuleWorkspace module={findModule("/image/generate")!} path="/image/generate/gallery" />
+        : path === "/video/generate" || path === "/music/generate" ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
+        : null
+      }</Shell>
     </>
   );
   const section = path.split("/")[1];

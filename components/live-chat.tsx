@@ -11,17 +11,16 @@ import { toast } from "sonner";
 import { useShell } from "./live-shell-context";
 import { Icon } from "./ui";
 import { fill } from "@/lib/live-app";
+import { useMediaTools, type Media, type Template } from "./live-media";
 
 export type MediaType = "chat" | "image" | "video" | "music";
 type PromptBox = { name: string; type: string; targetAI: string; language: string; category: string; content: string };
-type Media = { images?: string[]; videoUrl?: string; audioUrl?: string; error?: string; pending?: boolean; pendingLabel?: string };
 type Action = { id: string; summary: string; expiresAt: string };
 type Doc = { name: string; text: string; expires?: number; nonce?: string; signature?: string };
 export type LiveMessage = {
   id: string; role: "user" | "assistant"; content: string; display: string; suggestions: string[]; promptBox: PromptBox | null;
   media?: Media; attachments?: string[]; actions?: Action[]; dataSources?: string[]; documents?: { name: string; text: string }[];
 };
-type Template = { id: string; title: string; titleEn: string | null; titleDe?: string | null; content: string; contentEn: string | null; contentDe?: string | null; category: string; thumbnailUrl: string | null; guideFa: string | null; guideEn: string | null; guideDe?: string | null };
 type Provider = { id: string; name: string; model: string; creditCost?: number };
 
 const CHAT_HISTORY_UPDATED = "aifekr:chat-history-updated";
@@ -56,32 +55,8 @@ function parseStored(raw: string): { text: string; media?: Media; attachments?: 
   } catch { return null; }
 }
 
-/** The classic chat's client-side downscale before a reference-photo upload (main site lib/image/downscaleImage). */
-async function downscale(file: File, maxEdge = 1600, quality = 0.85, skipBelow = 500 * 1024): Promise<File> {
-  if (!file.type.startsWith("image/") || file.size <= skipBelow) return file;
-  try {
-    const bitmap: ImageBitmap | HTMLImageElement = typeof createImageBitmap === "function" ? await createImageBitmap(file).catch(() => loadImg(file)) : await loadImg(file);
-    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return file;
-    ctx.drawImage(bitmap as CanvasImageSource, 0, 0, canvas.width, canvas.height);
-    if (typeof ImageBitmap !== "undefined" && bitmap instanceof ImageBitmap) bitmap.close();
-    const blob: Blob | null = await new Promise((r) => canvas.toBlob(r, "image/jpeg", quality));
-    if (!blob || blob.size >= file.size) return file;
-    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg", lastModified: Date.now() });
-  } catch { return file; }
-}
-async function loadImg(file: File) {
-  const url = URL.createObjectURL(file);
-  try { const img = new Image(); img.src = url; await img.decode(); return img; } finally { URL.revokeObjectURL(url); }
-}
-
 declare global {
   interface Window {
-    puter?: { ai: { txt2img: (p: string, o?: { model?: string }) => Promise<HTMLImageElement> } };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SpeechRecognition: new () => any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,45 +81,21 @@ export function useLiveChat(conversationFromPath: string | null) {
   const [activeProvider, setActiveProvider] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Doc[]>([]);
   const [documentBusy, setDocumentBusy] = useState(false);
-  const [sourceImages, setSourceImages] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [plan, setPlan] = useState<string | null>(null);
   const [listening, setListening] = useState(false);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [imageProviders, setImageProviders] = useState<{ id: string; name: string }[]>([]);
-  const [videoProviders, setVideoProviders] = useState<{ id: string; name: string }[]>([]);
-  const [settings, setSettings] = useState({ imageStyle: "realistic", imageRatio: "1:1", imageQuality: "standard" as "standard" | "hd", imageCount: 1, imageProvider: "", videoStyle: chat?.videoStyles[0]?.value ?? "", videoDuration: 5, videoRatio: "16:9", videoProvider: "", musicGenre: chat?.musicGenres[0] ?? "", musicDuration: 30, puter: false });
-  const [puterReady, setPuterReady] = useState(false);
   const abort = useRef<AbortController | null>(null);
+  const tools = useMediaTools(chat, mediaType, lang, s);
+  const { settings, setSettings, sourceImages, setSourceImages } = tools;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognition = useRef<any>(null);
-  const timers = useRef<ReturnType<typeof setInterval>[]>([]);
 
   // Same reference data as the classic chat.
   useEffect(() => {
     if (!chat) return;
     fetch("/api/ai/chat-providers", { credentials: "include" }).then((r) => r.json()).then((d) => setProviders(d.providers ?? [])).catch(() => {});
     fetch("/api/credits/costs", { credentials: "include" }).then((r) => r.json()).then((d) => setBaseCost(typeof d.costs?.chat === "number" ? d.costs.chat : null)).catch(() => {});
-    fetch("/api/user/profile", { credentials: "include" }).then((r) => r.json()).then((d) => setPlan(d?.user?.plan ?? null)).catch(() => {});
-    fetch("/api/ai/image-providers", { credentials: "include" }).then((r) => r.json()).then((d) => { setImageProviders(d.providers || []); if (d.providers?.length) setSettings((v) => ({ ...v, imageProvider: d.providers[0].id })); }).catch(() => {});
-    fetch("/api/ai/video-providers", { credentials: "include" }).then((r) => r.json()).then((d) => { setVideoProviders(d.providers || []); if (d.providers?.length) setSettings((v) => ({ ...v, videoProvider: d.providers[0].id })); }).catch(() => {});
-    return () => { timers.current.forEach(clearInterval); window.speechSynthesis?.cancel(); };
+    return () => { window.speechSynthesis?.cancel(); };
   }, [chat]);
-  useEffect(() => {
-    if (!chat || mediaType === "chat" || mediaType === "music") { setTemplates([]); return; }
-    fetch(`/api/prompts?toolType=${mediaType}`).then((r) => r.json()).then((d) => setTemplates(d.prompts || [])).catch(() => {});
-  }, [chat, mediaType]);
-  // The free image mode needs Puter's script, loaded only when that mode is chosen.
-  useEffect(() => {
-    if (!settings.puter || window.puter) { if (window.puter) setPuterReady(true); return; }
-    const el = document.createElement("script");
-    el.src = "https://js.puter.com/v2/";
-    el.async = true;
-    el.onload = () => setPuterReady(true);
-    document.body.appendChild(el);
-  }, [settings.puter]);
-
   // A saved conversation (/chat/<id>), with any action still awaiting confirmation.
   const load = useCallback((id: string) => {
     setConversationId(id);
@@ -256,82 +207,24 @@ export function useLiveChat(conversationFromPath: string | null) {
     void fetch("/api/create/chat/messages", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ conversationId: convId, role, content: JSON.stringify({ __media: role, ...payload }) }) }).catch(() => {});
   };
   const setMedia = (id: string, media: Media) => setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, media } : m)));
-  function poll(kind: "video" | "music", predictionId: string, itemId: string, msgId: string, convId: string | null) {
-    const t = setInterval(async () => {
-      try {
-        const d = await fetch(kind === "video" ? `/api/video/status?predictionId=${predictionId}&videoId=${itemId}` : `/api/music/status?predictionId=${predictionId}&musicId=${itemId}`).then((r) => r.json());
-        if (d.status === "succeeded") {
-          clearInterval(t);
-          const media = kind === "video" ? { videoUrl: d.output } : { audioUrl: d.output };
-          setMedia(msgId, media);
-          if (convId) saveTurn(convId, "assistant", media);
-        } else if (d.status === "failed") {
-          clearInterval(t);
-          const error = s(kind === "video" ? "Video generation failed" : "Music generation failed");
-          setMedia(msgId, { error });
-          if (convId) saveTurn(convId, "assistant", { error });
-        }
-      } catch { /* keep polling */ }
-    }, 6000);
-    timers.current.push(t);
-  }
   async function generate(text: string) {
     if (!chat || !text.trim() || streaming || generating || mediaType === "chat") return;
-    const v = settings;
-    if (mediaType === "image" && v.puter && !window.puter) return void toast.error(s("Could not connect to Puter"));
-    const settingsPayload = mediaType === "image" ? { style: v.imageStyle, ratio: v.imageRatio, quality: v.imageQuality, count: v.imageCount } : mediaType === "video" ? { style: v.videoStyle, duration: v.videoDuration, ratio: v.videoRatio } : { genre: v.musicGenre, duration: v.musicDuration };
+    if (mediaType === "image" && settings.puter && !window.puter) return void toast.error(s("Could not connect to Puter"));
+    const settingsPayload = tools.settingsPayload();
     const attachments = mediaType !== "music" ? sourceImages : [];
     const answerId = uid();
     setMessages((prev) => [...prev, { id: uid(), role: "user", content: text, display: text, suggestions: [], promptBox: null, attachments }, { id: answerId, role: "assistant", content: "", display: "", suggestions: [], promptBox: null, media: { pending: true } }]);
     setSourceImages([]);
     setGenerating(true);
-    let convId: string | null = null;
-    try {
-      convId = await ensureConversation(text);
-      if (convId) saveTurn(convId, "user", { text, sourceImageUrls: attachments, settings: settingsPayload, mediaType });
-      if (mediaType === "image") {
-        let images: string[];
-        if (v.puter) {
-          const styled = v.imageStyle && v.imageStyle !== "realistic" ? `${text}, ${v.imageStyle} style` : text;
-          images = await Promise.all(Array.from({ length: v.imageCount }, () => window.puter!.ai.txt2img(styled, { model: "gpt-image-1-mini" }).then((img) => img.src)));
-        } else {
-          const res = await fetch("/api/image/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: text, style: v.imageStyle, ratio: v.imageRatio, quality: v.imageQuality, count: v.imageCount, sourceImageUrls: attachments, provider: v.imageProvider }) });
-          const d = await res.json();
-          if (!res.ok) throw new Error(d.error);
-          images = (d.images || []).map((img: { url: string }) => img.url);
-        }
-        setMedia(answerId, { images });
-        if (convId) saveTurn(convId, "assistant", { images });
-      } else if (mediaType === "video") {
-        const res = await fetch("/api/video/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: text, style: v.videoStyle, duration: v.videoDuration, ratio: v.videoRatio, sourceImageUrl: attachments[0] || null, provider: v.videoProvider }) });
-        const d = await res.json();
-        if (!res.ok) throw new Error(d.error);
-        setMedia(answerId, { pending: true, pendingLabel: s("Processing video... (2-5 min)") });
-        poll("video", d.predictionId, d.videoId, answerId, convId);
-      } else {
-        const res = await fetch("/api/music/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: text, genre: v.musicGenre, duration: v.musicDuration }) });
-        const d = await res.json();
-        if (!res.ok) throw new Error(d.error);
-        if (d.status === "succeeded" && d.output) { setMedia(answerId, { audioUrl: d.output }); if (convId) saveTurn(convId, "assistant", { audioUrl: d.output }); }
-        else { setMedia(answerId, { pending: true, pendingLabel: s("Generating music...") }); poll("music", d.predictionId, d.musicId, answerId, convId); }
-      }
-    } catch (err) {
-      const error = err instanceof Error && err.message ? err.message : s("Generation failed");
-      setMedia(answerId, { error });
-      if (convId) saveTurn(convId, "assistant", { error });
-    } finally {
-      setGenerating(false);
-    }
+    const convId = await ensureConversation(text);
+    if (convId) saveTurn(convId, "user", { text, sourceImageUrls: attachments, settings: settingsPayload, mediaType });
+    await tools.run(text, attachments, {
+      onPending: (media) => setMedia(answerId, media),
+      onDone: ({ requiresUpgrade: _upgrade, ...media }) => { setMedia(answerId, media); if (convId) saveTurn(convId, "assistant", media); },
+    });
+    setGenerating(false);
   }
-  const mediaCost = () => {
-    const v = settings;
-    if (mediaType === "image") return (v.imageQuality === "hd" ? 10 : 5) * v.imageCount;
-    if (mediaType === "video") return chat?.videoDurations.find((d) => d.value === v.videoDuration)?.credits ?? 20;
-    if (mediaType === "music") return chat?.musicDurations.find((d) => d.value === v.musicDuration)?.credits ?? 10;
-    return 0;
-  };
   const chatCost = model === "auto" ? baseCost : providers.find((p) => p.model === model)?.creditCost ?? null;
-  const refLimit = plan && plan !== "FREE" ? 7 : 2;
 
   // ── Files ──────────────────────────────────────────────────────────────────
   async function attachDocument(file: File) {
@@ -347,34 +240,6 @@ export function useLiveChat(conversationFromPath: string | null) {
       toast.error((e as Error).message === "NO_SELECTABLE_TEXT" ? s("No selectable text. Use Student OCR for scanned PDFs.") : s("Could not read file. Choose a text PDF, DOCX, TXT, CSV or XLSX up to 5 MB."));
     } finally { setDocumentBusy(false); }
   }
-  async function uploadReference(file: File) {
-    if (sourceImages.length >= refLimit) return void toast.error(plan && plan !== "FREE" ? s("Up to {n} reference photos allowed", { n: refLimit }) : s("Upgrade your plan to upload more photos"));
-    setUploading(true);
-    try {
-      const form = new FormData();
-      form.append("file", await downscale(file));
-      const r = await fetch("/api/upload", { method: "POST", body: form }), d = await r.json();
-      if (!r.ok) throw new Error(d.error);
-      setSourceImages((prev) => [...prev, d.url]);
-      toast.success(s("Photo uploaded"));
-    } catch (e) {
-      toast.error(e instanceof Error && e.message ? e.message : s("Upload failed"));
-    } finally { setUploading(false); }
-  }
-  async function translate(text: string) {
-    try { const d = await fetch("/api/image/translate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) }).then((r) => r.json()); return d.translated || text; }
-    catch { toast.error(s("Translation failed")); return text; }
-  }
-  function pickTemplate(tpl: Template) {
-    const text = lang === "de" && tpl.contentDe ? tpl.contentDe : lang !== "fa" && tpl.contentEn ? tpl.contentEn : tpl.content;
-    if (mediaType === "image" && chat?.referenceRequiredCategories.includes(tpl.category)) {
-      setSettings((v) => ({ ...v, puter: false }));
-      if (!sourceImages.length) toast(s("This prompt applies to your own photo — upload a reference photo"), { icon: "📷" });
-    }
-    void fetch("/api/prompts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: tpl.id }) }).catch(() => {});
-    return text;
-  }
-
   // ── Voice ──────────────────────────────────────────────────────────────────
   const locale = ({ fa: "fa-IR", en: "en-US", de: "de-DE", tr: "tr-TR" } as const)[lang];
   function toggleVoice(onText: (text: string) => void) {
@@ -414,9 +279,9 @@ export function useLiveChat(conversationFromPath: string | null) {
 
   return {
     enabled: !!chat, chat, s, lang, messages, setMessages, conversationId, providers, model, setModel, chatCost, expertMode, setExpertMode,
-    mediaType, setMediaType, streaming, generating, activeProvider, send, generate, stop: () => abort.current?.abort(), mediaCost,
-    documents, setDocuments, documentBusy, attachDocument, sourceImages, setSourceImages, uploading, uploadReference, refLimit,
-    translate, templates, pickTemplate, settings, setSettings, imageProviders, videoProviders, puterReady,
+    mediaType, setMediaType, streaming, generating, activeProvider, send, generate, stop: () => abort.current?.abort(), mediaCost: tools.mediaCost,
+    documents, setDocuments, documentBusy, attachDocument, sourceImages, setSourceImages, uploading: tools.uploading, uploadReference: tools.uploadReference, refLimit: tools.refLimit,
+    translate: tools.translate, templates: tools.templates, pickTemplate: tools.pickTemplate, settings, setSettings, imageProviders: tools.imageProviders, videoProviders: tools.videoProviders, puterReady: tools.puterReady,
     listening, toggleVoice, speakingId, toggleSpeak,
   };
 }

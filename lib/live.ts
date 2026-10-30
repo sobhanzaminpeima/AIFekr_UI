@@ -58,6 +58,7 @@ const EXACT: Record<string, string> = {
   "/create/video": "/video/generate",
   "/create/music": "/music/generate",
   "/create/video-factory": "/video-factory",
+  "/create/voice": "/voice-studio",
   "/crm?tab=board": "/crm",
   "/social?tab=content": "/social",
   "/fit/dashboard": "/fitness",

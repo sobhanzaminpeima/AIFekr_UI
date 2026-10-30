@@ -1,5 +1,7 @@
 "use client";
 import Link from "@/components/site-link";
+import { useShell } from "./live-shell-context";
+import { LiveMediaLibrary, LiveStudio } from "./live-create";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -406,6 +408,15 @@ function useRecords(key: string, initial: Row[]) {
   return { rows, save, ready };
 }
 
+/**
+ * A module tab's address on aifekr.com. Images are generated in the chat's
+ * image tab there and character sheets have their own page, so the image
+ * module's tabs lead to those instead of sample screens.
+ */
+function liveTabHref(module: ModuleSpec, view: ViewSpec) {
+  if (module.id === "image") return view.id === "gallery" ? "/image/gallery" : view.id === "characters" ? "/image/generate" : "/chat?mode=image";
+  return moduleViewHref(module, view);
+}
 export function ModuleWorkspace({
   module,
   path,
@@ -415,6 +426,7 @@ export function ModuleWorkspace({
 }) {
   const search = useSearchParams();
   const { fa } = useApp();
+  const live = !!useShell();
   const view = resolveView(
     module,
     path,
@@ -454,7 +466,7 @@ export function ModuleWorkspace({
         {module.views.map((v) => (
           <Link
             key={v.id}
-            href={examplePath(moduleViewHref(module, v))}
+            href={live ? liveTabHref(module, v) : examplePath(moduleViewHref(module, v))}
             aria-current={view.id === v.id ? "page" : undefined}
             className={view.id === v.id ? "selected" : ""}
           >
@@ -480,6 +492,10 @@ export function ModuleWorkspace({
 
 function ViewContent({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
   const { fa } = useApp();
+  // On aifekr.com the create modules show the account's real creations and generate for real.
+  const live = !!useShell();
+  if (live && ['image','video','music'].includes(module.id) && ['gallery','history'].includes(view.id)) return <LiveMediaLibrary type={module.id as 'image'|'video'|'music'}/>;
+  if (live && ['video','music'].includes(module.id) && view.kind === 'studio') return <LiveStudio tool={tools.find((x) => x.slug === 'create/' + module.id)!}/>;
   if(module.id==='admin-ai-courses')return <AdminCourses view={view.id}/>;
   if(module.id==='admin-academy'&&view.id==='overview')return <AdminCourses view="overview"/>;
   if(module.id==='doctor')return <AssessmentWorkspace view={view.id}/>;

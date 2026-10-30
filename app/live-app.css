@@ -161,3 +161,13 @@ select option,select optgroup{background-color:var(--surface-1);color:var(--text
   .app-shell.chat-route .chat-welcome{padding:4px 0 8px}
   .app-shell.chat-route .page-content{padding-top:10px}
 }
+
+/* Create pages on aifekr.com (components/live-create.tsx) */
+.meter.indeterminate{position:relative;overflow:hidden}
+.meter.indeterminate i{position:absolute;inset-block:0;width:35%;animation:live-indeterminate 1.4s ease-in-out infinite}
+@keyframes live-indeterminate{0%{inset-inline-start:-35%}100%{inset-inline-start:100%}}
+.generated-result video,.generated-result img{width:100%;border-radius:12px;display:block;background:var(--surface-2)}
+.generated-result audio,.full-img[src$=".mp3"],audio.full-img{width:100%;margin:8px 0}
+video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
+.media-collection-preview img{width:100%;height:100%;object-fit:cover}
+.gallery-item img{object-fit:cover}
