@@ -222,3 +222,40 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .stepper a{display:flex;align-items:center;gap:7px;color:var(--text-muted);font-size:10px;min-width:max-content;padding:5px 8px;border-bottom:2px solid transparent}
 .stepper a > span{width:24px;height:24px;display:grid;place-items:center;background:var(--surface-2);border-radius:50%;font-size:10px}
 .stepper a:hover{color:var(--text-primary)}
+
+/* Video factory (live) */
+.factory-quick-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.factory-quick-steps .domain-card{display:grid;gap:6px;margin:0}
+.factory-quick-steps p{margin:0;font-size:12px;color:var(--text-secondary)}
+.factory-advanced{margin:18px 0;border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.factory-advanced summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
+.factory-advanced fieldset,.factory-step fieldset{border:0;padding:0;margin:14px 0 0;min-width:0}
+.factory-advanced fieldset:disabled,.factory-step fieldset:disabled{opacity:.55}
+.factory-step form > label,.factory-step > label{display:grid;gap:8px;margin:14px 0}
+.factory-step .domain-fields{margin:14px 0}
+.factory-brief{white-space:pre-wrap;color:var(--text-secondary)}
+.factory-chapter{margin:22px 0;padding-top:16px;border-top:1px solid var(--border)}
+.factory-chapter > label{display:grid;gap:8px;margin-bottom:14px}
+.factory-chapter .scene-script{margin:14px 0}
+.factory-shot-time{font-size:11px;color:var(--orange)}
+.storyboard-card label{display:grid;gap:6px;margin-top:10px;font-size:12px}
+.storyboard-card textarea,.storyboard-card input,.storyboard-card select{width:100%}
+.factory-inline-form{display:grid;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.factory-inline-form label{display:grid;gap:8px}
+.factory-plan ul,.factory-plan ol{padding-inline-start:18px;display:grid;gap:6px;font-size:13px}
+.factory-plan blockquote{margin:10px 0;padding:10px 14px;border-inline-start:3px solid var(--orange);background:var(--surface-2);border-radius:8px;overflow-wrap:anywhere}
+.factory-character{display:grid;gap:12px}
+.factory-asset-media{width:100%;height:160px;object-fit:cover;border-radius:10px;background:#000}
+.factory-json{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;max-height:260px;overflow:auto;background:var(--surface-2);padding:10px;border-radius:8px}
+.factory-fieldset{border:1px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;display:grid;gap:12px;min-width:0}
+.factory-fieldset legend{padding:0 8px;font-size:13px}
+.factory-fieldset > label,.production-publishing label,.production-ideas label{display:grid;gap:8px}
+.production-publishing .panel{display:grid;gap:14px;align-content:start}
+.production-ideas .panel{display:grid;gap:14px;align-content:start}
+.storyboard-preview video{width:100%;max-height:600px;background:#000;border-radius:12px}
+.production-project-card .badge{justify-self:start}
+@media(max-width:767px){.factory-quick-steps{grid-template-columns:1fr}}
+.factory-step .domain-fields,.factory-advanced .domain-fields,.factory-fieldset .domain-fields,.factory-form .domain-fields{align-items:start}
+.factory-step .domain-fields .check-label,.factory-advanced .domain-fields .check-label,.factory-form .domain-fields .check-label{display:flex;flex-direction:row;align-items:center;gap:10px;align-self:center;text-align:start;justify-content:flex-start}
+.factory-step .check-label input,.factory-advanced .check-label input,.factory-form .check-label input{width:18px;height:18px;flex-shrink:0;margin:0}
+.factory-step .domain-fields > label,.factory-advanced .domain-fields > label,.factory-fieldset .domain-fields > label,.factory-form .domain-fields > label{margin:0}

@@ -4,6 +4,7 @@ import { useShell } from "./live-shell-context";
 import { LiveMediaLibrary, LiveStudio } from "./live-create";
 import { LiveCharacters } from "./live-characters";
 import { LiveVoice } from "./live-voice";
+import { LiveFactory } from "./live-factory";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -494,6 +495,7 @@ function ViewContent({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
   if (live && ['image','video','music'].includes(module.id) && view.kind === 'studio') return <LiveStudio tool={tools.find((x) => x.slug === 'create/' + module.id)!}/>;
   if (live && module.id === 'image' && view.id === 'characters') return <LiveCharacters/>;
   if (live && module.id === 'voice') return <LiveVoice view={view.id}/>;
+  if (live && module.id === 'factory') return <LiveFactory view={view.id}/>;
   if(module.id==='admin-ai-courses')return <AdminCourses view={view.id}/>;
   if(module.id==='admin-academy'&&view.id==='overview')return <AdminCourses view="overview"/>;
   if(module.id==='doctor')return <AssessmentWorkspace view={view.id}/>;

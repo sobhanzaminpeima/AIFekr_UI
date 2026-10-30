@@ -25,6 +25,8 @@ export type ShellData = {
   chat: ChatData | null;
   /** Only on /voice-studio: the classic voice studio's wording and error messages. */
   voice: { strings: Record<string, string>; errors: Record<string, string> } | null;
+  /** Only on /video-factory: the classic factory's wording, keyed by English. */
+  factory: Record<string, string> | null;
 };
 
 type Option = { value: string; label: string };
@@ -54,7 +56,7 @@ export type ChatData = {
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio"];
+export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_APP.includes(clean) || clean.startsWith("/chat/");
