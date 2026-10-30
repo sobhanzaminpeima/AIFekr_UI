@@ -1,6 +1,8 @@
 "use client";
 import Link, { useHref, useSite } from "@/components/site-link";
 import { LiveCreditCalculator } from "./live-public";
+import { LiveOnboarding } from "./live-onboarding";
+import { useShell } from "./live-shell-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -603,6 +605,11 @@ export function Auth({ register = false }: { register?: boolean }) {
   );
 }
 export function Onboarding() {
+  // aifekr.com: the account's real onboarding (answers saved on the main site).
+  if (useShell()?.welcome) return <LiveOnboarding />;
+  return <DemoOnboarding />;
+}
+function DemoOnboarding() {
   const { fa, t } = useApp();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);

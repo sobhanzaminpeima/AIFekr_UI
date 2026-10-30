@@ -507,6 +507,7 @@ export function RouteName(path: string, fa: boolean) {
   }
   const common: Record<string, [string, string]> = {
     "/home": ["خانه", "Home"],
+    "/welcome": ["شخصی‌سازی", "Personalize"],
     "/chat": ["گفتگو", "Chat"],
     "/create": ["استودیو خلاقیت", "Creative studio"],
     "/business": ["کسب‌وکار", "Business"],

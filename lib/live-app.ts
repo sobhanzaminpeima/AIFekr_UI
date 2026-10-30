@@ -31,6 +31,28 @@ export type ShellData = {
   crm: import("./crm").CrmCopy | null;
   /** Only on /accounting pages: the classic accounting pages' wording, keyed by English. */
   accounting?: Record<string, string> | null;
+  /** Only on /welcome: the account's onboarding answers, options, suggestions and wording. */
+  welcome?: WelcomeData | null;
+  /** Only on /home: the saved goals (what comes first) and the optional invitation to set them. */
+  personal?: { goals: string[]; invite: boolean; copy: { invite: WelcomeCopy["invite"]; personalize: string } } | null;
+};
+
+/** [Persian, English] — the onboarding options' own labels (main site lib/growth/modules.ts). */
+type Copy2 = [string, string];
+type Choice = { id: string; label: Copy2 };
+export type Suggestion = { id: string; name: Copy2; path: string; firstValue: Copy2; exampleTask: Copy2 };
+export type WelcomeCopy = {
+  welcome: string; edit: string; steps: { title: string; hint: string }[];
+  next: string; back: string; skip: string; later: string; start: string; home: string;
+  firstTask: string; result: string; credits: string; error: string; personalize: string;
+  invite: { title: string; body: string; start: string; dismiss: string };
+};
+export type WelcomeData = {
+  credits: number; state: string; step: number;
+  answers: { goals: string[]; persona: string | null; intent: string | null };
+  options: { objectives: Choice[]; personas: Choice[]; intents: Choice[] };
+  recommendations: Suggestion[];
+  copy: WelcomeCopy;
 };
 
 type Option = { value: string; label: string };
@@ -62,7 +84,7 @@ export type ChatData = {
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm"];
+export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm", "/welcome"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_APP.includes(clean) || clean.startsWith("/chat/");

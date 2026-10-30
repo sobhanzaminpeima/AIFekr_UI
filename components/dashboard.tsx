@@ -19,6 +19,12 @@ type LiveDashboard = {
 type LiveCourse = { id: string; title: string; percent: number | null };
 const MEDIA_PAGE = { image: "/image/gallery", video: "/video/generate", music: "/music/generate" } as const;
 const MEDIA_ICON = { image: "Image", video: "Clapperboard", music: "AudioLines" } as const;
+/** The workspace chip that puts an onboarding goal's tools first (goal ids: main site lib/growth/modules.ts). */
+const GOAL_CHIP: Record<string, string> = {
+  media: "create", content: "create", youtube: "create",
+  business: "business", crm: "business", sales: "business", real_estate: "business", seo: "business",
+  education: "learn", fitness: "fit",
+};
 
 function useLiveDashboard(enabled: boolean, student: boolean) {
   const [data, setData] = useState<LiveDashboard | null>(null);
@@ -60,7 +66,13 @@ export function Dashboard() {
   };
   const trend = data && data.usage.lastWeek > 0 ? Math.round(((data.usage.thisWeek - data.usage.lastWeek) / data.usage.lastWeek) * 100) : null;
   const [prompt, setPrompt] = useState("");
-  const [workspace, setWorkspace] = useState("all");
+  const personal = live?.personal;
+  const [workspace, setWorkspace] = useState(GOAL_CHIP[personal?.goals[0] ?? ""] ?? "all");
+  const [invite, setInvite] = useState(!!personal?.invite);
+  function dismissInvite() {
+    setInvite(false);
+    fetch("/api/growth/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dismiss_invite" }) }).catch(() => {});
+  }
   const router = useRouter();
   const suggestions = fa
     ? [
@@ -107,6 +119,19 @@ export function Dashboard() {
           <Icon name="ChevronLeft" size={15} className="directional" />
         </Link>
       </div>
+      {invite && personal && (
+        <div className="plan-notice" role="status">
+          <Icon name="SlidersHorizontal" size={18} />
+          <div>
+            <strong>{personal.copy.invite.title}</strong>
+            <p>{personal.copy.invite.body}</p>
+            <div className="domain-actions">
+              <a className="btn primary" href="/welcome">{personal.copy.invite.start}</a>
+              <button className="btn" onClick={dismissInvite}>{personal.copy.invite.dismiss}</button>
+            </div>
+          </div>
+        </div>
+      )}
       <BusinessDoctorEntry/>
       <section className="idea-hero">
         <div className="hero-orb" aria-hidden="true">
@@ -175,9 +200,16 @@ export function Dashboard() {
             </button>
           ))}
         </div>
-        <span className="muted">
-          {fa ? "فضایی برای تمام ایده‌هایت" : "A space for every side of you"}
-        </span>
+        {personal ? (
+          <a className="text-link" href="/welcome">
+            <Icon name="SlidersHorizontal" size={14} />
+            {personal.copy.personalize}
+          </a>
+        ) : (
+          <span className="muted">
+            {fa ? "فضایی برای تمام ایده‌هایت" : "A space for every side of you"}
+          </span>
+        )}
       </div>
       <SectionTitle
         title={fa ? "با یک جرقه شروع کن" : "Start with a spark"}

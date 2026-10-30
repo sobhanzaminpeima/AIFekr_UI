@@ -70,6 +70,8 @@ function LivePlatform({ path }: { path: string }) {
       <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
       <Shell path={path}>{
         path === "/home" ? <Dashboard />
+        // Onboarding inside the signed-in frame: every page stays one click away.
+        : path === "/welcome" ? <Onboarding />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
