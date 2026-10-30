@@ -115,6 +115,9 @@ export function LiveStudio({ tool }: { tool: Tool }) {
   const styles = type === "image" ? chat!.imageStyles : type === "video" ? chat!.videoStyles : chat!.musicGenres.map((g) => ({ value: g, label: g }));
   const styleValue = type === "image" ? v.imageStyle : type === "video" ? v.videoStyle : v.musicGenre;
   const providers = type === "image" ? media.imageProviders : type === "video" ? media.videoProviders : [];
+  // Said before the user writes a prompt, not after a refusal: video and music outside the account's plan.
+  const access = chat?.planAccess;
+  const blocked = !!access && ((type === "video" && !access.video) || (type === "music" && !access.music));
 
   async function run() {
     setConfirm(false);
@@ -148,6 +151,19 @@ export function LiveStudio({ tool }: { tool: Tool }) {
       </div>
       <div className="studio-layout">
         <section className={`panel prompt-panel mobile-${tab === "prompt" ? "show" : "hide"}`}>
+          {blocked && access && (
+            <div className="plan-notice" role="status">
+              <Icon name="LockKeyhole" size={18} />
+              <div>
+                <strong>{type === "video" ? access.notice.videoTitle : access.notice.musicTitle}</strong>
+                <p>{access.notice.body}</p>
+                <div className="domain-actions">
+                  <Link className="btn primary" href="/image/generate">{access.notice.createImage}</Link>
+                  <a className="btn" href="/plans">{access.notice.packages}</a>
+                </div>
+              </div>
+            </div>
+          )}
           <label className="field-label">{t("prompt")}</label>
           <textarea aria-label={t("prompt")} rows={6} value={prompt} onChange={(e) => setPrompt(e.target.value)}
             placeholder={type === "image" ? s("What image should I create? Describe the scene, style and light...") : type === "video" ? s("What video should I create? Describe it...") : s("What music should I create? Describe it...")} />
@@ -229,7 +245,7 @@ export function LiveStudio({ tool }: { tool: Tool }) {
               )}
             </>
           )}
-          <Button variant="primary full" disabled={!prompt.trim() || stage === "running" || stage === "queued"} onClick={() => setConfirm(true)}>
+          <Button variant="primary full" disabled={blocked || !prompt.trim() || stage === "running" || stage === "queued"} onClick={() => setConfirm(true)}>
             <Icon name="Sparkles" size={18} />
             {t("generate")}
             <span>✦ {n(cost)}</span>

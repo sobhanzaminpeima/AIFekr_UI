@@ -29,6 +29,8 @@ export type ShellData = {
   factory: Record<string, string> | null;
   /** Only on /crm: the classic CRM's wording, label tables and dictionary. */
   crm: import("./crm").CrmCopy | null;
+  /** Only on /accounting pages: the classic accounting pages' wording, keyed by English. */
+  accounting?: Record<string, string> | null;
 };
 
 type Option = { value: string; label: string };
@@ -55,6 +57,8 @@ export type ChatData = {
   create: Record<string, string>;
   /** Only on /image/generate: the character creator's wording, styles and sample people. */
   characters: { strings: Record<string, string>; genres: { value: string; label: string }[]; samples: { id: string; label: string; portraitPrompt: string }[] } | null;
+  /** Whether the account's plan allows video and music (the generate routes' own checks), and the notice shown before a user starts. */
+  planAccess?: { video: boolean; music: boolean; notice: { videoTitle: string; musicTitle: string; body: string; createImage: string; packages: string } };
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */

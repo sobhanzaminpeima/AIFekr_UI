@@ -350,3 +350,8 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .btn.is-active{color:#4ade80;border-color:#4ade8055}
 @media(max-width:767px){.crm-two{grid-template-columns:1fr}.crm-invoice-line{grid-template-columns:1fr}.crm-upgrade{flex-direction:column;align-items:stretch}}
 @media print{body *{visibility:hidden}.crm-print-sheet,.crm-print-sheet *{visibility:visible}.crm-print-sheet{position:fixed;inset:0;border-radius:0}}
+
+/* Plan notice on the create pages (live) */
+.plan-notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;margin-bottom:16px;border:1px solid #ff6b0040;border-radius:14px;background:#ff6b000d}
+.plan-notice>svg{flex-shrink:0;margin-top:3px;color:var(--orange,#ff6b00)}
+.plan-notice p{margin:6px 0 12px;font-size:13px;color:var(--text-secondary);line-height:1.9}
