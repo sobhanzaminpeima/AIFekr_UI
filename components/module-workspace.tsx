@@ -13,6 +13,7 @@ import { LiveAdvisory } from "./live-advisory";
 import { LiveWebsite } from "./live-website";
 import { LiveReferral } from "./live-referral";
 import { LiveStartup } from "./live-startup";
+import { LiveSeo } from "./live-seo";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -453,6 +454,7 @@ export function ModuleWorkspace({
   if (live && module.id === "website") return <LiveWebsite module={module} view={view} />;
   if (live && module.id === "referral") return <LiveReferral module={module} view={view} />;
   if (live && module.id === "startup") return <LiveStartup module={module} view={view} />;
+  if (live && module.id === "seo") return <LiveSeo module={module} view={view} />;
   if (["crm", "accounting"].includes(module.id))
     return (
       <BusinessShell module={module} view={view}>

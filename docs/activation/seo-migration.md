@@ -1,0 +1,13 @@
+# SEO live migration — 2026-10-31
+
+The 17 design views use the existing SEO APIs: saved sites and schedules, technical URL/site audits and audit history, internal TXT/file verification, quoted DataForSEO research and rank CSV, language-aware text/meta optimization, saved posts and hero images, lessons, WordPress connections/tests, Search Console properties/reports, and content-plan draft generation. No prototype records or invented search metrics are used. Research previews are distinct from the explicitly confirmed paid job; a confirmation retry keeps the same idempotency identifier. Site ownership is verified by the backend, independently of Google verification.
+
+Content plan activation clearly describes recurring credit use and public publishing mode. It requires a loaded rate. Write-now is explicitly draft-only and shows background status; refresh does not restart generation. Connection secrets use password inputs and are never read back. Provider/audit evidence is escaped React text, not executable HTML. Applying metadata is a separate explicit real-site modification.
+
+The existing SEO streaming endpoint previously emitted AI failures as normal text followed by DONE. It now emits an error event and ends without success. The new stream consumer rejects incomplete or empty outputs. No actual paid production operation was used to test this adapter.
+
+Evidence: 18 browser-free UI checks passed; 179 backend SEO/theme checks passed; 18 isolated local HTTP checks passed. The local HTTP test covers site creation/read, foreign ownership denial, verification challenge, disabled content-plan round-trip, posts/lessons/research/rank reads and unchanged credits. No public crawl, DNS verification, WordPress/Google connection, external publication or paid generation was executed. Browser/mobile visual QA remains unavailable. The adapter requires `UI_V2_SEO_ENABLED=1` and only migrates `/seo`; existing detail URLs remain classic. Deployment is not yet recorded in this report.
+
+## Home regression
+
+The prior repair checked the hashed Prisma alias while the Webpack route actually imported the direct `@prisma/client` name. The direct alias was absent and resolved to an outdated parent client. Both names now resolve to the isolated current runtime, verified from the deployed shell route with a read-only production database URL. The deployment checker now uses `createRequire` from the exact deployed route instead of its own directory. Local signed-in Home renders and shell responses returned 200 in fa/en/de/tr using synthetic accounts; no production account was impersonated. Error-page retry now performs a full reload to discard a cached failed server payload.
