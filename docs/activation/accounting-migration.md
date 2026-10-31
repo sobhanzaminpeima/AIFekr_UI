@@ -25,4 +25,4 @@ Main backend changes include accounting copy/access in the shell and manual jour
 
 ## Still open
 
-Accounting parity needs a final per-action local HTTP walkthrough and review of BI export/token management, AI proposals/anomalies, commission and management-fee tools, and report preview presentation. These are not marked completed by the presence of navigation tabs. Social, SEO, lead generation, business/learning/fitness/admin migrations remain separate work; do not enable their prototype screens.
+Accounting parity still needs UI-level interaction verification, commission and management-fee tools, cash-flow narrative and report preview presentation. BI token management and AI proposals/anomalies are now wired to their existing contracts, including parsing the stored proposal payload and showing actual anomaly account/deviation fields; no live token or paid request was created. These are not marked completed by the presence of navigation tabs. Social, SEO, lead generation, business/learning/fitness/admin migrations remain separate work; do not enable their prototype screens.

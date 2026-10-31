@@ -289,9 +289,21 @@ function Create({
                 {f.options || f.choices ? (
                   <select
                     name={f.key}
-                    defaultValue={String(defaults[f.key] ?? f.choices?.[0]?.value ?? f.options?.[0] ?? "")}
+                    defaultValue={String(
+                      defaults[f.key] ??
+                        f.choices?.[0]?.value ??
+                        f.options?.[0] ??
+                        "",
+                    )}
                   >
-                    {(f.choices ?? f.options!.map(o => ({ value: o, label: o }))).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    {(
+                      f.choices ??
+                      f.options!.map((o) => ({ value: o, label: o }))
+                    ).map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
                   </select>
                 ) : f.type === "textarea" ? (
                   <textarea
@@ -342,10 +354,40 @@ export function LiveAccounting({
     </AccountingProvider>
   );
 }
-function AccountingGate({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
-  const { shell, lang, canWrite } = useAcc(); const fa = lang === "fa";
-  if (!shell?.accountingAccess?.allowed) return <section className="panel plan-notice"><p>{fa ? "حسابداری به دسترسی CRM فعال نیاز دارد." : "Accounting requires active CRM access."}</p><Link href="/plans" className="btn primary">{fa ? "بررسی پکیج‌ها" : "Review packages"}</Link></section>;
-  return <BusinessShell module={module} view={view}>{!canWrite && <p className="plan-notice">{fa ? "دسترسی شما به این دفتر فقط خواندنی است." : "Your access to these books is read-only."}</p>}<AccountingView key={view.id} view={view.id} /></BusinessShell>;
+function AccountingGate({
+  module,
+  view,
+}: {
+  module: ModuleSpec;
+  view: ViewSpec;
+}) {
+  const { shell, lang, canWrite } = useAcc();
+  const fa = lang === "fa";
+  if (!shell?.accountingAccess?.allowed)
+    return (
+      <section className="panel plan-notice">
+        <p>
+          {fa
+            ? "حسابداری به دسترسی CRM فعال نیاز دارد."
+            : "Accounting requires active CRM access."}
+        </p>
+        <Link href="/plans" className="btn primary">
+          {fa ? "بررسی پکیج‌ها" : "Review packages"}
+        </Link>
+      </section>
+    );
+  return (
+    <BusinessShell module={module} view={view}>
+      {!canWrite && (
+        <p className="plan-notice">
+          {fa
+            ? "دسترسی شما به این دفتر فقط خواندنی است."
+            : "Your access to these books is read-only."}
+        </p>
+      )}
+      <AccountingView key={view.id} view={view.id} />
+    </BusinessShell>
+  );
 }
 
 function AccountingView({ view }: { view: string }) {
@@ -362,14 +404,257 @@ function AccountingView({ view }: { view: string }) {
   if (view === "tax") return <Tax />;
   if (view === "close-period") return <Periods />;
   if (view === "owner-statements") return <Statements />;
-  if (view === "assistant") return <Assistant />;
-  if (view === "automation") return <Automation />;
+  if (view === "assistant")
+    return (
+      <>
+        <Assistant />
+        <FinancialIntelligence />
+      </>
+    );
+  if (view === "automation")
+    return (
+      <>
+        <Automation />
+        <BiAccess />
+      </>
+    );
   return (
     <p role="alert">
       {fa
         ? "این بخش هنوز متصل نشده است."
         : "This section is not connected yet."}
     </p>
+  );
+}
+
+/** Suggestions never change a record until a manager explicitly approves. */
+function FinancialIntelligence() {
+  const { lang, api, canWrite } = useAcc();
+  const fa = lang === "fa";
+  const anomalies = useRemote<{ alerts: Row[] }>(base + "ai/anomalies");
+  const proposals = useRemote<{ proposals: Row[] }>(base + "ai/proposals");
+  const expenses = useRemote<{ expenses: Row[] }>(base + "expenses");
+  const costs = useRemote<{ costs: Record<string, number> }>(
+    "/api/credits/costs",
+  );
+  const [expense, setExpense] = useState(""),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const lock = useRef(false);
+  const rate =
+    costs.data?.costs.tool_accounting_propose ?? costs.data?.costs.tool;
+  return (
+    <>
+      <section className="panel">
+        <h3>{fa ? "ناهنجاری‌های دفتر" : "Ledger anomalies"}</h3>
+        <Notice error={anomalies.error} loading={!anomalies.data} />
+        {anomalies.data && (
+          <Table
+            rows={anomalies.data.alerts}
+            columns={[
+              field("accountCode", "کد حساب", "Account code"),
+              field("accountName", "حساب", "Account"),
+              field("currentMonthAmount", "مبلغ ماه", "Current month"),
+              field("trailingAverage", "میانگین قبلی", "Trailing average"),
+              field("deviationPercent", "درصد انحراف", "Deviation %"),
+            ]}
+          />
+        )}
+      </section>
+      <section className="panel">
+        <h3>
+          {fa ? "پیشنهاد دسته‌بندی هزینه" : "Expense categorization proposals"}
+        </h3>
+        {canWrite && (
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (lock.current || !expense || rate == null) return;
+              lock.current = true;
+              setBusy(true);
+              setError("");
+              try {
+                await api(base + "ai/proposals", { expenseId: expense });
+                proposals.reload();
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                lock.current = false;
+                setBusy(false);
+              }
+            }}
+          >
+            <label>
+              {fa ? "هزینه" : "Expense"}
+              <select
+                value={expense}
+                onChange={(e) => setExpense(e.target.value)}
+                required
+              >
+                <option value="">—</option>
+                {expenses.data?.expenses.map((r) => (
+                  <option value={r.id} key={r.id}>
+                    {String(r.description)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p>
+              {rate == null
+                ? fa
+                  ? "تعرفه در دسترس نیست"
+                  : "Cost unavailable"
+                : `${rate} ${fa ? "کردیت" : "credits"}`}
+            </p>
+            <Button disabled={busy || rate == null || !expense} type="submit">
+              {busy
+                ? fa
+                  ? "در حال بررسی…"
+                  : "Analyzing…"
+                : fa
+                  ? "دریافت پیشنهاد"
+                  : "Request proposal"}
+            </Button>
+          </form>
+        )}
+        <Notice error={error || proposals.error} loading={!proposals.data} />
+        {proposals.data && (
+          <Table
+            rows={proposals.data.proposals.map((r) => {
+              let payload: Row = {};
+              try {
+                payload = JSON.parse(String(r.payload));
+              } catch {}
+              return { ...payload, ...r };
+            })}
+            columns={[
+              field("suggestedAccountCode", "کد پیشنهادی", "Suggested account"),
+              field("reasoning", "دلیل پیشنهاد", "Reasoning"),
+              field("status", "وضعیت", "Status"),
+            ]}
+            actions={(r) =>
+              r.status === "pending" && (
+                <>
+                  {["approve", "reject"].map((action) => (
+                    <Action
+                      key={action}
+                      label={
+                        fa
+                          ? action === "approve"
+                            ? "تأیید پیشنهاد"
+                            : "رد پیشنهاد"
+                          : action === "approve"
+                            ? "Approve proposal"
+                            : "Reject proposal"
+                      }
+                      url={base + `ai/proposals/${enc(r.id!)}`}
+                      body={{ action }}
+                      onDone={proposals.reload}
+                    />
+                  ))}
+                </>
+              )
+            }
+          />
+        )}
+      </section>
+    </>
+  );
+}
+
+function BiAccess() {
+  const { lang, api, canWrite } = useAcc();
+  const fa = lang === "fa";
+  const { data, error, reload } = useRemote<{ tokens: Row[] }>(
+    base + "bi-tokens",
+  );
+  const [token, setToken] = useState(""),
+    [failure, setFailure] = useState(""),
+    [busy, setBusy] = useState(false);
+  const lock = useRef(false);
+  return (
+    <section className="panel">
+      <h3>{fa ? "دسترسی گزارش‌گیری BI" : "BI reporting access"}</h3>
+      <p>
+        {fa
+          ? "توکن فقط یک بار نمایش داده می‌شود؛ آن را در محل امن نگه دارید."
+          : "The token is shown once. Store it securely."}
+      </p>
+      {canWrite && (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (lock.current) return;
+            const label = String(
+              new FormData(e.currentTarget).get("label") ?? "",
+            );
+            lock.current = true;
+            setBusy(true);
+            setFailure("");
+            try {
+              const d = await api<{ token: string }>(base + "bi-tokens", {
+                label,
+              });
+              setToken(d.token);
+              reload();
+            } catch (e) {
+              setFailure((e as Error).message);
+            } finally {
+              lock.current = false;
+              setBusy(false);
+            }
+          }}
+        >
+          <label>
+            {fa ? "عنوان اتصال" : "Connection label"}
+            <input name="label" required />
+          </label>
+          <Button type="submit" disabled={busy}>
+            {fa ? "ساخت توکن گزارش‌گیری" : "Create reporting token"}
+          </Button>
+        </form>
+      )}
+      <Notice error={error || failure} loading={!data} />
+      {data && (
+        <Table
+          rows={data.tokens}
+          columns={[
+            field("label", "عنوان", "Label"),
+            field("createdAt", "ساخته‌شده", "Created"),
+            field("lastUsedAt", "آخرین استفاده", "Last used"),
+            field("revokedAt", "لغوشده", "Revoked"),
+          ]}
+          actions={(r) =>
+            !r.revokedAt && (
+              <Action
+                label={fa ? "لغو دسترسی" : "Revoke access"}
+                url={base + `bi-tokens/${enc(r.id!)}`}
+                method="DELETE"
+                onDone={reload}
+              />
+            )
+          }
+        />
+      )}
+      {token && (
+        <Modal
+          title={fa ? "ذخیرهٔ امن توکن" : "Save your token securely"}
+          onClose={() => setToken("")}
+        >
+          <input
+            readOnly
+            value={token}
+            aria-label={fa ? "توکن گزارش‌گیری" : "Reporting token"}
+            autoComplete="off"
+          />
+          <p>
+            {fa
+              ? "با بستن این پنجره دوباره قابل نمایش نیست."
+              : "It cannot be displayed again after closing this window."}
+          </p>
+        </Modal>
+      )}
+    </section>
   );
 }
 
@@ -628,13 +913,50 @@ function Expenses() {
           description,
           field("kind", "نوع", "Kind", "select", ["cash_expense", "bill"]),
           field("expenseDate", "تاریخ", "Date", "date"),
-          { ...field("vendorId", "تأمین‌کننده", "Vendor", "select", undefined, true), choices: [{ value: "", label: "—" }, ...(vendors.data?.vendors ?? []).map(v => ({ value: v.id!, label: String(v.name) }))] },
+          {
+            ...field(
+              "vendorId",
+              "تأمین‌کننده",
+              "Vendor",
+              "select",
+              undefined,
+              true,
+            ),
+            choices: [
+              { value: "", label: "—" },
+              ...(vendors.data?.vendors ?? []).map((v) => ({
+                value: v.id!,
+                label: String(v.name),
+              })),
+            ],
+          },
         ]}
         onDone={reload}
       />
-      <Create title={fa ? "تأمین‌کننده جدید" : "New vendor"} url={base + "vendors"} fields={[name, field("phone", "تلفن", "Phone", "tel", undefined, true), field("email", "ایمیل", "Email", "email", undefined, true)]} onDone={vendors.reload} />
+      <Create
+        title={fa ? "تأمین‌کننده جدید" : "New vendor"}
+        url={base + "vendors"}
+        fields={[
+          name,
+          field("phone", "تلفن", "Phone", "tel", undefined, true),
+          field("email", "ایمیل", "Email", "email", undefined, true),
+        ]}
+        onDone={vendors.reload}
+      />
       <Notice error={vendors.error} loading={!vendors.data} />
-      {vendors.data && <details><summary>{fa ? "تأمین‌کنندگان" : "Vendors"}</summary><Table rows={vendors.data.vendors} columns={[name, field("phone", "تلفن", "Phone"), field("email", "ایمیل", "Email")]} /></details>}
+      {vendors.data && (
+        <details>
+          <summary>{fa ? "تأمین‌کنندگان" : "Vendors"}</summary>
+          <Table
+            rows={vendors.data.vendors}
+            columns={[
+              name,
+              field("phone", "تلفن", "Phone"),
+              field("email", "ایمیل", "Email"),
+            ]}
+          />
+        </details>
+      )}
       <Notice error={error} loading={!data} />
       {data && (
         <Table
@@ -873,7 +1195,23 @@ function Payroll() {
                 field("deductions", "کسورات", "Deductions"),
                 field("netPay", "خالص", "Net pay"),
               ]}
-              actions={slip => r.status === "draft" && <Create title={fa ? "ویرایش پاداش و کسورات" : "Edit bonus and deductions"} url={base + `payslips/${enc(slip.id!)}`} method="PUT" fields={[field("bonus", "پاداش", "Bonus", "number"), field("deductions", "کسورات", "Deductions", "number")]} defaults={slip} onDone={runs.reload} />}
+              actions={(slip) =>
+                r.status === "draft" && (
+                  <Create
+                    title={
+                      fa ? "ویرایش پاداش و کسورات" : "Edit bonus and deductions"
+                    }
+                    url={base + `payslips/${enc(slip.id!)}`}
+                    method="PUT"
+                    fields={[
+                      field("bonus", "پاداش", "Bonus", "number"),
+                      field("deductions", "کسورات", "Deductions", "number"),
+                    ]}
+                    defaults={slip}
+                    onDone={runs.reload}
+                  />
+                )
+              }
             />
             {r.status !== "paid" && (
               <Action

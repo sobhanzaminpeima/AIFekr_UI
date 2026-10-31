@@ -4,20 +4,269 @@ import { useAcc } from "./live-accounting-context";
 import { Button, Modal } from "./ui";
 
 /** Multi-line journal/owner statement editor. Only the server posts the ledger. */
-export function AccountingDocumentForm({ kind, onDone }: { kind: "journal" | "statement"; onDone: () => void }) {
-  const { lang, api, get, canWrite } = useAcc(); const fa = lang === "fa", journal = kind === "journal";
-  const [open, setOpen] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState("");
+export function AccountingDocumentForm({
+  kind,
+  onDone,
+}: {
+  kind: "journal" | "statement";
+  onDone: () => void;
+}) {
+  const { lang, api, get, canWrite } = useAcc();
+  const fa = lang === "fa",
+    journal = kind === "journal";
+  const [open, setOpen] = useState(false),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
   const [count, setCount] = useState(journal ? 2 : 1);
-  const [choices, setChoices] = useState<{ value: string; label: string }[]>([]);
+  const [choices, setChoices] = useState<{ value: string; label: string }[]>(
+    [],
+  );
   const lock = useRef(false);
   if (!canWrite) return null;
-  const title = journal ? (fa ? "سند دستی چندردیفی" : "Multi-line journal") : (fa ? "پیش‌نویس تسویه مالک" : "Draft owner statement");
-  return <><Button onClick={async () => { setOpen(true); setError(""); try { if (journal) { const d = await get<{ accounts: { code: string; name: string; nameEn?: string }[] }>("/api/accounting/accounts"); setChoices(d.accounts.map(a => ({ value: a.code, label: `${a.code} · ${!fa && a.nameEn ? a.nameEn : a.name}` }))); } else { const d = await get<{ properties: { id: string; title: string }[] }>("/api/crm/properties"); setChoices(d.properties.map(p => ({ value: p.id, label: p.title }))); } } catch (e) { setError((e as Error).message); } }}>{title}</Button>{open && <Modal title={title} onClose={() => { if (!busy) setOpen(false); }}><form onSubmit={async e => {
-    e.preventDefault(); if (lock.current) return;
-    const form = new FormData(e.currentTarget), str = (key: string) => String(form.get(key) ?? "");
-    const lines = Array.from({ length: count }, (_, i) => journal ? { accountCode: str(`code${i}`), debit: Number(str(`debit${i}`)), credit: Number(str(`credit${i}`)) } : { date: str(`date${i}`), description: str(`description${i}`), category: str(`category${i}`), income: Number(str(`income${i}`)), expense: Number(str(`expense${i}`)) });
-    const body = journal ? { entryDate: str("date"), memo: str("memo"), lines } : { propertyId: str("propertyId"), month: str("month") + "-01", currency: str("currency"), entries: lines };
-    lock.current = true; setBusy(true); setError("");
-    try { await api(`/api/accounting/${journal ? "journal-entries" : "owner-statements"}`, body); setOpen(false); onDone(); } catch (e) { setError((e as Error).message); } finally { lock.current = false; setBusy(false); }
-  }}><div className="form-grid">{journal ? <><label>{fa ? "تاریخ" : "Date"}<input type="date" name="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></label><label>{fa ? "شرح سند" : "Memo"}<input name="memo" required /></label></> : <><label>{fa ? "ملک" : "Property"}<select name="propertyId" required>{choices.map(c => <option value={c.value} key={c.value}>{c.label}</option>)}</select></label><label>{fa ? "ماه" : "Month"}<input type="month" name="month" required defaultValue={new Date().toISOString().slice(0, 7)} /></label><label>{fa ? "واحد پول" : "Currency"}<select name="currency">{["IRT", "IRR", "USD", "EUR", "GBP", "TRY"].map(c => <option key={c}>{c}</option>)}</select></label></>}</div>{Array.from({ length: count }, (_, i) => <fieldset className="panel form-grid" key={i}><legend>{fa ? "ردیف" : "Line"} {i + 1}</legend>{journal ? <><label>{fa ? "حساب" : "Account"}<select name={`code${i}`} required>{choices.map(c => <option value={c.value} key={c.value}>{c.label}</option>)}</select></label>{["debit", "credit"].map(key => <label key={key}>{fa ? (key === "debit" ? "بدهکار" : "بستانکار") : key}<input type="number" min="0" step="any" name={`${key}${i}`} defaultValue="0" required /></label>)}</> : <><label>{fa ? "تاریخ" : "Date"}<input type="date" name={`date${i}`} required defaultValue={new Date().toISOString().slice(0, 10)} /></label><label>{fa ? "شرح" : "Description"}<input name={`description${i}`} required /></label><label>{fa ? "دسته" : "Category"}<select name={`category${i}`}>{["guest_stay", "maintenance", "utilities", "consumables", "other"].map(c => <option key={c}>{c}</option>)}</select></label>{["income", "expense"].map(key => <label key={key}>{fa ? (key === "income" ? "درآمد" : "هزینه") : key}<input type="number" min="0" step="any" name={`${key}${i}`} defaultValue="0" required /></label>)}</>}</fieldset>)}<div className="domain-actions"><Button disabled={count >= 100 || busy} onClick={() => setCount(c => c + 1)}>{fa ? "افزودن ردیف" : "Add line"}</Button><Button disabled={count <= (journal ? 2 : 1) || busy} onClick={() => setCount(c => c - 1)}>{fa ? "حذف آخرین ردیف" : "Remove last line"}</Button></div>{error && <p role="alert">{error}</p>}<Button type="submit" variant="primary" disabled={busy || !choices.length}>{busy ? (fa ? "در حال ثبت…" : "Saving…") : (fa ? "ذخیره" : "Save")}</Button></form></Modal>}</>;
+  const title = journal
+    ? fa
+      ? "سند دستی چندردیفی"
+      : "Multi-line journal"
+    : fa
+      ? "پیش‌نویس تسویه مالک"
+      : "Draft owner statement";
+  return (
+    <>
+      <Button
+        onClick={async () => {
+          setOpen(true);
+          setError("");
+          try {
+            if (journal) {
+              const d = await get<{
+                accounts: { code: string; name: string; nameEn?: string }[];
+              }>("/api/accounting/accounts");
+              setChoices(
+                d.accounts.map((a) => ({
+                  value: a.code,
+                  label: `${a.code} · ${!fa && a.nameEn ? a.nameEn : a.name}`,
+                })),
+              );
+            } else {
+              const d = await get<{
+                properties: { id: string; title: string }[];
+              }>("/api/crm/properties");
+              setChoices(
+                d.properties.map((p) => ({ value: p.id, label: p.title })),
+              );
+            }
+          } catch (e) {
+            setError((e as Error).message);
+          }
+        }}
+      >
+        {title}
+      </Button>
+      {open && (
+        <Modal
+          title={title}
+          onClose={() => {
+            if (!busy) setOpen(false);
+          }}
+        >
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (lock.current) return;
+              const form = new FormData(e.currentTarget),
+                str = (key: string) => String(form.get(key) ?? "");
+              const lines = Array.from({ length: count }, (_, i) =>
+                journal
+                  ? {
+                      accountCode: str(`code${i}`),
+                      debit: Number(str(`debit${i}`)),
+                      credit: Number(str(`credit${i}`)),
+                    }
+                  : {
+                      date: str(`date${i}`),
+                      description: str(`description${i}`),
+                      category: str(`category${i}`),
+                      income: Number(str(`income${i}`)),
+                      expense: Number(str(`expense${i}`)),
+                    },
+              );
+              const body = journal
+                ? { entryDate: str("date"), memo: str("memo"), lines }
+                : {
+                    propertyId: str("propertyId"),
+                    month: str("month") + "-01",
+                    currency: str("currency"),
+                    entries: lines,
+                  };
+              lock.current = true;
+              setBusy(true);
+              setError("");
+              try {
+                await api(
+                  `/api/accounting/${journal ? "journal-entries" : "owner-statements"}`,
+                  body,
+                );
+                setOpen(false);
+                onDone();
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                lock.current = false;
+                setBusy(false);
+              }
+            }}
+          >
+            <div className="form-grid">
+              {journal ? (
+                <>
+                  <label>
+                    {fa ? "تاریخ" : "Date"}
+                    <input
+                      type="date"
+                      name="date"
+                      required
+                      defaultValue={new Date().toISOString().slice(0, 10)}
+                    />
+                  </label>
+                  <label>
+                    {fa ? "شرح سند" : "Memo"}
+                    <input name="memo" required />
+                  </label>
+                </>
+              ) : (
+                <>
+                  <label>
+                    {fa ? "ملک" : "Property"}
+                    <select name="propertyId" required>
+                      {choices.map((c) => (
+                        <option value={c.value} key={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    {fa ? "ماه" : "Month"}
+                    <input
+                      type="month"
+                      name="month"
+                      required
+                      defaultValue={new Date().toISOString().slice(0, 7)}
+                    />
+                  </label>
+                  <label>
+                    {fa ? "واحد پول" : "Currency"}
+                    <select name="currency">
+                      {["IRT", "IRR", "USD", "EUR", "GBP", "TRY"].map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
+                    </select>
+                  </label>
+                </>
+              )}
+            </div>
+            {Array.from({ length: count }, (_, i) => (
+              <fieldset className="panel form-grid" key={i}>
+                <legend>
+                  {fa ? "ردیف" : "Line"} {i + 1}
+                </legend>
+                {journal ? (
+                  <>
+                    <label>
+                      {fa ? "حساب" : "Account"}
+                      <select name={`code${i}`} required>
+                        {choices.map((c) => (
+                          <option value={c.value} key={c.value}>
+                            {c.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    {["debit", "credit"].map((key) => (
+                      <label key={key}>
+                        {fa ? (key === "debit" ? "بدهکار" : "بستانکار") : key}
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          name={`${key}${i}`}
+                          defaultValue="0"
+                          required
+                        />
+                      </label>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <label>
+                      {fa ? "تاریخ" : "Date"}
+                      <input
+                        type="date"
+                        name={`date${i}`}
+                        required
+                        defaultValue={new Date().toISOString().slice(0, 10)}
+                      />
+                    </label>
+                    <label>
+                      {fa ? "شرح" : "Description"}
+                      <input name={`description${i}`} required />
+                    </label>
+                    <label>
+                      {fa ? "دسته" : "Category"}
+                      <select name={`category${i}`}>
+                        {[
+                          "guest_stay",
+                          "maintenance",
+                          "utilities",
+                          "consumables",
+                          "other",
+                        ].map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                    </label>
+                    {["income", "expense"].map((key) => (
+                      <label key={key}>
+                        {fa ? (key === "income" ? "درآمد" : "هزینه") : key}
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          name={`${key}${i}`}
+                          defaultValue="0"
+                          required
+                        />
+                      </label>
+                    ))}
+                  </>
+                )}
+              </fieldset>
+            ))}
+            <div className="domain-actions">
+              <Button
+                disabled={count >= 100 || busy}
+                onClick={() => setCount((c) => c + 1)}
+              >
+                {fa ? "افزودن ردیف" : "Add line"}
+              </Button>
+              <Button
+                disabled={count <= (journal ? 2 : 1) || busy}
+                onClick={() => setCount((c) => c - 1)}
+              >
+                {fa ? "حذف آخرین ردیف" : "Remove last line"}
+              </Button>
+            </div>
+            {error && <p role="alert">{error}</p>}
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={busy || !choices.length}
+            >
+              {busy ? (fa ? "در حال ثبت…" : "Saving…") : fa ? "ذخیره" : "Save"}
+            </Button>
+          </form>
+        </Modal>
+      )}
+    </>
+  );
 }
