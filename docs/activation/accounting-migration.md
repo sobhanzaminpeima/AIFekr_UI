@@ -19,6 +19,7 @@ Main backend changes include accounting copy/access in the shell and manual jour
 - Five browser-free UI logic checks passed: route/view mapping, unknown route rejection, streamed response/error handling and media safeguards.
 - Both TypeScript checks and the UI production build passed.
 - No paid synthesis, real payment, production financial mutation or customer-account sign-in occurred.
+- Local HTTP contract smoke: 18/18 checks passed, including shell access, 15 accounting data endpoints, balanced journal persistence and explicit reversal in the isolated test database.
 - Browser walkthrough, mobile visual verification and production rollout of this increment remain pending. Browser use is disabled in Work settings.
 - Wallet adapter from the previous session was unfinished: its typing/retry issues were corrected, but it is not enabled. Its localization, purchase currency and live contract need verification before rollout.
 
