@@ -31,10 +31,12 @@ export type SiteData = {
   contact: { email: string; phone: string; address: string; telegram: string };
   /** Only on /login and /register. */
   auth: AuthData | null;
+  /** Only on /privacy, /terms and /security: the legal text the classic pages show. */
+  legal?: { title: string; updated: string | null; sections: { title: string; body: string }[] } | null;
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return V2_READY.some((r) => (r === "/" ? clean === "/" : clean === r || clean.startsWith(r + "/")));

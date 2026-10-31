@@ -167,6 +167,46 @@ export function EditorialPage({ path }: { path: string }) {
   if (part === "contact") return <ContactPage />;
   if (part === "guides") return <Guides path={path} />;
   const legal = legalContent[part];
+  // aifekr.com: the real legal text (main site lib/marketing/legal.ts), in the design's own layout.
+  if (legal && live?.legal) {
+    const doc = live.legal;
+    const num = (i: number) => String(i + 1).padStart(2, "0");
+    return (
+      <div className="public-section editorial-page">
+        <header className="editorial-hero">
+          <span className="icon-chip orange">
+            <Icon name={legal.icon} size={30} />
+          </span>
+          <span className="eyebrow">AIFekr / {part.toUpperCase()}</span>
+          <h1>{doc.title}</h1>
+          <p>{doc.updated ?? live.copy.noPromise}</p>
+        </header>
+        <div className="editorial-layout">
+          <nav className="panel editorial-toc" aria-label={fa ? "فهرست مطالب" : "On this page"}>
+            <strong>{fa ? "در این صفحه" : "On this page"}</strong>
+            {doc.sections.map((s, i) => (
+              <a key={i} href={"#section-" + i}>
+                <span>{num(i)}</span>
+                {s.title}
+              </a>
+            ))}
+          </nav>
+          <article className="panel editorial-document">
+            {doc.sections.map((s, i) => (
+              <section id={"section-" + i} key={i}>
+                <span className="eyebrow">{num(i)}</span>
+                <h2>{s.title}</h2>
+                <p>{s.body}</p>
+              </section>
+            ))}
+            <Link href="/contact" className="btn">
+              {fa ? "تماس با ما" : "Contact us"} <Icon name="ArrowLeft" size={16} />
+            </Link>
+          </article>
+        </div>
+      </div>
+    );
+  }
   if (legal)
     return (
       <div className="public-section editorial-page">
