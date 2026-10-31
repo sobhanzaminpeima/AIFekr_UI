@@ -359,3 +359,5 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 /* Personalized home: icon art for conversations and tools in "Continue", and the hero's next-step button. */
 .project-art>.project-icon{position:absolute;inset:0;display:grid;place-items:center;color:var(--orange,#ff6b00)}
 .idea-content .hero-action{margin:4px 0 18px;width:max-content}
+.suite-menu-overlay{display:none}
+@media(max-width:767px){.suite-menu-overlay{display:block;position:fixed;inset:0;border:0;background:#0008;z-index:89}.suite-sidebar.is-open{box-shadow:none}.suite-close{min-width:44px;min-height:44px}}

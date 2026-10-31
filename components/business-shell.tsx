@@ -96,6 +96,13 @@ export function BusinessShell({
   const crm = module.id === "crm";
   const [copilot, setCopilot] = useState(false);
   const [menu, setMenu] = useState(false);
+  useEffect(() => { setMenu(false); }, [view.id, module.id]);
+  useEffect(() => {
+    if (!menu) return;
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenu(false); };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [menu]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   // On aifekr.com the CRM reads the account's real deals and follow-ups.
@@ -215,7 +222,8 @@ export function BusinessShell({
   }
   return (
     <div className={`business-suite ${crm ? "crm-suite" : "accounting-suite"}`}>
-      <aside className={`suite-sidebar ${menu ? "is-open" : ""}`}>
+      {menu && <button type="button" className="suite-menu-overlay" aria-label={fa ? "بستن منوی ماژول" : "Close module menu"} onClick={() => setMenu(false)} />}
+      <aside id="suite-navigation" className={`suite-sidebar ${menu ? "is-open" : ""}`}>
         <div className="suite-identity">
           <span className="suite-mark">
             <Icon name={crm ? "Users" : "BookOpen"} size={24} />
@@ -261,6 +269,7 @@ export function BusinessShell({
                     href={moduleViewHref(module, v)}
                     className={view.id === id ? "selected" : ""}
                     aria-current={view.id === id ? "page" : undefined}
+                    onClick={() => setMenu(false)}
                   >
                     <Icon name={icons[id] || module.icon} size={17} />
                     <span>{v.title[fa ? 0 : 1]}</span>
@@ -300,6 +309,8 @@ export function BusinessShell({
             <button
               className="suite-menu-button icon-btn"
               aria-label={fa ? "منوی ماژول" : "Module menu"}
+              aria-expanded={menu}
+              aria-controls="suite-navigation"
               onClick={() => setMenu(!menu)}
             >
               <Icon name="Menu" size={20} />
