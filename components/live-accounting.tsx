@@ -393,7 +393,7 @@ function AccountingGate({
 function AccountingView({ view }: { view: string }) {
   const { lang } = useAcc();
   const fa = lang === "fa";
-  if (view === "overview") return <><Overview /><CashFlow /></>;
+  if (view === "overview") return <><Overview /><CashFlow /><Commissions /></>;
   if (["accounts", "ledger-setup"].includes(view))
     return <Accounts setup={view === "ledger-setup"} />;
   if (view === "journal") return <Journal />;
@@ -425,6 +425,12 @@ function AccountingView({ view }: { view: string }) {
         : "This section is not connected yet."}
     </p>
   );
+}
+
+function Commissions() {
+  const { lang } = useAcc(); const fa = lang === "fa";
+  const { data, error, reload } = useRemote<{ records: Row[] }>(base + "commissions");
+  return <section className="panel"><h3>{fa ? "کمیسیون‌های معاملات" : "Deal commissions"}</h3><Link className="btn" href="/crm?tab=owners">{fa ? "مدیریت معاملات و سهم‌ها در CRM" : "Manage deals and splits in CRM"}</Link><Notice error={error} loading={!data} />{data?.records.map(record => <article key={record.id}><h4><Cell value={(record.deal as Row)?.title} /></h4><Table rows={record.splits as Row[]} columns={[field("agentUserId", "شناسه همکار", "Agent ID"), field("percent", "درصد سهم", "Split %"), field("amount", "مبلغ", "Amount"), field("status", "وضعیت", "Status")]} actions={split => split.status !== "paid" && <Action label={fa ? "ثبت پرداخت سهم" : "Record split payment"} url={base + `commissions/splits/${enc(split.id!)}`} body={{ action: "pay" }} onDone={reload} caution={fa ? "این گزینه فقط پرداخت انجام‌شده را در دفتر ثبت می‌کند و انتقال بانکی ندارد." : "This records an already completed payment; it does not transfer money."} />} /></article>)}</section>;
 }
 
 function CashFlow() {
