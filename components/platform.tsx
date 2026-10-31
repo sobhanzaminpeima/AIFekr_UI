@@ -48,6 +48,7 @@ import { AdminUsers } from "./admin-users";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
+import { LivePayments } from "./live-payments";
 import { LiveGallery } from "./live-create";
 export function Platform({ path }: { path: string }) {
   if (useSite()) return <LivePlatform path={path} />;
@@ -72,11 +73,12 @@ function LivePlatform({ path }: { path: string }) {
         path === "/home" ? <Dashboard />
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />
+        : path === "/payments" ? <LivePayments />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
         : path === "/image/gallery" ? <ModuleWorkspace module={findModule("/image/generate")!} path="/image/generate/gallery" />
-        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
+        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" || path === "/accounting" || path.startsWith("/accounting/") ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
         : null
       }</Shell>
     </>

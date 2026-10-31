@@ -1,6 +1,7 @@
 // Signed-in pages on aifekr.com: the frame data the main site's /api/app/shell
 // returns (same gate, sidebar data and wording as its classic layout).
 import type { Locale } from "./i18n";
+import { accountingPath } from "./accounting-routes";
 
 type Link = { href: string; label: string };
 export type Conversation = { id: string; title: string | null; updatedAt: string; projectId: string | null };
@@ -31,6 +32,9 @@ export type ShellData = {
   crm: import("./crm").CrmCopy | null;
   /** Only on /accounting pages: the classic accounting pages' wording, keyed by English. */
   accounting?: Record<string, string> | null;
+  accountingAccess?: { allowed: boolean; restricted: boolean } | null;
+  /** Only on /payments: the classic payment history's wording, keyed by English. */
+  payments?: Record<string, string> | null;
   /** Only on /welcome: the account's onboarding answers, options, suggestions and wording. */
   welcome?: WelcomeData | null;
   /** Only on /home: the personalized workspace (main site lib/growth/workspace.ts). */
@@ -95,10 +99,10 @@ export type ChatData = {
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm", "/welcome"];
+export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm", "/welcome", "/payments"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
-  return V2_APP.includes(clean) || clean.startsWith("/chat/");
+  return V2_APP.includes(clean) || accountingPath(clean) || clean.startsWith("/chat/");
 };
 
 /** Fills "{n}" / "{name}" in the classic frame's wording. */
