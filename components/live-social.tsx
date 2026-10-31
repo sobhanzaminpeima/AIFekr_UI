@@ -12,7 +12,7 @@ import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import { moduleViewHref } from "@/lib/upstream/registry";
 import { useShell } from "./live-shell-context";
 import { Button, Modal, SectionTitle } from "./ui";
-import { socialDraft, campaignLinks } from "@/lib/social-contract";
+import { socialDraft, campaignLinks, socialPillars } from "@/lib/social-contract";
 import { socialLabel } from "@/lib/social-copy";
 
 type Row = Record<string, unknown>;
@@ -46,7 +46,7 @@ async function request(
     method,
     credentials: "include",
     cache: "no-store",
-    ...(body !== undefined
+    ...(body !== undefined && method !== "GET"
       ? {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -128,7 +128,11 @@ function Records({
                         ? row[c.key]
                           ? "✓"
                           : "—"
-                        : ["status", "mode", "direction", "mediaType"].includes(c.key) ? socialLabel(String(row[c.key]), fa) : String(row[c.key])}
+                        : ["status", "mode", "direction", "mediaType"].includes(
+                              c.key,
+                            )
+                          ? socialLabel(String(row[c.key]), fa)
+                          : String(row[c.key])}
                   </bdi>
                 </td>
               ))}
@@ -188,7 +192,8 @@ function Form({
                 body: Row = {};
               fields.forEach((field) => {
                 const value = String(form.get(field.key) ?? "");
-                if (!value && field.optional && field.type !== "checkbox") return;
+                if (!value && field.optional && field.type !== "checkbox")
+                  return;
                 body[field.key] =
                   field.type === "number"
                     ? Number(value)
@@ -223,7 +228,9 @@ function Form({
                     )}
                   >
                     {field.choices.map((c) => (
-                      <option key={c} value={c}>{socialLabel(c, fa)}</option>
+                      <option key={c} value={c}>
+                        {socialLabel(c, fa)}
+                      </option>
                     ))}
                   </select>
                 ) : field.type === "textarea" ? (
@@ -331,16 +338,291 @@ export function LiveSocial({
 }
 function SocialView({ view }: { view: string }) {
   if (["publish", "connections", "calendar", "queue"].includes(view))
-    return <Publishing />;
-  if (view === "content") return <Studio />;
+    return (
+      <>
+        <Publishing />
+        {view === "connections" && <Webhooks />}
+        {view === "calendar" && <CalendarDraft />}
+      </>
+    );
+  if (view === "content")
+    return (
+      <>
+        <Studio />
+        <Quality />
+        <ImageAnalysis />
+        <Ideas />
+      </>
+    );
   if (view === "brand") return <Brand />;
   if (view === "analytics" || view === "growth-report")
     return <Analytics report={view === "growth-report"} />;
   if (view === "messages" || view === "direct-rules")
     return <Direct inbox={view === "messages"} />;
   if (view === "campaigns") return <Campaigns />;
-  if (view === "competitors") return <Competitors />;
+  if (view === "competitors")
+    return (
+      <>
+        <Competitors />
+        <CompetitorAnalysis />
+      </>
+    );
   return null;
+}
+function Ideas() {
+  const { fa } = useSocial();
+  const [data, setData] = useState<Row | null>(null);
+  return (
+    <section className="panel">
+      <h3>{fa ? "ایده‌های محتوا" : "Content ideas"}</h3>
+      <Form
+        title={fa ? "دریافت ایده‌ها" : "Get ideas"}
+        fields={[]}
+        url={API + "content-ideas"}
+        method="GET"
+        onDone={setData}
+        caution={
+          fa
+            ? "ایده‌ها برای بررسی شما آماده می‌شوند و خودکار منتشر نمی‌شوند."
+            : "Ideas are prepared for your review and are not published automatically."
+        }
+      />
+      {data && (
+        <Records
+          items={rows(data.ideas)}
+          columns={[
+            f("title", "ایده", "Idea"),
+            f("format", "فرمت", "Format"),
+            f("why", "دلیل", "Why"),
+          ]}
+        />
+      )}
+    </section>
+  );
+}
+function Quality() {
+  const { fa } = useSocial();
+  const [data, setData] = useState<Row | null>(null);
+  return (
+    <section className="panel">
+      <h3>{fa ? "بررسی کیفیت متن" : "Caption quality check"}</h3>
+      <Form
+        title={fa ? "بررسی بدون تولید AI" : "Check without AI generation"}
+        url={API + "quality"}
+        fields={[
+          f("caption", "کپشن", "Caption", "textarea"),
+          f(
+            "hashtags",
+            "هشتگ‌ها با فاصله",
+            "Space-separated hashtags",
+            "text",
+            undefined,
+            true,
+          ),
+          f("format", "فرمت", "Format", "select", [
+            "IMAGE",
+            "REELS",
+            "CAROUSEL",
+          ]),
+        ]}
+        map={(d) => ({
+          ...d,
+          hashtags: String(d.hashtags ?? "")
+            .split(/\s+/)
+            .filter(Boolean),
+        })}
+        onDone={setData}
+      />
+      {data && (
+        <>
+          <p>
+            {fa ? "امتیاز" : "Score"}: {String(data.score ?? "—")}/100
+          </p>
+          <Records
+            items={rows(data.findings)}
+            columns={[f("message", "پیشنهاد", "Suggestion")]}
+          />
+        </>
+      )}
+    </section>
+  );
+}
+function ImageAnalysis() {
+  const { fa, lang } = useSocial();
+  const costs = useData("/api/credits/costs");
+  const rates = costs.data?.costs as Row | undefined;
+  const rate = rates?.tool_social_ig_image ?? rates?.tool;
+  const [data, setData] = useState<Row | null>(null);
+  return (
+    <section className="panel">
+      <h3>{fa ? "تحلیل سبک تصویر" : "Reference image analysis"}</h3>
+      <Status {...costs} />
+      {typeof rate === "number" && (
+        <>
+          <p>
+            {rate} {fa ? "کردیت" : "credits"}
+          </p>
+          <Form
+            title={
+              fa ? "تحلیل تصویر با این هزینه" : "Analyze image at this cost"
+            }
+            url={IG + "analyze-image"}
+            fields={[
+              f("imageUrl", "آدرس تصویر مرجع", "Reference image URL", "url"),
+              f(
+                "businessName",
+                "نام کسب‌وکار",
+                "Business name",
+                "text",
+                undefined,
+                true,
+              ),
+              f(
+                "businessType",
+                "نوع کسب‌وکار",
+                "Business type",
+                "text",
+                undefined,
+                true,
+              ),
+            ]}
+            map={(d) => ({ ...d, language: lang === "fa" ? "fa" : "en" })}
+            onDone={setData}
+            caution={
+              fa
+                ? "تصویر به سرویس تحلیل ارسال می‌شود؛ خروجی برای بررسی شماست."
+                : "The image is sent for analysis; results are for your review."
+            }
+          />
+        </>
+      )}
+      {data && (
+        <>
+          {["styleDescription", "imagePrompt", "caption"].map((key) => (
+            <p key={key} style={{ whiteSpace: "pre-wrap" }}>
+              {String(data[key] ?? "")}
+            </p>
+          ))}
+          <p>{Array.isArray(data.hashtags) ? data.hashtags.join(" ") : ""}</p>
+          {typeof data.imagePrompt === "string" && !!data.imagePrompt.trim() && <Link className="btn" href={`/image/generate?prompt=${encodeURIComponent(data.imagePrompt)}`}>{fa ? "ساخت تصویر با این پرامپت" : "Use this prompt in Image Studio"}</Link>}
+        </>
+      )}
+    </section>
+  );
+}
+function CalendarDraft() {
+  const { fa, lang } = useSocial();
+  const [posts, setPosts] = useState<Row[] | null>(null);
+  return (
+    <section className="panel">
+      <h3>{fa ? "پیش‌نویس تقویم هفتگی" : "Weekly calendar draft"}</h3>
+      <Form
+        title={fa ? "آماده‌سازی تقویم" : "Prepare calendar"}
+        url={IG + "generate-calendar"}
+        fields={[
+          f("businessName", "نام کسب‌وکار", "Business name"),
+          f("businessType", "نوع کسب‌وکار", "Business type"),
+          f("topic", "موضوع", "Topic", "textarea", undefined, true),
+        ]}
+        map={(d) => ({ ...d, language: lang === "fa" ? "fa" : "en" })}
+        onDone={(d) => {
+          const result = rows(d.posts);
+          if (!result.length) throw Error("EMPTY_RESULT");
+          setPosts(result);
+        }}
+        caution={
+          fa
+            ? "این عملیات فقط پیش‌نویس می‌سازد؛ هیچ پستی زمان‌بندی یا منتشر نمی‌شود."
+            : "This creates drafts only; no post is scheduled or published."
+        }
+      />
+      {posts && (
+        <Records
+          items={posts.map((p) => ({
+            ...p,
+            hashtags: Array.isArray(p.hashtags) ? p.hashtags.join(" ") : "",
+          }))}
+          columns={[
+            f(
+              "dayOffset",
+              "روز پس از فردا (۰ تا ۶)",
+              "Day offset from tomorrow (0–6)",
+            ),
+            f("caption", "کپشن", "Caption"),
+            f("hashtags", "هشتگ‌ها", "Hashtags"),
+          ]}
+          actions={post => <Form title={fa ? "زمان‌بندی این پیش‌نویس" : "Schedule this draft"} url={IG + "schedule"} fields={[f("caption", "کپشن", "Caption", "textarea"), f("hashtags", "هشتگ‌ها", "Hashtags", "text", undefined, true), f("scheduledFor", "زمان انتشار", "Publish at", "datetime-local")]} initial={{ caption: post.caption, hashtags: Array.isArray(post.hashtags) ? post.hashtags.join(" ") : post.hashtags }} map={d => ({ ...d, mode: "manual", scheduledFor: new Date(String(d.scheduledFor)).toISOString() })} onDone={() => {}} caution={fa ? "این مورد به صف دستی افزوده می‌شود؛ انتشار خودکار انجام نمی‌شود." : "This adds the draft to the manual queue; it does not auto-publish."} />}
+        />
+      )}
+    </section>
+  );
+}
+function Webhooks() {
+  const { fa } = useSocial();
+  const [state, setState] = useState<Row | null>(null);
+  return (
+    <section className="panel">
+      <h3>
+        {fa ? "اتصال رویدادهای اینستاگرام" : "Instagram event subscription"}
+      </h3>
+      <Form
+        title={fa ? "بررسی وضعیت" : "Check status"}
+        fields={[]}
+        url={IG + "webhooks/subscribe"}
+        method="GET"
+        onDone={setState}
+      />
+      <Confirm
+        title={fa ? "فعال‌سازی دریافت رویدادها" : "Enable event subscription"}
+        url={IG + "webhooks/subscribe"}
+        onDone={() => {
+          setState({ subscribed: true });
+        }}
+        caution={
+          fa
+            ? "با این انتخاب دریافت رویدادهای مجاز حساب متصل برای قوانین پاسخ فعال می‌شود."
+            : "This subscribes the connected account's authorized events for reply rules."
+        }
+      />
+      {state && (
+        <p role="status">
+          {state.subscribed
+            ? fa
+              ? "اشتراک تأیید شد"
+              : "Subscription confirmed"
+            : fa
+              ? "اشتراک تأیید نشده است"
+              : "Subscription not confirmed"}
+        </p>
+      )}
+    </section>
+  );
+}
+function CompetitorAnalysis() {
+  const { fa } = useSocial();
+  return (
+    <>
+      <PaidResult
+        title={fa ? "تحلیل الگوهای رقبا" : "Competitor pattern analysis"}
+        feature="social.competitors"
+        url={API + "competitors/analyze"}
+        fields={[]}
+        resultKey="analysis"
+      />
+      <section className="panel">
+        <Form
+          title={
+            fa
+              ? "رد پیشنهاد و ثبت دلیل در هویت برند"
+              : "Reject suggestion and record the reason"
+          }
+          url={API + "competitors/reject"}
+          fields={[f("reason", "دلیل رد", "Reason", "textarea")]}
+          onDone={() => {}}
+        />
+      </section>
+    </>
+  );
 }
 function Publishing() {
   const { fa } = useSocial();
@@ -452,10 +734,7 @@ function Brand() {
   const { fa } = useSocial();
   const state = useData(API + "brand-profile");
   const profile = (state.data?.profile ?? {}) as Row;
-  let pillars: string[] = [];
-  try {
-    pillars = JSON.parse(String(profile.contentPillars ?? "[]"));
-  } catch {}
+  const pillars = socialPillars(profile.contentPillars);
   return (
     <section className="panel">
       <Status {...state} />
@@ -827,7 +1106,14 @@ function Campaigns() {
   const [logs, setLogs] = useState<Row[] | null>(null),
     [error, setError] = useState("");
   const fields = [
-    f("linksText", "حداکثر دو لینک؛ هر خط: عنوان | آدرس", "Up to two links; one label | URL per line", "textarea", undefined, true),
+    f(
+      "linksText",
+      "حداکثر دو لینک؛ هر خط: عنوان | آدرس",
+      "Up to two links; one label | URL per line",
+      "textarea",
+      undefined,
+      true,
+    ),
     f("name", "نام کمپین", "Campaign name"),
     f("keyword", "کلمهٔ محرک", "Trigger keyword"),
     f("dmMessage", "پیام دایرکت", "Direct message", "textarea"),
@@ -871,7 +1157,10 @@ function Campaigns() {
         title={fa ? "کمپین جدید" : "New campaign"}
         url={IG + "campaigns"}
         fields={fields}
-        map={d => { const { linksText, ...rest } = d; return { ...rest, links: campaignLinks(String(linksText ?? "")) }; }}
+        map={(d) => {
+          const { linksText, ...rest } = d;
+          return { ...rest, links: campaignLinks(String(linksText ?? "")) };
+        }}
         onDone={state.reload}
         caution={
           fa
@@ -896,8 +1185,25 @@ function Campaigns() {
                 url={IG + `campaigns/${enc(String(r.id))}`}
                 method="PATCH"
                 fields={fields}
-                initial={{ ...r, linksText: (() => { try { return rows(JSON.parse(String(r.links ?? "[]"))).map(l => `${l.label} | ${l.url}`).join("\n"); } catch { return ""; } })() }}
-                map={d => { const { linksText, ...rest } = d; return { ...rest, links: campaignLinks(String(linksText ?? "")) }; }}
+                initial={{
+                  ...r,
+                  linksText: (() => {
+                    try {
+                      return rows(JSON.parse(String(r.links ?? "[]")))
+                        .map((l) => `${l.label} | ${l.url}`)
+                        .join("\n");
+                    } catch {
+                      return "";
+                    }
+                  })(),
+                }}
+                map={(d) => {
+                  const { linksText, ...rest } = d;
+                  return {
+                    ...rest,
+                    links: campaignLinks(String(linksText ?? "")),
+                  };
+                }}
                 onDone={state.reload}
               />
               <Confirm
