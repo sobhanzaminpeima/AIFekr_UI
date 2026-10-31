@@ -1,183 +1,208 @@
 {
-  "generatedAt": "2026-10-30T22:28:02.417Z",
-  "scope": "registered product modules; admin, account and public routes audited separately",
-  "connected": 6,
-  "classicOnly": 18,
+  "generatedAt": "2026-10-31T11:02:06.442Z",
+  "scope": "Source inventory only; deployment, enabled flags and external workflows require separate verification. Admin, account and public routes audited separately.",
+  "connected": 8,
+  "classicOnly": 17,
   "modules": [
     {
       "module": "crm",
       "route": "/crm",
       "views": 15,
-      "status": "connected",
-      "adapter": "live-crm.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-crm.tsx",
+      "featureFlag": null
     },
     {
       "module": "social",
       "route": "/social",
       "views": 12,
-      "status": "classic-only",
-      "adapter": null
+      "status": "connected-in-source",
+      "adapter": "live-social.tsx",
+      "featureFlag": "UI_V2_SOCIAL_ENABLED"
     },
     {
       "module": "seo",
       "route": "/seo",
       "views": 17,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "accounting",
       "route": "/accounting",
       "views": 13,
-      "status": "implementation-in-progress",
-      "adapter": "live-accounting.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-accounting.tsx",
+      "featureFlag": "UI_V2_ACCOUNTING_ENABLED"
     },
     {
       "module": "leads",
       "route": "/lead-gen",
       "views": 7,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "voice-agent",
       "route": "/voice-agent",
       "views": 7,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "doctor",
       "route": "/business-doctor",
       "views": 5,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "ceo",
       "route": "/ceo",
       "views": 6,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "agents",
       "route": "/agents",
       "views": 4,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "meeting",
       "route": "/meeting",
       "views": 2,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "website",
       "route": "/website-designer",
       "views": 4,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "startup",
       "route": "/startup/builder",
       "views": 6,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "organization",
       "route": "/organization/onboarding",
       "views": 7,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "student",
       "route": "/student",
       "views": 15,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "learn",
       "route": "/learn",
       "views": 8,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "fitness",
       "route": "/fitness",
       "views": 10,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "marketplace",
       "route": "/fitness/marketplace",
       "views": 7,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "image",
       "route": "/image/generate",
       "views": 4,
-      "status": "connected",
-      "adapter": "live-create.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-create.tsx",
+      "featureFlag": null
     },
     {
       "module": "video",
       "route": "/video/generate",
       "views": 3,
-      "status": "connected",
-      "adapter": "live-create.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-create.tsx",
+      "featureFlag": null
     },
     {
       "module": "music",
       "route": "/music/generate",
       "views": 3,
-      "status": "connected",
-      "adapter": "live-create.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-create.tsx",
+      "featureFlag": null
     },
     {
       "module": "voice",
       "route": "/voice-studio",
       "views": 7,
-      "status": "connected",
-      "adapter": "live-voice.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-voice.tsx",
+      "featureFlag": null
     },
     {
       "module": "factory",
       "route": "/video-factory",
       "views": 13,
-      "status": "connected",
-      "adapter": "live-factory.tsx"
+      "status": "connected-in-source",
+      "adapter": "live-factory.tsx",
+      "featureFlag": null
     },
     {
       "module": "play",
       "route": "/play",
       "views": 6,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "referral",
       "route": "/referral",
       "views": 5,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     },
     {
       "module": "owner",
       "route": "/owner",
       "views": 3,
       "status": "classic-only",
-      "adapter": null
+      "adapter": null,
+      "featureFlag": null
     }
   ],
   "otherLiveRoutes": [
@@ -193,11 +218,11 @@
     "/contact",
     "/guides",
     "/features",
-    "/solutions"
+    "/solutions",
+    "/payments"
   ],
   "otherClassicAreas": [
     "/admin",
-    "/payments",
     "/plans",
     "/credits",
     "/settings",
