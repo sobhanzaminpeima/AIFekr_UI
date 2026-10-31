@@ -1,0 +1,206 @@
+{
+  "generatedAt": "2026-10-30T22:28:02.417Z",
+  "scope": "registered product modules; admin, account and public routes audited separately",
+  "connected": 6,
+  "classicOnly": 18,
+  "modules": [
+    {
+      "module": "crm",
+      "route": "/crm",
+      "views": 15,
+      "status": "connected",
+      "adapter": "live-crm.tsx"
+    },
+    {
+      "module": "social",
+      "route": "/social",
+      "views": 12,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "seo",
+      "route": "/seo",
+      "views": 17,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "accounting",
+      "route": "/accounting",
+      "views": 13,
+      "status": "implementation-in-progress",
+      "adapter": "live-accounting.tsx"
+    },
+    {
+      "module": "leads",
+      "route": "/lead-gen",
+      "views": 7,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "voice-agent",
+      "route": "/voice-agent",
+      "views": 7,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "doctor",
+      "route": "/business-doctor",
+      "views": 5,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "ceo",
+      "route": "/ceo",
+      "views": 6,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "agents",
+      "route": "/agents",
+      "views": 4,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "meeting",
+      "route": "/meeting",
+      "views": 2,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "website",
+      "route": "/website-designer",
+      "views": 4,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "startup",
+      "route": "/startup/builder",
+      "views": 6,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "organization",
+      "route": "/organization/onboarding",
+      "views": 7,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "student",
+      "route": "/student",
+      "views": 15,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "learn",
+      "route": "/learn",
+      "views": 8,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "fitness",
+      "route": "/fitness",
+      "views": 10,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "marketplace",
+      "route": "/fitness/marketplace",
+      "views": 7,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "image",
+      "route": "/image/generate",
+      "views": 4,
+      "status": "connected",
+      "adapter": "live-create.tsx"
+    },
+    {
+      "module": "video",
+      "route": "/video/generate",
+      "views": 3,
+      "status": "connected",
+      "adapter": "live-create.tsx"
+    },
+    {
+      "module": "music",
+      "route": "/music/generate",
+      "views": 3,
+      "status": "connected",
+      "adapter": "live-create.tsx"
+    },
+    {
+      "module": "voice",
+      "route": "/voice-studio",
+      "views": 7,
+      "status": "connected",
+      "adapter": "live-voice.tsx"
+    },
+    {
+      "module": "factory",
+      "route": "/video-factory",
+      "views": 13,
+      "status": "connected",
+      "adapter": "live-factory.tsx"
+    },
+    {
+      "module": "play",
+      "route": "/play",
+      "views": 6,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "referral",
+      "route": "/referral",
+      "views": 5,
+      "status": "classic-only",
+      "adapter": null
+    },
+    {
+      "module": "owner",
+      "route": "/owner",
+      "views": 3,
+      "status": "classic-only",
+      "adapter": null
+    }
+  ],
+  "otherLiveRoutes": [
+    "/home",
+    "/welcome",
+    "/chat",
+    "/create",
+    "/gallery",
+    "/pricing",
+    "/login",
+    "/register",
+    "/about",
+    "/contact",
+    "/guides",
+    "/features",
+    "/solutions"
+  ],
+  "otherClassicAreas": [
+    "/admin",
+    "/payments",
+    "/plans",
+    "/credits",
+    "/settings",
+    "/notifications"
+  ]
+}

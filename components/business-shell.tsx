@@ -8,6 +8,7 @@ import { useLocalState } from "@/lib/use-local-state";
 import { FinanceState, initialFinance, journalTotals } from "@/lib/finance";
 import { GATED_TABS } from "@/lib/crm";
 import { useCrmPulse, useLiveCrm } from "./live-crm-context";
+import { useAccountingPulse, useLiveAccounting } from "./live-accounting-context";
 const crmGroups = [
   [
     "فروش و ارتباطات",
@@ -99,6 +100,8 @@ export function BusinessShell({
   const [answer, setAnswer] = useState("");
   // On aifekr.com the CRM reads the account's real deals and follow-ups.
   const live = useLiveCrm();
+  const accounting = useLiveAccounting();
+  const accountingPulse = useAccountingPulse(!!accounting && !crm);
   const pulse = useCrmPulse(!!live && crm);
   const [localDeals] = useLocalState<Deal[]>("aifekr-domain:CrmDeal", []);
   const [tasks] = useLocalState<Task[]>("aifekr-crm-tasks", []);
@@ -117,8 +120,8 @@ export function BusinessShell({
   const overdue = live
     ? pulse?.overdue ?? []
     : tasks.filter((t) => !t.done && new Date(t.dueDate) < new Date());
-  const unmatched = finance.bank.filter((b) => !b.match);
-  const pending = finance.expenses.filter((e) => e.status === "pending");
+  const unmatched = accounting ? Array.from({ length: accountingPulse?.unmatched ?? 0 }) : finance.bank.filter((b) => !b.match);
+  const pending = accounting ? accountingPulse?.pending ?? [] : finance.expenses.filter((e) => e.status === "pending");
   const groups = crm ? crmGroups : financeGroups;
   useEffect(() => {
     setMenu(false);
@@ -174,7 +177,7 @@ export function BusinessShell({
     : [
         {
           title: fa ? "تراکنش‌های تطبیق‌نشده" : "Unmatched bank entries",
-          value: n(unmatched.length),
+          value: accounting && !accountingPulse ? "—" : n(unmatched.length),
           body: fa
             ? "پیش از بستن دوره، ارتباط تراکنش‌های بانکی و اسناد دفتر را بررسی کن."
             : "Review bank-to-journal matches before closing the period.",
@@ -183,14 +186,14 @@ export function BusinessShell({
         },
         {
           title: fa ? "هزینه‌های منتظر تأیید" : "Expenses awaiting approval",
-          value: n(pending.length),
-          body: price(pending.reduce((s, e) => s + e.amount, 0)),
+          value: accounting && !accountingPulse ? "—" : n(pending.length),
+          body: accounting ? (fa ? "تعداد هزینه‌های ثبت‌شده در انتظار تأیید" : "Recorded expenses awaiting approval") : price(pending.reduce((s, e) => s + e.amount, 0)),
           tab: "expenses",
           icon: "Receipt",
         },
         {
           title: fa ? "دوره‌های قفل‌شده" : "Locked fiscal periods",
-          value: n(finance.closedPeriods.length),
+          value: accounting ? accountingPulse ? n(accountingPulse.locked) : "—" : n(finance.closedPeriods.length),
           body: fa
             ? "ثبت سند در دوره‌های بسته محدود شده است."
             : "Posting is restricted in closed periods.",
@@ -199,6 +202,7 @@ export function BusinessShell({
         },
       ];
   function analyze() {
+    if (accounting) { setAnswer(fa ? "برای تحلیل دفتر واقعی، بخش دستیار مالی را باز کنید؛ هزینه قبل از ارسال سؤال نمایش داده می‌شود." : "Open the finance assistant to analyze your live ledger. The cost is shown before you submit a question."); return; }
     setAnswer(
       crm
         ? fa
@@ -231,10 +235,10 @@ export function BusinessShell({
           </Button>
         </div>
         <div className="suite-workspace">
-          <span className="suite-workspace-avatar">{live ? (live.shell?.user.name || "·").trim().slice(0, 1).toUpperCase() : "N"}</span>
+          <span className="suite-workspace-avatar">{live || accounting ? ((live ?? accounting)?.shell?.user.name || "·").trim().slice(0, 1).toUpperCase() : "N"}</span>
           <div>
             <strong>{fa ? "فضای کاری من" : "My workspace"}</strong>
-            <small>{live ? live.shell?.user.planName : fa ? "نسخه نمایشی محلی" : "Local preview"}</small>
+            <small>{live || accounting ? (live ?? accounting)?.shell?.user.planName : fa ? "نسخه نمایشی محلی" : "Local preview"}</small>
           </div>
           <Icon name="ChevronDown" size={15} />
         </div>

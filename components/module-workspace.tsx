@@ -6,6 +6,7 @@ import { LiveCharacters } from "./live-characters";
 import { LiveVoice } from "./live-voice";
 import { LiveFactory } from "./live-factory";
 import { LiveCrm } from "./live-crm";
+import { LiveAccounting } from "./live-accounting";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -439,6 +440,7 @@ export function ModuleWorkspace({
   }, [view.id]);
   // On aifekr.com the CRM is the account's real CRM.
   if (live && module.id === "crm") return <LiveCrm module={module} view={view} />;
+  if (live && module.id === "accounting") return <LiveAccounting module={module} view={view} />;
   if (["crm", "accounting"].includes(module.id))
     return (
       <BusinessShell module={module} view={view}>

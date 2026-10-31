@@ -67,6 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const path = await pathOf(params);
+  // Never expose a prototype through an unconnected route on the live server.
+  if (MAIN && !v2Ready(path) && !v2App(path)) notFound();
   const data = await siteData(path);
   // Live pages exist only where the main site has the same page (same URL, same SEO).
   if (MAIN && v2Ready(path) && !data?.seo) notFound();

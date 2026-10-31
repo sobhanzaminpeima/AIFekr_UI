@@ -33,6 +33,8 @@ export type ShellData = {
   /** Only on /accounting pages: the classic accounting pages' wording, keyed by English. */
   accounting?: Record<string, string> | null;
   accountingAccess?: { allowed: boolean; restricted: boolean } | null;
+  /** Reserved for the wallet adapter; route stays classic until its contract is verified. */
+  credits?: { strings: Record<string, string>; labels: Record<string, Record<string, string>>; tools: Record<string, string> } | null;
   /** Only on /payments: the classic payment history's wording, keyed by English. */
   payments?: Record<string, string> | null;
   /** Only on /welcome: the account's onboarding answers, options, suggestions and wording. */
