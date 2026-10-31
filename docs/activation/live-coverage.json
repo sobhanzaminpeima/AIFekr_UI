@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-31T11:02:06.442Z",
+  "generatedAt": "2026-10-31T13:52:27.088Z",
   "scope": "Source inventory only; deployment, enabled flags and external workflows require separate verification. Admin, account and public routes audited separately.",
-  "connected": 8,
-  "classicOnly": 17,
+  "connected": 14,
+  "classicOnly": 11,
   "modules": [
     {
       "module": "crm",
@@ -40,9 +40,9 @@
       "module": "leads",
       "route": "/lead-gen",
       "views": 7,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-leads.tsx",
+      "featureFlag": "UI_V2_LEADS_ENABLED"
     },
     {
       "module": "voice-agent",
@@ -56,9 +56,9 @@
       "module": "doctor",
       "route": "/business-doctor",
       "views": 5,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-advisory.tsx",
+      "featureFlag": "UI_V2_ADVISORY_ENABLED"
     },
     {
       "module": "ceo",
@@ -80,25 +80,25 @@
       "module": "meeting",
       "route": "/meeting",
       "views": 2,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-advisory.tsx",
+      "featureFlag": "UI_V2_ADVISORY_ENABLED"
     },
     {
       "module": "website",
       "route": "/website-designer",
       "views": 4,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-website.tsx",
+      "featureFlag": "UI_V2_WEBSITE_ENABLED"
     },
     {
       "module": "startup",
       "route": "/startup/builder",
       "views": 6,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-startup.tsx",
+      "featureFlag": "UI_V2_STARTUP_ENABLED"
     },
     {
       "module": "organization",
@@ -192,9 +192,9 @@
       "module": "referral",
       "route": "/referral",
       "views": 5,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-referral.tsx",
+      "featureFlag": "UI_V2_REFERRAL_ENABLED"
     },
     {
       "module": "owner",

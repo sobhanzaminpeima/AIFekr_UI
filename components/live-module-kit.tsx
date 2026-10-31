@@ -1,0 +1,326 @@
+"use client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button, Modal, SectionTitle } from "./ui";
+import { useShell } from "./live-shell-context";
+import Link from "./site-link";
+import {
+  moduleViewHref,
+  type ModuleSpec,
+  type ViewSpec,
+} from "@/lib/upstream/registry";
+
+export type LiveRow = Record<string, unknown>;
+export type LiveField = {
+  key: string;
+  label: [string, string];
+  type?: string;
+  optional?: boolean;
+  choices?: { value: string; label: string }[];
+};
+export const field = (
+  key: string,
+  fa: string,
+  en: string,
+  type = "text",
+  optional = false,
+): LiveField => ({ key, label: [fa, en], type, optional });
+export async function liveRequest(
+  url: string,
+  method = "GET",
+  body?: unknown,
+): Promise<LiveRow> {
+  const res = await fetch(url, {
+    method,
+    credentials: "include",
+    cache: "no-store",
+    ...(body !== undefined && method !== "GET"
+      ? {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      : {}),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok)
+    throw Error(
+      typeof data?.error === "string"
+        ? data.error
+        : typeof data?.code === "string"
+          ? data.code
+          : `HTTP ${res.status}`,
+    );
+  if (!data || typeof data !== "object") throw Error("INVALID_RESPONSE");
+  return data;
+}
+export function useLiveData(url: string | null) {
+  const [data, setData] = useState<LiveRow | null>(null),
+    [error, setError] = useState("");
+  const [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+  useEffect(() => {
+    let active = true;
+    setData(null);
+    setError("");
+    if (url)
+      void liveRequest(url)
+        .then((d) => {
+          if (active) setData(d);
+        })
+        .catch((e) => {
+          if (active) setError(e.message);
+        });
+    return () => {
+      active = false;
+    };
+  }, [url, version]);
+  return { data, error, reload };
+}
+export const liveRows = (value: unknown): LiveRow[] =>
+  Array.isArray(value) ? value : [];
+export function LiveLoad({
+  data,
+  error,
+  reload,
+}: {
+  data: LiveRow | null;
+  error: string;
+  reload?: () => void;
+}) {
+  const fa = useShell()!.lang === "fa";
+  return error ? (
+    <div role="alert" className="plan-notice">
+      {error}{" "}
+      {reload && (
+        <Button onClick={reload}>{fa ? "تلاش دوباره" : "Retry"}</Button>
+      )}
+    </div>
+  ) : !data ? (
+    <p role="status">{fa ? "در حال دریافت…" : "Loading…"}</p>
+  ) : null;
+}
+export function LiveModuleFrame({
+  module,
+  view,
+  children,
+}: {
+  module: ModuleSpec;
+  view: ViewSpec;
+  children: React.ReactNode;
+}) {
+  const fa = useShell()!.lang === "fa";
+  return (
+    <div className={`module-workspace accent-${module.accent}`}>
+      <SectionTitle
+        title={module.title[fa ? 0 : 1]}
+        subtitle={module.subtitle[fa ? 0 : 1]}
+      />
+      <nav className="module-tabs" aria-label={module.title[fa ? 0 : 1]}>
+        {module.views.map((v) => (
+          <Link
+            key={v.id}
+            href={moduleViewHref(module, v)}
+            aria-current={v.id === view.id ? "page" : undefined}
+          >
+            {v.title[fa ? 0 : 1]}
+          </Link>
+        ))}
+      </nav>
+      {children}
+    </div>
+  );
+}
+export function LiveTable({
+  items,
+  columns,
+  actions,
+}: {
+  items: LiveRow[];
+  columns: LiveField[];
+  actions?: (row: LiveRow) => React.ReactNode;
+}) {
+  const fa = useShell()!.lang === "fa";
+  return !items.length ? (
+    <p className="crm-empty">
+      {fa ? "هنوز داده‌ای ثبت نشده است." : "No records yet."}
+    </p>
+  ) : (
+    <div className="domain-table-wrap">
+      <table className="domain-table">
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th key={c.key}>{c.label[fa ? 0 : 1]}</th>
+            ))}
+            {actions && <th>{fa ? "عملیات" : "Actions"}</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((r, i) => (
+            <tr key={String(r.id ?? i)}>
+              {columns.map((c) => (
+                <td key={c.key}>
+                  <bdi>
+                    {r[c.key] == null
+                      ? "—"
+                      : typeof r[c.key] === "boolean"
+                        ? r[c.key]
+                          ? fa
+                            ? "فعال"
+                            : "Active"
+                          : fa
+                            ? "غیرفعال"
+                            : "Inactive"
+                        : String(r[c.key])}
+                  </bdi>
+                </td>
+              ))}
+              {actions && (
+                <td>
+                  <div className="domain-actions">{actions(r)}</div>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+/** No automatic retries. Callers must explicitly confirm paid or external effects. */
+export function LiveForm({
+  title,
+  url,
+  method = "POST",
+  fields = [],
+  initial = {},
+  map,
+  onDone,
+  caution,
+  submit,
+  progress,
+}: {
+  title: string;
+  url: string;
+  method?: string;
+  fields?: LiveField[];
+  initial?: LiveRow;
+  map?: (body: LiveRow) => LiveRow;
+  onDone: (data: LiveRow) => void;
+  caution?: string;
+  submit?: (body: LiveRow) => Promise<LiveRow>;
+  progress?: React.ReactNode;
+}) {
+  const fa = useShell()!.lang === "fa";
+  const [open, setOpen] = useState(false),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const lock = useRef(false);
+  return (
+    <>
+      <Button
+        onClick={() => {
+          setError("");
+          setOpen(true);
+        }}
+      >
+        {title}
+      </Button>
+      {open && (
+        <Modal
+          title={title}
+          onClose={() => {
+            if (!lock.current) setOpen(false);
+          }}
+        >
+          <form
+            className="form-grid"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (lock.current) return;
+              lock.current = true;
+              setBusy(true);
+              setError("");
+              try {
+                const form = new FormData(e.currentTarget),
+                  body: LiveRow = {};
+                fields.forEach((f) => {
+                  const raw = String(form.get(f.key) ?? "");
+                  if (
+                    !raw &&
+                    f.optional &&
+                    f.type !== "checkbox" &&
+                    !(f.key in initial)
+                  )
+                    return;
+                  body[f.key] =
+                    f.type === "checkbox"
+                      ? form.get(f.key) === "on"
+                      : f.type === "number"
+                        ? Number(raw)
+                        : raw;
+                });
+                const d = submit
+                  ? await submit(map ? map(body) : body)
+                  : await liveRequest(url, method, map ? map(body) : body);
+                onDone(d);
+                setOpen(false);
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                lock.current = false;
+                setBusy(false);
+              }
+            }}
+          >
+            {caution && <p className="plan-notice">{caution}</p>}
+            {fields.map((f) => (
+              <label key={f.key}>
+                {f.label[fa ? 0 : 1]}
+                {f.choices ? (
+                  <select
+                    name={f.key}
+                    defaultValue={String(
+                      initial[f.key] ?? f.choices[0]?.value ?? "",
+                    )}
+                  >
+                    {f.choices.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : f.type === "textarea" ? (
+                  <textarea
+                    name={f.key}
+                    required={!f.optional}
+                    rows={5}
+                    defaultValue={String(initial[f.key] ?? "")}
+                  />
+                ) : f.type === "checkbox" ? (
+                  <input
+                    name={f.key}
+                    type="checkbox"
+                    defaultChecked={!!initial[f.key]}
+                  />
+                ) : (
+                  <input
+                    name={f.key}
+                    type={f.type ?? "text"}
+                    required={!f.optional}
+                    defaultValue={String(initial[f.key] ?? "")}
+                    step={f.type === "number" ? "any" : undefined}
+                  />
+                )}
+              </label>
+            ))}
+            {progress}
+            {error && <p role="alert">{error}</p>}
+            <Button type="submit" variant="primary" disabled={busy}>
+              {busy ? (fa ? "در حال انجام…" : "Working…") : title}
+            </Button>
+          </form>
+        </Modal>
+      )}
+    </>
+  );
+}
