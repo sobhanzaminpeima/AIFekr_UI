@@ -1,0 +1,11 @@
+# Social live adapter — 2026-10-31
+
+The v2 social module now has an API adapter for its 12 registered views: account/publishing, content studio, analytics, inbox, comment campaigns, direct rules, brand, competitors, calendar/queue, growth report and connections. It reuses the existing tenant-scoped APIs and shell authorization, not prototype localStorage records. Calendar and queue currently expose the real scheduling form and queue table.
+
+AI content and reports display the approved credit cost before explicit submission. Empty responses are not successful drafts. Scheduling, immediate publishing, disconnect, campaign activation/deletion and message sends are explicit actions with confirmation text and submission locks. Disconnect explains removal of account-specific rules and queued data. No automatic retry is made after transport failure. Manual reply IDs stay stable during a same-form retry. No live message, post, campaign, token or paid generation was created for verification.
+
+Brand fields and content pillars use the existing profile contract. Campaign links support at most two labeled HTTP(S) destinations. Direct delivery settings round-trip unchecked booleans correctly. Unknown metrics are shown as missing, not zero. Existing plan gates and provider settings remain server-authoritative. The new route requires `UI_V2_SOCIAL_ENABLED=1`; leave it off to keep the classic page.
+
+Evidence: 8 browser-free UI tests passed; 32 related backend tests passed; 8 local HTTP checks passed (five reads, invalid brief rejection, disconnected analytics and unchanged credits). TypeScript passed. Production build passed before final wording adjustments; rerun before release. Browser interaction/mobile visual QA is unavailable because local browser use is disabled. OAuth switching, actual publishing, delivery, remote competitor fetch and paid generation have not been live-tested. This file does not claim those external operations succeeded.
+
+Remaining parity: content-idea and quality tools, image analysis and generated calendar flow, competitor AI analysis, richer calendar layout and webhook-subscription controls. Do not mark the entire platform migration complete; SEO, student, fitness, business tools, wallet and admin still need live adapters.

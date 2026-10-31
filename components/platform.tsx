@@ -78,7 +78,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
         : path === "/image/gallery" ? <ModuleWorkspace module={findModule("/image/generate")!} path="/image/generate/gallery" />
-        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" || path === "/accounting" || path.startsWith("/accounting/") ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
+        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" || path === "/social" || path === "/accounting" || path.startsWith("/accounting/") ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
         : null
       }</Shell>
     </>
