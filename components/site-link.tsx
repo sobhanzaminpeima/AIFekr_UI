@@ -30,7 +30,10 @@ export default function Link({ href, ...rest }: ComponentProps<typeof NextLink>)
   const target = resolve(href);
   if (target.startsWith("#") || /^[a-z]+:/i.test(target)) return <NextLink href={target} {...rest} />;
   const path = target.replace(/^\/(en|de|tr)(?=\/|$)/, "") || "/";
-  if (v2Ready(path) || v2App(path)) return <NextLink href={target} {...rest} />;
+  // Each signed-in prefetch loads a private shell. A dense sidebar must not
+  // exhaust the same API quota needed to open the page the user selected.
+  if (v2App(path)) return <NextLink href={target} {...rest} prefetch={false} />;
+  if (v2Ready(path)) return <NextLink href={target} {...rest} />;
   const { prefetch: _prefetch, replace: _replace, scroll: _scroll, shallow: _shallow, passHref: _passHref, legacyBehavior: _legacy, locale: _locale, onNavigate: _onNavigate, ...anchor } = rest;
   return <a href={target} {...anchor} />;
 }
