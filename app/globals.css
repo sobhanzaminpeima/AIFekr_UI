@@ -6404,3 +6404,22 @@ tr:hover td {
 .auth-form>a.btn{display:flex;align-items:center;justify-content:center;gap:9px}
 .auth-switch{margin-top:22px;text-align:center;font-size:12px;color:var(--text-secondary)}
 .auth-pack{display:inline-flex;margin-top:14px}
+
+/* Keep the menu inside a stable mobile header, including notched screens and narrow RTL layouts. */
+.account-avatar-preview{width:96px;height:96px;object-fit:cover;border-radius:24px;border:1px solid var(--border)}
+@media(max-width:767px){
+ .app-shell .topbar{height:auto;min-height:calc(64px + env(safe-area-inset-top,0px));padding-block:calc(8px + env(safe-area-inset-top,0px)) 8px;padding-inline:max(12px,env(safe-area-inset-left,0px)) max(12px,env(safe-area-inset-right,0px));gap:8px;flex-wrap:nowrap;flex-shrink:0;overflow:visible}
+ .app-shell .breadcrumb{max-width:none;min-width:0;flex:1;gap:6px}
+ .app-shell .breadcrumb .menu-btn{display:inline-flex!important;position:static;transform:none;flex:0 0 44px;width:44px;height:44px;min-width:44px;align-self:center}
+ .app-shell .top-actions{gap:2px;min-width:0;flex:0 0 auto}
+ .app-shell .top-actions>.preferences select{width:56px}
+ .app-shell .module-switcher{width:40px;min-width:40px;padding:8px}
+ .app-shell .module-switcher>span{display:none}
+ .app-shell .sidebar.mobile-open{z-index:100;max-width:calc(100vw - 44px);height:100dvh;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+ .app-shell .sidebar-overlay{z-index:99}
+ .suite-sidebar.is-open{z-index:102;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+ .suite-topbar .suite-menu-button{flex:0 0 44px;width:44px;height:44px;position:static;transform:none}
+}
+@media(max-width:380px){.app-shell .top-actions>.credit-pill{display:none}.app-shell .breadcrumb>span{max-width:80px}}
+
+.live-game{max-width:720px;margin:24px auto}.live-game-board{display:block;width:min(100%,420px);height:auto;aspect-ratio:1;margin:20px auto;touch-action:none;border:1px solid var(--border);border-radius:18px}.live-game-board:focus{outline:2px solid var(--accent)}.live-game .domain-actions{justify-content:center}

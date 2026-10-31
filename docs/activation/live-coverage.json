@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-31T13:52:27.088Z",
+  "generatedAt": "2026-10-31T22:46:10.205Z",
   "scope": "Source inventory only; deployment, enabled flags and external workflows require separate verification. Admin, account and public routes audited separately.",
-  "connected": 14,
-  "classicOnly": 11,
+  "connected": 25,
+  "classicOnly": 0,
   "modules": [
     {
       "module": "crm",
@@ -24,9 +24,9 @@
       "module": "seo",
       "route": "/seo",
       "views": 17,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-seo.tsx",
+      "featureFlag": "UI_V2_SEO_ENABLED"
     },
     {
       "module": "accounting",
@@ -48,9 +48,9 @@
       "module": "voice-agent",
       "route": "/voice-agent",
       "views": 7,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-call-center.tsx",
+      "featureFlag": "UI_V2_CALL_CENTER_ENABLED"
     },
     {
       "module": "doctor",
@@ -64,17 +64,17 @@
       "module": "ceo",
       "route": "/ceo",
       "views": 6,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-ceo.tsx",
+      "featureFlag": "UI_V2_TEAM_ENABLED"
     },
     {
       "module": "agents",
       "route": "/agents",
       "views": 4,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-agents.tsx",
+      "featureFlag": "UI_V2_TEAM_ENABLED"
     },
     {
       "module": "meeting",
@@ -104,41 +104,41 @@
       "module": "organization",
       "route": "/organization/onboarding",
       "views": 7,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-organization.tsx",
+      "featureFlag": "UI_V2_ORGANIZATION_ENABLED"
     },
     {
       "module": "student",
       "route": "/student",
       "views": 15,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-student.tsx",
+      "featureFlag": "UI_V2_FINAL_MODULES_ENABLED"
     },
     {
       "module": "learn",
       "route": "/learn",
       "views": 8,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-academy.tsx",
+      "featureFlag": "UI_V2_ACADEMY_ENABLED"
     },
     {
       "module": "fitness",
       "route": "/fitness",
       "views": 10,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-fitness.tsx",
+      "featureFlag": "UI_V2_FINAL_MODULES_ENABLED"
     },
     {
       "module": "marketplace",
       "route": "/fitness/marketplace",
       "views": 7,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-marketplace.tsx",
+      "featureFlag": "UI_V2_FINAL_MODULES_ENABLED"
     },
     {
       "module": "image",
@@ -184,9 +184,9 @@
       "module": "play",
       "route": "/play",
       "views": 6,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-play.tsx",
+      "featureFlag": "UI_V2_FINAL_MODULES_ENABLED"
     },
     {
       "module": "referral",
@@ -200,12 +200,13 @@
       "module": "owner",
       "route": "/owner",
       "views": 3,
-      "status": "classic-only",
-      "adapter": null,
-      "featureFlag": null
+      "status": "connected-in-source",
+      "adapter": "live-owner.tsx",
+      "featureFlag": "UI_V2_OWNER_ENABLED"
     }
   ],
   "otherLiveRoutes": [
+    "/settings",
     "/home",
     "/welcome",
     "/chat",
@@ -225,7 +226,6 @@
     "/admin",
     "/plans",
     "/credits",
-    "/settings",
     "/notifications"
   ]
 }

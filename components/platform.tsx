@@ -49,6 +49,8 @@ import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
 import { LivePayments } from "./live-payments";
+import { LiveSettings } from "./live-settings";
+import { LiveOwner } from "./live-owner";
 import { LiveGallery } from "./live-create";
 export function Platform({ path }: { path: string }) {
   if (useSite()) return <LivePlatform path={path} />;
@@ -64,13 +66,15 @@ export function Platform({ path }: { path: string }) {
  */
 function LivePlatform({ path }: { path: string }) {
   const { fa } = useApp();
+  if(path === "/owner") return <LiveOwner/>;
   // Signed-in pages bring their own frame (sidebar, banners, skip link).
   // Signed-in pages: the design's own frame and screens, with real data.
   if (useShell()) return (
     <>
       <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
       <Shell path={path}>{
-        path === "/home" ? <Dashboard />
+        path === "/settings" ? <LiveSettings />
+        : path === "/home" ? <Dashboard />
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />
         : path === "/payments" ? <LivePayments />
@@ -78,7 +82,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
         : path === "/image/gallery" ? <ModuleWorkspace module={findModule("/image/generate")!} path="/image/generate/gallery" />
-        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" || ["/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo"].includes(path) || path === "/accounting" || path.startsWith("/accounting/") ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
+        : path === "/image/generate" || path === "/video/generate" || path === "/music/generate" || path === "/voice-studio" || path === "/video-factory" || path === "/crm" || ["/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo", "/ceo", "/agents", "/organization/onboarding", "/voice-agent", "/learn", "/student", "/fitness", "/fitness/marketplace", "/play"].includes(path) || path === "/accounting" || path.startsWith("/accounting/") ? <ModuleWorkspace key={path} module={findModule(path)!} path={path} />
         : null
       }</Shell>
     </>

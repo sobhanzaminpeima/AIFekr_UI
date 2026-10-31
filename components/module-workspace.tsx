@@ -14,6 +14,15 @@ import { LiveWebsite } from "./live-website";
 import { LiveReferral } from "./live-referral";
 import { LiveStartup } from "./live-startup";
 import { LiveSeo } from "./live-seo";
+import { LiveCeo } from "./live-ceo";
+import { LiveAgents } from "./live-agents";
+import { LiveOrganization } from "./live-organization";
+import { LiveCallCenter } from "./live-call-center";
+import { LiveStudent } from "./live-student";
+import { LiveFitness } from "./live-fitness";
+import { LiveMarketplace } from "./live-marketplace";
+import { LivePlay } from "./live-play";
+import { LiveAcademy } from "./live-academy";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -455,6 +464,15 @@ export function ModuleWorkspace({
   if (live && module.id === "referral") return <LiveReferral module={module} view={view} />;
   if (live && module.id === "startup") return <LiveStartup module={module} view={view} />;
   if (live && module.id === "seo") return <LiveSeo module={module} view={view} />;
+  if (live && module.id === "ceo") return <LiveCeo module={module} view={view} />;
+  if (live && module.id === "agents") return <LiveAgents module={module} view={view} />;
+  if (live && module.id === "organization") return <LiveOrganization module={module} view={view} />;
+  if (live && module.id === "voice-agent") return <LiveCallCenter module={module} view={view} />;
+  if (live && module.id === "learn") return <LiveAcademy module={module} view={view} />;
+  if (live && module.id === "student") return <LiveStudent module={module} view={view} />;
+  if (live && module.id === "fitness") return <LiveFitness module={module} view={view} />;
+  if (live && module.id === "marketplace") return <LiveMarketplace module={module} view={view} />;
+  if (live && module.id === "play") return <LivePlay module={module} view={view} />;
   if (["crm", "accounting"].includes(module.id))
     return (
       <BusinessShell module={module} view={view}>

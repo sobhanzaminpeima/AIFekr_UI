@@ -53,6 +53,11 @@ const shellData = cache(async (path: string): Promise<ShellData | null> => {
   return data as ShellData;
 });
 
+const ownerData=cache(async()=>{
+  const h=await headers();const response=await fetch(`${MAIN}/api/owner/me`,{cache:"no-store",headers:{cookie:h.get("cookie")||"",...visitorIp(h)}});
+  if(response.status===401)redirect("/owner/login");if(!response.ok)throw Error(`Owner portal unavailable (${response.status})`);return response.json();
+});
+
 const toMetadata = (raw: Record<string, unknown>): Metadata => {
   const { metadataBase, ...rest } = raw as Metadata & { metadataBase?: string };
   return { ...rest, metadataBase: metadataBase ? new URL(metadataBase) : undefined };
@@ -60,6 +65,7 @@ const toMetadata = (raw: Record<string, unknown>): Metadata => {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = await pathOf(params);
+  if(MAIN && path === "/owner"){await ownerData();return {title:"AIFekr | Owner portal",robots:{index:false,follow:false}};}
   if (MAIN && v2App(path)) return toMetadata((await shellData(path))!.metadata);
   const data = await siteData(path);
   return data?.seo ? toMetadata(data.seo.metadata) : {};
@@ -67,6 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const path = await pathOf(params);
+  if(MAIN && path === "/owner") {await ownerData();const data=await siteData("/");return <SiteProvider data={data}><Platform path={path}/></SiteProvider>;}
   // Never expose a prototype through an unconnected route on the live server.
   if (MAIN && !v2Ready(path) && !v2App(path)) notFound();
   const data = await siteData(path);

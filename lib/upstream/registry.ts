@@ -59,7 +59,7 @@ export const view = (
 const v = view;
 const src = (route: string) =>
   sourceIndex.find((p) => p.route === route)?.source || "";
-const module = (
+const defineModule = (
   id: string,
   base: string,
   title: Copy,
@@ -83,7 +83,7 @@ const module = (
   ...extra,
 });
 export const modules: ModuleSpec[] = [
-  module(
+  defineModule(
     "crm",
     "/crm",
     ["روابط مشتریان", "Customer relationships"],
@@ -158,7 +158,7 @@ export const modules: ModuleSpec[] = [
       primary: ["فرصت فروش جدید", "New opportunity"],
     },
   ),
-  module(
+  defineModule(
     "social",
     "/social",
     ["استودیوی شبکه‌های اجتماعی", "Social media studio"],
@@ -252,7 +252,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/social"], primary: ["ساخت پست", "Create a post"] },
   ),
-  module(
+  defineModule(
     "seo",
     "/seo",
     ["کارگاه سئو و محتوا", "SEO & content workspace"],
@@ -343,7 +343,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/seo"], primary: ["پژوهش تازه", "New research"] },
   ),
-  module(
+  defineModule(
     "accounting",
     "/accounting",
     ["دفتر مالی", "Financial workspace"],
@@ -473,7 +473,7 @@ export const modules: ModuleSpec[] = [
       primary: ["ثبت سند مالی", "Record an entry"],
     },
   ),
-  module(
+  defineModule(
     "leads",
     "/lead-gen",
     ["رشد و جذب مشتری", "Lead generation"],
@@ -521,7 +521,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/leads"], primary: ["فرم تازه", "Create a form"] },
   ),
-  module(
+  defineModule(
     "voice-agent",
     "/voice-agent",
     ["مرکز تماس هوشمند", "AI call center"],
@@ -577,7 +577,7 @@ export const modules: ModuleSpec[] = [
       primary: ["منشی جدید", "New voice agent"],
     },
   ),
-  module(
+  defineModule(
     "doctor",
     "/business-doctor",
     ["دکتر کسب‌وکار", "Business doctor"],
@@ -632,7 +632,7 @@ export const modules: ModuleSpec[] = [
       primary: ["ارزیابی تازه", "New assessment"],
     },
   ),
-  module(
+  defineModule(
     "ceo",
     "/ceo",
     ["اتاق فرمان مدیرعامل", "CEO workspace"],
@@ -683,7 +683,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/ceo"], primary: ["هدف تازه", "New goal"] },
   ),
-  module(
+  defineModule(
     "agents",
     "/agents",
     ["تیم هوش مصنوعی", "AI agent team"],
@@ -704,10 +704,10 @@ export const modules: ModuleSpec[] = [
         "IndustryPack",
       ),
       v("runs", "گزارش اجراها", "Run history", "records", "OrchestratorAction"),
-      v("create", "ساخت دستیار", "Create an agent", "form", "CustomAiProvider"),
+      v("create", "راه‌اندازی دستیار", "Set up an assistant", "form", "CustomAiProvider"),
     ],
   ),
-  module(
+  defineModule(
     "meeting",
     "/meeting",
     ["اتاق مشاوران", "Advisory room"],
@@ -737,7 +737,7 @@ export const modules: ModuleSpec[] = [
       ),
     ],
   ),
-  module(
+  defineModule(
     "website",
     "/website-designer",
     ["طراح وب‌سایت", "Website designer"],
@@ -776,7 +776,7 @@ export const modules: ModuleSpec[] = [
       primary: ["وب‌سایت تازه", "New website"],
     },
   ),
-  module(
+  defineModule(
     "startup",
     "/startup/builder",
     ["از فکر تا استارتاپ", "Startup builder"],
@@ -809,7 +809,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/startup"] },
   ),
-  module(
+  defineModule(
     "organization",
     "/organization/onboarding",
     ["فضای کسب‌وکار و تیم", "Business & team workspace"],
@@ -862,7 +862,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/business/organization"] },
   ),
-  module(
+  defineModule(
     "student",
     "/student",
     ["فضای یادگیری تو", "Your learning workspace"],
@@ -962,7 +962,7 @@ export const modules: ModuleSpec[] = [
     ],
     { primary: ["افزودن درس", "Add a subject"] },
   ),
-  module(
+  defineModule(
     "learn",
     "/learn",
     ["آکادمی آی‌فکر", "AIFekr academy"],
@@ -1016,7 +1016,7 @@ export const modules: ModuleSpec[] = [
     ],
     { primary: ["ادامهٔ یادگیری", "Continue learning"] },
   ),
-  module(
+  defineModule(
     "fitness",
     "/fitness",
     ["فیتنس آی‌فکر", "AIFekr FIT"],
@@ -1087,7 +1087,7 @@ export const modules: ModuleSpec[] = [
       primary: ["شروع تمرین", "Start workout"],
     },
   ),
-  module(
+  defineModule(
     "marketplace",
     "/fitness/marketplace",
     ["بازار مربیان و رزرو", "Coaches & marketplace"],
@@ -1145,7 +1145,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/fit/coaches"] },
   ),
-  module(
+  defineModule(
     "image",
     "/image/generate",
     ["استودیوی تصویر", "Image studio"],
@@ -1188,7 +1188,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/create/image"], primary: ["تصویر تازه", "New image"] },
   ),
-  module(
+  defineModule(
     "video",
     "/video/generate",
     ["استودیوی ویدیو", "Video studio"],
@@ -1217,7 +1217,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/create/video"] },
   ),
-  module(
+  defineModule(
     "music",
     "/music/generate",
     ["استودیوی موسیقی", "Music studio"],
@@ -1245,7 +1245,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/create/music"] },
   ),
-  module(
+  defineModule(
     "voice",
     "/voice-studio",
     ["استودیوی صدا", "Voice studio"],
@@ -1301,7 +1301,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/create/voice"] },
   ),
-  module(
+  defineModule(
     "factory",
     "/video-factory",
     ["کارخانهٔ ویدیو", "Video factory"],
@@ -1391,7 +1391,7 @@ export const modules: ModuleSpec[] = [
     ],
     { aliases: ["/create/video-factory"] },
   ),
-  module(
+  defineModule(
     "play",
     "/play",
     ["زمین بازی آی‌فکر", "AIFekr arcade"],
@@ -1424,7 +1424,7 @@ export const modules: ModuleSpec[] = [
       ),
     ],
   ),
-  module(
+  defineModule(
     "referral",
     "/referral",
     ["دعوت و درآمد", "Invite & earn"],
@@ -1464,7 +1464,7 @@ export const modules: ModuleSpec[] = [
       ),
     ],
   ),
-  module(
+  defineModule(
     "owner",
     "/owner",
     ["فضای مالک", "Owner portal"],
@@ -1880,7 +1880,7 @@ const adminResourceTitles: Record<string,string> = {
 };
 export const adminModules: ModuleSpec[] = adminDefinitions.map(
   ([slug, fa, en, kind, models]) =>
-    module(
+    defineModule(
       "admin-" + slug.replaceAll("/", "-"),
       "/admin/" + slug,
       [fa, en],

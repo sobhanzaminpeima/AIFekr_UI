@@ -104,7 +104,7 @@ export type ChatData = {
 export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm", "/welcome", "/payments"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
-  return V2_APP.includes(clean) || ["/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo"].includes(clean) || accountingPath(clean) || clean.startsWith("/chat/");
+  return V2_APP.includes(clean) || ["/settings", "/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo", "/ceo", "/agents", "/organization/onboarding", "/voice-agent", "/learn", "/student", "/fitness", "/fitness/marketplace", "/play"].includes(clean) || accountingPath(clean) || clean.startsWith("/chat/");
 };
 
 /** Fills "{n}" / "{name}" in the classic frame's wording. */

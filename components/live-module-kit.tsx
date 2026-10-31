@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Modal, SectionTitle } from "./ui";
-import { useShell } from "./live-shell-context";
+import { useApp } from "./providers";
 import Link from "./site-link";
 import {
   moduleViewHref,
@@ -86,7 +86,7 @@ export function LiveLoad({
   error: string;
   reload?: () => void;
 }) {
-  const fa = useShell()!.lang === "fa";
+  const { fa } = useApp();
   return error ? (
     <div role="alert" className="plan-notice">
       {error}{" "}
@@ -107,7 +107,7 @@ export function LiveModuleFrame({
   view: ViewSpec;
   children: React.ReactNode;
 }) {
-  const fa = useShell()!.lang === "fa";
+  const { fa } = useApp();
   return (
     <div className={`module-workspace accent-${module.accent}`}>
       <SectionTitle
@@ -138,7 +138,7 @@ export function LiveTable({
   columns: LiveField[];
   actions?: (row: LiveRow) => React.ReactNode;
 }) {
-  const fa = useShell()!.lang === "fa";
+  const { fa } = useApp();
   return !items.length ? (
     <p className="crm-empty">
       {fa ? "هنوز داده‌ای ثبت نشده است." : "No records yet."}
@@ -210,7 +210,7 @@ export function LiveForm({
   submit?: (body: LiveRow) => Promise<LiveRow>;
   progress?: React.ReactNode;
 }) {
-  const fa = useShell()!.lang === "fa";
+  const { fa } = useApp();
   const [open, setOpen] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -256,7 +256,9 @@ export function LiveForm({
                     f.type === "checkbox"
                       ? form.get(f.key) === "on"
                       : f.type === "number"
-                        ? Number(raw)
+                        ? !raw && f.optional
+                          ? null
+                          : Number(raw)
                         : raw;
                 });
                 const d = submit

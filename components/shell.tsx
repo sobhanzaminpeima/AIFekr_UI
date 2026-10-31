@@ -47,7 +47,9 @@ export function Preferences() {
  * like the classic menu, it opens the CRM for accounts with business access
  * and the industry packs otherwise.
  */
-function liveNavHref(href: string, business: boolean) {
+function liveNavHref(href: string, business: boolean, student = false) {
+  if(href === "/fit/dashboard") return "/fitness";
+  if(href === "/learn" && student) return "/student";
   return href === "/business" ? (business ? "/crm" : "/industry") : href;
 }
 export function Shell({
@@ -111,11 +113,19 @@ export function Shell({
     return () => document.removeEventListener("keydown", handler);
   }, [router]);
   useEffect(() => setMobile(false), [path]);
+  useEffect(() => {
+    if (!mobile) return;
+    const prior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const escape = (e: KeyboardEvent) => { if (e.key === "Escape") setMobile(false); };
+    document.addEventListener("keydown", escape);
+    return () => { document.body.style.overflow = prior; document.removeEventListener("keydown", escape); };
+  }, [mobile]);
   return (
     <div
       className={`app-shell ${admin ? "admin-shell" : ""} ${live && (path === "/chat" || path.startsWith("/chat/")) ? "chat-route" : ""} ${collapsed || ["/crm", "/accounting", "/sales", "/business/crm", "/business/accounting", "/business/real-estate"].some((root) => path === root || path.startsWith(root + "/")) ? "collapsed" : ""}`}
     >
-      <aside className={`sidebar ${mobile ? "mobile-open" : ""}`}>
+      <aside id="workspace-sidebar" className={`sidebar ${mobile ? "mobile-open" : ""}`} onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMobile(false); }}>
         <div className="sidebar-top">
           <Brand compact={collapsed} />
           <button
@@ -148,7 +158,7 @@ export function Shell({
           </>
         )}
         <div className="side-label">{admin ? t("admin") : t("workspace")}</div>
-        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}</Link>)}</nav>}
+        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.filter(([href]) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}</Link>)}</nav>}
         {!admin && (
           <>
             <div className="side-label recent-label">
@@ -238,7 +248,9 @@ export function Shell({
           <div className="breadcrumb">
             <button
               className="icon-btn menu-btn"
-              onClick={() => setMobile(true)}
+              aria-controls="workspace-sidebar"
+              aria-expanded={mobile}
+              onClick={() => setMobile(v => !v)}
               aria-label={t("tools")}
             >
               <Icon name="Menu" />
@@ -312,7 +324,7 @@ export function Shell({
           <Link
             className={`${path === href ? "active" : ""} ${key === "chat" ? "center-chat" : ""}`}
             key={href}
-            href={live ? liveNavHref(href, live.access.hasBusinessAccess) : href}
+            href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href}
           >
             <Icon name={icon} />
             <span>{t(key)}</span>
