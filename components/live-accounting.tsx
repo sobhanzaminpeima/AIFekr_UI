@@ -393,7 +393,7 @@ function AccountingGate({
 function AccountingView({ view }: { view: string }) {
   const { lang } = useAcc();
   const fa = lang === "fa";
-  if (view === "overview") return <Overview />;
+  if (view === "overview") return <><Overview /><CashFlow /></>;
   if (["accounts", "ledger-setup"].includes(view))
     return <Accounts setup={view === "ledger-setup"} />;
   if (view === "journal") return <Journal />;
@@ -403,7 +403,7 @@ function AccountingView({ view }: { view: string }) {
   if (view === "budgets") return <Budgets />;
   if (view === "tax") return <Tax />;
   if (view === "close-period") return <Periods />;
-  if (view === "owner-statements") return <Statements />;
+  if (view === "owner-statements") return <><Statements /><ManagementFees /></>;
   if (view === "assistant")
     return (
       <>
@@ -425,6 +425,23 @@ function AccountingView({ view }: { view: string }) {
         : "This section is not connected yet."}
     </p>
   );
+}
+
+function CashFlow() {
+  const { lang, canWrite } = useAcc(); const fa = lang === "fa";
+  const forecast = useRemote<{ forecast: Row[] }>(base + "reports/cash-flow-forecast");
+  const costs = useRemote<{ costs: Record<string, number> }>("/api/credits/costs");
+  const rate = costs.data?.costs.tool_accounting_cash_flow_narrative ?? costs.data?.costs.tool;
+  const [text, setText] = useState(""), [error, setError] = useState(""), [busy, setBusy] = useState(false);
+  const lock = useRef(false);
+  return <section className="panel"><h3>{fa ? "پیش‌بینی جریان نقدی" : "Cash-flow forecast"}</h3><p>{fa ? "برآورد ساده بر پایهٔ فاکتورهای سررسیدشده و میانگین هزینه‌های قبلی؛ تضمین درآمد نیست." : "A heuristic from due invoices and historical expenses; not guaranteed income."}</p><Notice error={forecast.error} loading={!forecast.data} />{forecast.data && <Table rows={forecast.data.forecast} columns={[field("month", "ماه", "Month"), field("expectedInflow", "ورودی مورد انتظار", "Expected inflow"), field("expectedOutflow", "خروجی مورد انتظار", "Expected outflow")]} />}{canWrite && <Button disabled={busy || rate == null} onClick={async () => { if (lock.current || rate == null) return; lock.current = true; setBusy(true); setText(""); setError(""); try { const r = await fetch(base + "ai/cash-flow-narrative", { method: "POST", credentials: "include" }); if (!r.ok) { const d = await r.json(); throw Error(d.error); } await readStream(r, chunk => setText(t => t + chunk)); } catch (e) { setError((e as Error).message); } finally { lock.current = false; setBusy(false); } }}>{busy ? (fa ? "در حال تولید…" : "Generating…") : `${fa ? "خلاصهٔ هوشمند" : "AI summary"} · ${rate ?? "—"} ${fa ? "کردیت" : "credits"}`}</Button>}{error && <p role="alert">{error}</p>}{text && <p style={{ whiteSpace: "pre-wrap" }} aria-live="polite">{text}</p>}</section>;
+}
+
+function ManagementFees() {
+  const { lang } = useAcc(); const fa = lang === "fa";
+  const { data, error, reload } = useRemote<{ rules: Row[] }>(base + "management-fee-rules");
+  const properties = useRemote<{ properties: Row[] }>("/api/crm/properties");
+  return <section className="panel"><h3>{fa ? "کارمزد مدیریت ملک" : "Property management fees"}</h3><Create title={fa ? "ثبت درصد کارمزد" : "Set management fee"} url={base + "management-fee-rules"} fields={[{ ...field("propertyId", "ملک یا پیش‌فرض فضا", "Property or workspace default", "select", undefined, true), choices: [{ value: "", label: fa ? "پیش‌فرض فضا" : "Workspace default" }, ...(properties.data?.properties ?? []).map(p => ({ value: p.id!, label: String(p.title) }))] }, field("feePercent", "درصد", "Fee percent", "number")]} onDone={reload} /><Notice error={error || properties.error} loading={!data} />{data && <Table rows={data.rules} columns={[field("propertyId", "ملک (خالی: پیش‌فرض)", "Property (empty: default)"), field("feePercent", "درصد کارمزد", "Fee percent")]} />}</section>;
 }
 
 /** Suggestions never change a record until a manager explicitly approves. */
