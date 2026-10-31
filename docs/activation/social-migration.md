@@ -9,3 +9,9 @@ Brand fields and content pillars use the existing profile contract. Campaign lin
 Evidence: 9 browser-free UI tests passed; 32 related backend tests passed; 8 local HTTP checks passed (five reads, invalid brief rejection, disconnected analytics and unchanged credits). TypeScript passed. Production build passed including the additional tools. Browser interaction/mobile visual QA is unavailable because local browser use is disabled. OAuth switching, actual publishing, delivery, remote competitor fetch and paid generation have not been live-tested. This file does not claim those external operations succeeded.
 
 Additional tools now include explicit content-idea requests, deterministic quality checks, image analysis with an image-studio handoff, generated calendar drafts with manual queue insertion, competitor AI analysis and webhook-subscription controls. A richer visual month calendar remains pending. Do not mark the entire platform migration complete; SEO, student, fitness, business tools, wallet and admin still need live adapters.
+
+## Production release
+
+Released 2026-10-31: backend edb4eb08 (.next-rel-edb4eb0), UI 0d74040 (/var/www/aifekr-ui-v2-0d74040). Both PM2 processes are online. Accounting and social flags are enabled. Consistent SQLite backup was created and verified before switching. Home, English home and health returned 200; guest social/accounting returned 307 and guest Instagram status returned 401. Available disk: 5.7 GB. Rollback: backend .next-rel-2a2721a, UI /var/www/aifekr-ui-v2-b88f873, social flag disabled, accounting flag enabled.
+
+No signed-in production walkthrough or external publishing, messaging, OAuth switch, paid generation or real payment was performed. Browser access remains unavailable. Source inventory: 8 of 25 registered product modules have live adapters, 17 remain classic-only; this is not a declaration of completed platform migration.
