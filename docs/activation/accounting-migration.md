@@ -20,9 +20,13 @@ Main backend changes include accounting copy/access in the shell and manual jour
 - Both TypeScript checks and the UI production build passed.
 - No paid synthesis, real payment, production financial mutation or customer-account sign-in occurred.
 - Local HTTP contract smoke: 18/18 checks passed, including shell access, 15 accounting data endpoints, balanced journal persistence and explicit reversal in the isolated test database.
-- Browser walkthrough, mobile visual verification and production rollout of this increment remain pending. Browser use is disabled in Work settings.
+- Browser walkthrough and mobile visual verification remain pending. Browser use is disabled in Work settings.
 - Wallet adapter from the previous session was unfinished: its typing/retry issues were corrected, but it is not enabled. Its localization, purchase currency and live contract need verification before rollout.
 
 ## Still open
 
 Accounting parity still needs UI-level interaction verification, report preview presentation. BI token management, AI proposals/anomalies, cash-flow forecast/narrative and property management-fee settings are now wired to their existing contracts, including parsing the stored proposal payload and showing actual anomaly account/deviation fields; no live token or paid request was created. These are not marked completed by the presence of navigation tabs. Social, SEO, lead generation, business/learning/fitness/admin migrations remain separate work; do not enable their prototype screens.
+
+## Production rollout
+
+Backend `.next-rel-2a2721a` and UI `/var/www/aifekr-ui-v2-b88f873` are online. `UI_V2_ACCOUNTING_ENABLED=1` enables only the reviewed accounting route list. Both uploaded archives matched SHA-256, a consistent database backup was verified, and both previews passed health checks before switching. Rollback: backend `.next-rel-77fe095`, UI `/var/www/aifekr-ui-v2-3caba27`, accounting flag off. No schema migration or production financial mutation was performed. Post-release: homepage/en/health 200, guest accounting 307 and guest journal API 401. Disk free 6.0 GB. These checks do not claim a signed-in production walkthrough.
