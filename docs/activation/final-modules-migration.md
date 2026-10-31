@@ -33,6 +33,13 @@ Only the migrated root entries are claimed. Existing detail pages, admin pages, 
 - Earlier local contract batches: SEO 18, team 13, organization 10, academy 12.
 - Chrome at 390×844 and 320×740: main hamburger remains inside the header; main drawer opens/closes; CRM drawer closes after choosing Contacts. This visual check used the isolated design-review app. API checks used synthetic local accounts, not production users.
 - Home: exact deployed route's `createRequire` now resolves both direct and hashed Prisma imports to the current isolated runtime. The read-only production runtime guard passed. No production account was impersonated.
+- Final standalone build: 17 signed-in page checks with synthetic local users, including Home in four languages, every newly migrated root, a fitness account and the separate owner portal. Chrome confirmed Home rendered after local login and the profile form saved through the real local API.
+
+## Production verification
+
+Released on 2026-11-01: backend application build `e1251e55`, UI `3c9057b`. Backend `bdc4a16b` adds the final local page-check scripts without changing deployed application behavior. Both PM2 processes are online; all rollout switches above are enabled. The release retains the previous backend/UI pair for rollback.
+
+Public homepage and login returned 200; eight referenced static assets loaded successfully. Protected roots redirected guests to their correct sign-in flow, including the narrower owner login. Profile, student-workspace and owner APIs denied unauthenticated access with 401. The exact deployed Prisma runtime guard passed before and after activation. Available server disk remained 4.9 GB. These guest checks are distinct from the authenticated local-browser tests; production users were not signed in or impersonated.
 
 ## Limits
 
