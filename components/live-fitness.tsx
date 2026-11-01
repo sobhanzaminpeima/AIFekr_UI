@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import {useSearchParams} from "next/navigation";
 import { useApp } from "./providers";
 import Link from "./site-link";
 import { Button } from "./ui";
@@ -42,6 +43,7 @@ export function LiveFitness({
   module: ModuleSpec;
   view: ViewSpec;
 }) {
+  const returnPlan=useSearchParams().get("returnPlan");
   const { fa, locale } = useApp(),
     r = useLiveData(API),
     [error, setError] = useState(""),
@@ -110,6 +112,7 @@ export function LiveFitness({
               <FitnessReports />
             </>
           )}
+          {view.id === "profile" && returnPlan && <Link className="btn" href={'/choose-plan?group=FITNESS&plan='+encodeURIComponent(returnPlan)}>{fa?'پس از ذخیره، بازگشت به پکیج انتخاب‌شده':'After saving, return to selected package'}</Link>}
           {view.id === "profile" && (
             <section className="panel">
               <LiveForm

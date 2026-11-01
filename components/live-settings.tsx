@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useApp } from "./providers";
 import { Preferences } from "./shell";
-import { SectionTitle, Button } from "./ui";
+import { SectionTitle, Button, Icon } from "./ui";
 import Link from "./site-link";
 import {
   LiveForm,
@@ -25,10 +25,11 @@ export function LiveSettings() {
     state.reload();
   };
   return (
-    <>
-      <SectionTitle title={fa ? "حساب و پروفایل من" : "My account & profile"} />
+    <div className="account-center settings-center">
+      <SectionTitle title={fa ? "حساب و پروفایل من" : "My account & profile"} subtitle={fa?"اطلاعات، امنیت و فضای شخصی‌تان را از اینجا مدیریت کنید.":"Manage your personal details, security and workspace preferences."} />
+      <div className="settings-account-banner panel"><span className="avatar">{String(user?.name||"A").slice(0,1)}</span><div><strong>{String(user?.name|| (fa?"حساب شما":"Your account"))}</strong><p>{String(user?.email||"")}</p></div><Link className="btn" href="/plans">{fa?"مدیریت پکیج":"Manage package"}<Icon name="ArrowUpLeft" size={16}/></Link></div>
       <nav
-        className="module-tabs"
+        className="module-tabs settings-tabs"
         aria-label={fa ? "تنظیمات حساب" : "Account settings"}
       >
         {[
@@ -195,6 +196,6 @@ export function LiveSettings() {
       <Button onClick={() => window.location.reload()}>
         {fa ? "تازه‌سازی حساب" : "Refresh account"}
       </Button>
-    </>
+    </div>
   );
 }

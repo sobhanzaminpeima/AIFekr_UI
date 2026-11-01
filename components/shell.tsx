@@ -193,7 +193,7 @@ export function Shell({
               </Link>
               )}
             </div>
-            {live ? projects.list.slice(0, 3).map((p) => (
+            {live ? projects.list.map((p) => (
               <Link key={p.id} href={"/chat?project=" + p.id} className="project-link">
                 <span className="tiny-dot" style={{ background: p.color }} />
                 {p.name}
@@ -208,7 +208,7 @@ export function Shell({
             )}
           </>
         )}
-        <div className="sidebar-bottom"><WebAppInstallButton/>
+        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
           <Link href="/credits" className="wallet">
             <div>
               <span>

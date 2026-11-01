@@ -68,7 +68,7 @@ export function LivePlans() {
             <small>{n(p.days)} {pick(locale, "روز", "days", "Tage", "gün")} · {n(p.credits)} {pick(locale, "کردیت", "credits", "Credits", "kredi")}</small>
             <a href={choose(p.code)} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
             <ul>
-              {(group === "CHAT_STARTER" ? [pick(locale, "چت متنی، تاریخچه و ذخیرهٔ گفتگوها", "Text chat, history and saved conversations", "Textchat, Verlauf und gespeicherte Gespräche", "Metin sohbeti, geçmiş ve kayıtlı konuşmalar")] : p.features).concat(pick(locale, "خرید یک‌باره؛ بدون تمدید خودکار", "One-time purchase; no automatic renewal", "Einmaliger Kauf; keine automatische Verlängerung", "Tek seferlik satın alma; otomatik yenileme yok")).map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}
+              {p.features.concat(pick(locale, "خرید یک‌باره؛ بدون تمدید خودکار", "One-time purchase; no automatic renewal", "Einmaliger Kauf; keine automatische Verlängerung", "Tek seferlik satın alma; otomatik yenileme yok")).map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}
             </ul>
           </article>
         ))}

@@ -104,7 +104,7 @@ const loadNotices = () => {
   return noticeCache.promise;
 };
 export function NotificationBell() {
-  const { copy } = useShell()!;
+  const { copy, lang } = useShell()!;
   const t = copy.notifications;
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -119,8 +119,10 @@ export function NotificationBell() {
   }, []);
   useEffect(() => {
     void load();
+    const sync=()=>{noticeCache=null;void load();};
+    addEventListener("aifekr:notifications-updated",sync);
     const id = setInterval(load, 30000);
-    return () => clearInterval(id);
+    return () => {clearInterval(id);removeEventListener("aifekr:notifications-updated",sync);};
   }, [load]);
   useEffect(() => {
     if (!open) return;
@@ -144,7 +146,7 @@ export function NotificationBell() {
       {open && (
         <div className="bell-menu panel" role="dialog" aria-label={t.bellTooltip}>
           <div className="bell-head">
-            <strong>{t.bellTooltip}</strong>
+            <strong>{t.bellTooltip}</strong><Link href="/notifications" onClick={()=>setOpen(false)}>{lang === "fa" ? "همهٔ اعلان‌ها" : "View all"}</Link>
             {unread > 0 && <button className="text-btn" onClick={() => { setItems((p) => p.map((x) => ({ ...x, isRead: true }))); setUnread(0); void patch({ all: true }); }}>{t.markAllRead}</button>}
           </div>
           {!items.length ? <p className="muted bell-empty">{t.empty}</p> : (

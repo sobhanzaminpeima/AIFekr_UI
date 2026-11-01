@@ -49,6 +49,8 @@ import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
 import { LivePayments } from "./live-payments";
+import {LiveCredits} from "./live-credits";
+import {LiveWallet,LiveNotifications} from "./live-account-center";
 import { LiveSettings } from "./live-settings";
 import { LiveOwner } from "./live-owner";
 import { LiveGallery } from "./live-create";
@@ -73,7 +75,7 @@ function LivePlatform({ path }: { path: string }) {
     <>
       <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
       <Shell path={path}>{
-        path === "/settings" ? <LiveSettings />
+        path === "/credits" ? <LiveCredits/> : path === "/wallet" ? <LiveWallet/> : path === "/notifications" ? <LiveNotifications/> : path === "/settings" ? <LiveSettings />
         : path === "/home" ? <Dashboard />
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />

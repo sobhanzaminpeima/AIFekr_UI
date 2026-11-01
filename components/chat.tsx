@@ -1,4 +1,5 @@
 "use client";
+import {ChatOrganizer} from "./chat-organizer";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "@/components/site-link";
@@ -16,6 +17,7 @@ export function Chat({ persona }: { persona?: string }) {
   const router = useRouter();
   const lc = useLiveChat(pathname?.startsWith("/chat/") ? decodeURIComponent(pathname.split("/")[2] || "") || null : null);
   const live = lc.enabled;
+  useEffect(()=>{try{const raw=sessionStorage.getItem('aifekr-edit-draft');if(!raw)return;const draft=JSON.parse(raw);if(location.pathname==='/chat/'+draft.id&&typeof draft.text==='string'){setPrompt(draft.text);sessionStorage.removeItem('aifekr-edit-draft');}}catch{}},[]);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const referenceRef = useRef<HTMLInputElement>(null);
   const [prompt, setPrompt] = useState(query.get("prompt") || "");
@@ -168,7 +170,8 @@ export function Chat({ persona }: { persona?: string }) {
           <Icon name="SquarePen" />
         </button>
       </div>
-      {!(live ? lc.messages.length : messages.length) ? (
+      {live && !lc.messages.length && <ChatOrganizer conversationId={lc.conversationId}/>}
+        {!(live ? lc.messages.length : messages.length) ? (
         <div className="chat-welcome">
           <div className="big-spark">✦</div>
           <span className="eyebrow">AIFekr INTELLIGENCE</span>
@@ -198,7 +201,7 @@ export function Chat({ persona }: { persona?: string }) {
         </div>
       ) : live ? (
         <div className="messages">
-          {lc.messages.map((m, i) => <LiveMessageView key={m.id} m={m} i={i} lc={lc} onEdit={setPrompt} onShare={liveShare} />)}
+          <ChatOrganizer conversationId={lc.conversationId}/>{lc.messages.map((m, i) => <LiveMessageView key={m.id} m={m} i={i} lc={lc} onEdit={setPrompt} onShare={liveShare} />)}
           <div ref={bottom} />
         </div>
       ) : (
@@ -456,6 +459,7 @@ export function Chat({ persona }: { persona?: string }) {
 /** One message of the live thread, in the design's message markup. */
 function LiveMessageView({ m, i, lc, onEdit, onShare }: { m: LiveMessage; i: number; lc: ReturnType<typeof useLiveChat>; onEdit: (text: string) => void; onShare: (text: string) => void }) {
   const { t } = useApp();
+  const [editing,setEditing]=useState(false),[draft,setDraft]=useState(m.display),[saving,setSaving]=useState(false);
   const previous = lc.messages[i - 1];
   const done = !lc.streaming || i < lc.messages.length - 1;
   return (
@@ -474,9 +478,11 @@ function LiveMessageView({ m, i, lc, onEdit, onShare }: { m: LiveMessage; i: num
         ) : (
           <>
             <div className="message-text">{m.display}</div>
-            {!!m.attachments?.length && <div className="reference-row">{m.attachments.map((url, x) => <img key={x} src={url} alt="" />)}</div>}
+            {!!m.attachments?.length && !m.documents?.length && <div className="reference-row">{m.attachments.map((url, x) => <img key={x} src={url} alt="" />)}</div>}
           </>
         )}
+        {m.role === "user" && !m.attachments?.length && <div className="message-actions"><button className="icon-btn" disabled={lc.streaming||lc.generating} aria-label={lc.lang==='fa'?'ویرایش و ادامه از اینجا':'Edit and continue here'} onClick={()=>{setDraft(m.display);setEditing(true)}}><Icon name="Pencil" size={16}/></button></div>}
+        {editing&&<Modal title={lc.lang==='fa'?'ویرایش و ادامهٔ گفتگو':'Edit and continue'} onClose={()=>{if(!saving)setEditing(false)}}><p>{lc.lang==='fa'?'نسخهٔ اصلی حفظ می‌شود؛ ادامه در گفتگوی جدید باز می‌شود. ارسال مجدد طبق تعرفهٔ مدل کردیت مصرف می‌کند.':'The original is preserved. Continue in a new conversation. Sending again uses the selected model’s credit rate.'}</p><textarea aria-label={lc.lang==='fa'?'متن ویرایش‌شده':'Edited message'} value={draft} onChange={e=>setDraft(e.target.value)} rows={6}/><Button variant="primary" disabled={saving||!draft.trim()} onClick={async()=>{setSaving(true);try{await lc.branchFrom(i,draft)}finally{setSaving(false)}}}>{lc.lang==='fa'?'ادامه در شاخهٔ جدید':'Continue in new branch'}</Button></Modal>}
         {m.role === "assistant" && m.display && !m.media && done && (
           <div className="message-actions">
             <button className="icon-btn" aria-label={lc.chat!.t.copy} title={lc.chat!.t.copy} onClick={() => { void navigator.clipboard.writeText(m.display); toast.success(lc.chat!.t.copied); }}><Icon name="Copy" size={16} /></button>

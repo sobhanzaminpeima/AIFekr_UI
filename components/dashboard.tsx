@@ -58,7 +58,7 @@ function useLiveDashboard(enabled: boolean, student: boolean) {
 }
 
 /** The usage line from real daily credit use, drawn in the design's own chart frame. */
-function UsageChart({ days }: { days: number[] }) {
+export function UsageChart({ days }: { days: number[] }) {
   const max = Math.max(1, ...days);
   const points = days.map((v, i) => `${(i * 300) / (days.length - 1)} ${64 - (v / max) * 58}`);
   return (

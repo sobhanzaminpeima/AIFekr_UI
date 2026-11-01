@@ -132,7 +132,7 @@ export function useLiveChat(conversationFromPath: string | null) {
     else { abort.current?.abort(); setConversationId(null); setMessages([]); }
   }, [chat, conversationFromPath, load]);
 
-  const announce = (id: string, title?: string) => dispatchEvent(new CustomEvent(CHAT_HISTORY_UPDATED, { detail: { id, ...(title ? { title } : {}), updatedAt: new Date().toISOString(), projectId: null } }));
+  const announce = (id: string, title?: string) => dispatchEvent(new CustomEvent(CHAT_HISTORY_UPDATED, { detail: { id, ...(title ? { title } : {}), updatedAt: new Date().toISOString() } }));
 
   async function send(text: string, history: LiveMessage[] = messages) {
     if (!chat || (!text.trim() && !documents.length) || streaming || generating || documentBusy) return;
@@ -186,6 +186,17 @@ export function useLiveChat(conversationFromPath: string | null) {
       setStreaming(false);
       abort.current = null;
     }
+  }
+  async function branchFrom(index:number,text:string){
+    if(!conversationId||streaming||generating)return;
+    try{
+      const response=await fetch(`/api/chat/history?conversationId=${encodeURIComponent(conversationId)}`);if(!response.ok)throw Error(chat?.error);
+      const data=await response.json();const ordinal=messages.slice(0,index+1).filter(m=>m.role==='user').length-1;
+      const target=data.messages?.filter((m:LiveMessage)=>m.role==='user')[ordinal];
+      if(!target||target.content!==messages[index].content)throw Error(lang==='fa'?'گفتگو تغییر کرده؛ صفحه را تازه کنید.':'Conversation changed. Refresh before editing.');
+      const r=await fetch('/api/chat/branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId,messageId:target.id})});if(!r.ok)throw Error(chat?.error);
+      const result=await r.json();sessionStorage.setItem('aifekr-edit-draft',JSON.stringify({id:result.conversation.id,text}));location.assign('/chat/'+result.conversation.id);
+    }catch(error){toast.error(error instanceof Error?error.message:chat?.error);}
   }
   function history_replace(url: string) { window.history.replaceState(window.history.state, "", url); }
 
@@ -279,7 +290,7 @@ export function useLiveChat(conversationFromPath: string | null) {
 
   return {
     enabled: !!chat, chat, s, lang, messages, setMessages, conversationId, providers, model, setModel, chatCost, expertMode, setExpertMode,
-    mediaType, setMediaType, streaming, generating, activeProvider, send, generate, stop: () => abort.current?.abort(), mediaCost: tools.mediaCost,
+    mediaType, setMediaType, streaming, generating, activeProvider, send, branchFrom, generate, stop: () => abort.current?.abort(), mediaCost: tools.mediaCost,
     documents, setDocuments, documentBusy, attachDocument, sourceImages, setSourceImages, uploading: tools.uploading, uploadReference: tools.uploadReference, refLimit: tools.refLimit,
     translate: tools.translate, templates: tools.templates, pickTemplate: tools.pickTemplate, settings, setSettings, imageProviders: tools.imageProviders, videoProviders: tools.videoProviders, puterReady: tools.puterReady,
     listening, toggleVoice, speakingId, toggleSpeak,
