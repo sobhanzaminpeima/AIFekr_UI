@@ -128,10 +128,11 @@
 .template-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
 .template-head h2{display:flex;align-items:center;gap:8px;font-size:15px}
 .template-head h2 svg{color:var(--orange)}
-.template-cats{padding:10px 18px;overflow-x:auto;flex-wrap:nowrap;margin:0;border-bottom:1px solid var(--border)}
-.template-grid{flex:1;overflow-y:auto;padding:18px;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-.template-card{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface-1)}
-.template-card img{width:100%;height:130px;object-fit:cover;border-radius:10px}
+.template-cats{padding:10px 18px;overflow-x:auto;flex-wrap:nowrap;flex-shrink:0;margin:0;border-bottom:1px solid var(--border)}
+.template-head{flex-shrink:0}
+.template-grid{flex:1;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;padding:18px;display:grid;gap:14px;align-items:start;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr))}
+.template-card{min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface-1)}
+.template-card img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;background:var(--surface-2);border-radius:10px}
 .template-card strong{font-size:13px}
 .template-guide{flex:1;padding:8px 10px;border-radius:10px;background:#ea580c14;border:1px solid #ea580c33}
 .template-guide small{display:block;font-size:10px;font-weight:600;color:var(--orange)}
