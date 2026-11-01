@@ -6,6 +6,7 @@ import { useApp } from "./providers";
 import { Brand, Button, Command, Icon, Modal, RouteName } from "./ui";
 import { recentChats } from "@/mocks/catalog";
 import { TranslationKey, Locale } from "@/lib/i18n";
+import { WebAppInstallButton } from "./webapp-install";
 import { AdminNavigation } from "./admin-navigation";
 import {ModuleDirectory} from './module-directory';
 import { useShell } from "./live-shell-context";
@@ -207,7 +208,7 @@ export function Shell({
             )}
           </>
         )}
-        <div className="sidebar-bottom">
+        <div className="sidebar-bottom"><WebAppInstallButton/>
           <Link href="/credits" className="wallet">
             <div>
               <span>
@@ -415,7 +416,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           <Link href="/pricing">{t("plans")}</Link>
           <Link href="/learn">{fa ? "آکادمی" : "Academy"}</Link>
           <Link href="/fit">FIT</Link>
-          <Link href="/guides">{t("help")}</Link>
+          <Link href="/guides">{t("help")}</Link><WebAppInstallButton variant="footer"/>
           <div className="public-mobile-preferences"><Preferences/><Link href="/login">{t('login')}</Link></div>
         </nav>
         <div>

@@ -1,5 +1,6 @@
 "use client";
 import Link, { useHref, useSite } from "@/components/site-link";
+import { WebAppInstallCallout } from "./webapp-install";
 import { LiveCreditCalculator } from "./live-public";
 import { LiveOnboarding } from "./live-onboarding";
 import { useShell } from "./live-shell-context";
@@ -421,6 +422,7 @@ export function Landing() {
           <Icon name="ArrowLeft" size={16} />
         </Link>
       </section>
+      <WebAppInstallCallout/>
       <section className="final-cta">
         <span>✦</span>
         <h2>

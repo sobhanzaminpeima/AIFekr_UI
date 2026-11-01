@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { WebAppInstallProvider } from "./webapp-install";
 import { Toaster, toast } from "sonner";
 import { Locale, TranslationKey, translate, num, money } from "@/lib/i18n";
 import { GeneratedItem, setFailureMode } from "@/lib/api/client";
@@ -106,7 +107,7 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
         },
       }}
     >
-      {children}
+      <WebAppInstallProvider locale={locale}>{children}</WebAppInstallProvider>
       <Toaster
         richColors
         position="bottom-center"

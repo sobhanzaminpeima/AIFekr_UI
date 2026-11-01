@@ -6,6 +6,8 @@ import "./live-app.css";
 import { Providers } from "@/components/providers";
 import type { Locale } from "@/lib/i18n";
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
+  appleWebApp: { capable: true, title: "AIFekr", statusBarStyle: "black-translucent" },
   title: "ای آی فکر | یک فکر، هزار امکان",
   description:
     "پلتفرم یکپارچه هوش مصنوعی؛ گفتگو، خلق محتوا، کسب‌وکار، یادگیری و تناسب اندام.",
