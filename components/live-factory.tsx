@@ -20,11 +20,13 @@ import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
-export type VideoPackage = { planCode: string; name: string; nameEn: string | null; priceUsd: number | null; credits: number; entitlements: string; publicationStatus: string };
-type Catalog = { capabilities?: { silentOnly: boolean }; templates: Template[]; packages: VideoPackage[] };
+export type VideoPackage = { planCode: string; name: string; nameEn: string | null; priceUsd: number | null; baseCurrency?:string;termPrices?:string; credits: number; entitlements: string; publicationStatus: string };
+type Catalog = { capabilities?: { silentOnly: boolean;musicAvailable?:boolean }; templates: Template[]; packages: VideoPackage[] };
 
 // Classic error codes and the English text the classic page shows for them.
 const FAILURES: Record<string, string> = {
+  NARRATED_BUNDLE_REQUIRED: "Choose the narrated Creator Pack to generate a video with voice.",
+  BUNDLE_FEATURE_LIMIT: "This package supports up to eight image scenes and narration per one-minute video. Turn off additional effects.",
   AUDIO_TEMPORARILY_UNAVAILABLE: "Image and video generation is active; narration and music are temporarily unavailable. Turn off audio options.",
   VIDEO_PACKAGE_REQUIRED_OR_EXHAUSTED: "Purchase a video package or renew your quota.",
   VIDEO_MAXIMUM_8_MINUTES: "Each video is limited to 8 minutes.",
@@ -248,7 +250,7 @@ function PackagesView({ x }: { x: FactoryCtx }) {
               <article className="panel plan-card" key={p.planCode}>
                 <span className="icon-chip orange"><Icon name="Film" size={27} /></span>
                 <h2>{fa ? p.name : p.nameEn || p.name}</h2>
-                {p.priceUsd != null && <strong className="plan-price">${n(p.priceUsd / 100)}</strong>}
+                {p.baseCurrency==="IRT" ? <><del>{n(JSON.parse(p.entitlements).limits?.compareAtToman||0)} {fa?"تومان":"toman"}</del><strong className="plan-price">{n(JSON.parse(p.termPrices||"{}").monthly||0)} {fa?"تومان":"toman"}</strong></> : p.priceUsd != null && <strong className="plan-price">${n(p.priceUsd / 100)}</strong>}
                 <ul className="check-list">
                   {limits.videoCount ? <li><Icon name="Check" size={16} />{n(limits.videoCount)} {fa ? "ویدیو" : "videos"}</li> : null}
                   {limits.videoMaxSeconds ? <li><Icon name="Check" size={16} />{fa ? "تا" : "Up to"} {n(Math.round(limits.videoMaxSeconds / 60))} {x.f("minutes")}</li> : null}
@@ -366,7 +368,7 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
                 <label>{f("Output resolution")}<select value={config.resolution} onChange={(e) => change({ resolution: e.target.value as Configuration["resolution"] })}><option>720p</option><option>1080p</option></select></label>
                 <label className="check-label"><input type="checkbox" checked={config.narration} onChange={(e) => change({ narration: e.target.checked })} />{f("AI-generated narration")}</label>
                 <label>{f("Narrator voice")}<select disabled={!config.narration} value={config.voice} onChange={(e) => change({ voice: e.target.value })}>{VOICES.map((v) => <option key={v}>{v}</option>)}</select></label>
-                <label className="check-label"><input type="checkbox" checked={config.music} onChange={(e) => change({ music: e.target.checked })} />{f("Instrumental background music")}</label>
+                <label className="check-label"><input type="checkbox" disabled={!catalog?.capabilities?.musicAvailable} checked={config.music} onChange={(e) => change({ music: e.target.checked })} />{f("Instrumental background music")}</label>
                 <label>{f("Music direction")}<input disabled={!config.music} maxLength={2000} value={config.musicPrompt} onChange={(e) => change({ musicPrompt: e.target.value })} /></label>
               </>
             )}
@@ -515,7 +517,7 @@ function SoundStep({ x }: { x: FactoryCtx }) {
             </button>
           ))}
         </div>
-        <label className="toggle-row"><span>{f("Instrumental background music")}</span><input type="checkbox" checked={config.music} onChange={(e) => change({ music: e.target.checked })} /></label>
+        <label className="toggle-row"><span>{f("Instrumental background music")}</span><input type="checkbox" disabled={!catalog?.capabilities?.musicAvailable} checked={config.music} onChange={(e) => change({ music: e.target.checked })} /></label>
         <label>{f("Music direction")}<input disabled={!config.music} maxLength={2000} value={config.musicPrompt} onChange={(e) => change({ musicPrompt: e.target.value })} /></label>
       </fieldset>
       {config.mediaMode !== "MULTIMEDIA" && <p className="fine-print">{f("Output type")}: {f("Silent storyboard film")}</p>}

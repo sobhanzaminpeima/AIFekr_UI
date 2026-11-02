@@ -30,7 +30,7 @@ type Model = { id: string; name: string; languages: { id: string; name: string }
 type Voice = { id: string; name: string; preview: string | null; labels: Record<string, string> };
 type Data = {
   access?: { planAllowed: boolean; storageReady: boolean; trialRemaining?: number; trialMaxSeconds?: number };
-  policy: VoicePolicy;
+  policy: VoicePolicy & {trialFree?:boolean};
   catalog: { models: Model[]; voices: Voice[] } | null;
   catalogError: string | null;
   credits: number;
@@ -108,7 +108,7 @@ function Notices({ v, offline }: { v: VoiceCtx; offline?: boolean }) {
     <>
       {!data.policy.enabled && banner("off", err("VOICE_STUDIO_DISABLED"))}
       {data.policy.enabled && a && !a.planAllowed && (a.trialRemaining ?? 0) > 0 &&
-        banner("trial", k("You can create {0} short sample(s) of up to {1} seconds. It uses your credits as usual and is refunded if it fails.", { 0: (a.trialRemaining ?? 0).toLocaleString(lang), 1: (a.trialMaxSeconds ?? 30).toLocaleString(lang) }), "Sparkles")}
+        banner("trial", data.policy.trialFree ? (lang==="fa"?`${a.trialRemaining} نوبت صدای رایگان تا ${a.trialMaxSeconds??30} ثانیه؛ بدون کسر کردیت.`:lang==="de"?`${a.trialRemaining} kostenlose Sprachproben bis ${a.trialMaxSeconds??30} Sekunden.`:lang==="tr"?`${a.trialRemaining} ücretsiz ses denemesi, en fazla ${a.trialMaxSeconds??30} saniye.`:`${a.trialRemaining} free voice samples, up to ${a.trialMaxSeconds??30} seconds. No credits charged.`) : k("You can create {0} short sample(s) of up to {1} seconds. It uses your credits as usual and is refunded if it fails.", { 0: (a.trialRemaining ?? 0).toLocaleString(lang), 1: (a.trialMaxSeconds ?? 30).toLocaleString(lang) }), "Sparkles")}
       {data.policy.enabled && a && !a.planAllowed && !(a.trialRemaining ?? 0) &&
         banner("plan", <>{err("PLAN_REQUIRED")} <Link href="/pricing">{k("See plans")}</Link></>, "Lock")}
       {data.policy.enabled && a && !a.storageReady && banner("storage", err("PRIVATE_STORAGE_REQUIRED"))}
@@ -437,8 +437,9 @@ function GenerateView({ v }: { v: VoiceCtx }) {
   const policy = data!.policy;
   const selected = segments[segment] || "";
   const estimate = estimatedSeconds(selected || " ", language);
-  const cost = creditsFor(estimate, policy);
-  const reserved = creditsFor(policy.maxDurationSeconds, policy);
+  const freeSample = !data!.access?.planAllowed && !!policy.trialFree && (data!.access?.trialRemaining??0)>0;
+  const cost = freeSample ? 0 : creditsFor(estimate, policy);
+  const reserved = freeSample ? 0 : creditsFor(policy.maxDurationSeconds, policy);
   const a = data!.access;
   const blockedReason = !policy.enabled ? err("VOICE_STUDIO_DISABLED")
     : a && !a.planAllowed && !(a.trialRemaining ?? 0) ? err("PLAN_REQUIRED")

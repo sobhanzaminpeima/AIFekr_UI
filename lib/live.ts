@@ -3,7 +3,7 @@
 // every component keeps its demo behaviour.
 import type { Locale } from "./i18n";
 
-export type SitePlan = { code: string; name: string; category: string; minor: number; currency: string; credits: number; days: number; featured: boolean; features: string[] };
+export type SitePlan = { compareAtMinor?:number;code: string; name: string; category: string; minor: number; currency: string; credits: number; days: number; featured: boolean; features: string[] };
 export type SiteFeature = { slug: string; route: string; category: "work" | "create" | "learn"; title: string; desc: string; items: string[]; requirement: string };
 export type SiteSolution = { slug: string; title: string; modules: string[]; description: string; guide: string; steps: { title: string; body: string }[] };
 export type SiteGuide = { slug: string; title: string; description: string; related: string[]; sections: { title: string; body: string }[] };

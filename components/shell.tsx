@@ -83,6 +83,8 @@ export function Shell({
   const [collapsed, setCollapsed] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
   const [directory,setDirectory]=useState(false);
+  const [loggingOut,setLoggingOut]=useState(false);
+  async function logout(){setLoggingOut(true);try{const response=await fetch("/api/auth/logout",{method:"POST",credentials:"include"});if(!response.ok)throw Error("LOGOUT_FAILED");window.location.assign("/login");}catch{setLoggingOut(false);alert(fa?"خروج انجام نشد؛ دوباره تلاش کنید.":"Unable to log out. Please retry.");}}
   // The home page's "All tools" opens the same directory.
   useEffect(()=>{const open=()=>setDirectory(true);window.addEventListener("aifekr:directory",open);return()=>window.removeEventListener("aifekr:directory",open);},[]);
   const router = useRouter();
@@ -208,7 +210,7 @@ export function Shell({
             )}
           </>
         )}
-        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
+        <div className="sidebar-bottom">{live&&<button className="btn logout-button" disabled={loggingOut} onClick={()=>void logout()}><Icon name="LogOut" size={16}/>{loggingOut?(fa?"در حال خروج…":"Logging out…"):t("logout")}</button>}<WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
           <Link href="/credits" className="wallet">
             <div>
               <span>

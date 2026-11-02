@@ -27,18 +27,18 @@ function money(locale: Locale, minor: number, currency: string) {
   return `${value} ${unit}`;
 }
 
-const GROUPS = ["CHAT_STARTER", "BUSINESS", "STUDENT", "FITNESS"] as const;
-const GROUP_PARAM = { CHAT_STARTER: "CHAT", BUSINESS: "BUSINESS", STUDENT: "STUDENT", FITNESS: "FITNESS" } as const;
+const GROUPS = ["CHAT_STARTER", "BUSINESS", "STUDENT", "FITNESS", "VIDEO_FACTORY"] as const;
+const GROUP_PARAM = { CHAT_STARTER: "CHAT", BUSINESS: "BUSINESS", STUDENT: "STUDENT", FITNESS: "FITNESS", VIDEO_FACTORY:"VIDEO_FACTORY" } as const;
 
 /** Published packages at the site's real prices; choosing one continues on /choose-plan. */
 export function LivePlans() {
   const { locale, n } = useApp();
   const data = site(useSite());
   const [group, setGroup] = useState<(typeof GROUPS)[number]>("CHAT_STARTER");
-  const labels = { CHAT_STARTER: pick(locale, "چت هوش مصنوعی", "AI Chat", "KI-Chat", "AI Sohbet"), BUSINESS: pick(locale, "بیزنس", "Business", "Business", "İşletme"), STUDENT: pick(locale, "دانشجویی", "Student", "Studium", "Öğrenci"), FITNESS: pick(locale, "فیتنس", "Fitness", "Fitness", "Fitness") };
+  const labels = { VIDEO_FACTORY:pick(locale,"تولید محتوا","Content creation","Inhaltserstellung","İçerik üretimi"),CHAT_STARTER: pick(locale, "چت هوش مصنوعی", "AI Chat", "KI-Chat", "AI Sohbet"), BUSINESS: pick(locale, "بیزنس", "Business", "Business", "İşletme"), STUDENT: pick(locale, "دانشجویی", "Student", "Studium", "Öğrenci"), FITNESS: pick(locale, "فیتنس", "Fitness", "Fitness", "Fitness") };
   const rows = data.plans.filter((p) => p.category === group);
   // The package itself goes along, so /choose-plan opens with it marked.
-  const choose = (code: string) => `/choose-plan?group=${GROUP_PARAM[group]}&plan=${encodeURIComponent(code)}`;
+  const choose = (code: string) => group==="VIDEO_FACTORY"?`/plans?plan=${encodeURIComponent(code)}`:`/choose-plan?group=${GROUP_PARAM[group]}&plan=${encodeURIComponent(code)}`;
   return (
     <div className="plans-page">
       <div className="center-heading">
@@ -64,6 +64,7 @@ export function LivePlans() {
             {p.featured && <span className="recommended-tag">{pick(locale, "پیشنهاد ای آی فکر", "RECOMMENDED", "EMPFOHLEN", "ÖNERİLEN")}</span>}
             <span className="icon-chip orange"><Icon name={group === "FITNESS" ? "Dumbbell" : group === "STUDENT" ? "GraduationCap" : group === "BUSINESS" ? "Building2" : "Sparkles"} size={27} /></span>
             <h2>{p.name}</h2>
+            {p.compareAtMinor && p.compareAtMinor>p.minor ? <del>{money(locale,p.compareAtMinor,p.currency)}</del>:null}
             <strong className="plan-price">{money(locale, p.minor, p.currency)}</strong>
             <small>{n(p.days)} {pick(locale, "روز", "days", "Tage", "gün")} · {n(p.credits)} {pick(locale, "کردیت", "credits", "Credits", "kredi")}</small>
             <a href={choose(p.code)} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
