@@ -10,9 +10,10 @@ export function imageOutputs(body: { images?: unknown }): string[] {
   return body.images.flatMap((item) => item && typeof item.url === "string" && /^https?:\/\//.test(item.url) ? [item.url] : []);
 }
 
-export type MediaFailure = "credits" | "plan" | "rate_limited" | "invalid_input" | "disabled" | "provider";
+export type MediaFailure = "credits" | "plan" | "rate_limited" | "invalid_input" | "disabled" | "provider" | "content_blocked";
 export function mediaFailure(status: number, body: Record<string, unknown>): MediaFailure {
   const code = String(body.code ?? "");
+  if(code==='IMAGE_SAFETY_REJECTED')return 'content_blocked';
   if (body.requiresUpgrade || /PLAN_REQUIRED|REQUIRES_UPGRADE/.test(code)) return "plan";
   if (status === 402 || /INSUFFICIENT_CREDITS|CREDITS_INSUFFICIENT/.test(code)) return "credits";
   if (status === 429) return "rate_limited";
@@ -23,6 +24,7 @@ export function mediaFailure(status: number, body: Record<string, unknown>): Med
 
 export function failureGuidance(reason: MediaFailure, fa: boolean): string {
   const copy: Record<MediaFailure, [string, string]> = {
+    content_blocked:['درخواست تصویر در بررسی ایمنی سرویس پذیرفته نشد؛ متن و تصویر مرجع را بررسی کنید. برای این درخواست کردیتی کسر نشده است.','The image request was rejected by the service’s safety checks. Review your prompt and reference image. No credits were deducted for this request.'],
     credits: ["کردیت کافی نیست؛ موجودی و هزینه را بررسی کنید یا کیف پول را شارژ کنید.", "Check your balance and cost, or top up your wallet."],
     plan: ["این ابزار به پکیج مناسب نیاز دارد؛ پکیج‌ها را بررسی کنید.", "This tool needs an eligible package. Review your packages."],
     rate_limited: ["درخواست‌ها زیاد شده‌اند؛ کمی صبر کنید و دوباره تلاش کنید.", "Too many requests. Wait a moment before trying again."],
