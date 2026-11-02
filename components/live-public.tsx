@@ -27,18 +27,16 @@ function money(locale: Locale, minor: number, currency: string) {
   return `${value} ${unit}`;
 }
 
-const GROUPS = ["CHAT_STARTER", "BUSINESS", "STUDENT", "FITNESS", "VIDEO_FACTORY"] as const;
-const GROUP_PARAM = { CHAT_STARTER: "CHAT", BUSINESS: "BUSINESS", STUDENT: "STUDENT", FITNESS: "FITNESS", VIDEO_FACTORY:"VIDEO_FACTORY" } as const;
-
 /** Published packages at the site's real prices; choosing one continues on /choose-plan. */
 export function LivePlans() {
   const { locale, n } = useApp();
   const data = site(useSite());
-  const [group, setGroup] = useState<(typeof GROUPS)[number]>("CHAT_STARTER");
-  const labels = { VIDEO_FACTORY:pick(locale,"تولید محتوا","Content creation","Inhaltserstellung","İçerik üretimi"),CHAT_STARTER: pick(locale, "چت هوش مصنوعی", "AI Chat", "KI-Chat", "AI Sohbet"), BUSINESS: pick(locale, "بیزنس", "Business", "Business", "İşletme"), STUDENT: pick(locale, "دانشجویی", "Student", "Studium", "Öğrenci"), FITNESS: pick(locale, "فیتنس", "Fitness", "Fitness", "Fitness") };
+  const [group, setGroup] = useState("CHAT_STARTER");
+  const categories=data.packageCategories||[];
+
   const rows = data.plans.filter((p) => p.category === group);
   // The package itself goes along, so /choose-plan opens with it marked.
-  const choose = (code: string) => group==="VIDEO_FACTORY"?`/plans?plan=${encodeURIComponent(code)}`:`/choose-plan?group=${GROUP_PARAM[group]}&plan=${encodeURIComponent(code)}`;
+  const choose = (code: string,period="monthly") => group==="VIDEO_FACTORY"?`/plans?plan=${encodeURIComponent(code)}&period=${encodeURIComponent(period)}`:`/choose-plan?group=${group==="CHAT_STARTER"?"CHAT":group}&plan=${encodeURIComponent(code)}&period=${encodeURIComponent(period)}`;
   return (
     <div className="plans-page">
       <div className="center-heading">
@@ -46,7 +44,7 @@ export function LivePlans() {
         <h1>{pick(locale, "فضای بیشتر، برای فکرهای بزرگ‌تر.", "More room for your big ideas.", "Mehr Raum für große Ideen.", "Büyük fikirlerin için daha fazla alan.")}</h1>
         <p>{pick(locale, "یک دسته را انتخاب کن، امکانات و قیمت را ببین و شروع کن. خرید یک‌باره است و تمدید خودکار ندارد.", "Choose a category, review the price and start. Purchases are one-time with no automatic renewal.", "Kategorie wählen, Preis ansehen und starten. Einmaliger Kauf ohne automatische Verlängerung.", "Bir kategori seçin, fiyatı inceleyin ve başlayın. Tek seferlik satın alma, otomatik yenileme yok.")}</p>
         <div className="chips" role="group" aria-label={pick(locale, "دستهٔ پکیج", "Package category", "Paketkategorie", "Paket kategorisi")}>
-          {GROUPS.map((g) => <button key={g} className={group === g ? "selected" : ""} aria-pressed={group === g} onClick={() => setGroup(g)}>{labels[g]}</button>)}
+          {categories.map(category => <button key={category.code} className={group === category.code ? "selected" : ""} aria-pressed={group === category.code} onClick={() => setGroup(category.code)}>{category.label}</button>)}
         </div>
       </div>
       <div className="pricing-grid">
@@ -67,7 +65,7 @@ export function LivePlans() {
             {p.compareAtMinor && p.compareAtMinor>p.minor ? <del>{money(locale,p.compareAtMinor,p.currency)}</del>:null}
             <strong className="plan-price">{money(locale, p.minor, p.currency)}</strong>
             <small>{n(p.days)} {pick(locale, "روز", "days", "Tage", "gün")} · {n(p.credits)} {pick(locale, "کردیت", "credits", "Credits", "kredi")}</small>
-            <a href={choose(p.code)} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
+            <a href={choose(p.code,p.period)} className={`btn full ${p.featured ? "primary" : ""}`}>{pick(locale, "انتخاب و ادامه", "Choose and continue", "Wählen und weiter", "Seçin ve devam edin")}<Icon name="ArrowLeft" size={17} /></a>
             <ul>
               {p.features.concat(pick(locale, "خرید یک‌باره؛ بدون تمدید خودکار", "One-time purchase; no automatic renewal", "Einmaliger Kauf; keine automatische Verlängerung", "Tek seferlik satın alma; otomatik yenileme yok")).map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}
             </ul>
