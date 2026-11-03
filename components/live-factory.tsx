@@ -20,7 +20,8 @@ import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
-export type VideoPackage = { planCode: string; name: string; nameEn: string | null; priceUsd: number | null; baseCurrency?:string;termPrices?:string; credits: number; entitlements: string; publicationStatus: string };
+/** A purchasable video package; `offer` is its price in the visitor's currency, resolved by the main site like the landing (absent = not offered). */
+export type VideoPackage = { planCode: string; name: string; nameEn: string | null; credits: number; entitlements: string; publicationStatus: string; offer?: { minor: number; currency: string; compareAtMinor?: number } | null };
 type Catalog = { capabilities?: { silentOnly: boolean;musicAvailable?:boolean }; templates: Template[]; packages: VideoPackage[] };
 
 // Classic error codes and the English text the classic page shows for them.
@@ -231,9 +232,10 @@ export function useCatalog(x: FactoryCtx) {
   return catalog;
 }
 function PackagesView({ x }: { x: FactoryCtx }) {
-  const { fa, n } = useApp();
+  const { fa, n, locale } = useApp();
   const catalog = useCatalog(x);
-  const rows = (catalog?.packages ?? []).filter((p) => p.publicationStatus !== "DRAFT");
+  const rows = (catalog?.packages ?? []).filter((p) => p.publicationStatus !== "DRAFT" && p.offer);
+  const money = (minor: number, currency: string) => currency === "IRT" ? `${n(minor)} ${fa ? "تومان" : "toman"}` : new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 2 }).format(minor / 100);
   return (
     <div className="plans-page">
       <div className="center-heading">
@@ -250,7 +252,8 @@ function PackagesView({ x }: { x: FactoryCtx }) {
               <article className="panel plan-card" key={p.planCode}>
                 <span className="icon-chip orange"><Icon name="Film" size={27} /></span>
                 <h2>{fa ? p.name : p.nameEn || p.name}</h2>
-                {p.baseCurrency==="IRT" ? <><del>{n(JSON.parse(p.entitlements).limits?.compareAtToman||0)} {fa?"تومان":"toman"}</del><strong className="plan-price">{n(JSON.parse(p.termPrices||"{}").monthly||0)} {fa?"تومان":"toman"}</strong></> : p.priceUsd != null && <strong className="plan-price">${n(p.priceUsd / 100)}</strong>}
+                {p.offer!.compareAtMinor != null && p.offer!.compareAtMinor > p.offer!.minor && <del>{money(p.offer!.compareAtMinor, p.offer!.currency)}</del>}
+                <strong className="plan-price">{money(p.offer!.minor, p.offer!.currency)}</strong>
                 <ul className="check-list">
                   {limits.videoCount ? <li><Icon name="Check" size={16} />{n(limits.videoCount)} {fa ? "ویدیو" : "videos"}</li> : null}
                   {limits.videoMaxSeconds ? <li><Icon name="Check" size={16} />{fa ? "تا" : "Up to"} {n(Math.round(limits.videoMaxSeconds / 60))} {x.f("minutes")}</li> : null}
