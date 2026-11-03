@@ -678,6 +678,18 @@ kbd {
 .recent-label {
   margin-top: 28px;
 }
+.recent-label button {
+  margin-inline-start: auto;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+.recent-label button:hover {
+  color: var(--text-primary);
+}
 .recent-nav {
   display: flex;
   flex-direction: column;
