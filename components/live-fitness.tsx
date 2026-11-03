@@ -14,6 +14,7 @@ import {
   liveRequest,
   liveRows,
   field,
+  activationUrlFor,
   type LiveRow,
   type LiveField,
 } from "./live-module-kit";
@@ -59,7 +60,7 @@ export function LiveFitness({
   return (
     <LiveModuleFrame module={module} view={view}>
       <LiveLoad {...r} />
-      {error && <p role="alert">{error}</p>}
+      <ActivationError error={error} />
       {r.data && (
         <>
           <p className="inline-banner">
@@ -612,7 +613,7 @@ function Gym({ data, reload }: { data: LiveRow; reload: () => void }) {
   return (
     <section className="panel">
       <h2>{fa ? "تمرین امروز" : "Today’s workout"}</h2>
-      {error && <p role="alert">{error}</p>}
+      <ActivationError error={error} />
       {saved && <p role="status">{saved}</p>}
       {!session ? (
         <>
@@ -880,7 +881,7 @@ function AthleteCard({ data }: { data: LiveRow }) {
   return (
     <section className="panel">
       <LiveLoad {...r} />
-      {error && <p role="alert">{error}</p>}
+      <ActivationError error={error} />
       {card && (
         <img
           src={card}
@@ -920,5 +921,18 @@ function AthleteCard({ data }: { data: LiveRow }) {
           : "Your card uses your account’s official referral code."}
       </p>
     </section>
+  );
+}
+
+/** An error message, plus "choose a package" when the main site says which in-platform page activates the feature. */
+function ActivationError({ error }: { error: string }) {
+  const { fa } = useApp();
+  if (!error) return null;
+  const url = activationUrlFor(error);
+  return (
+    <div role="alert" className="domain-card">
+      <p>{error}</p>
+      {url && <a className="btn primary" href={url}>{fa ? "انتخاب و فعال‌سازی پکیج فیتنس" : "Choose and activate a fitness package"}</a>}
+    </div>
   );
 }

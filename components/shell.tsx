@@ -49,10 +49,11 @@ export function Preferences() {
  * like the classic menu, it opens the CRM for accounts with business access
  * and the industry packs otherwise.
  */
-function liveNavHref(href: string, business: boolean, student = false) {
+function liveNavHref(href: string, _business: boolean, student = false) {
   if(href === "/fit/dashboard") return "/fitness";
   if(href === "/learn" && student) return "/student";
-  return href === "/business" ? (business ? "/crm" : "/industry") : href;
+  // Business always opens the business workspace inside the platform; without a business package it offers the packages there (live-crm UpgradeBanner) instead of leaving for the public /industry page.
+  return href === "/business" ? "/crm" : href;
 }
 export function Shell({
   path,

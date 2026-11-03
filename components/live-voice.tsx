@@ -24,7 +24,10 @@ type Generation = {
   chargedCredits: number; reservedCredits: number; refundedCredits: number; errorCode: string | null;
   waveform: string | null; createdAt: string; providerStartedAt?: string | null;
 };
-type Settings = { stability?: number; style?: number; use_speaker_boost?: boolean };
+type Settings = { stability?: number; style?: number; use_speaker_boost?: boolean; emotion?: string };
+/** Delivery moods the main site sends as ElevenLabs audio tags (voice-studio/provider.ts VOICE_EMOTIONS). */
+const EMOTIONS: [string, string, string][] = [["", "بدون حالت خاص", "Neutral"], ["happy", "شاد", "Happy"], ["excited", "هیجان‌زده", "Excited"], ["calm", "آرام", "Calm"], ["sad", "غمگین", "Sad"], ["serious", "جدی", "Serious"], ["whispers", "نجواگونه", "Whispering"]];
+const supportsEmotion = (modelId: string) => /^eleven_v(3|4)/.test(modelId);
 type Preset = { id: string; name: string; modelId: string; voiceId: string; settings: Settings };
 type Model = { id: string; name: string; languages: { id: string; name: string }[]; maxCharacters: number; style: boolean; speakerBoost: boolean };
 type Voice = { id: string; name: string; preview: string | null; labels: Record<string, string> };
@@ -110,7 +113,9 @@ function Notices({ v, offline }: { v: VoiceCtx; offline?: boolean }) {
       {data.policy.enabled && a && !a.planAllowed && (a.trialRemaining ?? 0) > 0 &&
         banner("trial", data.policy.trialFree ? (lang==="fa"?`${a.trialRemaining} نوبت صدای رایگان تا ${a.trialMaxSeconds??30} ثانیه؛ بدون کسر کردیت.`:lang==="de"?`${a.trialRemaining} kostenlose Sprachproben bis ${a.trialMaxSeconds??30} Sekunden.`:lang==="tr"?`${a.trialRemaining} ücretsiz ses denemesi, en fazla ${a.trialMaxSeconds??30} saniye.`:`${a.trialRemaining} free voice samples, up to ${a.trialMaxSeconds??30} seconds. No credits charged.`) : k("You can create {0} short sample(s) of up to {1} seconds. It uses your credits as usual and is refunded if it fails.", { 0: (a.trialRemaining ?? 0).toLocaleString(lang), 1: (a.trialMaxSeconds ?? 30).toLocaleString(lang) }), "Sparkles")}
       {data.policy.enabled && a && !a.planAllowed && !(a.trialRemaining ?? 0) &&
-        banner("plan", <>{err("PLAN_REQUIRED")} <Link href="/pricing">{k("See plans")}</Link></>, "Lock")}
+        banner("plan", data.policy.paidAccess
+          ? <>{err("CREDITS_TO_CONTINUE")} <Link href="/credits">{lang === "fa" ? "خرید کردیت" : lang === "de" ? "Credits kaufen" : lang === "tr" ? "Kredi satın al" : "Buy credits"}</Link></>
+          : <>{err("PLAN_REQUIRED")} <Link href="/pricing">{k("See plans")}</Link></>, "Lock")}
       {data.policy.enabled && a && !a.storageReady && banner("storage", err("PRIVATE_STORAGE_REQUIRED"))}
       {data.catalogError && banner("catalog", err(data.catalogError), "AlertCircle")}
       {offline && banner("offline", k("You are offline. Your text is kept on this device."), "WifiOff")}
@@ -269,6 +274,7 @@ function ScriptView({ v }: { v: VoiceCtx }) {
 function VoiceSettings({ v, language }: { v: VoiceCtx; language: string }) {
   const { data, k, err, post, load, choice, setChoice } = v;
   const { models, modelId, model } = catalogFor(v, language);
+  const { fa } = useApp();
   const [presetId, setPresetId] = useState("");
   const settings = choice.settings;
   const setSettings = (next: Settings) => setChoice({ ...choice, settings: next });
@@ -286,6 +292,14 @@ function VoiceSettings({ v, language }: { v: VoiceCtx; language: string }) {
         {k("Stability")}
         <input type="range" min="0" max="1" step={modelId === "eleven_v3" ? "0.5" : "0.1"} value={settings.stability ?? 0.5} onChange={(e) => setSettings({ ...settings, stability: Number(e.target.value) })} />
       </label>
+      {supportsEmotion(modelId) && (
+        <label>
+          {fa ? "حس و حال صدا" : "Voice mood"}
+          <select value={settings.emotion ?? ""} onChange={(e) => setSettings({ ...settings, emotion: e.target.value || undefined })}>
+            {EMOTIONS.map(([id, faName, enName]) => <option key={id} value={id}>{fa ? faName : enName}</option>)}
+          </select>
+        </label>
+      )}
       {model?.style && (
         <label>
           {k("Style strength")}
@@ -442,7 +456,7 @@ function GenerateView({ v }: { v: VoiceCtx }) {
   const reserved = freeSample ? 0 : creditsFor(policy.maxDurationSeconds, policy);
   const a = data!.access;
   const blockedReason = !policy.enabled ? err("VOICE_STUDIO_DISABLED")
-    : a && !a.planAllowed && !(a.trialRemaining ?? 0) ? err("PLAN_REQUIRED")
+    : a && !a.planAllowed && !(a.trialRemaining ?? 0) ? err(policy.paidAccess ? "CREDITS_TO_CONTINUE" : "PLAN_REQUIRED")
     : !text.trim() ? k("Write the narration text first.")
     : !choice.voiceId ? k("Choose a voice from the voice list.")
     : !model ? k("No enabled model supports this language.")
@@ -505,7 +519,7 @@ function GenerateView({ v }: { v: VoiceCtx }) {
           </select>
           <input aria-label={k("Project name")} placeholder={k("Project name (optional)")} value={name} maxLength={120} onChange={(e) => setName(e.target.value)} />
           <label className="field-label">{k("Narration text")}</label>
-          <textarea aria-label={k("Narration text")} rows={6} value={text} maxLength={400000} placeholder={k("Type or paste the narration here…")} onChange={(e) => { setText(e.target.value); setSegment(0); }} />
+          <textarea id="voice-narration" aria-label={k("Narration text")} rows={6} value={text} maxLength={400000} placeholder={k("Type or paste the narration here…")} onChange={(e) => { setText(e.target.value); setSegment(0); }} />
           <p className={"fine-print" + (graphemes(text) > policy.maxCharacters ? " voice-over" : "")}>
             {graphemes(text).toLocaleString(lang)} / {policy.maxCharacters.toLocaleString(lang)} {k("characters")}
             {text.trim() ? ` · ≈ ${Math.ceil(estimatedSeconds(text || " ", language)).toLocaleString(lang)} ${k("s")}` : ""}
@@ -560,6 +574,12 @@ function GenerateView({ v }: { v: VoiceCtx }) {
         <section className={`panel studio-canvas mobile-${tab === "results" ? "show" : "hide"}`}>
           <div className="row-between">
             <h3>{k("Audio files")}</h3>
+            {generations.some((g) => g.status === "READY") && !submitting && !pending && (
+              // Back to the text, voice and mood with everything kept, to make another version straight away.
+              <Button variant="primary" onClick={() => { setTab("prompt"); requestAnimationFrame(() => { const box = document.getElementById("voice-narration"); box?.scrollIntoView({ behavior: "smooth", block: "center" }); box?.focus(); }); }}>
+                <Icon name="Plus" size={15} />{fa ? "ساخت صدای جدید" : "Make a new voice"}
+              </Button>
+            )}
             {generations.length > 0 && (
               <select aria-label={k("Status")} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                 <option value="">{k("All")}</option>

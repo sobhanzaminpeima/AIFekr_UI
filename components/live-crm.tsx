@@ -114,28 +114,39 @@ function CrmView({ view }: { view: string }) {
   );
 }
 
+type BusinessOffer = { planCode: string; name: string; nameEn?: string | null; category: string; offers?: Record<string, { minor: number; currency: string; credits: number; days: number }> };
+
+/**
+ * Shown in the business workspace to an account without a business package:
+ * the published business packages with their price in the visitor's currency
+ * (main site /api/packages), each opening the in-platform checkout.
+ */
 function UpgradeBanner() {
-  const { c, lang, s } = useCrm();
-  const [busy, setBusy] = useState(false);
-  async function purchase(plan: "CRM_SOLO" | "CRM_TEAM") {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/payment/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan, currency: lang === "fa" ? "IRR" : "TRY" }) });
-      const data = await res.json();
-      if (!res.ok || !data.paymentUrl) throw new Error(data.error || c.errors.paymentStartFailed);
-      window.location.href = data.paymentUrl;
-    } catch (e) {
-      toast.error(e instanceof Error && e.message ? e.message : c.errors.paymentGeneric);
-      setBusy(false);
-    }
-  }
+  const { c, lang } = useCrm();
+  const [plans, setPlans] = useState<BusinessOffer[] | null>(null);
+  useEffect(() => {
+    fetch("/api/packages", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : { packages: [] }))
+      .then((d) => setPlans(((d.packages || []) as BusinessOffer[]).filter((p) => p.category === "BUSINESS" && p.offers && Object.keys(p.offers).length)))
+      .catch(() => setPlans([]));
+  }, []);
+  const fa = lang === "fa";
+  const money = (minor: number, currency: string) => currency === "IRT" ? `${minor.toLocaleString("fa-IR")} تومان` : new Intl.NumberFormat(lang, { style: "currency", currency }).format(minor / 100);
   return (
     <div className="panel crm-upgrade">
       <div><strong>{c.upgrade.banner}</strong><p>{c.upgrade.bannerSub}</p></div>
-      <div className="domain-actions">
-        <Button disabled={busy} onClick={() => purchase("CRM_SOLO")}>{c.upgrade.solo}</Button>
-        <Button variant="primary" disabled={busy} onClick={() => purchase("CRM_TEAM")}>{busy ? s("Loading...") : c.upgrade.team}</Button>
-      </div>
+      {plans === null ? <p className="muted">…</p> : (
+        <div className="domain-actions">
+          {plans.map((p) => {
+            const offer = p.offers!.monthly ?? Object.values(p.offers!)[0];
+            return (
+              <a key={p.planCode} className="btn" href={`/plans?category=BUSINESS&plan=${encodeURIComponent(p.planCode)}`}>
+                {(fa ? p.name : p.nameEn || p.name)} · {money(offer.minor, offer.currency)}
+              </a>
+            );
+          })}
+          <a className="btn primary" href="/plans?category=BUSINESS">{fa ? "مقایسه و خرید پکیج کسب‌وکار" : "Compare and buy a business package"}</a>
+        </div>
+      )}
     </div>
   );
 }

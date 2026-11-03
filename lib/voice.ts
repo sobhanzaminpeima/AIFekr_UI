@@ -4,6 +4,8 @@
 
 export type VoicePolicy = {
   enabled: boolean;
+  /** Any account with a completed purchase may generate, paying from credits (main site voice-studio/domain.ts). */
+  paidAccess?: boolean;
   version: number;
   maxCharacters: number;
   maxDurationSeconds: number;

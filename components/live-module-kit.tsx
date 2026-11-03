@@ -24,6 +24,13 @@ export const field = (
   type = "text",
   optional = false,
 ): LiveField => ({ key, label: [fa, en], type, optional });
+/**
+ * Errors that come with the main site's in-platform page to activate the
+ * feature (e.g. a fitness package), by message, so any screen showing the
+ * message can offer that page next to it (see ActivationError).
+ */
+const activationUrls = new Map<string, string>();
+export const activationUrlFor = (message: string) => activationUrls.get(message) ?? null;
 export async function liveRequest(
   url: string,
   method = "GET",
@@ -41,14 +48,16 @@ export async function liveRequest(
       : {}),
   });
   const data = await res.json().catch(() => null);
-  if (!res.ok)
-    throw Error(
+  if (!res.ok) {
+    const message =
       typeof data?.error === "string"
         ? data.error
         : typeof data?.code === "string"
           ? data.code
-          : `HTTP ${res.status}`,
-    );
+          : `HTTP ${res.status}`;
+    if (typeof data?.renewUrl === "string" && data.renewUrl.startsWith("/")) activationUrls.set(message, data.renewUrl);
+    throw Error(message);
+  }
   if (!data || typeof data !== "object") throw Error("INVALID_RESPONSE");
   return data;
 }
@@ -90,7 +99,9 @@ export function LiveLoad({
   return error ? (
     <div role="alert" className="plan-notice">
       {error}{" "}
-      {reload && (
+      {activationUrlFor(error) ? (
+        <a className="btn primary" href={activationUrlFor(error)!}>{fa ? "انتخاب و فعال‌سازی پکیج" : "Choose and activate a package"}</a>
+      ) : reload && (
         <Button onClick={reload}>{fa ? "تلاش دوباره" : "Retry"}</Button>
       )}
     </div>
