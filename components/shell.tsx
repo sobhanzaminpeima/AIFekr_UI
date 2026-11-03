@@ -14,6 +14,7 @@ import { LiveFrame, NotificationBell, useLiveCredits, useLiveProjects } from "./
 const nav: [string, TranslationKey, string][] = [
   ["/home", "home", "LayoutDashboard"],
   ["/chat", "chat", "MessagesSquare"],
+  ["/live", "live", "AudioLines"],
   ["/create", "create", "Sparkles"],
   ["/business", "business", "BriefcaseBusiness"],
   ["/learn", "learn", "GraduationCap"],
@@ -78,6 +79,15 @@ export function Shell({
     addEventListener("aifekr:chat-history-updated", onHistory);
     return () => removeEventListener("aifekr:chat-history-updated", onHistory);
   }, []);
+  // Saved chats can be removed from the sidebar (main site DELETE /api/chat/history/:id); "All" shows every recent chat.
+  const [allRecent, setAllRecent] = useState(false);
+  async function removeChat(id: string) {
+    if (!confirm(fa ? "این گفتگو برای همیشه پاک شود؟" : "Delete this chat permanently?")) return;
+    const response = await fetch(`/api/chat/history/${encodeURIComponent(id)}`, { method: "DELETE", credentials: "include" }).catch(() => null);
+    if (!response?.ok) { alert(fa ? "پاک کردن گفتگو انجام نشد؛ دوباره تلاش کنید." : "Could not delete the chat; please try again."); return; }
+    setRecent((prev) => prev.filter((c) => c.id !== id));
+    if (path === "/chat/" + id) router.push("/chat");
+  }
   const [command, setCommand] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -166,15 +176,20 @@ export function Shell({
           <>
             <div className="side-label recent-label">
               <span>{t("recent")}</span>
-              <Link href="/chat">{t("all")}</Link>
+              {live ? <button className="text-link" onClick={() => setAllRecent((v) => !v)} aria-expanded={allRecent}>{allRecent ? (fa ? "کمتر" : "Less") : t("all")}</button> : <Link href="/chat">{t("all")}</Link>}
             </div>
             <nav className="recent-nav">
               {live
-                ? recent.filter((c) => !c.projectId).slice(0, 4).map((c) => (
-                    <Link key={c.id} href={"/chat/" + c.id}>
-                      <Icon name="MessageSquare" size={15} />
-                      <span>{c.title || live.copy.untitledChat}</span>
-                    </Link>
+                ? recent.filter((c) => !c.projectId).slice(0, allRecent ? 30 : 4).map((c) => (
+                    <div className="recent-item" key={c.id}>
+                      <Link href={"/chat/" + c.id}>
+                        <Icon name="MessageSquare" size={15} />
+                        <span>{c.title || live.copy.untitledChat}</span>
+                      </Link>
+                      <button className="recent-delete" aria-label={fa ? "پاک کردن گفتگو" : "Delete chat"} title={fa ? "پاک کردن گفتگو" : "Delete chat"} onClick={() => void removeChat(c.id)}>
+                        <Icon name="Trash2" size={13} />
+                      </button>
+                    </div>
                   ))
                 : recentChats.map(([a, b], i) => (
                 <Link key={a} href={"/chat?id=" + i}>

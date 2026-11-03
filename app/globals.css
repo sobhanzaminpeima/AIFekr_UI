@@ -699,6 +699,43 @@ kbd {
 .recent-nav svg {
   opacity: 0.6;
 }
+.recent-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.recent-item a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recent-delete {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+}
+.recent-item:hover .recent-delete,
+.recent-delete:focus-visible {
+  opacity: 1;
+}
+.recent-delete:hover {
+  color: var(--text-primary);
+  background: var(--surface-2, rgba(255, 255, 255, 0.06));
+}
+@media (hover: none) {
+  .recent-delete {
+    opacity: 0.7;
+  }
+}
 .project-link {
   display: flex;
   align-items: center;
@@ -6433,3 +6470,22 @@ tr:hover td {
 
 .account-center{max-width:1120px;margin:auto;display:grid;gap:22px;padding-bottom:32px}.settings-account-banner{display:flex;gap:16px;align-items:center;padding:24px;background:linear-gradient(120deg,#ff791810,transparent)}.settings-account-banner>.avatar{width:64px;height:64px;font-size:24px}.settings-account-banner>div{flex:1;min-width:0}.settings-account-banner p{overflow-wrap:anywhere;font-size:13px;opacity:.65}.settings-tabs{gap:8px;border-bottom:1px solid var(--border);padding-bottom:16px}.settings-tabs button{min-height:44px;border-radius:12px;padding:10px 20px}.settings-center .settings-layout{grid-template-columns:minmax(220px,.7fr) minmax(0,1.5fr);align-items:start}.settings-center .panel{padding:24px}.settings-center h2{font-size:18px}.settings-center .account-avatar-preview{width:104px;height:104px;object-fit:cover;border-radius:24px;margin:16px 0}.account-summary{display:flex;gap:18px;align-items:center;padding:24px}.account-summary>div{flex:1}.account-summary strong{font-size:32px}.account-summary p{margin:0;font-size:13px;opacity:.7}.notice-feed{display:grid;gap:12px}.notice-card{display:flex;gap:16px;padding:22px}.notice-card.unread{border-inline-start:3px solid #ff7918}.notice-card>div{min-width:0;flex:1}.notice-card h3{font-size:16px;margin:0}.notice-card p{font-size:14px;line-height:1.9;white-space:pre-wrap}.notice-card time,.wallet-ledger time{display:block;font-size:12px;opacity:.6}.account-empty{text-align:center;padding:36px}.wallet-overview{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}.wallet-balance-card{display:grid;gap:14px;padding:32px;border:1px solid #ff791840;border-radius:24px;background:radial-gradient(at 0 0,#ff791822,transparent 70%)}.wallet-balance-card strong{font-size:clamp(24px,4vw,38px)}.wallet-balance-card p{margin:0}.wallet-balance-card small{opacity:.65;line-height:1.9}.wallet-overview>.panel{padding:28px;display:flex;flex-direction:column;gap:16px}.wallet-overview h3{margin:0;font-size:18px}.wallet-overview p{line-height:1.9}.wallet-ledger{padding:12px 24px}.wallet-ledger article{display:flex;gap:16px;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--border)}.wallet-ledger article:last-child{border:0}.wallet-ledger p{font-size:13px;opacity:.7}.positive{color:#16a76d}.account-wallet-link{display:flex;gap:10px;padding:10px;font-size:13px}.chat-organizer{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:840px;margin:12px auto}.chat-organizer small{opacity:.6;font-size:12px}.project-conversations{margin:16px auto;max-width:840px;padding:20px}.project-conversations a{display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--border)}
 @media(max-width:640px){.wallet-overview,.settings-center .settings-layout{grid-template-columns:1fr}.account-center{gap:16px}.settings-account-banner{flex-wrap:wrap}.settings-account-banner .btn{width:100%}.settings-tabs{display:grid;grid-template-columns:1fr 1fr}.account-summary{flex-wrap:wrap}.notice-card{padding:16px}.wallet-ledger article{align-items:start;flex-wrap:wrap}.wallet-balance-card{padding:24px}}
+
+/* Chat on phones: the welcome block, four tall suggestion cards and the
+   sticky composer did not fit together, so the mode chips sat on top of the
+   cards. Keep the first screen to a short greeting, one scrollable row of
+   suggestions and a compact composer. */
+@media (max-width: 640px) {
+  .chat-welcome { padding: 14px 0 8px; width: 100%; min-width: 0; }
+  .chat-welcome .big-spark, .chat-welcome > .eyebrow { display: none; }
+  .chat-welcome h1 { font-size: 19px; line-height: 1.7; margin: 4px auto; }
+  .chat-suggestions { display: flex; overflow-x: auto; gap: 8px; margin: 14px -16px 0; padding: 0 16px 4px; scrollbar-width: none; }
+  .chat-suggestions::-webkit-scrollbar { display: none; }
+  .chat-suggestions > button { flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; white-space: nowrap; font-size: 11px; }
+  .chat-suggestions > button > svg:first-child { width: 14px; height: 14px; }
+  .mode-chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; margin-bottom: 8px; }
+  .mode-chips::-webkit-scrollbar { display: none; }
+  .mode-chips button { flex: none; }
+  .chat-composer { padding: 10px 12px; }
+  .chat-composer textarea { min-height: 38px; }
+}

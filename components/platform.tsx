@@ -49,6 +49,7 @@ import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
 import { LivePayments } from "./live-payments";
+import { LiveTalk } from "./live-talk";
 import {LiveCredits} from "./live-credits";
 import {LiveWallet,LiveNotifications} from "./live-account-center";
 import { LiveSettings } from "./live-settings";
@@ -80,6 +81,7 @@ function LivePlatform({ path }: { path: string }) {
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />
         : path === "/payments" ? <LivePayments />
+        : path === "/live" ? <LiveTalk />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
@@ -201,6 +203,7 @@ function PlatformContent({ path }: { path: string }) {
   else if (path === "/onboarding") content = <Onboarding />;
   else if (path === "/home") content = <Dashboard />;
   else if (path === "/chat") content = <Chat />;
+  else if (path === "/live") content = <LiveTalk />;
   else if (path === "/sitemap-ui") content = <Sitemap />;
   else if (path === "/design-system") content = <DesignSystem />;
   else if (path.startsWith("/admin")) content = <Admin path={path} />;

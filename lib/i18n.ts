@@ -3,6 +3,7 @@ export const dictionaries = {
   fa: {
     home: "خانه",
     chat: "گفتگو",
+    live: "AIFekr Live",
     create: "استودیو خلاقیت",
     business: "کسب‌وکار",
     learn: "یادگیری",
@@ -111,6 +112,7 @@ export const dictionaries = {
   en: {
     home: "Home",
     chat: "Chat",
+    live: "AIFekr Live",
     create: "Creative studio",
     business: "Business",
     learn: "Learn",
@@ -219,6 +221,7 @@ export const dictionaries = {
   de: {
     home: "Startseite",
     chat: "Chat",
+    live: "AIFekr Live",
     create: "Kreativstudio",
     business: "Unternehmen",
     learn: "Lernen",
@@ -247,6 +250,7 @@ export const dictionaries = {
   tr: {
     home: "Ana sayfa",
     chat: "Sohbet",
+    live: "AIFekr Live",
     create: "Yaratıcı stüdyo",
     business: "İşletme",
     learn: "Öğren",
