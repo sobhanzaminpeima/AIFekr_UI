@@ -7,6 +7,7 @@ import { Brand, Button, Command, Icon, Modal, RouteName } from "./ui";
 import { recentChats } from "@/mocks/catalog";
 import { TranslationKey, Locale } from "@/lib/i18n";
 import { WebAppInstallButton } from "./webapp-install";
+import { FeatureAnnouncement } from "./feature-announcement";
 import { AdminNavigation } from "./admin-navigation";
 import {ModuleDirectory} from './module-directory';
 import { useShell } from "./live-shell-context";
@@ -64,6 +65,7 @@ export function Shell({
 }) {
   const app = useApp();
   const { t, fa, n } = app;
+  const newTag = ({ fa: "جدید", en: "New", de: "Neu", tr: "Yeni" } as Record<string, string>)[app.locale] ?? "New";
   // Live mode (signed in on aifekr.com): the same frame with the account's real data.
   const live = useShell();
   const liveCredits = useLiveCredits(live?.user.credits ?? 0);
@@ -172,7 +174,7 @@ export function Shell({
           </>
         )}
         <div className="side-label">{admin ? t("admin") : t("workspace")}</div>
-        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.filter(([href]) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}</Link>)}</nav>}
+        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.filter(([href]) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}{href==="/live"&&<span className="new-tag">{newTag}</span>}</Link>)}</nav>}
         {!admin && (
           <>
             <div className="side-label recent-label">
@@ -226,7 +228,7 @@ export function Shell({
             )}
           </>
         )}
-        <div className="sidebar-bottom">{live&&<button className="btn logout-button" disabled={loggingOut} onClick={()=>void logout()}><Icon name="LogOut" size={16}/>{loggingOut?(fa?"در حال خروج…":"Logging out…"):t("logout")}</button>}<WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
+        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
           <Link href="/credits" className="wallet">
             <div>
               <span>
@@ -243,6 +245,7 @@ export function Shell({
               <i style={{ width: Math.min(100, credits / 15) + "%" }} />
             </div>
           </Link>
+          <div className="user-row">
           <Link className="user-menu" href="/settings">
             <span className="avatar">{live ? initial : "س"}</span>
             <div>
@@ -253,8 +256,11 @@ export function Shell({
             </div>
             <Icon name="ChevronsUpDown" size={15} />
           </Link>
+          {live && <button className="logout-icon" disabled={loggingOut} onClick={() => void logout()} aria-label={t("logout")} title={t("logout")}><Icon name={loggingOut ? "LoaderCircle" : "LogOut"} size={16} className={loggingOut ? "spin" : undefined} /></button>}
+          </div>
         </div>
       </aside>
+      {live && <FeatureAnnouncement path={path} />}
       {mobile && (
         <button
           className="sidebar-overlay"
@@ -347,6 +353,7 @@ export function Shell({
           >
             <Icon name={icon} />
             <span>{t(key)}</span>
+            {href === "/live" && <i className="new-dot" aria-label={newTag} />}
           </Link>
         ))}
       </nav>

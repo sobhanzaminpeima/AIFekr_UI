@@ -6491,9 +6491,10 @@ tr:hover td {
   .chat-welcome { padding: 14px 0 8px; width: 100%; min-width: 0; }
   .chat-welcome .big-spark, .chat-welcome > .eyebrow { display: none; }
   .chat-welcome h1 { font-size: 19px; line-height: 1.7; margin: 4px auto; }
-  .chat-suggestions { display: flex; overflow-x: auto; gap: 8px; margin: 14px -16px 0; padding: 0 16px 4px; scrollbar-width: none; }
+  /* Every suggestion fully visible: they wrap onto lines instead of scrolling off the screen. */
+  .chat-suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 0; }
   .chat-suggestions::-webkit-scrollbar { display: none; }
-  .chat-suggestions > button { flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; white-space: nowrap; font-size: 11px; }
+  .chat-suggestions > button { flex: 0 1 auto; max-width: 100%; min-height: 0; flex-direction: row; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; white-space: normal; text-align: start; font-size: 11px; }
   .chat-suggestions > button > svg:first-child { width: 14px; height: 14px; }
   .mode-chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; margin-bottom: 8px; }
   .mode-chips::-webkit-scrollbar { display: none; }

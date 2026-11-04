@@ -50,6 +50,7 @@ import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
 import { LivePayments } from "./live-payments";
 import { LiveTalk } from "./live-talk";
+import { LivePlans } from "./live-plans";
 import {LiveCredits} from "./live-credits";
 import {LiveWallet,LiveNotifications} from "./live-account-center";
 import { LiveSettings } from "./live-settings";
@@ -82,6 +83,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/welcome" ? <Onboarding />
         : path === "/payments" ? <LivePayments />
         : path === "/live" ? <LiveTalk />
+        : path === "/plans" ? <LivePlans />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
