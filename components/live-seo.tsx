@@ -535,16 +535,16 @@ function Research({ id, initial }: { id: string; initial: string }) {
           ),
           {
             ...field("device", "دستگاه", "Device"),
-            choices: ["desktop", "mobile"].map((value) => ({
+            choices: [["desktop", "دسکتاپ", "Desktop"], ["mobile", "موبایل", "Mobile"]].map(([value, f, e]) => ({
               value,
-              label: value,
+              label: fa ? f : e,
             })),
           },
           {
             ...field("platform", "موتور", "Platform"),
-            choices: ["google", "chat_gpt"].map((value) => ({
+            choices: [["google", "گوگل", "Google"], ["chat_gpt", "ChatGPT", "ChatGPT"]].map(([value, f, e]) => ({
               value,
-              label: value,
+              label: fa ? f : e,
             })),
           },
         ]}
