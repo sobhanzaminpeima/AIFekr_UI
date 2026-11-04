@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import { useShell } from "./live-shell-context";
 import { Button } from "./ui";
@@ -447,6 +447,32 @@ function ApplySeo({ url }: { url: string }) {
     </section>
   );
 }
+/** The research tools by name (the same eight as the classic SEO Intelligence page). */
+const RESEARCH_LABELS: Record<string, [string, string]> = {
+  keywords: ["پژوهش کلمات کلیدی", "Keyword explorer"],
+  rank: ["بررسی زندهٔ رتبه", "Live rank check"],
+  competitors: ["رقبای دامنه", "Domain competitors"],
+  backlinks: ["بک‌لینک‌ها", "Backlinks"],
+  referringDomains: ["دامنه‌های ارجاع‌دهنده", "Referring domains"],
+  keywordGap: ["شکاف کلمات رقبا", "Competitor keyword gaps"],
+  aiVisibility: ["حضور در جست‌وجوی هوش مصنوعی", "AI search visibility"],
+  backlinkHistory: ["تاریخچهٔ بک‌لینک", "Backlink history"],
+};
+type Market = { location_code: number; location_name: string; available_languages: { language_code: string; language_name: string }[] };
+/** Markets the search-data provider supports (countries, then their languages), as on the classic page. */
+function useMarkets(kind: "labs" | "ai") {
+  const [markets, setMarkets] = useState<Market[]>([]);
+  useEffect(() => {
+    const c = new AbortController();
+    fetch(API + "intelligence/markets?kind=" + kind, { credentials: "include", signal: c.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.markets && !c.signal.aborted) setMarkets(d.markets); })
+      .catch(() => {});
+    return () => c.abort();
+  }, [kind]);
+  return markets;
+}
+
 function Research({ id, initial }: { id: string; initial: string }) {
   const fa = useShell()!.lang === "fa",
     r = useLiveData(API + "intelligence/research?siteId=" + enc(id));
@@ -457,6 +483,8 @@ function Research({ id, initial }: { id: string; initial: string }) {
     } | null>(null),
     [selected, setSelected] = useState<LiveRow | null>(null);
   const key = useRef("");
+  const markets = useMarkets(initial === "aiVisibility" ? "ai" : "labs");
+  const languages = [...new Map(markets.flatMap((m) => m.available_languages).map((l) => [l.language_code, l.language_name])).entries()];
   const actions = [
     "keywords",
     "rank",
@@ -483,20 +511,15 @@ function Research({ id, initial }: { id: string; initial: string }) {
         fields={[
           {
             ...field("action", "نوع بررسی", "Research type"),
-            choices: actions.map((value) => ({ value, label: value })),
+            choices: actions.map((value) => ({ value, label: (RESEARCH_LABELS[value] ?? [value, value])[fa ? 0 : 1] })),
           },
           field("keyword", "کلمه کلیدی", "Keyword", "text", true),
-          field(
-            "locationCode",
-            "کد کشور بازار (مثال 2840 برای آمریکا)",
-            "Market location code (e.g. 2840 for US)",
-            "number",
-          ),
-          field(
-            "languageCode",
-            "زبان جستجو (fa / en / de / tr)",
-            "Search language (fa / en / de / tr)",
-          ),
+          markets.length
+            ? { ...field("locationCode", "کشور بازار هدف", "Target market"), choices: markets.map((m) => ({ value: String(m.location_code), label: m.location_name })) }
+            : field("locationCode", "کد کشور بازار (مثال 2840 برای آمریکا)", "Market location code (e.g. 2840 for US)", "number"),
+          languages.length
+            ? { ...field("languageCode", "زبان جستجو", "Search language"), choices: languages.map(([value, label]) => ({ value, label })) }
+            : field("languageCode", "زبان جستجو (fa / en / de / tr)", "Search language (fa / en / de / tr)"),
           field(
             "rows",
             "تعداد نتایج، ۱ تا ۱۰۰",
@@ -525,8 +548,11 @@ function Research({ id, initial }: { id: string; initial: string }) {
             })),
           },
         ]}
+        key={markets.length ? "markets" : "codes"}
         initial={{
           action: initial,
+          ...(markets[0] ? { locationCode: String((markets.find((m) => m.location_code === 2364) ?? markets.find((m) => m.location_code === 2840) ?? markets[0]).location_code) } : {}),
+          ...(languages.length ? { languageCode: languages.some(([c]) => c === (fa ? "fa" : "en")) ? (fa ? "fa" : "en") : languages[0][0] } : {}),
           rows: 20,
           device: "desktop",
           platform: "google",

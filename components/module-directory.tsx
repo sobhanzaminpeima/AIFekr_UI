@@ -124,8 +124,8 @@ export const moduleDestinations = [
     ],
     terms: "سئو سایت کلمات کلیدی جستجو seo keyword",
     links: [
-      ["/seo?tab=sites", "سایت‌ها", "Sites"],
-      ["/seo?tab=keyword", "کلمات کلیدی", "Keywords"],
+      ["/seo?view=sites", "سایت‌ها", "Sites"],
+      ["/seo?view=keyword", "کلمات کلیدی", "Keywords"],
     ],
   },
   {

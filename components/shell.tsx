@@ -18,6 +18,7 @@ const nav: [string, TranslationKey, string][] = [
   ["/live", "live", "AudioLines"],
   ["/create", "create", "Sparkles"],
   ["/business", "business", "BriefcaseBusiness"],
+  ["/seo", "seo", "Search"],
   ["/learn", "learn", "GraduationCap"],
   ["/fit/dashboard", "fit", "Dumbbell"],
 ];
