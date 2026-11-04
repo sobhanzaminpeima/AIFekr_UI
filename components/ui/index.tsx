@@ -9,6 +9,9 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  CircleCheck,
+  TriangleAlert,
+  CircleX,
   ArrowUpDown,
   ArrowUpLeft,
   AudioLines,
@@ -297,6 +300,9 @@ const Icons = {
   UsersRound,
   Wallet,
   X,
+  CircleX,
+  TriangleAlert,
+  CircleCheck,
   Ellipsis,
 };
 import { useApp } from "../providers";

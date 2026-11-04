@@ -6,6 +6,7 @@ import { Button } from "./ui";
 import { LiveStreamTool } from "./live-stream-tool";
 import { LivePaidForm } from "./live-paid-form";
 import { seoResearchInput, seoTopics } from "@/lib/seo-contract";
+import { SeoDashboard } from "./seo-charts";
 import {
   field,
   LiveForm,
@@ -251,7 +252,8 @@ function SiteTools({
   const fa = useShell()!.lang === "fa",
     id = String(site.id);
   if (view === "verify") return <Verification id={id} onChange={onChange} />;
-  if (["overview", "sites"].includes(view)) return <Audits id={id} />;
+  if (view === "overview") return <><SeoDashboard siteId={id} /><Audits id={id} /></>;
+  if (view === "sites") return <Audits id={id} />;
   if (
     [
       "intelligence",
@@ -733,7 +735,12 @@ function SearchConsole() {
                 method="GET"
                 onDone={setReport}
               />
-              {report && <Evidence value={report} />}
+              {report && (
+                <>
+                  <p className="muted">{fa ? "نمودارهای این گزارش در «نمای کلی» است." : "This report's charts are on the Overview tab."} <a className="text-link" href="/seo">{fa ? "دیدن نمودارها" : "See the charts"}</a></p>
+                  <details><summary>{fa ? "دادهٔ خام" : "Raw data"}</summary><Evidence value={report} /></details>
+                </>
+              )}
             </>
           )}
         </>

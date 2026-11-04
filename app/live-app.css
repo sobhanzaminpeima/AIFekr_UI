@@ -472,3 +472,49 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .plans-tabs button, .plans-periods button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary); font: inherit; font-size: 13px; cursor: pointer; }
 .plans-tabs button.selected, .plans-periods button.selected { border-color: var(--orange); color: var(--orange); }
 .plans-periods button { padding: 5px 12px; font-size: 12px; }
+
+/* SEO dashboard charts (seo-charts.tsx). Palette validated for both surfaces (dataviz validator, 2026-11-05):
+   series blue/orange; status colors with icon + label. Dark is the default theme; light under data-theme. */
+.seo-viz { --viz-1: #3987e5; --viz-2: #d95926; --viz-good: #0ca30c; --viz-warning: #fab219; --viz-critical: #d03b3b; --viz-grid: #2c2c2a; --viz-base: #383835; --viz-axis: #898781; --viz-ring: var(--surface-1); display: flex; flex-direction: column; gap: 16px; }
+:root[data-theme="light"] .seo-viz { --viz-1: #2a78d6; --viz-2: #eb6834; --viz-grid: #e1e0d9; --viz-base: #c3c2b7; --viz-axis: #716963; }
+.seo-viz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.seo-viz .panel h3 { font-size: 15px; margin: 0 0 8px; }
+.seo-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 8px; }
+.seo-stat { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); }
+.seo-stat strong { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+.seo-stat small { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; }
+.seo-stat small.up, .seo-diff .up { color: var(--success); }
+.seo-stat small.down, .seo-diff .down { color: var(--danger); }
+.seo-diff { display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 0 0; font-size: 13px; }
+.seo-diff span { display: inline-flex; align-items: center; gap: 5px; }
+.seo-viz-legend { display: flex; flex-wrap: wrap; gap: 14px; list-style: none; margin: 0 0 6px; padding: 0; font-size: 12px; color: var(--text-secondary); }
+.seo-viz-legend li { display: inline-flex; align-items: center; gap: 5px; }
+.seo-viz-legend i, .seo-viz-tip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+.seo-viz-plot { position: relative; direction: ltr; touch-action: pan-y; }
+.seo-viz-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.seo-viz-plot .grid { stroke: var(--viz-grid); stroke-width: 1; }
+.seo-viz-plot .baseline { stroke: var(--viz-base); stroke-width: 1; }
+.seo-viz-plot .axis { fill: var(--viz-axis); font-size: 11px; font-variant-numeric: tabular-nums; }
+.seo-viz-plot .crosshair { stroke: var(--viz-axis); stroke-width: 1; stroke-dasharray: 3 3; }
+.seo-viz-plot .ring { stroke: var(--viz-ring); stroke-width: 2; }
+.seo-viz-tip { position: absolute; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; gap: 3px; min-width: 120px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--surface-1); box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 12px; color: var(--text-primary); white-space: nowrap; z-index: 2; }
+.seo-viz-tip span { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+.seo-viz-hbars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.seo-viz-hbars li { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "label value" "track track" "note note"; gap: 3px 10px; font-size: 13px; }
+.seo-viz-hbars .label { grid-area: label; display: inline-flex; align-items: center; gap: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary); }
+.seo-viz-hbars .value { grid-area: value; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.seo-viz-hbars .track { grid-area: track; direction: ltr; }
+.seo-viz-hbars .track svg { display: block; width: 100%; height: 10px; }
+/* Bars start where the label starts: from the right in Persian. */
+[dir="rtl"] .seo-viz-hbars .track svg { transform: scaleX(-1); }
+.seo-viz-hbars .tone { display: inline-flex; }
+.seo-viz-hbars .note { grid-area: note; color: var(--text-muted); font-size: 11px; }
+.seo-viz-table { margin-top: 8px; font-size: 12px; }
+.seo-viz-table summary { cursor: pointer; color: var(--text-secondary); }
+.seo-viz-table .table-scroll { overflow-x: auto; margin-top: 6px; }
+.seo-viz-table table { width: 100%; border-collapse: collapse; }
+.seo-viz-table th, .seo-viz-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: start; white-space: nowrap; }
+.seo-wins { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.seo-wins li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); font-size: 13px; }
+.seo-wins li .text-link { margin-inline-start: auto; }
+@media (forced-colors: active) { .seo-viz-plot path, .seo-viz-hbars path { forced-color-adjust: none; } }
