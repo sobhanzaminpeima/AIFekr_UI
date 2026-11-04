@@ -1,16 +1,20 @@
 "use client";
 // AIFekr Live on aifekr.com: a spoken conversation with the assistant through
 // the main site's /api/live (bootstrap) and /api/live/turn (speech -> answer ->
-// speech, charged per turn from credits). The conversation stays in this tab.
+// speech, charged per turn from credits), and its live mode: a full-duplex call
+// with GPT-Live charged per started minute (live-realtime-call.ts). The
+// conversation stays in this tab.
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/components/site-link";
 import { useApp } from "./providers";
 import { useLiveCredits } from "./live-shell-widgets";
 import { useShell } from "./live-shell-context";
 import { Icon } from "./ui";
+import { useRealtimeCall, type RealtimeInfo } from "./live-realtime-call";
 
 type Voice = { id: string; name: string; gender: string };
-type Boot = { enabled: boolean; voices: Voice[]; costs: { turn: number; per100: number }; credits: number; typicalTurn: number };
+type Boot = { enabled: boolean; voices: Voice[]; costs: { turn: number; per100: number }; credits: number; typicalTurn: number; realtime?: RealtimeInfo | null };
+type Mode = "live" | "turns";
 type Turn = { role: "user" | "assistant"; content: string };
 type State = "idle" | "listening" | "thinking" | "speaking" | "paused";
 
@@ -42,6 +46,20 @@ const COPY = {
   noSpeech: ["صدایی نشنیدم؛ دوباره بگویید.", "I didn't hear anything; please say it again.", "Ich habe nichts gehört; bitte noch einmal.", "Bir şey duymadım; lütfen tekrar söyleyin."],
   failed: ["این نوبت انجام نشد و اعتباری کسر نشد. دوباره امتحان کنید.", "That turn didn't go through and no credits were charged. Please try again.", "Diese Runde hat nicht geklappt, es wurden keine Credits berechnet. Bitte erneut versuchen.", "Bu tur tamamlanamadı ve kredi düşülmedi. Lütfen tekrar deneyin."],
   busy: ["لحظه‌ای صبر کنید و دوباره امتحان کنید.", "Please wait a moment and try again.", "Bitte kurz warten und erneut versuchen.", "Lütfen biraz bekleyip tekrar deneyin."],
+  modeLive: ["زنده", "Live", "Live", "Canlı"],
+  modeTurns: ["نوبتی", "Turn by turn", "Abwechselnd", "Sırayla"],
+  modeHelp: ["زنده: بدون مکث جواب می‌دهد و وسط حرفش می‌توانید صحبت کنید.", "Live: answers instantly and you can talk over it.", "Live: antwortet sofort, Sie können jederzeit dazwischensprechen.", "Canlı: anında yanıt verir, sözünü kesebilirsiniz."],
+  liveIdle: ["برای شروع تماس زنده، روی میکروفون بزنید", "Tap the microphone to start a live call", "Tippen Sie auf das Mikrofon, um ein Live-Gespräch zu starten", "Canlı görüşmeyi başlatmak için mikrofona dokunun"],
+  connecting: ["در حال اتصال…", "Connecting…", "Verbinde…", "Bağlanıyor…"],
+  inCall: ["زنده؛ هر وقت خواستید حرف بزنید", "Live — speak whenever you like", "Live – sprechen Sie, wann Sie möchten", "Canlı — istediğiniz zaman konuşun"],
+  endCall: ["پایان تماس", "End call", "Gespräch beenden", "Görüşmeyi bitir"],
+  perMinute: ["هر دقیقه {n} اعتبار", "{n} credits per minute", "{n} Credits pro Minute", "Dakika başına {n} kredi"],
+  freeMinute: ["دقیقهٔ اول رایگان", "First minute free", "Erste Minute kostenlos", "İlk dakika ücretsiz"],
+  maxLength: ["حداکثر {n} دقیقه", "Up to {n} minutes", "Bis zu {n} Minuten", "En fazla {n} dakika"],
+  callEnded: ["تماس تمام شد.", "The call has ended.", "Das Gespräch ist beendet.", "Görüşme sona erdi."],
+  liveFailed: ["تماس زنده وصل نشد. دوباره امتحان کنید یا حالت نوبتی را بزنید.", "The live call didn't connect. Try again or switch to turn by turn.", "Das Live-Gespräch kam nicht zustande. Erneut versuchen oder auf Abwechselnd wechseln.", "Canlı görüşme bağlanamadı. Tekrar deneyin veya Sırayla moduna geçin."],
+  alreadyActive: ["یک تماس زندهٔ دیگر باز است؛ اول آن را ببندید.", "Another live call is still open; end it first.", "Ein anderes Live-Gespräch ist noch offen; beenden Sie es zuerst.", "Başka bir canlı görüşme açık; önce onu bitirin."],
+  lowCreditLive: ["اعتبار کافی برای یک دقیقه تماس زنده ندارید.", "You don't have enough credits for a minute of live call.", "Ihre Credits reichen nicht für eine Minute Live-Gespräch.", "Bir dakikalık canlı görüşme için yeterli krediniz yok."],
 } as const;
 const LOCALES = ["fa", "en", "de", "tr"] as const;
 /** Recording stops on its own after this much quiet following speech, or at the hard limit. */
@@ -67,12 +85,49 @@ export function LiveTalk() {
   const player = useRef<HTMLAudioElement | null>(null);
   const turnsRef = useRef<Turn[]>([]);
   const go = (s: State) => { stateRef.current = s; setState(s); };
+  const [mode, setMode] = useState<Mode>("turns");
+  const [clock, setClock] = useState(0);
+  // Live mode: transcript deltas grow the current line of the speaker.
+  const appendLive = (role: Turn["role"], delta: string) => {
+    const list = turnsRef.current, last = list[list.length - 1];
+    const next = last?.role === role ? [...list.slice(0, -1), { role, content: last.content + delta }] : [...list, { role, content: delta.trimStart() }];
+    turnsRef.current = next;
+    setTurns(next);
+  };
+  const realtime = useRealtimeCall({
+    onUser: (d) => appendLive("user", d),
+    onAssistant: (d) => appendLive("assistant", d),
+    onLevel: setLevel,
+    onError: (code) => setNotice(code === "NO_MIC" ? { text: say("noMic") } : code === "INSUFFICIENT_CREDITS" ? { text: say("lowCreditLive"), buy: true } : code === "LIVE_ALREADY_ACTIVE" ? { text: say("alreadyActive") } : code === "RATE_LIMITED" ? { text: say("busy") } : { text: say("liveFailed") }),
+    onEnded: () => {
+      setNotice({ text: say("callEnded") });
+      setBoot((b) => (b?.realtime ? { ...b, realtime: { ...b.realtime, freeMinute: false } } : b));
+      window.dispatchEvent(new Event("aifekr:credits-refresh"));
+    },
+  });
+  useEffect(() => {
+    if (realtime.phase !== "live") return;
+    const t = window.setInterval(() => setClock(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [realtime.phase]);
+  function chooseMode(next: Mode) {
+    if (realtime.phase !== "idle") return;
+    stopRecording(true);
+    player.current?.pause();
+    go("idle");
+    setNotice(null);
+    setMode(next);
+    try { localStorage.setItem("aifekr-live-mode", next); } catch { /* private mode */ }
+  }
 
   useEffect(() => {
     fetch("/api/live", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : Promise.reject())).then((d: Boot) => {
       setBoot(d);
       let saved = ""; try { saved = localStorage.getItem("aifekr-live-voice") || ""; } catch { /* private mode */ }
       setVoiceId(d.voices.some((v) => v.id === saved) ? saved : d.voices[0]?.id || "");
+      let savedMode = ""; try { savedMode = localStorage.getItem("aifekr-live-mode") || ""; } catch { /* private mode */ }
+      // Live mode is the default wherever it is available.
+      if (d.realtime?.enabled && savedMode !== "turns") setMode("live");
     }).catch(() => setFailed(true));
     return () => { stopRecording(true); player.current?.pause(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,6 +220,12 @@ export function LiveTalk() {
   }
 
   function onMic() {
+    if (mode === "live") {
+      setNotice(null);
+      if (realtime.phase === "idle") void realtime.start();
+      else void realtime.end();
+      return;
+    }
     if (state === "listening") { stopRecording(); return; }
     if (state === "speaking") { player.current?.pause(); go("idle"); }
     if (state === "thinking") return;
@@ -190,32 +251,47 @@ export function LiveTalk() {
   if (failed) return <section className="live-talk"><p className="live-talk-status">{say("unavailable")}</p></section>;
   if (!boot) return <section className="live-talk"><p role="status" className="live-talk-status">…</p></section>;
   const busy = state === "thinking";
+  const rt = boot.realtime, liveMode = mode === "live" && !!rt?.enabled, calling = realtime.phase !== "idle";
+  const elapsed = realtime.phase === "live" ? Math.max(0, Math.floor((clock - realtime.startedAt) / 1000)) : 0;
+  const mmss = (sec: number) => `${n(Math.floor(sec / 60))}:${String(sec % 60).padStart(2, "0").replace(/\d/g, (x) => n(Number(x)))}`;
+  const status = liveMode ? (realtime.phase === "connecting" ? say("connecting") : realtime.phase === "live" ? `${say("inCall")} · ${mmss(elapsed)}` : say("liveIdle")) : boot.enabled ? say(state) : say("unavailable");
   return (
-    <section className="live-talk" data-state={state}>
+    <section className="live-talk" data-state={liveMode ? (realtime.phase === "live" ? "speaking" : realtime.phase === "connecting" ? "thinking" : "idle") : state}>
       <header className="live-talk-head">
         <div>
           <h1>{say("title")}</h1>
           <p>{say("intro")}</p>
         </div>
         <div className="live-talk-meta">
-          <label>
+          {!liveMode && <label>
             <span>{say("voice")}</span>
             <select value={voiceId} onChange={(e) => chooseVoice(e.target.value)} disabled={state === "listening" || busy}>
               {boot.voices.map((v) => <option key={v.id} value={v.id}>{v.name} · {say(v.gender === "male" ? "male" : "female")}</option>)}
             </select>
-          </label>
+          </label>}
           <span>{say("credits")}: <strong>{n(credits)}</strong></span>
-          <small>{say("perTurn").replace("{n}", n(boot.typicalTurn))}</small>
+          {liveMode && rt
+            ? <small>{say("perMinute").replace("{n}", n(rt.creditsPerMinute))} · {say("maxLength").replace("{n}", n(rt.maxMinutes))}{rt.freeMinute ? ` · ${say("freeMinute")}` : ""}</small>
+            : <small>{say("perTurn").replace("{n}", n(boot.typicalTurn))}</small>}
         </div>
       </header>
 
+      {rt?.enabled && (
+        <div className="live-talk-modes" role="group" aria-label={say("modeHelp")}>
+          {(["live", "turns"] as const).map((m) => (
+            <button key={m} className={mode === m ? "selected" : ""} aria-pressed={mode === m} disabled={calling} onClick={() => chooseMode(m)}>{say(m === "live" ? "modeLive" : "modeTurns")}</button>
+          ))}
+          {mode === "live" && <small>{say("modeHelp")}</small>}
+        </div>
+      )}
+
       <div className="live-talk-stage">
         <div className="live-orb" style={{ ["--level" as string]: String(level) }} aria-hidden="true" />
-        <p className="live-talk-status" role="status" aria-live="polite">{boot.enabled ? say(state) : say("unavailable")}</p>
+        <p className="live-talk-status" role="status" aria-live="polite">{status}</p>
         {notice && <p className="live-talk-notice" role="alert">{notice.text} {notice.buy && <Link href="/credits">{say("buy")}</Link>}</p>}
       </div>
 
-      {typing && (
+      {typing && !liveMode && (
         <form className="live-talk-type" onSubmit={(e) => { e.preventDefault(); const text = draft.trim(); if (!text || busy) return; setDraft(""); stopRecording(true); player.current?.pause(); void send({ text }); }}>
           <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={say("placeholder")} maxLength={2000} autoFocus />
           <button className="btn primary" disabled={busy || !draft.trim()}>{say("send")}</button>
@@ -223,18 +299,18 @@ export function LiveTalk() {
       )}
 
       <div className="live-talk-controls">
-        <button className="live-ctl" onClick={() => setTyping((v) => !v)} aria-pressed={typing} aria-label={say("type")} title={say("type")}><Icon name="MessageSquare" size={20} /></button>
-        <button className="live-ctl live-mic" onClick={onMic} disabled={!boot.enabled || busy} aria-label={say("mic")} title={say("mic")}>
-          <Icon name={state === "listening" ? "Square" : "Mic"} size={26} />
+        {!liveMode && <button className="live-ctl" onClick={() => setTyping((v) => !v)} aria-pressed={typing} aria-label={say("type")} title={say("type")}><Icon name="MessageSquare" size={20} /></button>}
+        <button className="live-ctl live-mic" onClick={onMic} disabled={liveMode ? realtime.phase === "connecting" : !boot.enabled || busy} aria-label={liveMode && calling ? say("endCall") : say("mic")} title={liveMode && calling ? say("endCall") : say("mic")} data-calling={liveMode && calling ? "" : undefined}>
+          <Icon name={(liveMode ? calling : state === "listening") ? "Square" : "Mic"} size={26} />
         </button>
-        <button className="live-ctl" onClick={onPause} disabled={state === "idle" || state === "paused"} aria-label={say("pause")} title={say("pause")}><Icon name="Pause" size={20} /></button>
+        {!liveMode && <button className="live-ctl" onClick={onPause} disabled={state === "idle" || state === "paused"} aria-label={say("pause")} title={say("pause")}><Icon name="Pause" size={20} /></button>}
       </div>
 
       {turns.length > 0 && (
         <div className="live-talk-transcript">
           <div className="row-between">
-            <button className="text-link" onClick={() => setShowTranscript((v) => !v)} aria-expanded={showTranscript}>{say("transcript")} ({n(turns.length / 2)})</button>
-            <button className="text-link" onClick={onNew}>{say("newTalk")}</button>
+            <button className="text-link" onClick={() => setShowTranscript((v) => !v)} aria-expanded={showTranscript}>{say("transcript")} ({n(Math.ceil(turns.length / 2))})</button>
+            {!calling && <button className="text-link" onClick={onNew}>{say("newTalk")}</button>}
           </div>
           {showTranscript && turns.map((t, i) => (
             <p key={i} className={t.role === "user" ? "live-line you" : "live-line"} dir="auto"><strong>{t.role === "user" ? say("you") : say("title")}:</strong> {t.content}</p>
