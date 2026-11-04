@@ -508,6 +508,7 @@ export function RouteName(path: string, fa: boolean) {
   const common: Record<string, [string, string]> = {
     "/home": ["خانه", "Home"],
     "/welcome": ["شخصی‌سازی", "Personalize"],
+    "/live": ["AIFekr Live", "AIFekr Live"],
     "/chat": ["گفتگو", "Chat"],
     "/create": ["استودیو خلاقیت", "Creative studio"],
     "/business": ["کسب‌وکار", "Business"],
@@ -515,7 +516,7 @@ export function RouteName(path: string, fa: boolean) {
     "/fit": ["تناسب اندام", "FIT"],
     "/fit/dashboard": ["نمای تناسب اندام", "FIT dashboard"],
     "/gallery": ["گالری من", "My gallery"],
-    "/plans": ["طرح‌ها", "Plans"],
+    "/plans": ["پکیج‌ها", "Packages"],
     "/credits": ["اعتبارها", "Credits"],
     "/payments": ["پرداخت‌ها", "Payments"],
     "/referral": ["دعوت دوستان", "Invite friends"],

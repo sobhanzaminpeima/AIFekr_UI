@@ -55,6 +55,13 @@ export function LivePlans() {
   const periods = [...new Set(rows.flatMap((p) => Object.keys(p.offers ?? {})))];
   const activePeriod = periods.includes(period) ? period : periods[0] ?? "monthly";
 
+  // Server error codes (UPPER_SNAKE) as a sentence; server sentences pass through.
+  function readable(code: string) {
+    if (code.startsWith("APPROVED_RATE_REQUIRED")) return tx("قیمت این پکیج به‌روز می‌شود؛ کمی بعد دوباره امتحان کنید.", "This package's price is being updated; please try again shortly.");
+    if (code === "UNSUPPORTED_PERIOD") return tx("این دوره برای این پکیج موجود نیست؛ دورهٔ دیگری انتخاب کنید.", "This period isn't offered for this package; please pick another.");
+    if (!code || /^[A-Z0-9_]+$/.test(code)) return tx("فعال‌سازی این پکیج الان ممکن نشد؛ کمی بعد دوباره امتحان کنید یا با پشتیبانی تماس بگیرید.", "This package couldn't be activated right now; please try again shortly or contact support.");
+    return code;
+  }
   async function choose(p: Pkg) {
     setBusy(p.planCode); setError("");
     try {
@@ -62,7 +69,7 @@ export function LivePlans() {
       const r = await fetch("/api/billing/quote", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: p.planCode, period: activePeriod, currency }) });
       const b = await r.json().catch(() => ({}));
       if (b.error === "FITNESS_ONBOARDING_REQUIRED") { location.href = "/fitness?tab=profile"; return; }
-      if (!r.ok) throw Error(String(b.error || "").startsWith("APPROVED_RATE_REQUIRED") ? tx("قیمت این پکیج به‌روز می‌شود؛ کمی بعد دوباره امتحان کنید.", "This package's price is being updated; please try again shortly.") : b.error || tx("خطا", "Error"));
+      if (!r.ok) throw Error(readable(String(b.error || "")));
       setQuote(b.quote);
     } catch (e) { setError(e instanceof Error ? e.message : tx("خطا", "Error")); }
     finally { setBusy(""); }
@@ -74,7 +81,7 @@ export function LivePlans() {
       const r = await fetch("/api/payment/create", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: quote.planCode, period: quote.period, currency: quote.currency === "IRT" ? "IRR" : quote.currency, quoteId: quote.id, selectStudentAccount: group === "STUDENT", returnPath: new URLSearchParams(location.search).get("returnTo") || undefined }) });
       const b = await r.json().catch(() => ({}));
       if (b.error === "FITNESS_ONBOARDING_REQUIRED") { location.href = "/fitness?tab=profile"; return; }
-      if (!r.ok || !b.paymentUrl) throw Error(b.error || tx("شروع پرداخت ممکن نشد", "Could not start the payment"));
+      if (!r.ok || !b.paymentUrl) throw Error(b.error ? readable(String(b.error)) : tx("شروع پرداخت ممکن نشد", "Could not start the payment"));
       location.href = b.paymentUrl;
     } catch (e) { setError(e instanceof Error ? e.message : tx("خطا", "Error")); setBusy(""); }
   }
@@ -103,8 +110,8 @@ export function LivePlans() {
             </div>
           )}
           <div className="pricing-grid">
-            {rows.map((p) => {
-              const o = p.offers?.[activePeriod] ?? Object.values(p.offers ?? {})[0];
+            {rows.filter((p) => p.offers?.[activePeriod]).map((p) => {
+              const o = p.offers?.[activePeriod];
               if (!o) return null;
               const list = features(fa ? p.features : p.featuresEn || p.features).slice(0, 6);
               return (
