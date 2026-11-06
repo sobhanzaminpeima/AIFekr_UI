@@ -8,6 +8,8 @@ import { projects, tools } from "@/mocks/catalog";
 import {BusinessDoctorEntry} from './module-directory';
 import { useShell } from "./live-shell-context";
 import { useLiveCredits } from "./live-shell-widgets";
+import { FirstStep } from "./first-step";
+import { PaymentRetryNotice } from "./payment-retry-notice";
 import type { HomeTool } from "@/lib/live-app";
 
 /** The account's own dashboard data on aifekr.com (main site /api/app/dashboard). */
@@ -93,6 +95,7 @@ export function Dashboard() {
     ...live.conversations.slice(0, 3).map((c) => ({ kind: "chat" as const, at: c.updatedAt, c })),
     ...(personal?.recentModules ?? []).map((m) => ({ kind: "module" as const, at: m.at, m })),
   ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 3) : [];
+  const isNew = !!live && !!data && !data.recent.length && !live.conversations.length && data.usage.days.every((d) => d === 0) && !(personal?.recentModules ?? []).length;
   const [invite, setInvite] = useState(!!personal?.invite);
   function dismissInvite() {
     setInvite(false);
@@ -144,6 +147,8 @@ export function Dashboard() {
           <Icon name="ChevronLeft" size={15} className="directional" />
         </Link>
       </div>
+      {live && <PaymentRetryNotice />}
+      <FirstStep isNew={isNew} credits={credits} />
       {invite && personal && (
         <div className="plan-notice" role="status">
           <Icon name="SlidersHorizontal" size={18} />

@@ -518,3 +518,28 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .seo-wins li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); font-size: 13px; }
 .seo-wins li .text-link { margin-inline-start: auto; }
 @media (forced-colors: active) { .seo-viz-plot path, .seo-viz-hbars path { forced-color-adjust: none; } }
+
+/* Home: first step for a new account (first-step.tsx) and the failed-payment notice (payment-retry-notice.tsx). */
+.first-step { display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 22px; border: 1px solid rgba(255, 107, 0, 0.3); background: radial-gradient(120% 90% at 100% 0%, rgba(255, 107, 0, 0.14), transparent 60%), var(--surface-1); }
+.first-step-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.first-step-head h2 { font-size: 20px; font-weight: 800; margin: 6px 0 4px; color: var(--text-primary); }
+.first-step-head p { margin: 0; font-size: 13px; }
+.first-step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.first-step-card { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 16px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-primary); text-decoration: none; transition: border-color .15s, transform .15s; }
+.first-step-card:hover, .first-step-card:focus-visible { border-color: rgba(255, 107, 0, 0.55); transform: translateY(-1px); }
+.first-step-card strong { font-size: 15px; }
+.first-step-card small { color: var(--text-secondary); font-size: 12px; line-height: 1.7; }
+.first-step-arrow { position: absolute; inset-inline-end: 14px; top: 18px; color: var(--text-muted); }
+.payment-retry { border-color: rgba(248, 136, 136, 0.35); }
+.plan-start-badge { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff; background: var(--brand-gradient, #ea580c); }
+.first-step-text { display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 640px) {
+  .first-step { padding: 16px; gap: 10px; }
+  .first-step-head h2 { font-size: 17px; }
+  .first-step-grid { gap: 8px; }
+  /* Phones: one compact row per start (icon beside the text) instead of three tall cards. */
+  .first-step-card { flex-direction: row; align-items: center; gap: 12px; padding: 12px 40px 12px 12px; }
+  [dir="rtl"] .first-step-card { padding: 12px 12px 12px 40px; }
+  .first-step-card .icon-chip { flex: none; }
+  .first-step-arrow { top: 50%; transform: translateY(-50%); }
+}
