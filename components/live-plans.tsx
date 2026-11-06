@@ -45,7 +45,8 @@ export function LivePlans() {
       const q = new URLSearchParams(location.search);
       const chosen = list.find((p) => p.planCode === q.get("plan"));
       const asked = (q.get("category") || "").toUpperCase();
-      setGroup(chosen?.category || (list.some((p) => p.category === asked) ? asked : list[0]?.category || ""));
+      const cheapest = list.reduce<Pkg | null>((best, p) => { const m = Math.min(...Object.values(p.offers ?? {}).map((o) => o.minor)); return !best || m < Math.min(...Object.values(best.offers ?? {}).map((o) => o.minor)) ? p : best; }, null);
+      setGroup(chosen?.category || (list.some((p) => p.category === asked) ? asked : cheapest?.category || list[0]?.category || ""));
       if (q.get("period")) setPeriod(q.get("period")!);
     }).catch(() => setFailed(true));
   }, []);
@@ -110,13 +111,14 @@ export function LivePlans() {
             </div>
           )}
           <div className="pricing-grid">
-            {rows.filter((p) => p.offers?.[activePeriod]).map((p) => {
+            {rows.filter((p) => p.offers?.[activePeriod]).sort((a, b) => a.offers![activePeriod].minor - b.offers![activePeriod].minor).map((p, index, shown) => {
               const o = p.offers?.[activePeriod];
               if (!o) return null;
               const list = features(fa ? p.features : p.featuresEn || p.features).slice(0, 6);
               return (
                 <article className={`panel plan-card ${p.isFeatured ? "recommended" : ""}`} key={p.planCode}>
                   <span className="icon-chip orange"><Icon name={(CATEGORY[p.category] ?? ["", "", "Sparkles"])[2]} size={24} /></span>
+                  {index === 0 && shown.length > 1 && <span className="plan-start-badge"><Icon name="Sparkles" size={13} />{tx("کم‌هزینه‌ترین گزینه", "Lowest price")}</span>}
                   <h2>{fa ? p.name : p.nameEn || p.name}</h2>
                   {o.compareAtMinor != null && o.compareAtMinor > o.minor && <del>{money(o.compareAtMinor, o.currency)}</del>}
                   <strong className="plan-price">{money(o.minor, o.currency)}</strong>
