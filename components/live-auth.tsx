@@ -294,12 +294,16 @@ export function LiveRegister() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.firstName.trim()) return void toast.error(copy.errName);
-    // Sign-up is by email and password only for now (owner decision 2026-11-06; the mobile number is not asked).
+    // Sign-up: email, password and a mobile number, all required (owner decision 2026-11-06); no SMS-code sign-up.
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return void toast.error(EMAIL_REQUIRED[lang] ?? EMAIL_REQUIRED.en);
     if (!form.password) return void toast.error(copy.errPasswordRequired);
+    if (!form.phone.trim()) return void toast.error(extra.phoneRequired || extra.phoneInvalid);
     if (form.password && form.password !== form.confirmPassword) return void toast.error(copy.errPasswordMismatch);
     if (form.password && form.password.length < 6) return void toast.error(copy.errPasswordShort);
     if (!agreed) return void toast.error(copy.errMustAgree);
+    let composedPhone: string;
+    try { composedPhone = registrationPhone(form.phone, form.country, dialCode); }
+    catch { return void toast.error(extra.phoneInvalid); }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
@@ -308,7 +312,7 @@ export function LiveRegister() {
         body: JSON.stringify({
           firstName: form.firstName, lastName: form.lastName || undefined, country: form.country || undefined,
           language: registerLang, selectedPlan: planCode || studentPlan || undefined, accountType,
-          email: form.email.trim(), password: form.password,
+          email: form.email.trim(), phone: composedPhone, password: form.password,
           industryPackSlug: packSlug || undefined, ref: refCode || undefined, promoCode: promoCode || undefined,
           ...(entryChat ? { entry: "chat" } : { redirect: params.get("redirect") || undefined }),
           marketingConsent,
@@ -382,6 +386,13 @@ export function LiveRegister() {
         <label>
           {copy.emailLabel}
           <input type="email" required aria-required="true" value={form.email} onChange={set("email")} placeholder="example@email.com" dir="ltr" autoComplete="email" />
+        </label>
+        <label>
+          <span>{copy.phoneLabel} <span aria-hidden="true" className="orange-text">*</span></span>
+          <span className="phone-field" dir="ltr">
+            {dialCode && <span className="dial-code">{dialCode}</span>}
+            <input type="tel" required aria-required="true" value={form.phone} onChange={set("phone")} placeholder={form.country === "IR" ? "9123456789" : "123456789"} dir="ltr" autoComplete="tel-national" />
+          </span>
         </label>
         <label>
           {copy.passwordLabel}
