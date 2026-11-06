@@ -11,7 +11,7 @@ export type SiteGuide = { slug: string; title: string; description: string; rela
 export type AuthData = {
   login: Record<"subtitle" | "tabPhone" | "tabEmail" | "back" | "otpTitle" | "otpSentPrefix" | "otpSentSuffix" | "testCode" | "phoneLabel" | "sendCode" | "sending" | "verifying" | "verifyAndLogin" | "resendCode" | "emailLabel" | "passwordLabel" | "loggingIn" | "submit" | "or" | "googleLogin" | "noAccount" | "registerLink" | "errPhoneInvalid" | "otpSent" | "errSendFailed" | "errOtpLength" | "loginSuccess" | "errOtpWrong" | "errFillEmailPass" | "errEmailPassWrong", string>;
   register: Record<"subtitle" | "selectedPack" | "firstNameLabel" | "firstNamePlaceholder" | "lastNameLabel" | "lastNamePlaceholder" | "countryLabel" | "countryPlaceholder" | "languageLabel" | "emailLabel" | "phoneLabel" | "passwordLabel" | "passwordPlaceholder" | "confirmPasswordLabel" | "agreePrefix" | "termsLink" | "and" | "privacyLink" | "agreeSuffix" | "creatingAccount" | "submit" | "googleRegister" | "haveAccount" | "loginLink" | "errName" | "errEmailOrPhone" | "errPasswordRequired" | "errPasswordMismatch" | "errPasswordShort" | "errMustAgree" | "success" | "errGeneric", string>;
-  extra: { promoLabel: string; promoHint: string; accountType: string; accountTypes: Record<"FITNESS" | "PERSONAL" | "STUDENT" | "BUSINESS", string>; phoneInvalid: string; marketingConsent: string };
+  extra: { promoLabel: string; promoHint: string; accountType: string; accountTypes: Record<"FITNESS" | "PERSONAL" | "STUDENT" | "BUSINESS", string>; phoneInvalid: string; phoneRequired?: string; marketingConsent: string };
   countries: { code: string; name: string; dialCode: string }[];
   studentPlanCode: string;
 };

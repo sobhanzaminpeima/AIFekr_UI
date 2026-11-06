@@ -290,7 +290,7 @@ export function LiveRegister() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.firstName.trim()) return void toast.error(copy.errName);
-    if (!form.email && !form.phone) return void toast.error(copy.errEmailOrPhone);
+    if (!form.phone.trim()) return void toast.error(extra.phoneRequired || extra.phoneInvalid);
     if (form.email && !form.password) return void toast.error(copy.errPasswordRequired);
     if (form.password && form.password !== form.confirmPassword) return void toast.error(copy.errPasswordMismatch);
     if (form.password && form.password.length < 6) return void toast.error(copy.errPasswordShort);
@@ -382,10 +382,10 @@ export function LiveRegister() {
           <input type="email" value={form.email} onChange={set("email")} placeholder="example@email.com" dir="ltr" autoComplete="email" />
         </label>
         <label>
-          {copy.phoneLabel}
+          {copy.phoneLabel} <span aria-hidden="true" className="orange-text">*</span>
           <span className="phone-field" dir="ltr">
             {dialCode && <span className="dial-code">{dialCode}</span>}
-            <input type="tel" value={form.phone} onChange={set("phone")} placeholder={form.country === "IR" ? "9123456789" : "123456789"} dir="ltr" autoComplete="tel-national" />
+            <input type="tel" required aria-required="true" value={form.phone} onChange={set("phone")} placeholder={form.country === "IR" ? "9123456789" : "123456789"} dir="ltr" autoComplete="tel-national" />
           </span>
         </label>
         <label>

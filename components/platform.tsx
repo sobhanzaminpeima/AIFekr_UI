@@ -50,6 +50,7 @@ import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
 import { LivePayments } from "./live-payments";
 import { LiveTalk } from "./live-talk";
+import { LiveCompletePhone } from "./live-complete-phone";
 import { LivePlans } from "./live-plans";
 import {LiveCredits} from "./live-credits";
 import {LiveWallet,LiveNotifications} from "./live-account-center";
@@ -81,6 +82,8 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/home" ? <Dashboard />
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />
+        // Required mobile number before anything else (main site lib/auth/phoneRequirement).
+        : path === "/complete-phone" ? <LiveCompletePhone />
         : path === "/payments" ? <LivePayments />
         : path === "/live" ? <LiveTalk />
         : path === "/plans" ? <LivePlans />
