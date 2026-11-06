@@ -514,6 +514,7 @@ export function RouteName(path: string, fa: boolean) {
   const common: Record<string, [string, string]> = {
     "/home": ["خانه", "Home"],
     "/welcome": ["شخصی‌سازی", "Personalize"],
+    "/complete-phone": ["شماره موبایل", "Mobile number"],
     "/live": ["AIFekr Live", "AIFekr Live"],
     "/chat": ["گفتگو", "Chat"],
     "/create": ["استودیو خلاقیت", "Creative studio"],

@@ -48,7 +48,7 @@ export function LiveCompletePhone() {
           </select>
         </label>
         <label>
-          {c.phone} <span aria-hidden="true" className="orange-text">*</span>
+          <span>{c.phone} <span aria-hidden="true" className="orange-text">*</span></span>
           <span className="phone-field" dir="ltr">
             {dial && <span className="dial-code">{dial}</span>}
             <input type="tel" required aria-required="true" inputMode="tel" autoComplete="tel-national" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={country === "IR" ? "9123456789" : "123456789"} dir="ltr" />

@@ -382,7 +382,7 @@ export function LiveRegister() {
           <input type="email" value={form.email} onChange={set("email")} placeholder="example@email.com" dir="ltr" autoComplete="email" />
         </label>
         <label>
-          {copy.phoneLabel} <span aria-hidden="true" className="orange-text">*</span>
+          <span>{copy.phoneLabel} <span aria-hidden="true" className="orange-text">*</span></span>
           <span className="phone-field" dir="ltr">
             {dialCode && <span className="dial-code">{dialCode}</span>}
             <input type="tel" required aria-required="true" value={form.phone} onChange={set("phone")} placeholder={form.country === "IR" ? "9123456789" : "123456789"} dir="ltr" autoComplete="tel-national" />
