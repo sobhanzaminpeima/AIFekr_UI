@@ -17,6 +17,8 @@ export type ShellData = {
   lang: Locale;
   metadata: Record<string, unknown>;
   user: { name: string | null; plan: string; planName: string; role: string; accountType: string | null; credits: number; pendingPaymentCount: number; studentWorkspaceEnabled: boolean; showFitness: boolean };
+  /** Paid workspaces for the sidebar; locked ones carry the plan that opens them. */
+  proTools?: { key: string; href: string; icon: string; label: string; unlocked: boolean; requiredPlan: string | null; highlight: "popular" | "new" | null; recommended: boolean }[];
   access: { crmPlanActive: boolean; hasPack: boolean; hasBusinessAccess: boolean; fitnessOnly: boolean; hideBusiness: boolean };
   banners: { expired: boolean; expiresAt: string | null; trial: { endsAt: string; limited: boolean } | null };
   conversations: Conversation[];

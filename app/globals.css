@@ -6757,3 +6757,26 @@ tr:hover td {
 .student-card-actions{display:flex;gap:10px}
 .student-card-actions .btn{flex:1}
 @media(max-width:560px){.statement-totals{grid-template-columns:1fr}}
+
+
+/* ---- Pro tools in the sidebar ---- */
+.pro-nav a.locked{color:var(--text-muted)}
+.pro-nav a.locked:hover{color:var(--text-primary)}
+.pro-tag{margin-inline-start:auto;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;color:var(--text-secondary);background:var(--surface-3);white-space:nowrap}
+.pro-tag.hot{color:#fff;background:linear-gradient(135deg,#f43f5e,#f97316)}
+.pro-tag.suggest{color:#fff;background:linear-gradient(135deg,#a78bfa,#f472b6);animation:proPulse 2.4s ease-in-out infinite}
+@keyframes proPulse{50%{box-shadow:0 0 0 4px #f472b633}}
+@media(prefers-reduced-motion:reduce){.pro-tag.suggest{animation:none}}
+.collapsed .pro-tag{display:none}
+
+/* ---- Pro tools on the home page ---- */
+.pro-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}
+.pro-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:18px;border:1px solid var(--border);background:linear-gradient(150deg,#f9731614,transparent 60%),var(--surface-1);color:inherit;text-decoration:none;transition:transform .18s,border-color .18s}
+.pro-card:hover{transform:translateY(-2px);border-color:#f9731666}
+.pro-card.locked{background:linear-gradient(150deg,#a78bfa18,transparent 60%),var(--surface-1)}
+.pro-card-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;color:var(--orange);background:#f9731620}
+.pro-card.locked .pro-card-icon{color:#a78bfa;background:#a78bfa22}
+.pro-card strong{font-size:15px}
+.pro-card small{font-size:12px;color:var(--text-secondary)}
+.pro-card .pro-tag{position:absolute;top:14px;inset-inline-end:14px;margin:0}
+@media(max-width:900px){.pro-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}

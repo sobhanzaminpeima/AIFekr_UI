@@ -264,6 +264,28 @@ export function Dashboard() {
           <ToolCard key={tool.slug} tool={tool} />
         ))}
       </div>
+      {live?.proTools && live.proTools.length > 0 && (
+        <>
+          <SectionTitle
+            title={tl("ابزارهای حرفه‌ای", "Pro tools")}
+            subtitle={tl("کارهای بزرگ‌تر، با دستیارهای تخصصی", "Bigger work, with specialist assistants")}
+          />
+          <div className="pro-cards">
+            {[...live.proTools]
+              .sort((a, b) => Number(b.recommended) - Number(a.recommended) || Number(b.unlocked) - Number(a.unlocked) || Number(!!b.highlight) - Number(!!a.highlight))
+              .slice(0, 4)
+              .map((tool) => (
+                <Link key={tool.key} href={tool.unlocked ? tool.href : "/plans"} className={"pro-card" + (tool.unlocked ? "" : " locked")}>
+                  <span className="pro-card-icon" aria-hidden="true"><Icon name={tool.icon} size={24} /></span>
+                  <strong>{tool.label}</strong>
+                  {tool.recommended && <span className="pro-tag suggest">{tl("پیشنهاد برای تو", "Picked for you")}</span>}
+                  {!tool.recommended && tool.highlight === "popular" && <span className="pro-tag hot">{tl("محبوب", "Popular")}</span>}
+                  <small>{tool.unlocked ? tl("باز کن و شروع کن", "Open and start") : tool.requiredPlan === "BUSINESS" ? tl("با پکیج بیزنس باز می‌شود", "Opens with a Business package") : tl("با پکیج حرفه‌ای باز می‌شود", "Opens with a Pro package")}</small>
+                </Link>
+              ))}
+          </div>
+        </>
+      )}
       <div className="dashboard-bento">
         <section className="panel continue-card">
           <SectionTitle

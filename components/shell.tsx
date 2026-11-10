@@ -176,6 +176,28 @@ export function Shell({
         )}
         <div className="side-label">{admin ? t("admin") : t("workspace")}</div>
         {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.filter(([href]) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}{href==="/live"&&<span className="new-tag">{newTag}</span>}</Link>)}</nav>}
+        {!admin && live?.proTools && live.proTools.length > 0 && (
+          <>
+            <div className="side-label">{tl("ابزارهای حرفه‌ای", "Pro tools")}</div>
+            <nav className="main-nav pro-nav" aria-label={tl("ابزارهای حرفه‌ای", "Pro tools")}>
+              {[...live.proTools].sort((a, b) => Number(b.recommended) - Number(a.recommended)).map((tool) => (
+                <Link
+                  key={tool.key}
+                  href={tool.unlocked ? tool.href : "/plans"}
+                  className={(path === tool.href || path.startsWith(tool.href + "/") ? "active " : "") + (tool.unlocked ? "" : "locked")}
+                  title={tool.unlocked ? tool.label : `${tool.label} · ${tl("با ارتقای پکیج", "Upgrade to open")}`}
+                >
+                  <Icon name={tool.unlocked ? tool.icon : "Lock"} />
+                  <span>{tool.label}</span>
+                  {tool.recommended ? <span className="pro-tag suggest">{tl("پیشنهاد", "For you")}</span>
+                    : !tool.unlocked ? <span className="pro-tag">{tool.requiredPlan === "BUSINESS" ? tl("بیزنس", "Business") : "Pro"}</span>
+                    : tool.highlight === "popular" ? <span className="pro-tag hot">{tl("محبوب", "Popular")}</span>
+                    : tool.highlight === "new" ? <span className="new-tag">{newTag}</span> : null}
+                </Link>
+              ))}
+            </nav>
+          </>
+        )}
         {!admin && (
           <>
             <div className="side-label recent-label">
