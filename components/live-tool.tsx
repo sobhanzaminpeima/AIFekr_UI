@@ -75,7 +75,7 @@ export function LiveTool({ slug }: { slug: string }) {
   return (
     <div className="module-workspace accent-amber" data-module="startup">
       <ToolHero icon="Lightbulb" title={spec.title} description={spec.description} />
-      <div className="tool-grid">
+      <div className="guided-tool-grid">
         <form className="panel" onSubmit={run}>
           <h3>{tl("اطلاعات شما", "Your information")}</h3>
           {spec.fields.map((f) => (
@@ -135,7 +135,7 @@ export function LiveTryFree() {
     <div className="module-workspace accent-purple" data-module="startup">
       <ToolHero icon="Sparkles" title={tl("امتحان AI رایگان (آزمایشی)", "Try Free AI (Experimental)")} description={tl("با حساب Puter.com شخصی خودتان، جدا از اعتبار AIFekr", "Uses your own puter.com account, separate from AIFekr credits")} />
       <p className="panel">{tl("این ابزار آزمایشی از سرویس شخص ثالث Puter.js استفاده می‌کند و بار اول از شما می‌خواهد وارد حساب puter.com خودتان شوید.", "This experimental tool uses the third-party Puter.js service. The first time, it asks you to sign in to your own puter.com account.")}</p>
-      <div className="tool-grid">
+      <div className="guided-tool-grid">
         <section className="panel">
           <h3>{tl("تولید متن", "Text generation")}</h3>
           <div className="tool-field"><textarea rows={4} aria-label={tl("درخواست متن", "Text request")} placeholder={tl("سؤال یا درخواست خود را بنویسید…", "Ask anything…")} value={text.prompt} onChange={(e) => setText((t) => ({ ...t, prompt: e.target.value }))} /></div>

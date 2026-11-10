@@ -331,9 +331,11 @@ export function LiveFitness({
                         src={String(t.image)}
                         alt=""
                         style={{
+                          display: "block",
                           width: "100%",
-                          height: 180,
-                          objectFit: "cover",
+                          aspectRatio: "4 / 5",
+                          objectFit: "contain",
+                          background: "var(--surface-2)",
                           borderRadius: 16,
                         }}
                       />
