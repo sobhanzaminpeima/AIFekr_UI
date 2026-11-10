@@ -6827,3 +6827,31 @@ tr:hover td {
 .industry-outcomes strong{display:block;font-size:17px;color:var(--industry)}
 .industry-outcomes small{font-size:12px;color:var(--text-secondary)}
 @media(max-width:860px){.industry-layout{grid-template-columns:1fr}.industry-aside{position:static}}
+
+
+/* ---- AIFekr FIT landing ---- */
+.fit-land{--fit:#84cc16;background:radial-gradient(900px 480px at 80% -5%,#84cc1624,transparent 60%),radial-gradient(700px 400px at 0% 30%,#f9731618,transparent 60%),var(--bg);padding:24px 18px 70px}
+.fit-land>*{max-width:1180px;margin-inline:auto}
+.fit-land-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;align-items:center;padding:36px 0 48px}
+.fit-land-chip{display:inline-block;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:800;color:#0b0d10;background:var(--fit)}
+.fit-land-kicker{margin:16px 0 8px;font-weight:700;color:var(--fit)}
+.fit-land h1{font-size:clamp(34px,6vw,64px);font-weight:900;line-height:1.15;margin:0 0 16px}
+.fit-land-proof{font-size:16px;color:var(--text-secondary);margin:0 0 8px}
+.fit-land-safety{font-size:13px;color:var(--text-muted);margin:0 0 22px;line-height:1.9}
+.fit-land-actions{display:flex;flex-wrap:wrap;gap:12px}
+.fit-land .btn.primary{background:linear-gradient(135deg,#a3e635,#65a30d);color:#0b0d10;border-color:transparent;font-weight:800}
+.fit-land-portraits{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fit-land-portraits img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 18%;border-radius:26px;border:1px solid var(--border-strong);box-shadow:0 30px 60px -30px #000}
+.fit-land-portraits img:last-child{margin-top:42px}
+.fit-land-section{padding:20px 0}
+.fit-land-section>h2{font-size:26px;font-weight:900;margin:0 0 16px}
+.fit-land-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fit-land-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.fit-land-card{padding:22px;border-radius:22px;border:1px solid var(--border);background:linear-gradient(150deg,#84cc1612,transparent 60%),var(--surface-1)}
+.fit-land-card h2,.fit-land-card h3{margin:10px 0 8px;font-weight:800}
+.fit-land-card p{color:var(--text-secondary);font-size:13px;line-height:1.9;margin:0 0 10px}
+.fit-land-card a{color:var(--fit);font-weight:700;text-decoration:none}
+.fit-land-cta{text-align:center;padding:40px 22px;margin-top:20px;border-radius:26px;border:1px solid #84cc1640;background:linear-gradient(135deg,#84cc161c,#f9731614)}
+.fit-land-cta p{color:var(--text-secondary);margin:0 0 18px}
+.fit-land-cta .fit-land-actions{justify-content:center}
+@media(max-width:860px){.fit-land-hero{grid-template-columns:1fr}.fit-land-grid,.fit-land-grid.four{grid-template-columns:1fr}}

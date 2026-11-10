@@ -48,6 +48,7 @@ import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
 import { LiveContentPage } from "./live-content-page";
 import { LiveIndustries, LiveIndustry } from "./live-industry";
+import { LiveFit } from "./live-fit";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
 import { LiveOwnerStatement, LiveStudentCard } from "./live-links-2";
 import { LiveCertificate, LiveOwnerLogin, LiveStartupContact } from "./live-forms";
@@ -122,6 +123,7 @@ function LivePlatform({ path }: { path: string }) {
     : path === "/login" ? <LiveLogin />
     : path === "/register" ? <LiveRegister />
     : path === "/ai-chat" || path === "/ai-team" || path === "/start" ? <LiveContentPage />
+    : path === "/fit" ? <LiveFit />
     : path === "/industry" ? <LiveIndustries />
     : path.startsWith("/industry/") ? <LiveIndustry />
     : path === "/owner/login" ? <LiveOwnerLogin />
