@@ -233,6 +233,9 @@ function actionLabel(action: string, tx: (c: Tx) => string) {
     account_registered: ["ثبت‌نام حساب", "Account registered", "Konto registriert", "Hesap oluşturuldu"],
     last_login: ["آخرین ورود", "Last sign-in", "Letzte Anmeldung", "Son giriş"],
     account_updated: ["ویرایش حساب توسط مدیر", "Account updated by an admin", "Konto von Admin geändert", "Hesap yönetici tarafından güncellendi"],
+    fitness_admin_access_changed: ["تغییر دسترسی فیتنس", "FIT access changed", "FIT-Zugang geändert", "FIT erişimi değişti"],
+    fitness_subscription_activated: ["فعال‌شدن اشتراک فیتنس", "FIT subscription activated", "FIT-Abo aktiviert", "FIT aboneliği etkinleşti"],
+    module_override_updated: ["تغییر دسترسی ماژول", "Module access changed", "Modulzugriff geändert", "Modül erişimi değişti"],
   };
   if (known[action]) return tx(known[action]);
   if (action.startsWith("payment_")) return tx(["پرداخت", "Payment", "Zahlung", "Ödeme"]) + " · " + action.slice(8);
@@ -299,7 +302,11 @@ function AccessForm({ user, tx, put, planNames, modules, locale, reloadModules, 
   const [fit, setFit] = useState({ days: "30", reason: "" });
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
-  const plans = Array.from(new Set([user.plan, ...Object.keys(planNames)]));
+  // Every package an admin can assign (Package table), plus the built-in plans.
+  const [packages, setPackages] = useState<{ planCode: string; name: string; nameEn: string | null; isActive: boolean }[]>([]);
+  useEffect(() => { fetch("/api/admin/packages", { credentials: "include" }).then((r) => (r.ok ? r.json() : null)).then((d) => d?.packages && setPackages(d.packages)).catch(() => {}); }, []);
+  const packageName = (code: string) => { const p = packages.find((x) => x.planCode === code); return p ? (locale === 0 ? p.name : p.nameEn || p.name) + (p.isActive ? "" : " (" + tx(["غیرفعال", "inactive", "inaktiv", "pasif"]) + ")") : planNames[code] || code; };
+  const plans = Array.from(new Set([user.plan, "FREE", ...Object.keys(planNames), ...packages.map((p) => p.planCode)]));
   async function save() {
     const body: Record<string, unknown> = {};
     if (form.plan !== user.plan) body.plan = form.plan;
@@ -338,7 +345,7 @@ function AccessForm({ user, tx, put, planNames, modules, locale, reloadModules, 
       <h2>{tx(["طرح، اعتبار زمانی و دسترسی‌ها", "Plans, expiry & permissions", "Tarife, Laufzeit & Rechte", "Plan, süre ve izinler"])}</h2>
       <div className="domain-fields">
         <label>{tx(["طرح پلتفرم", "Platform plan", "Plattform-Tarif", "Platform planı"])}
-          <select value={form.plan} onChange={set("plan")}>{plans.map((p) => <option key={p} value={p}>{planNames[p] || p}</option>)}</select>
+          <select value={form.plan} onChange={set("plan")}>{plans.map((p) => <option key={p} value={p}>{packageName(p)}</option>)}</select>
         </label>
         <label>{tx(["انقضای طرح", "Plan expiry", "Tarifende", "Plan bitişi"])}<input type="datetime-local" value={form.planExpiry} onChange={set("planExpiry")} /></label>
         <label>{tx(["اشتراک CRM", "CRM subscription", "CRM-Abo", "CRM aboneliği"])}
