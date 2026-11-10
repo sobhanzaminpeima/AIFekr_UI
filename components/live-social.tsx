@@ -301,6 +301,31 @@ function Confirm({
   );
 }
 
+const CONNECT_RESULT: Record<string, [string, string]> = {
+  connected_other_account: ["این حساب اینستاگرام به حساب دیگری در AIFekr وصل است. از صاحب آن بخواهید اتصال را قطع کند یا با پشتیبانی تماس بگیرید.", "This Instagram account is connected to a different AIFekr account. Ask its owner to disconnect it, or contact support."],
+  connected_other_workspace: ["این حساب اینستاگرام در فضای کاری دیگری از حساب خودتان وصل است. آنجا اتصال را قطع کنید و دوباره وصل شوید.", "This Instagram account is connected in another of your workspaces. Disconnect it there, then connect here."],
+  denied: ["اجازهٔ دسترسی در اینستاگرام داده نشد.", "Access was not granted on Instagram."],
+  session_expired: ["زمان اتصال تمام شد. دوباره تلاش کنید.", "The connection attempt expired. Please try again."],
+};
+/** The Instagram callback reports through the URL; it must never fail silently. */
+function InstagramConnectNotice({ fa }: { fa: boolean }) {
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const result = query.get("instagram");
+    if (result === "connected") setMessage({ ok: true, text: fa ? "حساب اینستاگرام وصل شد." : "Instagram account connected." });
+    else if (result === "failed") {
+      const copy = CONNECT_RESULT[query.get("reason") ?? ""] ?? ["اتصال اینستاگرام انجام نشد. دوباره تلاش کنید.", "Instagram connection failed. Please try again."];
+      setMessage({ ok: false, text: fa ? copy[0] : copy[1] });
+    }
+  }, [fa]);
+  if (!message) return null;
+  return (
+    <p className="panel" role={message.ok ? "status" : "alert"}>
+      {message.text}
+    </p>
+  );
+}
 export function LiveSocial({
   module,
   view,
@@ -313,6 +338,7 @@ export function LiveSocial({
   return (
     <SocialContext.Provider value={{ fa, lang: shell.lang }}>
       <div className="module-workspace accent-pink">
+        <InstagramConnectNotice fa={fa} />
         <SectionTitle
           title={module.title[fa ? 0 : 1]}
           subtitle={module.subtitle[fa ? 0 : 1]}

@@ -1505,6 +1505,7 @@ export const adminDefinitions: [string, string, string, string, string[]?][] = [
     ["Payment", "User", "UsageLog"],
   ],
   ["users", "کاربران", "Users", "records", ["User"]],
+  ["social-connections", "اتصال‌های اینستاگرام", "Instagram connections", "records", ["InstagramConnection"]],
   [
     "users/[id]",
     "پروندهٔ کاربر",

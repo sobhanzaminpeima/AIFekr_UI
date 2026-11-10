@@ -12,7 +12,7 @@ const groups=[
  {id:'ai',fa:'هوش مصنوعی و مصرف',en:'AI & usage',icon:'BrainCircuit',roots:['llm','models','provider-fallback','usage','analytics','prompts','ai-chat','chats']},
  {id:'learning',fa:'آموزش، فیتنس و بازی',en:'Learning, fitness & games',icon:'GraduationCap',roots:['student','academy','ai-courses','fitness','play','games']},
  {id:'content',fa:'تولید محتوا و تماس',en:'Content & calls',icon:'Clapperboard',roots:['video-factory','voice-studio','voice-agent','generated-websites','public-share','moderation']},
- {id:'system',fa:'تنظیمات و زیرساخت',en:'Settings & infrastructure',icon:'Settings',roots:['modules','module-access','tools','settings','cloudflare','system','logs','backups']},
+ {id:'system',fa:'تنظیمات و زیرساخت',en:'Settings & infrastructure',icon:'Settings',roots:['modules','module-access','tools','settings','cloudflare','system','social-connections','logs','backups']},
 ] as const;
 const extras:[string,string,string][]=[['growth','رشد مشتریان','Customer growth'],['payment-providers','درگاه‌های پرداخت','Payment providers'],['moderation','بازبینی محتوا','Content review'],['backups','پشتیبان‌ها','Backups']];
 const entries=[...adminDefinitions.filter(([slug])=>!slug.includes('[')&&slug!=='dashboard').map(([slug,fa,en])=>({href:'/admin/'+slug,fa,en,root:slug.split('/')[0]})),...extras.map(([slug,fa,en])=>({href:'/admin/'+slug,fa,en,root:slug}))];
