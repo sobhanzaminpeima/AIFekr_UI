@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Modal, SectionTitle } from "./ui";
 import { useApp } from "./providers";
 import Link from "./site-link";
+import { AIText } from "./ai-text";
+import { liveCellText } from "@/lib/live-format";
 import {
   moduleViewHref,
   type ModuleSpec,
@@ -149,7 +151,7 @@ export function LiveTable({
   columns: LiveField[];
   actions?: (row: LiveRow) => React.ReactNode;
 }) {
-  const { fa, tl } = useApp();
+  const { locale, tl } = useApp();
   return !items.length ? (
     <p className="crm-empty">
       {tl("هنوز داده‌ای ثبت نشده است.", "No records yet.")}
@@ -177,7 +179,7 @@ export function LiveTable({
                         ? r[c.key]
                           ? tl("فعال", "Active")
                           : tl("غیرفعال", "Inactive")
-                        : String(r[c.key])}
+                        : liveCellText(r[c.key], locale)}
                   </bdi>
                 </td>
               ))}
@@ -191,6 +193,47 @@ export function LiveTable({
         </tbody>
       </table>
     </div>
+  );
+}
+/** A saved report opened from a list: comes into view, since the list can be long. */
+export function LiveReportPanel({
+  title,
+  onClose,
+  children,
+}: {
+  title: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const { tl } = useApp();
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    panel.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    panel.current?.focus({ preventScroll: true });
+  }, []);
+  return (
+    <section className="panel" ref={panel} tabIndex={-1} data-testid="saved-report">
+      <div className="row-between">
+        <h3><bdi>{title}</bdi></h3>
+        <Button onClick={onClose}>{tl("بستن", "Close")}</Button>
+      </div>
+      {children}
+    </section>
+  );
+}
+/** The messages of a saved conversation (a meeting or a question to an adviser). */
+export function LiveSavedConversation({ id }: { id: string }) {
+  const r = useLiveData("/api/chat/history?conversationId=" + encodeURIComponent(id));
+  return (
+    <>
+      <LiveLoad {...r} />
+      {r.data &&
+        liveRows(r.data.messages).map((m) => (
+          <div className="domain-card" key={String(m.id)}>
+            <AIText text={String(m.content ?? "")} />
+          </div>
+        ))}
+    </>
   );
 }
 /** No automatic retries. Callers must explicitly confirm paid or external effects. */

@@ -1,4 +1,5 @@
 "use client";
+import { AIText } from "./ai-text";
 import { useState } from "react";
 import { useShell } from "./live-shell-context";
 import { Button } from "./ui";
@@ -286,11 +287,8 @@ function StartupProject({
           )}
           {(generated?.result || stored.result) && (
             <>
-              <div
-                className="domain-card"
-                style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-              >
-                {String(generated?.result ?? stored.result)}
+              <div className="domain-card">
+                <AIText text={String(generated?.result ?? stored.result)} />
               </div>
               {generated && (
                 <LiveForm

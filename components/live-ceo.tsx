@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Link from "./site-link";
+import { Button } from "./ui";
 import { useShell } from "./live-shell-context";
 import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import {
@@ -8,6 +8,8 @@ import {
   LiveForm,
   LiveLoad,
   LiveModuleFrame,
+  LiveReportPanel,
+  LiveSavedConversation,
   LiveTable,
   liveRows,
   useLiveData,
@@ -24,6 +26,7 @@ export function LiveCeo({
   const shell = useShell()!,
     fa = shell.lang === "fa",
     workspace = useLiveData("/api/ceo/workspace");
+  const [opened, setOpened] = useState<LiveRow | null>(null);
   return (
     <LiveModuleFrame module={module} view={view}>
       {view.id === "advisor" && (
@@ -55,13 +58,22 @@ export function LiveCeo({
                   field("updatedAt", "آخرین تغییر", "Updated"),
                 ]}
                 actions={(c) => (
-                  <Link href={"/chat/" + encodeURIComponent(String(c.id))}>
+                  <Button onClick={() => setOpened(c)}>
                     {fa ? "گفتگوی ذخیره‌شده" : "Saved conversation"}
-                  </Link>
+                  </Button>
                 )}
               />
             )}
           </section>
+          {opened && (
+            <LiveReportPanel
+              key={String(opened.id)}
+              title={String(opened.title ?? "")}
+              onClose={() => setOpened(null)}
+            >
+              <LiveSavedConversation id={String(opened.id)} />
+            </LiveReportPanel>
+          )}
         </>
       )}
       {view.id === "orchestrator" && (

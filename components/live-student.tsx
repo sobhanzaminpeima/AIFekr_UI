@@ -1,4 +1,5 @@
 "use client";
+import { AIText } from "./ai-text";
 import { useEffect, useState } from "react";
 import { useApp } from "./providers";
 import Link from "./site-link";
@@ -607,12 +608,12 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
         />
       )}
       {result && (
-        <div className="prose" style={{ whiteSpace: "pre-wrap" }}>
+        <div>
           <p role="status">
             {tl("کردیت مصرف‌شده: ", "Credits used: ")}
             {String(result.creditsUsed ?? "—")}
           </p>
-          <p>{String(result.answer ?? result.content ?? "")}</p>
+          <AIText text={String(result.answer ?? result.content ?? "")} />
           {result.created != null && (
             <p>
               {tl("فلش‌کارت‌های ذخیره‌شده: ", "Saved flashcards: ")}

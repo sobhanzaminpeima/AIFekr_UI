@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useShell } from "./live-shell-context";
 import { consumeToolStream } from "@/lib/live-stream";
+import { AIText } from "./ai-text";
 import {
   LiveForm,
   LiveLoad,
@@ -49,8 +50,8 @@ export function LiveStreamTool({
             map={map}
             caution={
               fa
-                ? "پس از تأیید، تولید با هزینه بالا شروع می‌شود. در صورت قطع ارتباط، پیش از تکرار تاریخچه را بررسی کنید. خروجی خودکار منتشر نمی‌شود."
-                : "Confirmation starts generation at the displayed cost. If disconnected, check history before retrying. Results are not published automatically."
+                ? `پس از تأیید، تولید با هزینهٔ ${rate} کردیت شروع می‌شود. در صورت قطع ارتباط، پیش از تکرار تاریخچه را بررسی کنید. خروجی خودکار منتشر نمی‌شود.`
+                : `Confirmation starts generation for ${rate} credits. If disconnected, check history before retrying. Results are not published automatically.`
             }
             submit={async (body) => {
               setText("");
@@ -101,11 +102,8 @@ export function LiveStreamTool({
         </p>
       )}
       {text && (
-        <div
-          className="domain-card"
-          style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-        >
-          {text}
+        <div className="domain-card">
+          <AIText text={text} />
         </div>
       )}
     </section>

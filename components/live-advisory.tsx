@@ -8,12 +8,15 @@ import {
   field,
   LiveLoad,
   LiveModuleFrame,
+  LiveReportPanel,
+  LiveSavedConversation,
   LiveTable,
   useLiveData,
   liveRows,
   type LiveRow,
 } from "./live-module-kit";
 import { Button } from "./ui";
+import { AIText } from "./ai-text";
 export function LiveAdvisory({
   module,
   view,
@@ -119,17 +122,19 @@ export function LiveAdvisory({
           />
         )}
       </section>
-      {selected &&
-        (doctor ? (
-          <div
-            className="panel"
-            style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-          >
-            {String(selected.result ?? "")}
-          </div>
-        ) : (
-          <MeetingTranscript id={String(selected.id)} />
-        ))}
+      {selected && (
+        <LiveReportPanel
+          key={String(selected.id)}
+          title={String(selected.businessName ?? selected.title ?? "")}
+          onClose={() => setSelected(null)}
+        >
+          {doctor ? (
+            <AIText text={String(selected.result ?? "")} />
+          ) : (
+            <LiveSavedConversation id={String(selected.id)} />
+          )}
+        </LiveReportPanel>
+      )}
       {doctor && view.id === "action-plan" && (
         <section className="panel">
           <p>
@@ -143,25 +148,5 @@ export function LiveAdvisory({
         </section>
       )}
     </LiveModuleFrame>
-  );
-}
-function MeetingTranscript({ id }: { id: string }) {
-  const r = useLiveData(
-    "/api/chat/history?conversationId=" + encodeURIComponent(id),
-  );
-  return (
-    <section className="panel">
-      <LiveLoad {...r} />
-      {r.data &&
-        liveRows(r.data.messages).map((m) => (
-          <div
-            className="domain-card"
-            style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-            key={String(m.id)}
-          >
-            {String(m.content ?? "")}
-          </div>
-        ))}
-    </section>
   );
 }
