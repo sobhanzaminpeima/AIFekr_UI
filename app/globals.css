@@ -6655,3 +6655,21 @@ tr:hover td {
 .tool-field input,.tool-field textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text-primary);font:inherit}
 .tool-image{width:100%;border-radius:14px;margin-top:12px;border:1px solid var(--border)}
 @media(max-width:800px){.guided-tool-grid{grid-template-columns:1fr}}
+
+
+/* ---- Public copy pages ---- */
+.content-page{max-width:880px;margin:0 auto;padding:48px 20px 72px}
+.content-hero{text-align:center;padding:36px 8px 40px}
+.content-hero h1{font-size:clamp(28px,5vw,46px);font-weight:800;line-height:1.35;margin:12px 0 14px}
+.content-hero p{color:var(--text-secondary);line-height:2;max-width:640px;margin:0 auto}
+.content-actions,.content-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:22px}
+.content-links{justify-content:flex-start;margin-top:8px}
+.content-price{display:flex;flex-direction:column;align-items:center;gap:10px;margin:26px auto 0;padding:26px;max-width:420px;border-radius:22px;border:1px solid var(--border-strong);background:linear-gradient(145deg,#f9731622,transparent 60%),var(--surface-1)}
+.content-price strong{font-size:34px;font-weight:800;color:var(--orange)}
+.content-price span{font-size:13px;color:var(--text-secondary)}
+.content-buy{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px}
+.content-blocks{display:flex;flex-direction:column;gap:16px}
+.content-blocks .panel{margin:0}
+.content-blocks h2{font-size:20px;font-weight:800;margin:0 0 10px}
+.content-blocks p,.content-blocks li{color:var(--text-secondary);line-height:2}
+.content-blocks ol{padding-inline-start:22px;margin:0}

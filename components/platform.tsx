@@ -46,6 +46,7 @@ import { PublicLeadForm } from "./leads-workspace";
 import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
+import { LiveContentPage } from "./live-content-page";
 import { LiveTool, LiveTryFree } from "./live-tool";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
@@ -108,6 +109,7 @@ function LivePlatform({ path }: { path: string }) {
     : path === "/pricing" ? <section className="public-section"><Plans /></section>
     : path === "/login" ? <LiveLogin />
     : path === "/register" ? <LiveRegister />
+    : path === "/ai-chat" || path === "/start" ? <LiveContentPage />
     : ["about", "contact", "guides"].includes(section) ? <EditorialPage path={path} />
     : <PublicPage path={path} />;
   return (
