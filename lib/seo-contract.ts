@@ -25,3 +25,21 @@ export function seoResearchInput(
     competitorDomain: body.competitorDomain ?? "",
   };
 }
+
+/**
+ * The search market last run for a site, newest job first. Backlink jobs carry
+ * market fields the provider ignores, so they say nothing about the choice.
+ */
+export function lastSeoMarket(jobs: Record<string, unknown>[]) {
+  for (const job of jobs) {
+    if (["backlinks", "referringDomains", "backlinkHistory"].includes(String(job.action))) continue;
+    try {
+      const input = JSON.parse(String(job.input)) as { locationCode?: unknown; languageCode?: unknown };
+      if (Number.isInteger(input.locationCode) && typeof input.languageCode === "string")
+        return { locationCode: input.locationCode as number, languageCode: input.languageCode };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}

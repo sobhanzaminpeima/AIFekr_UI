@@ -5,7 +5,7 @@ import { useShell } from "./live-shell-context";
 import { Button } from "./ui";
 import { LiveStreamTool } from "./live-stream-tool";
 import { LivePaidForm } from "./live-paid-form";
-import { seoResearchInput, seoTopics } from "@/lib/seo-contract";
+import { lastSeoMarket, seoResearchInput, seoTopics } from "@/lib/seo-contract";
 import { SeoDashboard } from "./seo-charts";
 import { SeoHistory } from "./live-seo-history";
 import {
@@ -269,7 +269,7 @@ function SiteTools({
   const fa = useShell()!.lang === "fa",
     id = String(site.id);
   if (view === "verify") return <Verification id={id} onChange={onChange} />;
-  if (view === "overview") return <><SeoDashboard siteId={id} /><Audits id={id} /></>;
+  if (view === "overview") return <><SearchConsoleState /><SeoDashboard siteId={id} /><Audits id={id} /></>;
   if (view === "sites") return <Audits id={id} />;
   if (
     [
@@ -503,6 +503,7 @@ function Research({ id, initial }: { id: string; initial: string }) {
     [selected, setSelected] = useState<LiveRow | null>(null);
   const key = useRef("");
   const markets = useMarkets(initial === "aiVisibility" ? "ai" : "labs");
+  const remembered = lastSeoMarket(liveRows(r.data?.jobs));
   const languages = [...new Map(markets.flatMap((m) => m.available_languages).map((l) => [l.language_code, l.language_name])).entries()];
   const actions = [
     "keywords",
@@ -521,11 +522,11 @@ function Research({ id, initial }: { id: string; initial: string }) {
       </h3>
       <p>
         {fa
-          ? "کشور و زبان جستجو مستقل از زبان رابط هستند. کد بازار باید توسط ارائه‌دهنده پشتیبانی شود. ابتدا هزینه محاسبه می‌شود؛ اجرا فقط با تأیید شماست."
-          : "Search market and language are independent of the interface. The provider must support the market code. Preview the cost, then explicitly confirm execution."}
+          ? "کشور و زبان جستجو مستقل از زبان رابط هستند و آخرین انتخاب برای این سایت به‌خاطر سپرده می‌شود. برای شروع، نوع بررسی و بازار را انتخاب کنید؛ ابتدا هزینه را می‌بینید و اجرا فقط با تأیید شماست."
+          : "Search market and language are independent of the interface, and the last choice is remembered for this site. To start, choose the research type and market; you see the cost first, and it runs only when you confirm."}
       </p>
       <LiveForm
-        title={fa ? "محاسبه هزینه" : "Preview cost"}
+        title={fa ? "شروع پژوهش: محاسبه هزینه" : "Start research: preview cost"}
         url={API + "intelligence/research"}
         fields={[
           {
@@ -570,8 +571,8 @@ function Research({ id, initial }: { id: string; initial: string }) {
         key={markets.length ? "markets" : "codes"}
         initial={{
           action: initial,
-          ...(markets[0] ? { locationCode: String((markets.find((m) => m.location_code === 2364) ?? markets.find((m) => m.location_code === 2840) ?? markets[0]).location_code) } : {}),
-          ...(languages.length ? { languageCode: languages.some(([c]) => c === (fa ? "fa" : "en")) ? (fa ? "fa" : "en") : languages[0][0] } : {}),
+          ...(markets[0] ? { locationCode: String((markets.find((m) => m.location_code === remembered?.locationCode) ?? markets.find((m) => m.location_code === 2364) ?? markets.find((m) => m.location_code === 2840) ?? markets[0]).location_code) } : remembered ? { locationCode: remembered.locationCode } : {}),
+          ...(languages.length ? { languageCode: remembered && languages.some(([c]) => c === remembered.languageCode) ? remembered.languageCode : languages.some(([c]) => c === (fa ? "fa" : "en")) ? (fa ? "fa" : "en") : languages[0][0] } : remembered ? { languageCode: remembered.languageCode } : {}),
           rows: 20,
           device: "desktop",
           platform: "google",
@@ -707,6 +708,32 @@ function Connections() {
     </section>
   );
 }
+function gscStateText(state: LiveRow, fa: boolean) {
+  if (!state.connected)
+    return fa ? "Search Console وصل نیست؛ آمار ورودی گوگل در دسترس نیست." : "Search Console is not connected, so Google traffic is unavailable.";
+  if (!state.siteUrl)
+    return fa ? "حساب گوگل وصل است، ولی هنوز سایتی انتخاب نشده؛ آمار ورودی تا انتخاب سایت خالی می‌ماند." : "Your Google account is connected, but no site is selected, so traffic stays empty until you choose one.";
+  return `${fa ? "Search Console متصل به:" : "Search Console connected to:"} ${String(state.siteUrl)}`;
+}
+function SearchConsoleState() {
+  const fa = useShell()!.lang === "fa",
+    r = useLiveData(API + "gsc/status");
+  return (
+    <section className="panel">
+      <LiveLoad {...r} />
+      {r.data && (
+        <p role="status">
+          {gscStateText(r.data, fa)}{" "}
+          {!r.data.siteUrl && (
+            <a className="text-link" href="/seo?tab=search-console">
+              {fa ? "تنظیم اتصال" : "Set up"}
+            </a>
+          )}
+        </p>
+      )}
+    </section>
+  );
+}
 function SearchConsole() {
   const fa = useShell()!.lang === "fa",
     r = useLiveData(API + "gsc/status");
@@ -717,7 +744,7 @@ function SearchConsole() {
       <LiveLoad {...r} />
       {r.data && (
         <>
-          <Evidence value={r.data} />
+          <p role="status">{gscStateText(r.data, fa)}</p>
           <a href={API + "gsc/connect"}>
             {fa ? "اتصال حساب گوگل" : "Connect Google account"}
           </a>
