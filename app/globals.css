@@ -3707,8 +3707,12 @@ tr:hover td {
   font-size: 12px;
   margin-bottom: 20px;
 }
+/* Long forms scroll inside the dialog; the action stays in view. */
 .modal form > .btn {
   margin-top: 22px;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
 }
 .modal-end {
   display: flex;

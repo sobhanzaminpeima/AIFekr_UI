@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useShell } from "./live-shell-context";
 import { consumeToolStream } from "@/lib/live-stream";
 import { AIText } from "./ai-text";
+import { AIResultActions } from "./ai-result-actions";
 import {
   LiveForm,
   LiveLoad,
@@ -103,6 +104,9 @@ export function LiveStreamTool({
       )}
       {text && (
         <div className="domain-card">
+          {state !== "running" && (
+            <AIResultActions text={text} filename={`${feature}.md`} />
+          )}
           <AIText text={text} />
         </div>
       )}
