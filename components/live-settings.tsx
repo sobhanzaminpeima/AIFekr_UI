@@ -15,7 +15,7 @@ import { LiveUpload } from "./live-upload";
 
 /** Account fields are loaded from the authenticated API, never prototype data. */
 export function LiveSettings() {
-  const { fa } = useApp();
+  const { fa, locale } = useApp();
   const state = useLiveData("/api/user/profile");
   const [tab, setTab] = useState("profile"),
     [saved, setSaved] = useState(false);
@@ -83,7 +83,7 @@ export function LiveSettings() {
                 : "Email and sign-in method come from your verified account."}
             </p>
             <p>
-              {String(user.plan ?? "")} · {String(user.planExpiry ?? "—")}
+              {String(user.plan ?? "")} · {user.planExpiry ? new Date(String(user.planExpiry)).toLocaleDateString(locale) : "—"}
             </p>
           </section>
           <section className="panel">

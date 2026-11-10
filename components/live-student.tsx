@@ -29,6 +29,23 @@ const courseFields = [
   field("instructor", "مدرس", "Instructor", "text", true),
   field("description", "توضیحات", "Description", "textarea", true),
 ];
+function StudentSubscription() {
+  const { tl, locale, n } = useApp();
+  const profile = useLiveData("/api/user/profile");
+  const user = (profile.data?.user ?? profile.data) as { plan?: string; planExpiry?: string | null } | null | undefined;
+  if (!user?.plan?.startsWith("STUDENT_") || !user.planExpiry) return null;
+  const end = new Date(user.planExpiry);
+  const left = Math.ceil((end.getTime() - Date.now()) / 86400000);
+  if (left <= 0) return null;
+  return (
+    <section className="panel" aria-label={tl("پکیج دانشجویی", "Student package")}>
+      <strong>{tl("پکیج دانشجویی", "Student package")}</strong> · {tl("فعال", "Active")}
+      <p>
+        {tl("پایان اعتبار", "Ends on")}: {end.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })} · {n(left)} {tl("روز مانده", "days left")}
+      </p>
+    </section>
+  );
+}
 export function LiveStudent({
   module,
   view,
@@ -52,6 +69,7 @@ export function LiveStudent({
     <LiveModuleFrame module={module} view={view}>
       <LiveLoad {...courses} />
       {error && <p role="alert">{error}</p>}
+      {view.id === "overview" && <StudentSubscription />}
       {courses.data && (
         <>
           <label>
