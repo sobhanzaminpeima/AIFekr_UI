@@ -174,7 +174,17 @@ export function LiveSeo({
             field("keyword", "کلمه کلیدی", "Keyword"),
             ...(view.id === "keyword"
               ? []
-              : [field("content", "متن صفحه", "Page content", "textarea")]),
+              : view.id === "content"
+                ? [
+                    field(
+                      "content",
+                      "متن صفحه (اختیاری؛ خالی بماند، مقاله از روی موضوع نوشته می‌شود)",
+                      "Page content (optional; leave empty to write from the topic)",
+                      "textarea",
+                      true,
+                    ),
+                  ]
+                : [field("content", "متن صفحه", "Page content", "textarea")]),
           ]}
           map={(b) => ({ ...b, tool: view.id, language: fa ? "fa" : "en" })}
           onDone={() => setSaved((n) => n + 1)}
