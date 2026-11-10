@@ -38,6 +38,9 @@ export type SiteData = {
   certificate?: { id: string; studentName: string; courseTitle: string; version: number; status: string; issuedAt: string } | null;
   /** Only on a public student profile. */
   studentProfile?: { name: string | null; avatar: string | null; slug: string } | null;
+  /** Only on /industry and /industry/<slug>. */
+  industries?: { slug: string; name: string; tagline: string; emoji: string; color: string; from: string; to: string; tier: string; agentCount: number }[];
+  industry?: { slug: string; name: string; tagline: string; emoji: string; color: string; from: string; to: string; tier: string; agentCount: number; valueProposition: string; targetCustomers: string[]; agents: { name: string; description: string; icon: string }[]; painPoints: string[]; outcomes: { metric: string; description: string }[]; kpis: string[] };
   /** Only on /share/<token>. */
   shared?: { badge: string; title: string; subtitle: string; author: string | null; date: string; content: string } | null;
   /** Only on /f/<slug>. */
@@ -47,7 +50,7 @@ export type SiteData = {
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/ai-team", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/ai-team", "/industry", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   if (/^\/student\/(?!chat$)[^/]+$/.test(clean)) return true;
