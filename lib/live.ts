@@ -52,7 +52,7 @@ export type SiteData = {
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/ai-team", "/industry", "/start", "/fit", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/ai-team", "/industry", "/start", "/fit", "/explore", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   if (/^\/student\/(?!chat$)[^/]+$/.test(clean)) return true;

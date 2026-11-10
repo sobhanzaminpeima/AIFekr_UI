@@ -6884,3 +6884,20 @@ tr:hover td {
 .retro-foot{text-align:center;font-size:12px}
 .retro-foot a{color:var(--text-muted)}
 @media(max-width:420px){.retro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* ---- Guest chat preview ---- */
+.explore{max-width:760px;margin:0 auto;padding:56px 18px 72px}
+.explore-hero{text-align:center;margin-bottom:24px}
+.explore-hero h1{font-size:clamp(30px,5vw,48px);font-weight:900;margin:12px 0 10px}
+.explore-hero p{color:var(--text-secondary);line-height:2;margin:0 auto;max-width:560px}
+.explore-box{padding:16px;border-radius:24px;border:1px solid var(--border-strong);background:linear-gradient(150deg,#f9731614,transparent 60%),var(--surface-1);box-shadow:0 30px 60px -36px #000}
+.explore-box textarea{width:100%;resize:vertical;min-height:110px;padding:12px;border:0;background:transparent;color:var(--text-primary);font:inherit;font-size:15px;outline:none}
+.explore-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.explore-row small{color:var(--text-muted);font-size:12px}
+.explore-starters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0}
+.explore-starters button{padding:9px 14px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text-secondary);font:inherit;font-size:13px;cursor:pointer}
+.explore-starters button:hover{color:var(--text-primary);border-color:#f9731666}
+.explore-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:13px}
+.explore-links a{color:var(--text-muted)}
+.explore-auth{display:flex;flex-direction:column;gap:10px;margin-top:12px}
