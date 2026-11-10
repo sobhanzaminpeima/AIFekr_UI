@@ -99,6 +99,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/plans" ? <LivePlans />
         : /^\/(fitness\/)?checkout\/[^/]+$/.test(path) ? <LiveCheckout id={decodeURIComponent(path.split("/").pop()!)} />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
+        : path.startsWith("/assistants/") ? <AssistantChat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
         : path === "/image/gallery" ? <ModuleWorkspace module={findModule("/image/generate")!} path="/image/generate/gallery" />
@@ -832,4 +833,9 @@ function DesignSystem() {
       )}
     </>
   );
+}
+
+/** A specialist assistant: the same chat, under the assistant's own name. */
+function AssistantChat() {
+  return <Chat persona={useShell()?.assistant?.title} />;
 }

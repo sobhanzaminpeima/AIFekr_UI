@@ -146,7 +146,7 @@ export function useLiveChat(conversationFromPath: string | null) {
     try {
       const res = await fetch("/api/chat", {
         method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.current.signal,
-        body: JSON.stringify({ message: question, attachments: attached, conversationId, model, expertMode, history: history.slice(-10).filter((m) => !m.media).map((m) => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({ message: question, attachments: attached, conversationId, model, expertMode, ...(shell?.assistant ? { assistantType: shell.assistant.type } : {}), history: history.slice(-10).filter((m) => !m.media).map((m) => ({ role: m.role, content: m.content })) }),
       });
       if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || chat.error); }
       const convId = res.headers.get("X-Conversation-Id");

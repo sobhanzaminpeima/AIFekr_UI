@@ -17,6 +17,8 @@ export type ShellData = {
   lang: Locale;
   metadata: Record<string, unknown>;
   user: { name: string | null; plan: string; planName: string; role: string; accountType: string | null; credits: number; pendingPaymentCount: number; studentWorkspaceEnabled: boolean; showFitness: boolean };
+  /** Only on /assistants/<type>. */
+  assistant?: { type: string; title: string } | null;
   /** Paid workspaces for the sidebar; locked ones carry the plan that opens them. */
   proTools?: { key: string; href: string; icon: string; label: string; unlocked: boolean; requiredPlan: string | null; highlight: "popular" | "new" | null; recommended: boolean }[];
   access: { crmPlanActive: boolean; hasPack: boolean; hasBusinessAccess: boolean; fitnessOnly: boolean; hideBusiness: boolean };
@@ -106,7 +108,7 @@ export type ChatData = {
 export const V2_APP = ["/home", "/chat", "/create", "/gallery", "/image/gallery", "/image/generate", "/video/generate", "/music/generate", "/voice-studio", "/video-factory", "/crm", "/welcome", "/payments", "/live", "/plans", "/complete-phone"];
 export const v2App = (path: string) => {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
-  return V2_APP.includes(clean) || ["/credits", "/wallet", "/notifications", "/settings", "/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo", "/seo/intelligence", "/seo/sites", "/seo/agent-pipeline", "/ceo", "/agents", "/organization/onboarding", "/voice-agent", "/learn", "/student", "/fitness", "/fitness/marketplace", "/play"].includes(clean) || accountingPath(clean) || clean.startsWith("/chat/") || /^\/(fitness\/)?checkout\/[^/]+$/.test(clean) || /^\/tools\/(business-ideas|drop-shipping|healthy-diet|math|trading|try-free-ai)$/.test(clean) || ["/fitness/credits", "/fitness/payments", "/startup/contact"].includes(clean);
+  return V2_APP.includes(clean) || ["/credits", "/wallet", "/notifications", "/settings", "/social", "/lead-gen", "/business-doctor", "/meeting", "/website-designer", "/referral", "/startup/builder", "/seo", "/seo/intelligence", "/seo/sites", "/seo/agent-pipeline", "/ceo", "/agents", "/organization/onboarding", "/voice-agent", "/learn", "/student", "/fitness", "/fitness/marketplace", "/play"].includes(clean) || accountingPath(clean) || clean.startsWith("/chat/") || /^\/(fitness\/)?checkout\/[^/]+$/.test(clean) || /^\/tools\/(business-ideas|drop-shipping|healthy-diet|math|trading|try-free-ai)$/.test(clean) || ["/fitness/credits", "/fitness/payments", "/startup/contact"].includes(clean) || /^\/assistants\/[^/]+$/.test(clean);
 };
 
 /** Fills "{n}" / "{name}" in the classic frame's wording. */
