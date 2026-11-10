@@ -7,6 +7,7 @@ import { LiveStreamTool } from "./live-stream-tool";
 import { LivePaidForm } from "./live-paid-form";
 import { seoResearchInput, seoTopics } from "@/lib/seo-contract";
 import { SeoDashboard } from "./seo-charts";
+import { SeoHistory } from "./live-seo-history";
 import {
   field,
   LiveForm,
@@ -59,7 +60,8 @@ export function LiveSeo({
 }) {
   const fa = useShell()!.lang === "fa",
     sites = useLiveData(API + "sites");
-  const [id, setId] = useState("");
+  const [id, setId] = useState(""),
+    [saved, setSaved] = useState(0);
   const list = liveRows(sites.data?.sites),
     selected = list.find((s) => s.id === id) ?? list[0];
   return (
@@ -175,8 +177,13 @@ export function LiveSeo({
               : [field("content", "متن صفحه", "Page content", "textarea")]),
           ]}
           map={(b) => ({ ...b, tool: view.id, language: fa ? "fa" : "en" })}
+          onDone={() => setSaved((n) => n + 1)}
         />
       )}{" "}
+      {["keyword", "content", "meta"].includes(view.id) && (
+        <SeoHistory key={saved} tool={view.id} />
+      )}
+      {view.id === "posts" && <SeoHistory />}
       {view.id === "wordpress" && <Connections />}
       {view.id === "search-console" && <SearchConsole />}
       {view.id === "lessons" && <Lessons />}
