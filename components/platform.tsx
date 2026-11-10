@@ -47,6 +47,7 @@ import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
 import { LiveContentPage } from "./live-content-page";
+import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
 import { LiveCertificate, LiveOwnerLogin, LiveStartupContact } from "./live-forms";
 import { LiveTool, LiveTryFree } from "./live-tool";
 import { EmptyStateContext } from "./ui";
@@ -105,6 +106,10 @@ function LivePlatform({ path }: { path: string }) {
       }</Shell>
     </>
   );
+  // Links opened by people outside the platform, some inside an iframe: no site frame around them.
+  if (path.startsWith("/share/")) return <LiveSharedResult />;
+  if (path.startsWith("/f/")) return <LiveLeadForm />;
+  if (path.startsWith("/p/")) return <LiveProperty id={decodeURIComponent(path.split("/")[2])} />;
   const section = path.split("/")[1];
   const content =
     path === "/" ? <Landing />
