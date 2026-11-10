@@ -70,7 +70,7 @@ export function Platform({ path }: { path: string }) {
  * already answered 404 for anything else, so no prototype screen is reachable.
  */
 function LivePlatform({ path }: { path: string }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   if(path === "/owner") return <LiveOwner/>;
   // Signed-in pages bring their own frame (sidebar, banners, skip link).
   // Signed-in pages: the design's own frame and screens, with real data.
@@ -112,7 +112,7 @@ function LivePlatform({ path }: { path: string }) {
   );
 }
 function PlatformContent({ path }: { path: string }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const module = findModule(path);
   const source = sourcePage(path);
   const search = useSearchParams();
@@ -269,7 +269,7 @@ function PlatformContent({ path }: { path: string }) {
             .map((v) => (
               <Link key={v.slug} className="panel" href={"/" + v.slug}>
                 <Icon name={v.icon} />
-                <h3>{fa ? v.fa : v.en}</h3>
+                <h3>{tl(v.fa, v.en)}</h3>
                 <p>{fa ? v.description : v.descriptionEn}</p>
               </Link>
             ))}
@@ -395,7 +395,7 @@ function PlatformContent({ path }: { path: string }) {
   );
 }
 function Sitemap() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [query, setQuery] = useState("");
   return (
     <>
@@ -416,13 +416,13 @@ function Sitemap() {
       <div className="sitemap-grid">
         {allRoutes
           .filter((p) =>
-            (p + " " + RouteName(p, fa))
+            (p + " " + RouteName(p, fa, tl))
               .toLowerCase()
               .includes(query.toLowerCase()),
           )
           .map((p) => (
             <Link className="panel" key={p} href={p}>
-              <span>{RouteName(p, fa)}</span>
+              <span>{RouteName(p, fa, tl)}</span>
               <code dir="ltr">{p}</code>
               <Icon name="ArrowUpLeft" size={16} />
             </Link>
@@ -432,7 +432,7 @@ function Sitemap() {
   );
 }
 function Gallery() {
-  const { fa, t, items } = useApp();
+  const { fa, t, items, tl } = useApp();
   const [filter, setFilter] = useState("all");
   const [lightbox, setLightbox] = useState<string | null>(null);
   const filtered = items.filter((v) => filter === "all" || v.type === filter);
@@ -504,7 +504,7 @@ function Gallery() {
   );
 }
 function Assistants() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   return (
     <>
       <SectionTitle
@@ -561,7 +561,7 @@ function Assistants() {
   );
 }
 function Nutrition() {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const [swapped, setSwapped] = useState<number[]>([]);
   return (
     <>
@@ -618,7 +618,7 @@ function Nutrition() {
   );
 }
 function Coaches() {
-  const { fa, t, price } = useApp();
+  const { fa, t, price, tl } = useApp();
   return (
     <>
       <SectionTitle
@@ -648,7 +648,7 @@ function Coaches() {
   );
 }
 function Play() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [result, setResult] = useState(false);
   return (
     <>
@@ -678,7 +678,7 @@ function Play() {
   );
 }
 function DesignSystem() {
-  const { t, fa, theme, setTheme } = useApp();
+  const { t, fa, theme, setTheme, tl } = useApp();
   const [state, setState] = useState("ready");
   const [modal, setModal] = useState(false);
   return (

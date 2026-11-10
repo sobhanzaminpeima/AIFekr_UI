@@ -27,7 +27,7 @@ const features = (raw?: string | null) => {
 };
 
 export function LivePlans() {
-  const { fa, locale, n } = useApp();
+  const { fa, locale, n, tl } = useApp();
   const [packages, setPackages] = useState<Pkg[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [group, setGroup] = useState("");
@@ -35,8 +35,20 @@ export function LivePlans() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [quote, setQuote] = useState<Quote | null>(null);
-  const tx = (a: string, b: string) => (fa ? a : b);
-  const money = (minor: number, currency: string) => currency === "IRT" ? `${n(minor)} ${fa ? "تومان" : "toman"}` : new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 2 }).format(minor / 100);
+  // The buyer's payment routes, decided by the main site (lib/payment/routing): currency and gateway.
+  const [routes, setRoutes] = useState<{ options: { currency: string; gateway: string }[]; preferred: string | null } | null>(null);
+  const [payCurrency, setPayCurrency] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/payment/options", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (!d) return;
+      setRoutes(d);
+      setPayCurrency(d.preferred);
+    }).catch(() => {});
+  }, []);
+  const ROUTE_LABEL: Record<string, [string, string]> = { IRT: ["تومان · زرین‌پال", "Toman · Zarinpal"], TRY: ["لیر ترکیه · حوالهٔ بانکی", "Turkish lira · bank transfer"], EUR: ["یورو · حوالهٔ بانکی", "Euro · bank transfer"], USD: ["دلار · حوالهٔ بانکی", "US dollar · bank transfer"] };
+  const noRoute = !!routes && routes.options.length === 0;
+  const tx = tl;
+  const money = (minor: number, currency: string) => currency === "IRT" ? `${n(minor)} ${tl("تومان", "toman")}` : new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 2 }).format(minor / 100);
 
   useEffect(() => {
     fetch("/api/packages", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : Promise.reject())).then((d) => {
@@ -66,7 +78,7 @@ export function LivePlans() {
   async function choose(p: Pkg) {
     setBusy(p.planCode); setError("");
     try {
-      const currency = fa ? "IRT" : locale === "tr" ? "TRY" : "USD";
+      const currency = payCurrency ?? (fa ? "IRT" : locale === "tr" ? "TRY" : "USD");
       const r = await fetch("/api/billing/quote", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: p.planCode, period: activePeriod, currency }) });
       const b = await r.json().catch(() => ({}));
       if (b.error === "FITNESS_ONBOARDING_REQUIRED") { location.href = "/fitness?tab=profile"; return; }
@@ -101,30 +113,36 @@ export function LivePlans() {
             <div className="plans-tabs" role="tablist">
               {groups.map((g) => {
                 const c = CATEGORY[g] ?? [g, g, "Sparkles"];
-                return <button key={g} role="tab" aria-selected={g === group} className={g === group ? "selected" : ""} onClick={() => setGroup(g)}><Icon name={c[2]} size={15} />{fa ? c[0] : c[1]}</button>;
+                return <button key={g} role="tab" aria-selected={g === group} className={g === group ? "selected" : ""} onClick={() => setGroup(g)}><Icon name={c[2]} size={15} />{tl(c[0], c[1])}</button>;
               })}
             </div>
           )}
           {periods.length > 1 && (
             <div className="plans-periods" role="radiogroup">
-              {periods.map((k) => <button key={k} role="radio" aria-checked={k === activePeriod} className={k === activePeriod ? "selected" : ""} onClick={() => setPeriod(k)}>{(PERIOD[k] ?? [k, k])[fa ? 0 : 1]}</button>)}
+              {periods.map((k) => <button key={k} role="radio" aria-checked={k === activePeriod} className={k === activePeriod ? "selected" : ""} onClick={() => setPeriod(k)}>{tl(...(PERIOD[k] ?? [k, k]))}</button>)}
             </div>
           )}
+          {routes && routes.options.length > 1 && (
+            <div className="plans-periods plans-pay" role="radiogroup" aria-label={tx("روش پرداخت", "Payment method")}>
+              {routes.options.map((o) => <button key={o.currency} role="radio" aria-checked={o.currency === payCurrency} className={o.currency === payCurrency ? "selected" : ""} onClick={() => setPayCurrency(o.currency)}>{tl(...(ROUTE_LABEL[o.currency] ?? [o.currency, o.currency]))}</button>)}
+            </div>
+          )}
+          {noRoute && <p role="alert" className="error-text">{tx("فعلاً روش پرداختی برای حساب شما فعال نیست؛ با پشتیبانی تماس بگیرید.", "No payment method is available for your account right now; please contact support.")}</p>}
           <div className="pricing-grid">
             {rows.filter((p) => p.offers?.[activePeriod]).sort((a, b) => a.offers![activePeriod].minor - b.offers![activePeriod].minor).map((p, index, shown) => {
               const o = p.offers?.[activePeriod];
               if (!o) return null;
-              const list = features(fa ? p.features : p.featuresEn || p.features).slice(0, 6);
+              const list = (fa ? features(p.features) : features(p.featuresEn || p.features).map((f) => tl(f, f))).slice(0, 6);
               return (
                 <article className={`panel plan-card ${p.isFeatured ? "recommended" : ""}`} key={p.planCode}>
                   <span className="icon-chip orange"><Icon name={(CATEGORY[p.category] ?? ["", "", "Sparkles"])[2]} size={24} /></span>
                   {index === 0 && shown.length > 1 && <span className="plan-start-badge"><Icon name="Sparkles" size={13} />{tx("کم‌هزینه‌ترین گزینه", "Lowest price")}</span>}
-                  <h2>{fa ? p.name : p.nameEn || p.name}</h2>
+                  <h2>{tl(p.name, p.nameEn || p.name)}</h2>
                   {o.compareAtMinor != null && o.compareAtMinor > o.minor && <del>{money(o.compareAtMinor, o.currency)}</del>}
                   <strong className="plan-price">{money(o.minor, o.currency)}</strong>
-                  <small className="muted">{(PERIOD[o.period] ?? [o.period, o.period])[fa ? 0 : 1]} · {n(o.credits)} {tx("اعتبار", "credits")}</small>
+                  <small className="muted">{tl(...(PERIOD[o.period] ?? [o.period, o.period]))} · {n(o.credits)} {tx("اعتبار", "credits")}</small>
                   <ul className="check-list">{list.map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}</ul>
-                  <Button variant="primary" className="full" disabled={!!busy || p.purchaseAvailable === false} onClick={() => void choose(p)}>
+                  <Button variant="primary" className="full" disabled={!!busy || noRoute || p.purchaseAvailable === false} onClick={() => void choose(p)}>
                     {busy === p.planCode ? <Icon name="LoaderCircle" size={16} className="spin" /> : null}{tx("انتخاب و فعال‌سازی", "Choose and activate")}
                   </Button>
                 </article>

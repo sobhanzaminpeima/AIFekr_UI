@@ -362,16 +362,16 @@ export function Button({
   );
 }
 export function Brand({ compact = false }: { compact?: boolean }) {
-  const {fa}=useApp();
+  const {fa, tl }=useApp();
   return (
-    <Link href="/" className="brand" aria-label={fa?'ای آی فکر':'AIFekr'}>
+    <Link href="/" className="brand" aria-label={tl('ای آی فکر', 'AIFekr')}>
       <span className="brand-mark">
         <Icon name="Sparkles" size={25} />
       </span>
       {!compact && (
         <>
           <b>
-            {fa?'ای آی فکر':'AIFekr'}<span>{fa?'AIFekr':'AI WORKSPACE'}</span>
+            {tl('ای آی فکر', 'AIFekr')}<span>{tl('AIFekr', 'AI WORKSPACE')}</span>
           </b>
         </>
       )}
@@ -481,7 +481,7 @@ export function SectionTitle({
   );
 }
 export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   // On aifekr.com the admin's real starting cost; tools priced per use (voice
   // studio, video factory) show none rather than a sample figure.
   const site = useSite();
@@ -491,7 +491,7 @@ export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
       <span className={`icon-chip ${tool.accent}`}>
         <Icon name={tool.icon} size={25} />
       </span>
-      <h3>{fa ? tool.fa : tool.en}</h3>
+      <h3>{tl(tool.fa, tool.en)}</h3>
       <p>{fa ? tool.description : tool.descriptionEn}</p>
       <span className="tool-bottom">
         {cost != null ? <span>
@@ -502,14 +502,14 @@ export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
     </Link>
   );
 }
-export function RouteName(path: string, fa: boolean) {
+export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string) => string = (a, b) => (fa ? a : b)) {
   const [pathname, query] = path.split("?");
   const module = findModule(pathname);
   if (module) {
     const view = resolveView(module, pathname, new URLSearchParams(query));
     return query
-      ? module.title[fa ? 0 : 1] + " · " + view.title[fa ? 0 : 1]
-      : module.title[fa ? 0 : 1];
+      ? tl(module.title[0], module.title[1]) + " · " + tl(view.title[0], view.title[1])
+      : tl(module.title[0], module.title[1]);
   }
   const common: Record<string, [string, string]> = {
     "/home": ["خانه", "Home"],
@@ -551,13 +551,13 @@ export function RouteName(path: string, fa: boolean) {
     if (entry) return entry[fa ? 1 : 2];
   }
   if (path.startsWith("/checkout/"))
-    return fa ? "پرداخت آزمایشی" : "Demo checkout";
+    return tl("پرداخت آزمایشی", "Demo checkout");
   if (path.startsWith("/learn/courses/"))
-    return fa ? "جزئیات دوره" : "Course details";
+    return tl("جزئیات دوره", "Course details");
   if (path.startsWith("/assistants/"))
     return fa ? "دستیار تخصصی" : "Specialist assistant";
   const tool = tools.find((t) => "/" + t.slug === path);
-  if (tool) return fa ? tool.fa : tool.en;
+  if (tool) return tl(tool.fa, tool.en);
   const a = adminSections.find(([s]) => "/admin/" + s === path);
   if (a) return fa ? a[1] : a[2];
   const p = publicPages.find(([s]) => "/" + s === path);
@@ -569,7 +569,7 @@ export function RouteName(path: string, fa: boolean) {
         (fa ? "صفحه اصلی" : "Landing");
 }
 export function Command({ onClose }: { onClose: () => void }) {
-  const { t, fa } = useApp();
+  const { t, fa, tl } = useApp();
   const input = useRef<HTMLInputElement>(null);
   const [query, setQuery] = ReactUseState("");
   // On aifekr.com: the real destinations, and the main site's goal search

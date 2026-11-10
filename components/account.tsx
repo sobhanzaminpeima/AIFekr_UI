@@ -31,7 +31,7 @@ export function Plans() {
   return useSite() ? <LivePlans /> : <DemoPlans />;
 }
 function DemoPlans() {
-  const { fa, t, n, price } = useApp();
+  const { fa, t, n, price, tl } = useApp();
   const [period, setPeriod] = useState(1);
   const [planCatalog] = useLocalState<Plan[]>(
     "aifekr-billing-plans",
@@ -41,14 +41,10 @@ function DemoPlans() {
     <div className="plans-page">
       <div className="center-heading">
         <span className="eyebrow orange-text">
-          {fa
-            ? "یک سرمایه‌گذاری روی ایده‌های تو"
-            : "A LITTLE INVESTMENT IN YOUR IDEAS"}
+          {tl("یک سرمایه‌گذاری روی ایده‌های تو", "A LITTLE INVESTMENT IN YOUR IDEAS")}
         </span>
         <h1>
-          {fa
-            ? "فضای بیشتر، برای فکرهای بزرگ‌تر."
-            : "More room for your big ideas."}
+          {tl("فضای بیشتر، برای فکرهای بزرگ‌تر.", "More room for your big ideas.")}
         </h1>
         <p>
           {fa
@@ -58,7 +54,7 @@ function DemoPlans() {
         <div className="chips">
           {[
             [1, t("monthly")],
-            [3, fa ? "۳ ماهه" : "Quarterly"],
+            [3, tl("۳ ماهه", "Quarterly")],
             [6, fa ? "۶ ماهه" : "6 months"],
             [12, t("yearly")],
           ].map(([p, label]) => (
@@ -83,7 +79,7 @@ function DemoPlans() {
               >
                 {i === 1 && (
                   <span className="recommended-tag">
-                    {fa ? "پیشنهاد ای آی فکر" : "THE SWEET SPOT"}
+                    {tl("پیشنهاد ای آی فکر", "THE SWEET SPOT")}
                   </span>
                 )}
                 <span className={`icon-chip ${["blue", "orange", "amber"][i]}`}>
@@ -92,7 +88,7 @@ function DemoPlans() {
                     size={27}
                   />
                 </span>
-                <h2>{fa ? plan.fa : plan.en}</h2>
+                <h2>{tl(plan.fa, plan.en)}</h2>
                 <p>
                   {fa
                     ? [
@@ -138,7 +134,7 @@ function DemoPlans() {
                 <ul>
                   {[
                     `${n(plan.credits)} ${t("credits")}`,
-                    fa ? "دسترسی به مدل‌های هوشمند" : "Smart model access",
+                    tl("دسترسی به مدل‌های هوشمند", "Smart model access"),
                     fa ? "تاریخچه و فضای شخصی" : "Personal workspace & history",
                     fa
                       ? [
@@ -197,7 +193,7 @@ export function FAQ() {
   return useSite() ? <LiveFAQ /> : <DemoFAQ />;
 }
 function DemoFAQ() {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   return (
     <section className="faq">
       <h2>
@@ -243,11 +239,11 @@ function DemoFAQ() {
   );
 }
 export function Credits() {
-  const { fa, t, n, credits, price } = useApp();
+  const { fa, t, n, credits, price, tl } = useApp();
   return (
     <>
       <SectionTitle
-        title={fa ? "کیف پول اعتبار" : "Your credit wallet"}
+        title={tl("کیف پول اعتبار", "Your credit wallet")}
         subtitle={
           fa
             ? "شفاف، ساده، همیشه در اختیار تو."
@@ -287,7 +283,7 @@ export function Credits() {
   );
 }
 export function Checkout({ path }: { path: string }) {
-  const { fa, t, price, topup } = useApp();
+  const { fa, t, price, topup, tl } = useApp();
   const router = useRouter();
   const id = path.split("/").pop() || "pro";
   const [discount, setDiscount] = useState("");
@@ -337,9 +333,7 @@ export function Checkout({ path }: { path: string }) {
         </span>
         <h1>
           {id === "success"
-            ? fa
-              ? "اعتبار تازه، ایده‌های تازه!"
-              : "Fresh credits. Fresh possibilities."
+            ? tl("اعتبار تازه، ایده‌های تازه!", "Fresh credits. Fresh possibilities.")
             : fa
               ? "پرداخت آزمایشی انجام نشد"
               : "Demo payment failed"}
@@ -359,11 +353,11 @@ export function Checkout({ path }: { path: string }) {
       <h1>{fa ? "یک قدم تا شروع" : "One step closer"}</h1>
       <p className="badge">{t("mock")}</p>
       <dl className="cost-summary">
-        <dt>{fa ? "سفارش" : "Your order"}</dt>
+        <dt>{tl("سفارش", "Your order")}</dt>
         <dd>{id}</dd>
-        <dt>{fa ? "قابل پرداخت" : "Total"}</dt>
+        <dt>{tl("قابل پرداخت", "Total")}</dt>
         <dd className="checkout-total">{price(total)}</dd>
-        <dt>{fa ? "اعتبار این خرید" : "Credits for this purchase"}</dt>
+        <dt>{tl("اعتبار این خرید", "Credits for this purchase")}</dt>
         <dd>{value}</dd>
       </dl>
       <label>
@@ -386,13 +380,11 @@ export function Checkout({ path }: { path: string }) {
                   ? fa
                     ? `${promotion.percent}٪ تخفیف اعمال شد`
                     : `${promotion.percent}% discount applied`
-                  : fa
-                    ? "کد معتبر نیست؛ AIFekr10 را امتحان کن."
-                    : "Try AIFekr10",
+                  : tl("کد معتبر نیست؛ AIFekr10 را امتحان کن.", "Try AIFekr10"),
               );
             }}
           >
-            {fa ? "اعمال" : "Apply"}
+            {tl("اعمال", "Apply")}
           </Button>
         </div>
       </label>
@@ -403,7 +395,7 @@ export function Checkout({ path }: { path: string }) {
           <option>
             {fa ? "کارت‌به‌کارت (آزمایشی)" : "Card transfer (simulated)"}
           </option>
-          <option>{fa ? "رمزارز (آزمایشی)" : "Crypto (simulated)"}</option>
+          <option>{tl("رمزارز (آزمایشی)", "Crypto (simulated)")}</option>
         </select>
       </label>
       <label className="check-label">
@@ -449,7 +441,7 @@ export function Checkout({ path }: { path: string }) {
   );
 }
 export function Settings() {
-  const { fa, t, theme, setTheme, failure, setFailure, locale } = useApp();
+  const { fa, t, theme, setTheme, failure, setFailure, locale, tl } = useApp();
   const [tab, setTab] = useState("profile");
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -540,7 +532,7 @@ export function Settings() {
             <>
               <div className="profile-photo">
                 <span className="avatar">س</span>
-                <p>{fa ? "تصویر پروفایل" : "Profile picture"}</p>
+                <p>{tl("تصویر پروفایل", "Profile picture")}</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -572,7 +564,7 @@ export function Settings() {
                 />
               </label>
               <label>
-                {fa ? "دربارهٔ من" : "About me"}
+                {tl("دربارهٔ من", "About me")}
                 <textarea rows={3} onChange={() => setDirty(true)} />
               </label>
             </>
@@ -609,7 +601,7 @@ export function Settings() {
           ) : tab === "security" ? (
             <>
               <label>
-                {fa ? "گذرواژهٔ جدید" : "New password"}
+                {tl("گذرواژهٔ جدید", "New password")}
                 <input
                   type="password"
                   minLength={8}
@@ -705,10 +697,10 @@ export function Settings() {
                   )
                 }
               >
-                {fa ? "خروجی داده‌ها" : "Export my data"}
+                {tl("خروجی داده‌ها", "Export my data")}
               </Button>
               <div className="danger-zone">
-                <h3>{fa ? "حذف حساب آزمایشی" : "Delete demo data"}</h3>
+                <h3>{tl("حذف حساب آزمایشی", "Delete demo data")}</h3>
                 <p>
                   {fa
                     ? "اطلاعات ذخیره‌شده در این مرورگر پاک می‌شوند."
@@ -735,9 +727,7 @@ export function Settings() {
       {dialog && (
         <Modal title={t("delete")} onClose={() => setDialog(false)}>
           <p>
-            {fa
-              ? "برای حذف، DELETE را بنویس."
-              : "Type DELETE to clear your demo data."}
+            {tl("برای حذف، DELETE را بنویس.", "Type DELETE to clear your demo data.")}
           </p>
           <input
             aria-label="DELETE"
@@ -762,7 +752,7 @@ export function Settings() {
   );
 }
 export function Referral() {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const [withdraw, setWithdraw] = useState(false);
   return (
     <>
@@ -778,7 +768,7 @@ export function Referral() {
         <span className="icon-chip orange">
           <Icon name="Gift" size={38} />
         </span>
-        <h1>{fa ? "با هم، بیشتر می‌سازیم." : "Make more. Together."}</h1>
+        <h1>{tl("با هم، بیشتر می‌سازیم.", "Make more. Together.")}</h1>
         <p>
           {fa
             ? "هر دعوت موفق، ۱۰۰ اعتبار برای هر دوی شما."
@@ -814,7 +804,7 @@ export function Referral() {
         ))}
       </div>
       <Button onClick={() => setWithdraw(true)}>
-        {fa ? "درخواست برداشت" : "Request withdrawal"}
+        {tl("درخواست برداشت", "Request withdrawal")}
       </Button>
       {withdraw && (
         <Modal
@@ -832,13 +822,13 @@ export function Referral() {
   );
 }
 export function Notifications() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [read, setRead] = useState(false);
   return (
     <>
       <SectionTitle title={t("notifications")}>
         <Button variant="primary" onClick={() => setRead(true)}>
-          {fa ? "همه را خواندم" : "Mark all as read"}
+          {tl("همه را خواندم", "Mark all as read")}
         </Button>
       </SectionTitle>
       <div className="panel notification-list">

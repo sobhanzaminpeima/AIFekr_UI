@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { WebAppInstallProvider } from "./webapp-install";
 import { Toaster, toast } from "sonner";
 import { Locale, TranslationKey, translate, num, money } from "@/lib/i18n";
+import { pairText } from "@/lib/i18n-text";
 import { GeneratedItem, setFailureMode } from "@/lib/api/client";
 import { isPublicRoute, localizedPath } from "@/lib/live";
 type Context = {
@@ -12,6 +13,8 @@ type Context = {
   setTheme: (v: string) => void;
   t: (k: TranslationKey) => string;
   fa: boolean;
+  /** A Persian/English text pair in the visitor's language (Turkish from lib/i18n-tr.ts). */
+  tl: (fa: string, en: string) => string;
   n: (v: number) => string;
   price: (v: number) => string;
   credits: number;
@@ -82,6 +85,7 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
         } : setTheme,
         t,
         fa: locale === "fa",
+        tl: (f, e) => pairText(locale, f, e),
         n: (v) => num(v, locale),
         price: (v) => money(v, locale),
         credits,

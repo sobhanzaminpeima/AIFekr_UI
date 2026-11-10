@@ -159,7 +159,7 @@ const legalContent: Record<
   },
 };
 export function EditorialPage({ path }: { path: string }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const live = useSite();
   const part = path.split("/")[1];
   if (live && part === "contact") return <LiveContact />;
@@ -215,7 +215,7 @@ export function EditorialPage({ path }: { path: string }) {
             <Icon name={legal.icon} size={30} />
           </span>
           <span className="eyebrow">AIFekr / {part.toUpperCase()}</span>
-          <h1>{fa ? legal.fa : legal.en}</h1>
+          <h1>{tl(legal.fa, legal.en)}</h1>
           <p>
             {fa
               ? "اطلاعات مربوط به همین نسخهٔ نمایشی، بدون ادعای سیاست‌های یک سرویس عملیاتی."
@@ -231,7 +231,7 @@ export function EditorialPage({ path }: { path: string }) {
             {legal.sections.map((s, i) => (
               <a key={i} href={"#section-" + i}>
                 <span>0{i + 1}</span>
-                {s[fa ? 0 : 1]}
+                {tl(s[0], s[1])}
               </a>
             ))}
           </nav>
@@ -239,7 +239,7 @@ export function EditorialPage({ path }: { path: string }) {
             {legal.sections.map((s, i) => (
               <section id={"section-" + i} key={i}>
                 <span className="eyebrow">0{i + 1}</span>
-                <h2>{s[fa ? 0 : 1]}</h2>
+                <h2>{tl(s[0], s[1])}</h2>
                 <p>{s[fa ? 2 : 3]}</p>
               </section>
             ))}
@@ -265,7 +265,7 @@ export function EditorialPage({ path }: { path: string }) {
         </p>
         <div className="domain-actions">
           <Link className="btn primary" href="/home">
-            {fa ? "کشف فضای ای آی فکر" : "Explore AIFekr"}{" "}
+            {tl("کشف فضای ای آی فکر", "Explore AIFekr")}{" "}
             <Icon name="ArrowLeft" size={16} />
           </Link>
           <Link className="btn" href="/contact">
@@ -279,7 +279,7 @@ export function EditorialPage({ path }: { path: string }) {
         </div>
       </header>
       <section className="about-story">
-        <span className="eyebrow">{fa ? "چرایی ای آی فکر" : "WHY AIFekr"}</span>
+        <span className="eyebrow">{tl("چرایی ای آی فکر", "WHY AIFekr")}</span>
         <h2>
           {fa
             ? "ابزارها کنار هم،\nفکر تو در مرکز."
@@ -332,7 +332,7 @@ export function EditorialPage({ path }: { path: string }) {
   );
 }
 function ContactPage() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [sent, setSent] = useState(false);
   return (
     <div className="public-section editorial-page">
@@ -356,9 +356,7 @@ function ContactPage() {
               <Icon name="MessagesSquare" size={30} />
             </span>
             <h2>
-              {fa
-                ? "درباره چه چیزی صحبت کنیم؟"
-                : "What would you like to discuss?"}
+              {tl("درباره چه چیزی صحبت کنیم؟", "What would you like to discuss?")}
             </h2>
             <p>
               {fa
@@ -369,7 +367,7 @@ function ContactPage() {
           <Link className="contact-guide-link" href="/guides">
             <Icon name="BookOpen" />
             <span>
-              {fa ? "پاسخ را در راهنماها جستجو کن" : "Explore the guides"}
+              {tl("پاسخ را در راهنماها جستجو کن", "Explore the guides")}
             </span>
             <Icon name="ArrowUpLeft" size={18} />
           </Link>
@@ -404,7 +402,7 @@ function ContactPage() {
               <span className="icon-chip lime">
                 <Icon name="CheckCircle2" size={36} />
               </span>
-              <h2>{fa ? "بازخوردت ثبت شد." : "Your feedback is saved."}</h2>
+              <h2>{tl("بازخوردت ثبت شد.", "Your feedback is saved.")}</h2>
               <p>
                 {fa
                   ? "این ثبت محلی است و پیام ارسال نشده است."
@@ -432,7 +430,7 @@ function ContactPage() {
                 </label>
               </div>
               <label>
-                {fa ? "موضوع گفتگو" : "Topic"}
+                {tl("موضوع گفتگو", "Topic")}
                 <select name="topic">
                   <option>{fa ? "بازخورد طراحی" : "Design feedback"}</option>
                   <option>{fa ? "گزارش مشکل" : "Report an issue"}</option>
@@ -440,11 +438,11 @@ function ContactPage() {
                 </select>
               </label>
               <label>
-                {fa ? "پیام تو" : "Your message"}
+                {tl("پیام تو", "Your message")}
                 <textarea name="message" required rows={7} />
               </label>
               <Button type="submit" variant="primary">
-                {fa ? "ثبت پیام در پیش‌نمایش" : "Save preview message"}{" "}
+                {tl("ثبت پیام در پیش‌نمایش", "Save preview message")}{" "}
                 <Icon name="ArrowLeft" size={17} />
               </Button>
             </>
@@ -455,7 +453,7 @@ function ContactPage() {
   );
 }
 function Guides({ path }: { path: string }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const [query, setQuery] = useState("");
   const slug = path.split("/")[2];
   const topic = guideTopics.find((t) => t[0] === slug);
@@ -463,7 +461,7 @@ function Guides({ path }: { path: string }) {
     return (
       <div className="public-section editorial-page">
         <Link className="text-link" href="/guides">
-          {fa ? "همه راهنماها" : "All guides"}
+          {tl("همه راهنماها", "All guides")}
         </Link>
         <header className="editorial-hero">
           <span className="icon-chip blue">
@@ -484,7 +482,7 @@ function Guides({ path }: { path: string }) {
                 : "Before choosing a tool, describe the desired result and its audience.",
             ],
             [
-              fa ? "۲. یک نسخه کوچک بساز" : "2. Start small",
+              tl("۲. یک نسخه کوچک بساز", "2. Start small"),
               fa
                 ? "اطلاعات لازم را وارد کن، پیش‌نمایش را ببین و جزئیات را اصلاح کن."
                 : "Enter the required information, review the preview and refine the details.",
@@ -523,7 +521,7 @@ function Guides({ path }: { path: string }) {
         </p>
         <input
           className="guide-search"
-          aria-label={fa ? "جستجوی راهنما" : "Search guides"}
+          aria-label={tl("جستجوی راهنما", "Search guides")}
           placeholder={fa ? "دنبال چه چیزی هستی؟" : "What are you looking for?"}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -544,7 +542,7 @@ function Guides({ path }: { path: string }) {
               <h2>{fa ? a : b}</h2>
               <p>{fa ? c : d}</p>
               <span className="text-link">
-                {fa ? "خواندن راهنما" : "Read guide"}{" "}
+                {tl("خواندن راهنما", "Read guide")}{" "}
                 <Icon name="ArrowLeft" size={16} />
               </span>
             </Link>

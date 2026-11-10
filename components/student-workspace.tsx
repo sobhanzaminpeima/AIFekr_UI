@@ -46,7 +46,7 @@ type Group = {
 };
 const uid = () => crypto.randomUUID();
 export function StudentWorkspace({ view }: { view: string }) {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const [subjects, saveSubjects] = useLocalState<Subject[]>(
     "aifekr-study-subjects",
     [],
@@ -96,19 +96,15 @@ export function StudentWorkspace({ view }: { view: string }) {
   }, [activeTimer, started]);
   const selectSubject = (required = false) => (
     <select
-      aria-label={fa ? "انتخاب درس" : "Choose subject"}
+      aria-label={tl("انتخاب درس", "Choose subject")}
       required={required}
       value={selected}
       onChange={(e) => setSelected(e.target.value)}
     >
       <option value="all">
         {required
-          ? fa
-            ? "انتخاب درس"
-            : "Choose subject"
-          : fa
-            ? "همه درس‌ها"
-            : "All subjects"}
+          ? tl("انتخاب درس", "Choose subject")
+          : tl("همه درس‌ها", "All subjects")}
       </option>
       {subjects.map((s) => (
         <option key={s.id} value={s.id}>
@@ -135,7 +131,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               })
             }
           >
-            {fa ? "افزودن درس" : "Add subject"}
+            {tl("افزودن درس", "Add subject")}
           </Button>
         </div>
         {subjects.length ? (
@@ -151,7 +147,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                     <Icon name="BookOpen" size={26} />
                   </span>
                   <Button onClick={() => setSubject(s)}>
-                    {fa ? "ویرایش" : "Edit"}
+                    {tl("ویرایش", "Edit")}
                   </Button>
                 </div>
                 <h3>{s.name}</h3>
@@ -159,13 +155,13 @@ export function StudentWorkspace({ view }: { view: string }) {
                   {s.teacher || (fa ? "مدرس مشخص نشده" : "No teacher assigned")}
                 </p>
                 <div className="row-between">
-                  <span>{fa ? "پیشرفت ثبت‌شده" : "Recorded progress"}</span>
+                  <span>{tl("پیشرفت ثبت‌شده", "Recorded progress")}</span>
                   <strong>{n(s.progress)}٪</strong>
                 </div>
                 <progress max={100} value={s.progress} />
                 <div className="domain-actions">
                   <Link className="btn" href="/student?view=upload">
-                    {fa ? "منابع" : "Resources"}
+                    {tl("منابع", "Resources")}
                   </Link>
                   <Link className="btn" href="/student?view=planner">
                     {fa ? "برنامه مطالعه" : "Study plan"}
@@ -179,7 +175,7 @@ export function StudentWorkspace({ view }: { view: string }) {
         )}
         {subject && (
           <Modal
-            title={fa ? "مشخصات درس" : "Subject details"}
+            title={tl("مشخصات درس", "Subject details")}
             onClose={() => setSubject(null)}
           >
             <form
@@ -205,7 +201,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "مدرس" : "Teacher"}
+                  {tl("مدرس", "Teacher")}
                   <input
                     value={subject.teacher}
                     onChange={(e) =>
@@ -214,7 +210,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "رنگ درس" : "Subject color"}
+                  {tl("رنگ درس", "Subject color")}
                   <input
                     type="color"
                     value={subject.color}
@@ -224,7 +220,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "پیشرفت (%)" : "Progress (%)"}
+                  {tl("پیشرفت (%)", "Progress (%)")}
                   <input
                     required
                     type="number"
@@ -267,7 +263,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               : "Choose a file to record its name, type and size in your local library. TXT and Markdown text is also retained."}
           </p>
           <label className="study-upload-control">
-            {fa ? "افزودن منبع محلی" : "Add local resource"}
+            {tl("افزودن منبع محلی", "Add local resource")}
             <input
               type="file"
               multiple
@@ -300,7 +296,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           </small>
         </section>
         <section className="panel">
-          <h3>{fa ? "کتابخانه منابع" : "Resource library"}</h3>
+          <h3>{tl("کتابخانه منابع", "Resource library")}</h3>
           {materials
             .filter((m) => selected === "all" || m.subject === selected)
             .map((m) => (
@@ -369,7 +365,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 <p>{note.text}</p>
                 <div className="domain-actions">
                   <Button onClick={() => setNote(note)}>
-                    {fa ? "ویرایش" : "Edit"}
+                    {tl("ویرایش", "Edit")}
                   </Button>
                   <Button
                     onClick={() => download(note.title + ".txt", note.text)}
@@ -406,7 +402,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             >
               <div className="domain-fields">
                 <label>
-                  {fa ? "عنوان یادداشت" : "Note title"}
+                  {tl("عنوان یادداشت", "Note title")}
                   <input
                     required
                     value={note.title}
@@ -416,7 +412,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "درس مرتبط" : "Related subject"}
+                  {tl("درس مرتبط", "Related subject")}
                   <select
                     value={note.subject}
                     onChange={(e) =>
@@ -469,7 +465,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               })
             }
           >
-            {fa ? "کار یا امتحان تازه" : "New task or exam"}
+            {tl("کار یا امتحان تازه", "New task or exam")}
           </Button>
         </div>
         <section className="panel">
@@ -485,12 +481,8 @@ export function StudentWorkspace({ view }: { view: string }) {
                     {subjects.find((s) => s.id === task.subject)?.name} ·{" "}
                     {task.due.replace("T", " ")} ·{" "}
                     {task.kind === "exam"
-                      ? fa
-                        ? "امتحان"
-                        : "Exam"
-                      : fa
-                        ? "مطالعه"
-                        : "Study"}
+                      ? tl("امتحان", "Exam")
+                      : tl("مطالعه", "Study")}
                   </small>
                 </span>
                 <input
@@ -522,7 +514,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             >
               <div className="domain-fields">
                 <label>
-                  {fa ? "موضوع" : "Title"}
+                  {tl("موضوع", "Title")}
                   <input
                     required
                     value={task.title}
@@ -532,7 +524,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "درس" : "Subject"}
+                  {tl("درس", "Subject")}
                   <select
                     value={task.subject}
                     onChange={(e) =>
@@ -548,7 +540,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   </select>
                 </label>
                 <label>
-                  {fa ? "زمان" : "Date & time"}
+                  {tl("زمان", "Date & time")}
                   <input
                     type="datetime-local"
                     required
@@ -557,13 +549,13 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <label>
-                  {fa ? "نوع برنامه" : "Task type"}
+                  {tl("نوع برنامه", "Task type")}
                   <select
                     value={task.kind}
                     onChange={(e) => setTask({ ...task, kind: e.target.value })}
                   >
-                    <option value="study">{fa ? "مطالعه" : "Study"}</option>
-                    <option value="exam">{fa ? "امتحان" : "Exam"}</option>
+                    <option value="study">{tl("مطالعه", "Study")}</option>
+                    <option value="exam">{tl("امتحان", "Exam")}</option>
                   </select>
                 </label>
               </div>
@@ -585,8 +577,8 @@ export function StudentWorkspace({ view }: { view: string }) {
           </h2>
           {selectSubject()}
           <strong className="study-timer-value" role="timer">
-            {n(Math.floor(seconds / 60)).padStart(2, fa ? "۰" : "0")}:
-            {n(seconds % 60).padStart(2, fa ? "۰" : "0")}
+            {n(Math.floor(seconds / 60)).padStart(2, tl("۰", "0"))}:
+            {n(seconds % 60).padStart(2, tl("۰", "0"))}
           </strong>
           <div className="domain-actions">
             <Button
@@ -627,7 +619,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           </div>
         </div>
         <section className="panel">
-          <h3>{fa ? "زمان واقعی ثبت‌شده" : "Actual recorded study time"}</h3>
+          <h3>{tl("زمان واقعی ثبت‌شده", "Actual recorded study time")}</h3>
           <strong>
             {n(Math.round(sessions.reduce((s, x) => s + x.seconds, 0) / 60))}{" "}
             {fa ? "دقیقه" : "minutes"}
@@ -650,7 +642,7 @@ export function StudentWorkspace({ view }: { view: string }) {
     return (
       <div className="study-groups">
         <section className="panel">
-          <h2>{fa ? "گروه‌های مطالعه محلی" : "Local study groups"}</h2>
+          <h2>{tl("گروه‌های مطالعه محلی", "Local study groups")}</h2>
           <form
             className="domain-toolbar"
             onSubmit={(e) => {
@@ -672,7 +664,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
-            <Button type="submit">{fa ? "ساخت گروه" : "Create group"}</Button>
+            <Button type="submit">{tl("ساخت گروه", "Create group")}</Button>
           </form>
           {groups.map((g) => (
             <button
@@ -725,7 +717,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 }}
               >
                 <label>
-                  {fa ? "پیام گروه" : "Group message"}
+                  {tl("پیام گروه", "Group message")}
                   <textarea
                     required
                     rows={3}
@@ -734,7 +726,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   />
                 </label>
                 <Button type="submit" variant="primary">
-                  {fa ? "ثبت پیام محلی" : "Save local message"}
+                  {tl("ثبت پیام محلی", "Save local message")}
                 </Button>
               </form>
             </>
@@ -814,7 +806,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 : "Assignment structure"}
           </h2>
           <label>
-            {fa ? "موضوع" : "Topic"}
+            {tl("موضوع", "Topic")}
             <input
               required
               value={topic}
@@ -884,7 +876,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           toast.success(t("save"));
         }}
       >
-        <h2>{fa ? "پروفایل تحصیلی من" : "My academic profile"}</h2>
+        <h2>{tl("پروفایل تحصیلی من", "My academic profile")}</h2>
         <div className="domain-fields">
           {(["name", "institution", "major", "goal"] as const).map((key, i) => (
             <label key={key}>
@@ -909,7 +901,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             </label>
           ))}
           <label>
-            {fa ? "مقطع" : "Study level"}
+            {tl("مقطع", "Study level")}
             <select
               value={profile.level}
               onChange={(e) =>
@@ -987,8 +979,8 @@ export function StudentWorkspace({ view }: { view: string }) {
       </div>
       <div className="stats-grid">
         {[
-          [fa ? "درس‌های من" : "My subjects", subjects.length],
-          [fa ? "منابع ثبت‌شده" : "Saved resources", materials.length],
+          [tl("درس‌های من", "My subjects"), subjects.length],
+          [tl("منابع ثبت‌شده", "Saved resources"), materials.length],
           [
             fa ? "کارهای باز" : "Open tasks",
             tasks.filter((t) => !t.done).length,

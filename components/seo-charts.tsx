@@ -23,8 +23,8 @@ type Gsc = { siteUrl: string; totals: { clicks: number; impressions: number; avg
 
 /* ---------- small helpers ---------- */
 function useT() {
-  const { fa, locale, n } = useApp();
-  const tx = (a: string, b: string) => (fa ? a : b);
+  const { fa, locale, n, tl } = useApp();
+  const tx = tl;
   const date = (iso: string) => new Intl.DateTimeFormat(fa ? "fa-IR" : locale, { month: "short", day: "numeric" }).format(new Date(iso));
   const num = (v: number, digits = 0) => (digits ? new Intl.NumberFormat(fa ? "fa-IR" : locale, { maximumFractionDigits: digits }).format(v) : n(Math.round(v)));
   return { fa, tx, date, num };

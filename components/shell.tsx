@@ -65,7 +65,7 @@ export function Shell({
   children: React.ReactNode;
 }) {
   const app = useApp();
-  const { t, fa, n } = app;
+  const { t, fa, n, tl } = app;
   const newTag = ({ fa: "جدید", en: "New", de: "Neu", tr: "Yeni" } as Record<string, string>)[app.locale] ?? "New";
   // Live mode (signed in on aifekr.com): the same frame with the account's real data.
   const live = useShell();
@@ -180,7 +180,7 @@ export function Shell({
           <>
             <div className="side-label recent-label">
               <span>{t("recent")}</span>
-              {live ? <button className="text-link" onClick={() => setAllRecent((v) => !v)} aria-expanded={allRecent}>{allRecent ? (fa ? "کمتر" : "Less") : t("all")}</button> : <Link href="/chat">{t("all")}</Link>}
+              {live ? <button className="text-link" onClick={() => setAllRecent((v) => !v)} aria-expanded={allRecent}>{allRecent ? (tl("کمتر", "Less")) : t("all")}</button> : <Link href="/chat">{t("all")}</Link>}
             </div>
             <nav className="recent-nav">
               {live
@@ -190,7 +190,7 @@ export function Shell({
                         <Icon name="MessageSquare" size={15} />
                         <span>{c.title || live.copy.untitledChat}</span>
                       </Link>
-                      <button className="recent-delete" aria-label={fa ? "پاک کردن گفتگو" : "Delete chat"} title={fa ? "پاک کردن گفتگو" : "Delete chat"} onClick={() => void removeChat(c.id)}>
+                      <button className="recent-delete" aria-label={tl("پاک کردن گفتگو", "Delete chat")} title={tl("پاک کردن گفتگو", "Delete chat")} onClick={() => void removeChat(c.id)}>
                         <Icon name="Trash2" size={13} />
                       </button>
                     </div>
@@ -250,9 +250,9 @@ export function Shell({
           <Link className="user-menu" href="/settings">
             <span className="avatar">{live ? initial : "س"}</span>
             <div>
-              <strong>{live ? live.user.name || live.copy.nav.settings : fa ? "سارا محمدی" : "Sara Mohammadi"}</strong>
+              <strong>{live ? live.user.name || live.copy.nav.settings : tl("سارا محمدی", "Sara Mohammadi")}</strong>
               <small>
-                {live ? live.user.planName : fa ? "طرح حرفه‌ای" : "Pro workspace"} <span>{live ? live.user.plan : "PRO"}</span>
+                {live ? live.user.planName : tl("طرح حرفه‌ای", "Pro workspace")} <span>{live ? live.user.plan : "PRO"}</span>
               </small>
             </div>
             <Icon name="ChevronsUpDown" size={15} />
@@ -283,14 +283,14 @@ export function Shell({
             </button>
             <Icon name="House" size={16} />
             <span className="slash">/</span>
-            <span>{path === "/home" ? t("home") : RouteName(path, fa)}</span>
+            <span>{path === "/home" ? t("home") : RouteName(path, fa, tl)}</span>
             <span className="private-label">
               <Icon name="LockKeyhole" size={12} />
               {t("personal")}
             </span>
           </div>
           <div className="top-actions">
-            <button className="btn module-switcher" onClick={()=>setDirectory(true)} aria-label={fa?'انتخاب ماژول':'Choose workspace'}><Icon name="LayoutGrid" size={18}/><span>{fa?'ماژول‌ها':'Workspaces'}</span></button>
+            <button className="btn module-switcher" onClick={()=>setDirectory(true)} aria-label={tl('انتخاب ماژول', 'Choose workspace')}><Icon name="LayoutGrid" size={18}/><span>{tl('ماژول‌ها', 'Workspaces')}</span></button>
             {!live && <span className="live-status">
               <i />
               {t("mock")}
@@ -320,7 +320,7 @@ export function Shell({
         <main className="page-content" id="main">
           {live ? <LiveFrame path={path}>{children}</LiveFrame> : children}
         </main>
-        {directory&&<Modal title={fa?'انتخاب فضای کاری':'Choose a workspace'} onClose={()=>setDirectory(false)}><ModuleDirectory compact onNavigate={()=>{setDirectory(false);setMobile(false);}}/></Modal>}
+        {directory&&<Modal title={tl('انتخاب فضای کاری', 'Choose a workspace')} onClose={()=>setDirectory(false)}><ModuleDirectory compact onNavigate={()=>{setDirectory(false);setMobile(false);}}/></Modal>}
         <footer className="app-footer">
           <span>
             ✦{" "}
@@ -361,7 +361,7 @@ export function Shell({
       {command && <Command onClose={() => setCommand(false)} />}{" "}
       {shortcuts && (
         <Modal
-          title={fa ? "میان‌برهای صفحه‌کلید" : "Keyboard shortcuts"}
+          title={tl("میان‌برهای صفحه‌کلید", "Keyboard shortcuts")}
           onClose={() => setShortcuts(false)}
         >
           <div className="shortcut-list">
@@ -370,7 +370,7 @@ export function Shell({
               ["/", t("prompt")],
               ["N", t("newChat")],
               ["G → H", t("home")],
-              ["?", fa ? "راهنمای میان‌برها" : "Shortcut guide"],
+              ["?", tl("راهنمای میان‌برها", "Shortcut guide")],
             ].map(([k, v]) => (
               <p key={k}>
                 <span>{v}</span>
@@ -384,7 +384,7 @@ export function Shell({
   );
 }
 export function PublicShell({ children }: { children: React.ReactNode }) {
-  const { t, fa } = useApp();
+  const { t, fa, tl } = useApp();
   const live = useSite();
   const [open, setOpen] = useState(false);
   return (
@@ -400,7 +400,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         >
           <details className="public-nav-menu">
             <summary>
-              {fa ? "محصول" : "Product"}
+              {tl("محصول", "Product")}
               <Icon name="ChevronDown" size={13} />
             </summary>
             <div>
@@ -440,7 +440,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             </div>
           </details>
           <Link href="/pricing">{t("plans")}</Link>
-          <Link href="/learn">{fa ? "آکادمی" : "Academy"}</Link>
+          <Link href="/learn">{tl("آکادمی", "Academy")}</Link>
           <Link href="/fit">FIT</Link>
           <Link href="/guides">{t("help")}</Link><WebAppInstallButton variant="footer"/>
           <div className="public-mobile-preferences"><Preferences/><Link href="/login">{t('login')}</Link></div>
@@ -478,36 +478,36 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         <div className="footer-link-groups">
           {[
             [
-              fa ? "محصول" : "Product",
+              tl("محصول", "Product"),
               [
-                ["/chat", fa ? "گفتگوی هوشمند" : "AI chat"],
-                ["/features/crm", fa ? "CRM و فروش" : "CRM & sales"],
+                ["/chat", tl("گفتگوی هوشمند", "AI chat")],
+                ["/features/crm", tl("CRM و فروش", "CRM & sales")],
                 ["/features/accounting", fa ? "حسابداری" : "Accounting"],
-                ["/voice-studio", fa ? "استودیوی صدا" : "Voice Studio"],
+                ["/voice-studio", tl("استودیوی صدا", "Voice Studio")],
                 ["/features/seo", fa ? "محتوا و سئو" : "Content & SEO"],
-                ["/features/factory", fa ? "کارخانه ویدیو" : "Video factory"],
+                ["/features/factory", tl("کارخانه ویدیو", "Video factory")],
               ],
             ],
             [
               fa ? "راهکارها" : "Solutions",
               [
                 ["/business", fa ? "کسب‌وکار و تیم" : "Business & teams"],
-                ["/solutions/creators", fa ? "تولیدکنندگان محتوا" : "Creators"],
-                ["/solutions/real-estate", fa ? "املاک" : "Real estate"],
+                ["/solutions/creators", tl("تولیدکنندگان محتوا", "Creators")],
+                ["/solutions/real-estate", tl("املاک", "Real estate")],
                 ["/student", fa ? "دانشجویان" : "Students"],
-                ["/fitness", fa ? "ورزش و سلامت" : "FIT"],
+                ["/fitness", tl("ورزش و سلامت", "FIT")],
                 ["/pricing", fa ? "طرح‌ها و قیمت‌گذاری" : "Plans & pricing"],
               ],
             ],
             [
-              fa ? "منابع و ارتباط" : "Resources",
+              tl("منابع و ارتباط", "Resources"),
               [
-                ["/about", fa ? "درباره ای آی فکر" : "About AIFekr"],
-                ["/guides", fa ? "راهنماها" : "Guides"],
+                ["/about", tl("درباره ای آی فکر", "About AIFekr")],
+                ["/guides", tl("راهنماها", "Guides")],
                 ["/contact", fa ? "تماس با ما" : "Contact"],
-                ["/security", fa ? "داده و امنیت" : "Data & security"],
-                ["/privacy", fa ? "حریم خصوصی" : "Privacy"],
-                ["/terms", fa ? "شرایط استفاده" : "Terms"],
+                ["/security", tl("داده و امنیت", "Data & security")],
+                ["/privacy", tl("حریم خصوصی", "Privacy")],
+                ["/terms", tl("شرایط استفاده", "Terms")],
               ],
             ],
           ].map(([heading, links]) => (

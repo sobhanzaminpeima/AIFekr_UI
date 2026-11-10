@@ -281,7 +281,7 @@ const newId = () => Math.random().toString(36).slice(2);
 export function SupportWidget({ path }: { path: string }) {
   const { copy: shellCopy, lang } = useShell()!;
   const copy = shellCopy.support;
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -381,7 +381,7 @@ export function SupportWidget({ path }: { path: string }) {
               {messages.map((m) => (
                 <div key={m.id} className={`support-msg ${m.role}`}>
                   <p className={`support-bubble ${m.isError ? "error" : ""}`}>{m.content || (streaming && m.role === "assistant" ? <Icon name="Loader2" size={15} className="spin" /> : "")}</p>
-                  {m.navigation && <button className="support-nav" onClick={() => router.push(m.navigation!.href)}><span>{m.navigation.label}</span><Icon name={fa ? "ArrowLeft" : "ArrowRight"} size={14} /></button>}
+                  {m.navigation && <button className="support-nav" onClick={() => router.push(m.navigation!.href)}><span>{m.navigation.label}</span><Icon name={tl("ArrowLeft", "ArrowRight")} size={14} /></button>}
                   {!!m.sources?.length && <small className="support-sources">{copy.sourcesLabel}: {sources(m.sources)}</small>}
                 </div>
               ))}
@@ -389,7 +389,7 @@ export function SupportWidget({ path }: { path: string }) {
             </div>
             <form className="support-composer" onSubmit={(e) => { e.preventDefault(); void send(input); }}>
               <textarea value={input} rows={1} disabled={streaming} placeholder={copy.placeholder} aria-label={copy.placeholder} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void send(input); } }} />
-              <button type="submit" className="support-send" disabled={streaming || !input.trim()} aria-label={copy.send}><Icon name={streaming ? "Loader2" : "Send"} size={16} className={streaming ? "spin" : fa ? "flip" : ""} /></button>
+              <button type="submit" className="support-send" disabled={streaming || !input.trim()} aria-label={copy.send}><Icon name={streaming ? "Loader2" : "Send"} size={16} className={streaming ? "spin" : tl("flip", "")} /></button>
             </form>
           </div>
         </>
@@ -454,14 +454,14 @@ function TrialBanner() {
 
 function PendingPayments({ path }: { path: string }) {
   const { user, copy } = useShell()!;
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const count = user.pendingPaymentCount;
   if (!count || path === "/payments" || path.startsWith("/checkout/") || path.startsWith("/fitness/checkout/") || path === "/fitness/payments") return null;
   return (
     <Link className="notice-banner" href={path.startsWith("/fitness") ? "/fitness/payments?filter=pending" : "/payments?filter=pending"}>
       <Icon name="Clock3" size={15} />
       <span>{fill(copy.pendingPayments, { n: count })}</span>
-      <Icon name={fa ? "ArrowLeft" : "ArrowRight"} size={15} />
+      <Icon name={tl("ArrowLeft", "ArrowRight")} size={15} />
     </Link>
   );
 }

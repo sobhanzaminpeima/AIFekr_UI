@@ -86,7 +86,7 @@ const journeys = [
   },
 ];
 export function LandingJourney() {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const [selected, setSelected] = useState("business");
   const [step, setStep] = useState(0);
   const journey = journeys.find((j) => j.id === selected)!;
@@ -127,7 +127,7 @@ export function LandingJourney() {
             }}
           >
             <Icon name={j.icon} size={19} />
-            {fa ? j.fa : j.en}
+            {tl(j.fa, j.en)}
           </button>
         ))}
       </div>
@@ -138,11 +138,11 @@ export function LandingJourney() {
         aria-labelledby={"journey-" + selected}
       >
         <div className="journey-copy">
-          <span className="eyebrow">{fa ? journey.fa : journey.en}</span>
-          <h3>{journey.title[fa ? 0 : 1]}</h3>
-          <p>{journey.description[fa ? 0 : 1]}</p>
+          <span className="eyebrow">{tl(journey.fa, journey.en)}</span>
+          <h3>{tl(journey.title[0], journey.title[1])}</h3>
+          <p>{tl(journey.description[0], journey.description[1])}</p>
           <Link className="btn primary" href={journey.href}>
-            {journey.cta[fa ? 0 : 1]}
+            {tl(journey.cta[0], journey.cta[1])}
             <Icon name="ArrowLeft" size={17} />
           </Link>
           <span className="journey-preview-note">
@@ -180,7 +180,7 @@ export function LandingJourney() {
               <Icon name={journey.steps[step][2]} size={27} />
             </span>
             <div>
-              <small>{fa ? "قدم انتخاب‌شده" : "SELECTED STEP"}</small>
+              <small>{tl("قدم انتخاب‌شده", "SELECTED STEP")}</small>
               <h4>{journey.steps[step][fa ? 0 : 1]}</h4>
             </div>
             <span className="badge">
@@ -191,7 +191,7 @@ export function LandingJourney() {
             <Icon name="Sparkles" size={20} />
             <div>
               <strong>AIFekr COPILOT</strong>
-              <p>{journey.insight[fa ? 0 : 1]}</p>
+              <p>{tl(journey.insight[0], journey.insight[1])}</p>
             </div>
           </div>
           <div className="journey-mini-bars" aria-hidden="true">
@@ -209,13 +209,13 @@ export function LandingModuleExplorer() {
   return useSite() ? <LiveModuleExplorer /> : <DemoModuleExplorer />;
 }
 function DemoModuleExplorer() {
-  const { fa, n } = useApp();
+  const { fa, n, tl } = useApp();
   const [group, setGroup] = useState("business");
   const [query, setQuery] = useState("");
   const visible = modules.filter(
     (m) =>
       m.group === group &&
-      (m.title[fa ? 0 : 1] + " " + m.subtitle[fa ? 0 : 1])
+      (tl(m.title[0], m.title[1]) + " " + tl(m.subtitle[0], m.subtitle[1]))
         .toLowerCase()
         .includes(query.toLowerCase()),
   );
@@ -238,7 +238,7 @@ function DemoModuleExplorer() {
         <label className="explorer-search">
           <Icon name="Search" size={17} />
           <input
-            aria-label={fa ? "جستجوی ماژول‌ها" : "Search modules"}
+            aria-label={tl("جستجوی ماژول‌ها", "Search modules")}
             placeholder={
               fa ? "دنبال چه ابزاری هستی؟" : "What tool are you looking for?"
             }
@@ -274,8 +274,8 @@ function DemoModuleExplorer() {
             <span className={`icon-chip ${m.accent}`}>
               <Icon name={m.icon} size={25} />
             </span>
-            <h3>{m.title[fa ? 0 : 1]}</h3>
-            <p>{m.subtitle[fa ? 0 : 1]}</p>
+            <h3>{tl(m.title[0], m.title[1])}</h3>
+            <p>{tl(m.subtitle[0], m.subtitle[1])}</p>
             <div>
               <span>
                 {n(m.views.length)} {fa ? "بخش تخصصی" : "specialist sections"}
@@ -297,7 +297,7 @@ function DemoModuleExplorer() {
 }
 
 export function LandingDetails() {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const live = useSite();
   return (
     <>
@@ -318,7 +318,7 @@ export function LandingDetails() {
           </p>
           <div className="domain-actions">
             <Link href="/crm?tab=board" className="btn primary">
-              {fa ? "کشف CRM" : "Explore CRM"}
+              {tl("کشف CRM", "Explore CRM")}
               <Icon name="ArrowLeft" size={16} />
             </Link>
             <Link href="/accounting" className="btn">
@@ -433,13 +433,11 @@ export function LandingDetails() {
               AIFekr / PRACTICAL GUIDES
             </span>
             <h2>
-              {fa
-                ? "از ابزار تا نتیجه، قدم‌به‌قدم."
-                : "From tools to outcomes, step by step."}
+              {tl("از ابزار تا نتیجه، قدم‌به‌قدم.", "From tools to outcomes, step by step.")}
             </h2>
           </div>
           <Link href="/guides" className="text-link">
-            {fa ? "همه راهنماها" : "All guides"} ←
+            {tl("همه راهنماها", "All guides")} ←
           </Link>
         </div>
         <div className="three-cols">
@@ -481,7 +479,7 @@ export function LandingDetails() {
               <h3>{fa ? a : b}</h3>
               <p>{fa ? c : d}</p>
               <span className="text-link">
-                {fa ? "خواندن راهنما" : "Read guide"} ↗
+                {tl("خواندن راهنما", "Read guide")} ↗
               </span>
             </Link>
           ))}

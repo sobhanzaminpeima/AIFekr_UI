@@ -71,7 +71,7 @@ export function UsageChart({ days }: { days: number[] }) {
 }
 export function Dashboard() {
   const app = useApp();
-  const { fa, t, n, locale } = app;
+  const { fa, t, n, locale, tl } = app;
   const live = useShell();
   const liveCredits = useLiveCredits(live?.user.credits ?? 0);
   const credits = live ? liveCredits : app.credits;
@@ -172,9 +172,7 @@ export function Dashboard() {
         <div className="idea-content">
           <div className="eyebrow orange-text">
             <Icon name="Sparkles" size={15} />
-            {primary ? `${personal!.copy.nextStep} · ${primary.name}` : fa
-              ? "اینجا، هر ایده‌ای ممکن می‌شود"
-              : "YOUR NEXT BIG IDEA STARTS HERE"}
+            {primary ? `${personal!.copy.nextStep} · ${primary.name}` : tl("اینجا، هر ایده‌ای ممکن می‌شود", "YOUR NEXT BIG IDEA STARTS HERE")}
           </div>
           <h2>{primary ? primary.title : t("question")}</h2>
           <p>
@@ -243,12 +241,12 @@ export function Dashboard() {
           </a>
         ) : (
           <span className="muted">
-            {fa ? "فضایی برای تمام ایده‌هایت" : "A space for every side of you"}
+            {tl("فضایی برای تمام ایده‌هایت", "A space for every side of you")}
           </span>
         )}
       </div>
       <SectionTitle
-        title={suggested ? personal!.copy.recommended : fa ? "با یک جرقه شروع کن" : "Start with a spark"}
+        title={suggested ? personal!.copy.recommended : tl("با یک جرقه شروع کن", "Start with a spark")}
         subtitle={
           suggested ? personal!.copy.recommendedHint : fa
             ? "ابزار درست، برای ایدهٔ بعدی تو"
@@ -275,7 +273,7 @@ export function Dashboard() {
       <div className="dashboard-bento">
         <section className="panel continue-card">
           <SectionTitle
-            title={fa ? "از همان‌جا ادامه بده" : "Pick up where you left off"}
+            title={tl("از همان‌جا ادامه بده", "Pick up where you left off")}
           >
             <Link href="/gallery" className="text-link">
               {t("viewAll")}
@@ -332,7 +330,7 @@ export function Dashboard() {
                     src={
                       ["/art/orbit.svg", "/art/waves.svg", "/art/voice.svg"][i]
                     }
-                    alt={fa ? p.fa : p.en}
+                    alt={tl(p.fa, p.en)}
                   />
                   <span className="media-type">
                     <Icon
@@ -347,9 +345,9 @@ export function Dashboard() {
                     </span>
                   )}
                 </div>
-                <strong>{fa ? p.fa : p.en}</strong>
+                <strong>{tl(p.fa, p.en)}</strong>
                 <small>
-                  {fa ? "آخرین ویرایش: دیروز" : "Edited yesterday"}
+                  {tl("آخرین ویرایش: دیروز", "Edited yesterday")}
                   <Icon name="ArrowUpLeft" size={14} />
                 </small>
               </Link>
@@ -372,7 +370,7 @@ export function Dashboard() {
           {live ? <UsageChart days={data?.usage.days ?? [0, 0, 0, 0, 0, 0, 0]} /> : <SparkChart />}
           <div className="row-between">
             <span className="muted">
-              {fa ? "مصرف این هفته" : "Used this week"}
+              {tl("مصرف این هفته", "Used this week")}
             </span>
             {live ? (
               <span>
@@ -397,7 +395,7 @@ export function Dashboard() {
           </span>
           <div>
             <span className="eyebrow blue-text">
-              {fa ? "هر روز، یک قدم جلوتر" : "A LITTLE BETTER, EVERY DAY"}
+              {tl("هر روز، یک قدم جلوتر", "A LITTLE BETTER, EVERY DAY")}
             </span>
             <h3>{fa ? "آینده را یاد بگیر" : "Learn your way forward"}</h3>
             <p>
@@ -427,9 +425,7 @@ export function Dashboard() {
           </div>
           <div>
             <span className="eyebrow orange-text">
-              {fa
-                ? "فکر خوب، با هم بهتر می‌شود"
-                : "GOOD IDEAS ARE BETTER TOGETHER"}
+              {tl("فکر خوب، با هم بهتر می‌شود", "GOOD IDEAS ARE BETTER TOGETHER")}
             </span>
             <h3>
               {fa

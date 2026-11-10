@@ -20,7 +20,7 @@ import {
   LandingDetails,
 } from "./landing-sections";
 export function Landing() {
-  const { t, fa, n } = useApp();
+  const { t, fa, n, tl } = useApp();
   const [demo, setDemo] = useState(false);
   const [tab, setTab] = useState("image");
   const [credits, setCredits] = useState(100);
@@ -97,7 +97,7 @@ export function Landing() {
           <div className="hero-demo-body">
             <div>
               <span className="eyebrow orange-text">
-                {fa ? "ایده‌ات را زنده کن" : "GIVE YOUR IDEA A LITTLE LIFE"}
+                {tl("ایده‌ات را زنده کن", "GIVE YOUR IDEA A LITTLE LIFE")}
               </span>
               <h2 className="demo-title">
                 {fa ? "فقط تصورش کن." : "Just imagine it."}
@@ -169,7 +169,7 @@ export function Landing() {
       <section className="public-section" id="worlds">
         <div className="center-heading">
           <span className="eyebrow orange-text">
-            {fa ? "همهٔ دنیای تو، در یک جا" : "MANY SIDES OF YOU. ONE AIFekr."}
+            {tl("همهٔ دنیای تو، در یک جا", "MANY SIDES OF YOU. ONE AIFekr.")}
           </span>
           <h2>
             {fa
@@ -220,7 +220,7 @@ export function Landing() {
       <section className="public-section showcase">
         <SectionTitle
           title={
-            fa ? "خلاقیت، بدون مرز." : "Your creativity, without the limits."
+            tl("خلاقیت، بدون مرز.", "Your creativity, without the limits.")
           }
         />
         <div className="chips">
@@ -278,7 +278,7 @@ export function Landing() {
       <LandingModuleExplorer />
       <section className="public-section">
         <SectionTitle
-          title={fa ? "برای آدم‌هایی شبیه تو." : "For people just like you."}
+          title={tl("برای آدم‌هایی شبیه تو.", "For people just like you.")}
         />
         <div className="audience-grid">
           {live ? live.solutions.map((s) => (
@@ -368,7 +368,7 @@ export function Landing() {
         {live ? <LiveCreditCalculator /> : <div className="panel calculator">
           <div>
             <span className="eyebrow orange-text">
-              {fa ? "اعتبار یعنی انتخاب" : "YOUR CREDITS. YOUR CHOICE."}
+              {tl("اعتبار یعنی انتخاب", "YOUR CREDITS. YOUR CHOICE.")}
             </span>
             <h2>{fa ? "قبل از ساخت، بدان." : "Know before you create."}</h2>
             <p>
@@ -390,7 +390,7 @@ export function Landing() {
               />
             </label>
             <p>
-              ≈ {n(Math.floor(credits / 12))} {t("image")} {fa ? "یا" : "or"}{" "}
+              ≈ {n(Math.floor(credits / 12))} {t("image")} {tl("یا", "or")}{" "}
               {n(Math.floor(credits / 45))} {t("video")}
             </p>
           </div>
@@ -448,7 +448,7 @@ export function Landing() {
             className="btn primary"
             onClick={() => setDemo(false)}
           >
-            {fa ? "خودت امتحان کن" : "Try it yourself"}
+            {tl("خودت امتحان کن", "Try it yourself")}
           </Link>
         </Modal>
       )}
@@ -456,7 +456,7 @@ export function Landing() {
   );
 }
 export function Auth({ register = false }: { register?: boolean }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const router = useRouter();
   const [method, setMethod] = useState("phone");
   const [phase, setPhase] = useState(0);
@@ -471,10 +471,10 @@ export function Auth({ register = false }: { register?: boolean }) {
     <div className="auth-layout">
       <div className="auth-form panel">
         <span className="eyebrow orange-text">
-          {fa ? "یک فکر، هزار امکان" : "ONE SPARK. A THOUSAND POSSIBILITIES."}
+          {tl("یک فکر، هزار امکان", "ONE SPARK. A THOUSAND POSSIBILITIES.")}
         </span>
         <h1>
-          {register ? t("welcome") : fa ? "خوش برگشتی!" : "Welcome back."}
+          {register ? t("welcome") : tl("خوش برگشتی!", "Welcome back.")}
         </h1>
         <p>
           {fa
@@ -504,7 +504,7 @@ export function Auth({ register = false }: { register?: boolean }) {
             if (method === "phone" && phase === 0) {
               setPhase(1);
               setTimer(60);
-              toast.info(fa ? "کد آزمایشی: ۱۲۳۴۵۶" : "Demo code: 123456");
+              toast.info(tl("کد آزمایشی: ۱۲۳۴۵۶", "Demo code: 123456"));
             } else {if(register){const code=new URLSearchParams(location.search).get('ref');if(code&&/^[A-Za-z0-9_-]{1,64}$/.test(code)){const events=JSON.parse(localStorage.getItem('aifekr-referral-events')||'[]');if(!events.some((event:{code:string;type:string})=>event.code===code&&event.type==='signup'))localStorage.setItem('aifekr-referral-events',JSON.stringify([{id:crypto.randomUUID(),code,type:'signup',date:new Date().toISOString(),name:fa?'ثبت‌نام نمونه':'Demo signup'},...events]));}}router.push(register ? "/onboarding" : "/home");}
           }}
         >
@@ -528,7 +528,7 @@ export function Auth({ register = false }: { register?: boolean }) {
               </label>
               {method === "email" && (
                 <label>
-                  {fa ? "گذرواژه" : "Password"}
+                  {tl("گذرواژه", "Password")}
                   <input
                     type="password"
                     minLength={8}
@@ -556,7 +556,7 @@ export function Auth({ register = false }: { register?: boolean }) {
                 />
               </label>
               <small id="otp-help">
-                {fa ? "کد آزمایشی: 123456" : "Demo code: 123456"}
+                {tl("کد آزمایشی: 123456", "Demo code: 123456")}
               </small>
               <Button
                 disabled={timer > 0}
@@ -599,7 +599,7 @@ export function Auth({ register = false }: { register?: boolean }) {
       <div className="auth-art">
         <img src="/art/orbit.svg" alt="" />
         <h2>
-          {fa ? "جایی برای فکرهای تو." : "A little space for your big ideas."}
+          {tl("جایی برای فکرهای تو.", "A little space for your big ideas.")}
         </h2>
         <p>{fa ? "بساز، یاد بگیر، جلو برو." : "Create. Learn. Keep moving."}</p>
       </div>
@@ -612,7 +612,7 @@ export function Onboarding() {
   return <DemoOnboarding />;
 }
 function DemoOnboarding() {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
   const router = useRouter();
@@ -644,9 +644,7 @@ function DemoOnboarding() {
             ][step]}
       </h1>
       <p>
-        {fa
-          ? "این انتخاب فقط فضای کارت را شخصی‌تر می‌کند."
-          : "We’ll make your workspace feel a little more like you."}
+        {tl("این انتخاب فقط فضای کارت را شخصی‌تر می‌کند.", "We’ll make your workspace feel a little more like you.")}
       </p>
       <div className="onboarding-options">
         {(step === 0
@@ -694,18 +692,14 @@ function DemoOnboarding() {
             : router.push(
                 "/chat?prompt=" +
                   encodeURIComponent(
-                    fa
-                      ? "برای شروع یک ایدهٔ خلاقانه بده"
-                      : "Give me a creative first idea",
+                    tl("برای شروع یک ایدهٔ خلاقانه بده", "Give me a creative first idea"),
                   ),
               )
         }
       >
         {step < 2
           ? t("next")
-          : fa
-            ? "اولین ایده‌ام را بساز"
-            : "Make my first idea"}
+          : tl("اولین ایده‌ام را بساز", "Make my first idea")}
       </Button>
       <Link className="text-link" href="/home">
         {t("skip")}
@@ -714,7 +708,7 @@ function DemoOnboarding() {
   );
 }
 export function PublicPage({ path }: { path: string }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const part = path.split("/")[1];
   if (
     ["about", "contact", "privacy", "security", "terms", "guides"].includes(
@@ -730,16 +724,12 @@ export function PublicPage({ path }: { path: string }) {
       ? page[1]
       : page[2]
     : part === "solutions"
-      ? fa
-        ? "راهکاری برای دنیای تو"
-        : "Made for your world"
+      ? tl("راهکاری برای دنیای تو", "Made for your world")
       : part === "features"
         ? fa
           ? "یک امکان تازه برای ایده‌هایت"
           : "A new possibility for your ideas"
-        : fa
-          ? "با ای آی فکر، یک قدم جلوتر"
-          : "A little further with AIFekr";
+        : tl("با ای آی فکر، یک قدم جلوتر", "A little further with AIFekr");
   return (
     <div className="public-section public-article">
       <span className="eyebrow orange-text">AIFekr / {part.toUpperCase()}</span>
@@ -770,7 +760,7 @@ export function PublicPage({ path }: { path: string }) {
             <input type="email" required />
           </label>
           <label>
-            {fa ? "پیام تو" : "Your message"}
+            {tl("پیام تو", "Your message")}
             <textarea required rows={5} />
           </label>
           <Button type="submit" variant="primary">
@@ -779,13 +769,13 @@ export function PublicPage({ path }: { path: string }) {
         </form>
       ) : ["privacy", "terms", "security"].includes(part) ? (
         <div className="panel prose">
-          <h2>{fa ? "دربارهٔ این نسخه" : "About this demo"}</h2>
+          <h2>{tl("دربارهٔ این نسخه", "About this demo")}</h2>
           <p>
             {fa
               ? "این پروژه یک رابط کاربری آزمایشی است. هیچ سرویس هوش مصنوعی، پرداخت، انتشار یا اتصال حساب واقعی فعال نیست. اطلاعات پروفایل، تنظیمات و خروجی‌های نمونه در حافظهٔ مرورگر ذخیره می‌شوند."
               : "This project is an interactive interface demo. No live AI, payment, publishing or account connection is enabled. Preferences and sample outputs are stored in your browser."}
           </p>
-          <h2>{fa ? "کنترل داده‌ها" : "Your data, your choice"}</h2>
+          <h2>{tl("کنترل داده‌ها", "Your data, your choice")}</h2>
           <p>
             {fa
               ? "از تنظیمات می‌توانی داده‌های آزمایشی را دریافت یا پاک کنی. اطلاعات حساس یا واقعی را در این نسخه وارد نکن."
@@ -803,7 +793,7 @@ export function PublicPage({ path }: { path: string }) {
               ? "هدف، مخاطب و شکل خروجی را روشن بنویس. برای مثال: «برای یک فروشگاه کوچک، سه ایدهٔ پست با لحن دوستانه بنویس.»"
               : "Describe your goal, audience and desired format. Try: “Write three friendly social post ideas for a small shop.”"}
           </p>
-          <h2>{fa ? "قدم‌های کوچک" : "Small steps"}</h2>
+          <h2>{tl("قدم‌های کوچک", "Small steps")}</h2>
           <p>
             {fa
               ? "ابتدا یک نسخهٔ ساده بساز، نتیجه را ببین و جزئیات را بهتر کن. هزینهٔ هر عملیات کنار دکمهٔ ساخت نمایش داده می‌شود."

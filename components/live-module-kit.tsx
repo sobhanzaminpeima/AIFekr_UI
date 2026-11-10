@@ -95,14 +95,14 @@ export function LiveLoad({
   error: string;
   reload?: () => void;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   return error ? (
     <div role="alert" className="plan-notice">
       {error}{" "}
       {activationUrlFor(error) ? (
         <a className="btn primary" href={activationUrlFor(error)!}>{fa ? "انتخاب و فعال‌سازی پکیج" : "Choose and activate a package"}</a>
       ) : reload && (
-        <Button onClick={reload}>{fa ? "تلاش دوباره" : "Retry"}</Button>
+        <Button onClick={reload}>{tl("تلاش دوباره", "Retry")}</Button>
       )}
     </div>
   ) : !data ? (
@@ -118,21 +118,21 @@ export function LiveModuleFrame({
   view: ViewSpec;
   children: React.ReactNode;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   return (
     <div className={`module-workspace accent-${module.accent}`}>
       <SectionTitle
-        title={module.title[fa ? 0 : 1]}
-        subtitle={module.subtitle[fa ? 0 : 1]}
+        title={tl(module.title[0], module.title[1])}
+        subtitle={tl(module.subtitle[0], module.subtitle[1])}
       />
-      <nav className="module-tabs" aria-label={module.title[fa ? 0 : 1]}>
+      <nav className="module-tabs" aria-label={tl(module.title[0], module.title[1])}>
         {module.views.map((v) => (
           <Link
             key={v.id}
             href={moduleViewHref(module, v)}
             aria-current={v.id === view.id ? "page" : undefined}
           >
-            {v.title[fa ? 0 : 1]}
+            {tl(v.title[0], v.title[1])}
           </Link>
         ))}
       </nav>
@@ -149,10 +149,10 @@ export function LiveTable({
   columns: LiveField[];
   actions?: (row: LiveRow) => React.ReactNode;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   return !items.length ? (
     <p className="crm-empty">
-      {fa ? "هنوز داده‌ای ثبت نشده است." : "No records yet."}
+      {tl("هنوز داده‌ای ثبت نشده است.", "No records yet.")}
     </p>
   ) : (
     <div className="domain-table-wrap">
@@ -160,7 +160,7 @@ export function LiveTable({
         <thead>
           <tr>
             {columns.map((c) => (
-              <th key={c.key}>{c.label[fa ? 0 : 1]}</th>
+              <th key={c.key}>{tl(c.label[0], c.label[1])}</th>
             ))}
             {actions && <th>{fa ? "عملیات" : "Actions"}</th>}
           </tr>
@@ -175,9 +175,7 @@ export function LiveTable({
                       ? "—"
                       : typeof r[c.key] === "boolean"
                         ? r[c.key]
-                          ? fa
-                            ? "فعال"
-                            : "Active"
+                          ? tl("فعال", "Active")
                           : fa
                             ? "غیرفعال"
                             : "Inactive"
@@ -221,7 +219,7 @@ export function LiveForm({
   submit?: (body: LiveRow) => Promise<LiveRow>;
   progress?: React.ReactNode;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const [open, setOpen] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -288,7 +286,7 @@ export function LiveForm({
             {caution && <p className="plan-notice">{caution}</p>}
             {fields.map((f) => (
               <label key={f.key}>
-                {f.label[fa ? 0 : 1]}
+                {tl(f.label[0], f.label[1])}
                 {f.choices ? (
                   <select
                     name={f.key}

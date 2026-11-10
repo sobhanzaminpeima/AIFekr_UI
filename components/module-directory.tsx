@@ -5,10 +5,10 @@ import { useApp } from "./providers";
 import { Icon } from "./ui";
 
 export function BusinessDoctorEntry(){
-  const {fa}=useApp();
+  const {fa, tl }=useApp();
   return <Link href="/business-doctor" className="directory-doctor">
     <span className="icon-chip amber"><Icon name="HeartPulse" size={30}/></span>
-    <div><span className="eyebrow">{fa?'نقطهٔ شروع پیشنهادی برای کسب‌وکار':'A STARTING POINT FOR YOUR BUSINESS'}</span>
+    <div><span className="eyebrow">{tl('نقطهٔ شروع پیشنهادی برای کسب‌وکار', 'A STARTING POINT FOR YOUR BUSINESS')}</span>
     <h3>{fa?'نمی‌دانی از کجا شروع کنی؟ دکتر کسب‌وکار':'Not sure where to begin? Business Doctor'}</h3>
     <p>{fa?'ابتدا مسئله و هدف را روشن کن؛ سپس مسیر فروش، مالی یا محتوا را انتخاب کن.':'Clarify the challenge and goal, then choose a sales, finance or content workflow.'}</p></div>
     <Icon name="ArrowLeft" className="directional"/>
@@ -254,7 +254,7 @@ export function ModuleDirectory({
   compact?: boolean;
   onNavigate?: () => void;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const [query, setQuery] = useState(""),
     [group, setGroup] = useState("all");
   const rows = moduleDestinations.filter(
@@ -267,13 +267,13 @@ export function ModuleDirectory({
   return (
     <section
       className={"module-directory " + (compact ? "compact" : "")}
-      aria-label={fa ? "راهنمای ماژول‌ها" : "Module directory"}
+      aria-label={tl("راهنمای ماژول‌ها", "Module directory")}
       id={compact ? undefined : "modules"}
     >
       <div className="directory-heading">
         <div>
           <span className="eyebrow orange-text">
-            {fa ? "از هدفت شروع کن" : "START WITH YOUR GOAL"}
+            {tl("از هدفت شروع کن", "START WITH YOUR GOAL")}
           </span>
           <h2>
             {fa
@@ -290,21 +290,19 @@ export function ModuleDirectory({
           <Icon name="Search" size={19} />
           <input
             aria-label={
-              fa ? "جست‌وجوی ماژول یا هدف" : "Search modules or goals"
+              tl("جست‌وجوی ماژول یا هدف", "Search modules or goals")
             }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
-              fa
-                ? "مثلاً فروش، درس، تماس یا سئو…"
-                : "Try sales, study, calls or SEO…"
+              tl("مثلاً فروش، درس، تماس یا سئو…", "Try sales, study, calls or SEO…")
             }
           />
         </label>
       </div>
       <div
         className="chips directory-groups"
-        aria-label={fa ? "دسته‌های ماژول" : "Module categories"}
+        aria-label={tl("دسته‌های ماژول", "Module categories")}
       >
         {[
           ["all", "همه", "All"],
@@ -334,9 +332,7 @@ export function ModuleDirectory({
           </span>
           <div>
             <span className="eyebrow">
-              {fa
-                ? "نقطهٔ شروع پیشنهادی برای کسب‌وکار"
-                : "A STARTING POINT FOR YOUR BUSINESS"}
+              {tl("نقطهٔ شروع پیشنهادی برای کسب‌وکار", "A STARTING POINT FOR YOUR BUSINESS")}
             </span>
             <h3>
               {fa
@@ -363,8 +359,8 @@ export function ModuleDirectory({
               <span className="icon-chip orange">
                 <Icon name={m.icon} size={23} />
               </span>
-              <h3>{fa ? m.fa : m.en}</h3>
-              <p>{m.description[fa ? 0 : 1]}</p>
+              <h3>{tl(m.fa, m.en)}</h3>
+              <p>{tl(m.description[0], m.description[1])}</p>
               <span className="directory-enter">
                 {fa ? "ورود به ماژول" : "Open workspace"}
                 <Icon name="ArrowLeft" size={15} className="directional" />
@@ -373,7 +369,7 @@ export function ModuleDirectory({
             {!compact && (
               <nav
                 aria-label={
-                  (fa ? "میان‌برهای " : "Shortcuts for ") + (fa ? m.fa : m.en)
+                  (tl("میان‌برهای ", "Shortcuts for ")) + (tl(m.fa, m.en))
                 }
               >
                 {m.links.map(([href, a, b]) => (
@@ -392,9 +388,7 @@ export function ModuleDirectory({
             {fa ? "ماژولی با این عبارت پیدا نشد" : "No matching workspace"}
           </h3>
           <p>
-            {fa
-              ? "عبارت کوتاه‌تری مثل «فروش» یا «مطالعه» امتحان کن."
-              : "Try a shorter task such as sales or study."}
+            {tl("عبارت کوتاه‌تری مثل «فروش» یا «مطالعه» امتحان کن.", "Try a shorter task such as sales or study.")}
           </p>
           <button
             className="btn"
@@ -403,7 +397,7 @@ export function ModuleDirectory({
               setGroup("all");
             }}
           >
-            {fa ? "نمایش همهٔ ماژول‌ها" : "Show all workspaces"}
+            {tl("نمایش همهٔ ماژول‌ها", "Show all workspaces")}
           </button>
         </div>
       )}

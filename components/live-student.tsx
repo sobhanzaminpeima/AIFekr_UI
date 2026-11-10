@@ -35,7 +35,7 @@ export function LiveStudent({
   module: ModuleSpec;
   view: ViewSpec;
 }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     courses = useLiveData(API + "courses"),
     [course, setCourse] = useState(""),
     [error, setError] = useState("");
@@ -56,7 +56,7 @@ export function LiveStudent({
           <label>
             {fa ? "درس فعال" : "Current subject"}
             <select value={course} onChange={(e) => setCourse(e.target.value)}>
-              <option value="">{fa ? "انتخاب درس" : "Choose subject"}</option>
+              <option value="">{tl("انتخاب درس", "Choose subject")}</option>
               {items.map((c) => (
                 <option key={String(c.id)} value={String(c.id)}>
                   {String(c.name)}
@@ -66,9 +66,9 @@ export function LiveStudent({
           </label>
           {["overview", "courses", "path"].includes(view.id) && (
             <section className="panel">
-              <h2>{fa ? "درس‌های من" : "My subjects"}</h2>
+              <h2>{tl("درس‌های من", "My subjects")}</h2>
               <LiveForm
-                title={fa ? "افزودن درس" : "Add subject"}
+                title={tl("افزودن درس", "Add subject")}
                 url={API + "courses"}
                 fields={courseFields}
                 onDone={courses.reload}
@@ -83,10 +83,10 @@ export function LiveStudent({
                 actions={(c) => (
                   <>
                     <Button onClick={() => setCourse(String(c.id))}>
-                      {fa ? "انتخاب" : "Select"}
+                      {tl("انتخاب", "Select")}
                     </Button>
                     <LiveForm
-                      title={fa ? "ویرایش" : "Edit"}
+                      title={tl("ویرایش", "Edit")}
                       url={API + "courses/" + enc(String(c.id))}
                       method="PATCH"
                       initial={c}
@@ -118,7 +118,7 @@ export function LiveStudent({
               </p>
               <div className="domain-actions">
                 <Link className="btn" href="/student?view=upload">
-                  {fa ? "منابع درس" : "Course sources"}
+                  {tl("منابع درس", "Course sources")}
                 </Link>
                 <Link className="btn" href="/learn">
                   {fa ? "مسیرهای آکادمی" : "Academy learning paths"}
@@ -184,9 +184,7 @@ export function LiveStudent({
               "thesis",
             ].includes(view.id) && (
               <p>
-                {fa
-                  ? "ابتدا درس را اضافه یا انتخاب کنید."
-                  : "Add or select a subject first."}
+                {tl("ابتدا درس را اضافه یا انتخاب کنید.", "Add or select a subject first.")}
               </p>
             )}
         </>
@@ -195,7 +193,7 @@ export function LiveStudent({
   );
 }
 function Sources({ course, choice }: { course: string; choice: LiveField }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "materials?courseId=" + enc(course));
   return (
     <section className="panel">
@@ -203,9 +201,7 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
       <LiveUpload
         url={API + "materials"}
         title={
-          fa
-            ? "ارسال جزوه (PDF، DOCX، PPTX)"
-            : "Upload course sources (PDF, DOCX, PPTX)"
+          tl("ارسال جزوه (PDF، DOCX، PPTX)", "Upload course sources (PDF, DOCX, PPTX)")
         }
         accept=".pdf,.docx,.pptx"
         maxBytes={10 * 1024 * 1024}
@@ -219,7 +215,7 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
         onDone={r.reload}
       />
       <LiveForm
-        title={fa ? "افزودن منبع متنی" : "Add text source"}
+        title={tl("افزودن منبع متنی", "Add text source")}
         url={API + "materials"}
         fields={[
           field("title", "عنوان", "Title"),
@@ -239,7 +235,7 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
   );
 }
 function Notes({ course, choice }: { course: string; choice: LiveField }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "notes" + (course ? "?courseId=" + enc(course) : ""));
   return (
     <section className="panel">
@@ -276,13 +272,13 @@ function Notes({ course, choice }: { course: string; choice: LiveField }) {
   );
 }
 function Cards({ course }: { course: string }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "flashcards?courseId=" + enc(course));
   return (
     <section className="panel">
       <LiveLoad {...r} />
       <LiveForm
-        title={fa ? "افزودن فلش‌کارت" : "Add flashcard"}
+        title={tl("افزودن فلش‌کارت", "Add flashcard")}
         url={API + "flashcards"}
         fields={[
           field("question", "پرسش", "Question", "textarea"),
@@ -296,7 +292,7 @@ function Cards({ course }: { course: string }) {
           <summary>{String(c.question)}</summary>
           <p>{String(c.answer)}</p>
           <p>
-            {fa ? "مرور بعدی: " : "Next review: "}
+            {tl("مرور بعدی: ", "Next review: ")}
             {String(c.nextReviewAt ?? "—")}
           </p>
           {["hard", "good", "easy"].map((rating, i) => (
@@ -317,15 +313,15 @@ function Cards({ course }: { course: string }) {
   );
 }
 function Planner({ choice }: { choice: LiveField }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     tasks = useLiveData(API + "tasks"),
     exams = useLiveData(API + "exams");
   return (
     <section className="panel">
-      <h2>{fa ? "تکلیف‌ها و امتحان‌ها" : "Tasks & exams"}</h2>
+      <h2>{tl("تکلیف‌ها و امتحان‌ها", "Tasks & exams")}</h2>
       <LiveLoad {...tasks} />
       <LiveForm
-        title={fa ? "کار جدید" : "New task"}
+        title={tl("کار جدید", "New task")}
         url={API + "tasks"}
         fields={[
           choice,
@@ -369,9 +365,7 @@ function Planner({ choice }: { choice: LiveField }) {
                   ? fa
                     ? "بازگشایی"
                     : "Reopen"
-                  : fa
-                    ? "انجام شد"
-                    : "Complete"
+                  : tl("انجام شد", "Complete")
               }
               url={API + "tasks/" + enc(String(t.id))}
               method="PATCH"
@@ -379,11 +373,11 @@ function Planner({ choice }: { choice: LiveField }) {
               onDone={tasks.reload}
             />
             <LiveForm
-              title={fa ? "حذف" : "Delete"}
+              title={tl("حذف", "Delete")}
               url={API + "tasks/" + enc(String(t.id))}
               method="DELETE"
               caution={
-                fa ? "این کار حذف می‌شود." : "This task will be deleted."
+                tl("این کار حذف می‌شود.", "This task will be deleted.")
               }
               onDone={tasks.reload}
             />
@@ -392,7 +386,7 @@ function Planner({ choice }: { choice: LiveField }) {
       />
       <LiveLoad {...exams} />
       <LiveForm
-        title={fa ? "امتحان جدید" : "New exam"}
+        title={tl("امتحان جدید", "New exam")}
         url={API + "exams"}
         fields={[
           choice,
@@ -425,7 +419,7 @@ function Planner({ choice }: { choice: LiveField }) {
               onDone={tasks.reload}
             />
             <LiveForm
-              title={fa ? "حذف امتحان" : "Delete exam"}
+              title={tl("حذف امتحان", "Delete exam")}
               url={API + "exams/" + enc(String(e.id))}
               method="DELETE"
               onDone={exams.reload}
@@ -437,7 +431,7 @@ function Planner({ choice }: { choice: LiveField }) {
   );
 }
 function StudyTimer({ course }: { course: string }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     [days, setDays] = useState(7),
     r = useLiveData(
       API +
@@ -481,9 +475,7 @@ function StudyTimer({ course }: { course: string }) {
   return (
     <section className="panel">
       <h2>
-        {fa
-          ? "زمان‌سنج و گزارش واقعی مطالعه"
-          : "Study timer & recorded progress"}
+        {tl("زمان‌سنج و گزارش واقعی مطالعه", "Study timer & recorded progress")}
       </h2>
       <LiveLoad {...r} />
       {error && <p role="alert">{error}</p>}
@@ -500,12 +492,8 @@ function StudyTimer({ course }: { course: string }) {
               onClick={() => void act(active.pausedAt ? "resume" : "pause")}
             >
               {active.pausedAt
-                ? fa
-                  ? "ادامه"
-                  : "Resume"
-                : fa
-                  ? "توقف موقت"
-                  : "Pause"}
+                ? tl("ادامه", "Resume")
+                : tl("توقف موقت", "Pause")}
             </Button>
             <Button disabled={busy} onClick={() => void act("stop")}>
               {fa ? "پایان و ذخیره" : "Finish & save"}
@@ -520,9 +508,9 @@ function StudyTimer({ course }: { course: string }) {
       <select
         value={days}
         onChange={(e) => setDays(Number(e.target.value))}
-        aria-label={fa ? "بازه گزارش" : "Report period"}
+        aria-label={tl("بازه گزارش", "Report period")}
       >
-        <option value={7}>{fa ? "هفتگی" : "Weekly"}</option>
+        <option value={7}>{tl("هفتگی", "Weekly")}</option>
         <option value={30}>{fa ? "ماهانه" : "Monthly"}</option>
       </select>
       <p>
@@ -540,7 +528,7 @@ function StudyTimer({ course }: { course: string }) {
   );
 }
 function StudyAi({ course, mode }: { course: string; mode: string }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "workspace"),
     thesis = useLiveData(mode === "thesis" ? API + "thesis-assist" : null),
     [result, setResult] = useState<LiveRow | null>(null),
@@ -564,9 +552,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
       {isThesis && <LiveLoad {...thesis} />}
       <p>
         {isThesis
-          ? fa
-            ? "کردیت این درخواست: "
-            : "Credits per request: "
+          ? tl("کردیت این درخواست: ", "Credits per request: ")
           : fa
             ? "هزینه وابسته به مدل انتخاب‌شدهٔ سرور است؛ حداکثر نرخ مدل‌های فعلی: "
             : "Cost depends on the server-selected model; highest current model rate: "}
@@ -600,7 +586,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
                 label:
                   (
                     {
-                      ask: fa ? "پرسش از منابع" : "Ask sources",
+                      ask: tl("پرسش از منابع", "Ask sources"),
                       flashcards: fa ? "ساخت فلش‌کارت" : "Generate flashcards",
                       quiz: fa ? "ساخت آزمون" : "Generate quiz",
                     } as Record<string, string>
@@ -637,13 +623,13 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
       {result && (
         <div className="prose" style={{ whiteSpace: "pre-wrap" }}>
           <p role="status">
-            {fa ? "کردیت مصرف‌شده: " : "Credits used: "}
+            {tl("کردیت مصرف‌شده: ", "Credits used: ")}
             {String(result.creditsUsed ?? "—")}
           </p>
           <p>{String(result.answer ?? result.content ?? "")}</p>
           {result.created != null && (
             <p>
-              {fa ? "فلش‌کارت‌های ذخیره‌شده: " : "Saved flashcards: "}
+              {tl("فلش‌کارت‌های ذخیره‌شده: ", "Saved flashcards: ")}
               {String(result.created)}
             </p>
           )}
@@ -663,7 +649,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
       )}
       {mode === "practice" && (
         <>
-          <h3>{fa ? "آزمون‌های ذخیره‌شده" : "Saved quizzes"}</h3>
+          <h3>{tl("آزمون‌های ذخیره‌شده", "Saved quizzes")}</h3>
           <LiveTable
             items={liveRows(r.data?.quizzes).filter(
               (q) => q.courseId === course,
@@ -691,7 +677,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
                   }
                 }}
               >
-                {fa ? "شروع آزمون" : "Start quiz"}
+                {tl("شروع آزمون", "Start quiz")}
               </Button>
             )}
           />
@@ -708,7 +694,7 @@ function StudentQuiz({
   id: string;
   attemptToken: string;
 }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "quizzes/" + enc(id)),
     [answers, setAnswers] = useState<Record<number, number>>({}),
     [result, setResult] = useState<LiveRow | null>(null);
@@ -757,7 +743,7 @@ function StudentQuiz({
           />
           {result && (
             <>
-              <h3>{fa ? "نتیجه سرور" : "Server result"}</h3>
+              <h3>{tl("نتیجه سرور", "Server result")}</h3>
               <p>
                 {String((result.attempt as LiveRow)?.score ?? "—")} /{" "}
                 {String((result.attempt as LiveRow)?.total ?? "—")}
@@ -778,14 +764,14 @@ function StudentQuiz({
   );
 }
 function Groups({ choice }: { choice: LiveField }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "groups"),
     [group, setGroup] = useState("");
   return (
     <section className="panel">
       <LiveLoad {...r} />
       <LiveForm
-        title={fa ? "ایجاد گروه" : "Create study group"}
+        title={tl("ایجاد گروه", "Create study group")}
         url={API + "groups"}
         fields={[field("name", "نام", "Name"), { ...choice, optional: true }]}
         onDone={r.reload}
@@ -804,7 +790,7 @@ function Groups({ choice }: { choice: LiveField }) {
         ]}
         actions={(g) => (
           <Button onClick={() => setGroup(String(g.id))}>
-            {fa ? "پیام‌های گروه" : "Group messages"}
+            {tl("پیام‌های گروه", "Group messages")}
           </Button>
         )}
       />
@@ -813,14 +799,14 @@ function Groups({ choice }: { choice: LiveField }) {
   );
 }
 function GroupMessages({ id }: { id: string }) {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     url = API + "groups/" + enc(id) + "/messages",
     r = useLiveData(url);
   return (
     <>
       <LiveLoad {...r} />
       <Button onClick={r.reload}>
-        {fa ? "دریافت پیام‌های جدید" : "Refresh messages"}
+        {tl("دریافت پیام‌های جدید", "Refresh messages")}
       </Button>
       <LiveTable
         items={liveRows(r.data?.messages).map((m) => ({
@@ -840,9 +826,7 @@ function GroupMessages({ id }: { id: string }) {
         url={url}
         fields={[field("content", "پیام", "Message", "textarea")]}
         caution={
-          fa
-            ? "این پیام برای اعضای گروه ارسال می‌شود."
-            : "This message will be visible to group members."
+          tl("این پیام برای اعضای گروه ارسال می‌شود.", "This message will be visible to group members.")
         }
         onDone={r.reload}
       />
@@ -850,7 +834,7 @@ function GroupMessages({ id }: { id: string }) {
   );
 }
 function StudentPublicProfile() {
-  const { fa } = useApp(),
+  const { fa, tl } = useApp(),
     r = useLiveData(API + "profile"),
     p = r.data?.profile as LiveRow | undefined;
   return (
