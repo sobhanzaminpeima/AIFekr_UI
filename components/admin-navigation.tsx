@@ -1,5 +1,6 @@
 "use client";
-import Link from 'next/link';
+import Link from '@/components/site-link';
+import {useShell} from './live-shell-context';
 import {useEffect,useId,useState} from 'react';
 import {adminDefinitions} from '@/lib/upstream/registry';
 import {useApp} from './providers';
@@ -26,7 +27,9 @@ export function AdminNavigation({path,onExpand}:{path:string;onExpand?:()=>void}
  const activeGroup=groups.find(g=>g.roots.some(r=>r===active?.root))?.id||null;
  const [open,setOpen]=useState<string|null>(activeGroup),[query,setQuery]=useState('');
  useEffect(()=>{setOpen(activeGroup);setQuery('');},[path,activeGroup]);
- const matches=entries.filter(e=>normalize(e.fa+' '+e.en+' '+e.href).includes(normalize(query)));
+ const live=!!useShell();
+ // The extra design-only sections have no page on aifekr.com.
+ const matches=entries.filter(e=>!live||!extras.some(([slug])=>'/admin/'+slug===e.href)).filter(e=>normalize(e.fa+' '+e.en+' '+e.href).includes(normalize(query)));
  return <div className="admin-navigation"><label className="admin-nav-search"><Icon name="Search" size={16}/><input aria-label={fa?'جست‌وجوی بخش مدیریت':'Search admin sections'} placeholder={fa?'جست‌وجوی بخش مدیریت…':'Find an admin section…'} value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label={fa?'پاک‌کردن جست‌وجو':'Clear search'} onClick={()=>setQuery('')}><Icon name="X" size={14}/></button>}</label>
  <nav className="admin-nav-groups" aria-label={fa?'بخش‌های مدیریت':'Administration sections'}>
  <Link href="/admin/dashboard" className={'admin-overview-link '+(current==='/admin/dashboard'?'active':'')} aria-current={current==='/admin/dashboard'?'page':undefined} title={fa?'نمای کلی مدیریت':'Admin overview'}><Icon name="LayoutDashboard" size={19}/><span>{fa?'نمای کلی مدیریت':'Admin overview'}</span></Link>

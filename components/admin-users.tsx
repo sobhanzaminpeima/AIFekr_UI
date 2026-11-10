@@ -6,6 +6,8 @@ import { contacts } from "@/mocks/catalog";
 import { useApp } from "./providers";
 import { Button, Empty, Icon, Modal, download } from "./ui";
 import { toast } from "sonner";
+import { useShell } from "./live-shell-context";
+import { LiveAdminUsers } from "./live-admin-users";
 type Account = (typeof contacts)[number];
 type Summary = {
   blocked?: boolean;
@@ -14,6 +16,10 @@ type Summary = {
   role?: string;
 };
 export function AdminUsers() {
+  if (useShell()) return <LiveAdminUsers />;
+  return <PreviewAdminUsers />;
+}
+function PreviewAdminUsers() {
   const { fa, t, n } = useApp();
   const [users, save] = useLocalState("aifekr-admin-users", contacts);
   const [summaries, setSummaries] = useState<Record<string, Summary>>({});
