@@ -45,6 +45,7 @@ import { PaymentHistory } from "./billing-admin";
 import { PublicLeadForm } from "./leads-workspace";
 import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
+import { LiveCheckout } from "./live-checkout";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
@@ -87,6 +88,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/payments" ? <LivePayments />
         : path === "/live" ? <LiveTalk />
         : path === "/plans" ? <LivePlans />
+        : /^\/(fitness\/)?checkout\/[^/]+$/.test(path) ? <LiveCheckout id={decodeURIComponent(path.split("/").pop()!)} />
         : path === "/chat" || path.startsWith("/chat/") ? <Chat />
         : path === "/create" ? <Hub group="create" />
         : path === "/gallery" ? <LiveGallery />
