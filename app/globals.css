@@ -6780,3 +6780,9 @@ tr:hover td {
 .pro-card small{font-size:12px;color:var(--text-secondary)}
 .pro-card .pro-tag{position:absolute;top:14px;inset-inline-end:14px;margin:0}
 @media(max-width:900px){.pro-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.content-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-top:14px}
+.content-cards article{position:relative;padding:16px;border-radius:16px;border:1px solid var(--border);background:linear-gradient(150deg,#f9731612,transparent 60%),var(--surface-2)}
+.content-cards span{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;font-size:12px;font-weight:800;color:#fff;background:var(--brand-gradient);margin-bottom:10px}
+.content-cards h3{font-size:14px;font-weight:800;margin:0 0 6px}
+.content-cards p{font-size:13px;line-height:1.8;margin:0;color:var(--text-secondary)}

@@ -43,11 +43,11 @@ export type SiteData = {
   /** Only on /f/<slug>. */
   leadForm?: { slug: string; title: string; description: string; accent: string; logoUrl: string | null; submitLabel: string | null; successMessage: string | null; fields: { key: string; label: string; required: boolean }[] } | null;
   /** Public pages that are plain copy. */
-  page?: { eyebrow: string; title: string; intro: string; actions: { href: string; label: string; primary?: boolean }[]; blocks: { heading?: string; body?: string; ordered?: string[]; links?: { href: string; label: string }[] }[]; starter?: { plan: string; available: boolean; minor: number | null; currency: string | null; days: number; credits: number } } | null;
+  page?: { eyebrow: string; title: string; intro: string; actions: { href: string; label: string; primary?: boolean }[]; blocks: { heading?: string; body?: string; ordered?: string[]; cards?: { title: string; desc: string }[]; links?: { href: string; label: string }[] }[]; starter?: { plan: string; available: boolean; minor: number | null; currency: string | null; days: number; credits: number } } | null;
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/ai-team", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   if (/^\/student\/(?!chat$)[^/]+$/.test(clean)) return true;

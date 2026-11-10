@@ -87,6 +87,7 @@ export function LiveContentPage() {
             {b.heading && <h2>{b.heading}</h2>}
             {b.body && <p>{b.body}</p>}
             {b.ordered && <ol>{b.ordered.map((x) => <li key={x}>{x}</li>)}</ol>}
+            {b.cards && <div className="content-cards">{b.cards.map((c, j) => <article key={c.title}><span aria-hidden="true">{(j + 1).toLocaleString(locale)}</span><h3>{c.title}</h3><p>{c.desc}</p></article>)}</div>}
             {b.links && <div className="content-links">{b.links.map((l) => <Link key={l.href} className="btn" href={l.href}>{l.label}</Link>)}</div>}
           </section>
         ))}

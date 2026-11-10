@@ -120,7 +120,7 @@ function LivePlatform({ path }: { path: string }) {
     : path === "/pricing" ? <section className="public-section"><Plans /></section>
     : path === "/login" ? <LiveLogin />
     : path === "/register" ? <LiveRegister />
-    : path === "/ai-chat" || path === "/start" ? <LiveContentPage />
+    : path === "/ai-chat" || path === "/ai-team" || path === "/start" ? <LiveContentPage />
     : path === "/owner/login" ? <LiveOwnerLogin />
     : path.startsWith("/verify-certificate/") ? <LiveCertificate />
     : ["about", "contact", "guides"].includes(section) ? <EditorialPage path={path} />
