@@ -9,8 +9,8 @@ export function BusinessDoctorEntry(){
   return <Link href="/business-doctor" className="directory-doctor">
     <span className="icon-chip amber"><Icon name="HeartPulse" size={30}/></span>
     <div><span className="eyebrow">{tl('نقطهٔ شروع پیشنهادی برای کسب‌وکار', 'A STARTING POINT FOR YOUR BUSINESS')}</span>
-    <h3>{fa?'نمی‌دانی از کجا شروع کنی؟ دکتر کسب‌وکار':'Not sure where to begin? Business Doctor'}</h3>
-    <p>{fa?'ابتدا مسئله و هدف را روشن کن؛ سپس مسیر فروش، مالی یا محتوا را انتخاب کن.':'Clarify the challenge and goal, then choose a sales, finance or content workflow.'}</p></div>
+    <h3>{tl('نمی‌دانی از کجا شروع کنی؟ دکتر کسب‌وکار', 'Not sure where to begin? Business Doctor')}</h3>
+    <p>{tl('ابتدا مسئله و هدف را روشن کن؛ سپس مسیر فروش، مالی یا محتوا را انتخاب کن.', 'Clarify the challenge and goal, then choose a sales, finance or content workflow.')}</p></div>
     <Icon name="ArrowLeft" className="directional"/>
   </Link>;
 }
@@ -276,14 +276,10 @@ export function ModuleDirectory({
             {tl("از هدفت شروع کن", "START WITH YOUR GOAL")}
           </span>
           <h2>
-            {fa
-              ? "امروز کدام کار را جلو می‌بری؟"
-              : "What would you like to work on?"}
+            {tl("امروز کدام کار را جلو می‌بری؟", "What would you like to work on?")}
           </h2>
           <p>
-            {fa
-              ? "فضای مناسب کارت را پیدا کن و مستقیم وارد همان بخش شو."
-              : "Find the right workspace and go straight to the task."}
+            {tl("فضای مناسب کارت را پیدا کن و مستقیم وارد همان بخش شو.", "Find the right workspace and go straight to the task.")}
           </p>
         </div>
         <label className="directory-search">
@@ -335,14 +331,10 @@ export function ModuleDirectory({
               {tl("نقطهٔ شروع پیشنهادی برای کسب‌وکار", "A STARTING POINT FOR YOUR BUSINESS")}
             </span>
             <h3>
-              {fa
-                ? "نمی‌دانی از کجا شروع کنی؟ دکتر کسب‌وکار"
-                : "Not sure where to begin? Business Doctor"}
+              {tl("نمی‌دانی از کجا شروع کنی؟ دکتر کسب‌وکار", "Not sure where to begin? Business Doctor")}
             </h3>
             <p>
-              {fa
-                ? "ابتدا مسئله و هدف را روشن کن؛ سپس مسیر فروش، مالی یا محتوا را انتخاب کن."
-                : "Clarify the challenge and goal, then choose a sales, finance or content workflow."}
+              {tl("ابتدا مسئله و هدف را روشن کن؛ سپس مسیر فروش، مالی یا محتوا را انتخاب کن.", "Clarify the challenge and goal, then choose a sales, finance or content workflow.")}
             </p>
           </div>
           <Icon name="ArrowLeft" className="directional" />
@@ -362,7 +354,7 @@ export function ModuleDirectory({
               <h3>{tl(m.fa, m.en)}</h3>
               <p>{tl(m.description[0], m.description[1])}</p>
               <span className="directory-enter">
-                {fa ? "ورود به ماژول" : "Open workspace"}
+                {tl("ورود به ماژول", "Open workspace")}
                 <Icon name="ArrowLeft" size={15} className="directional" />
               </span>
             </Link>
@@ -385,7 +377,7 @@ export function ModuleDirectory({
       {!rows.length && (
         <div className="panel" role="status">
           <h3>
-            {fa ? "ماژولی با این عبارت پیدا نشد" : "No matching workspace"}
+            {tl("ماژولی با این عبارت پیدا نشد", "No matching workspace")}
           </h3>
           <p>
             {tl("عبارت کوتاه‌تری مثل «فروش» یا «مطالعه» امتحان کن.", "Try a shorter task such as sales or study.")}

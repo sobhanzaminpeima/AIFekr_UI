@@ -102,6 +102,10 @@ function OrDivider({ label }: { label: string }) {
 
 /** The number tab only logs in accounts that already have a number (sign-up by number is off for now). */
 const TAB_PHONE: Record<string, string> = { fa: "ورود با شماره (حساب‌های قبلی)", en: "Mobile login (existing accounts)", de: "Mobil-Login (bestehende Konten)", tr: "Numarayla giriş (mevcut hesaplar)" };
+function countryName(c: { code: string; name: string }, lang: string) {
+  if (lang !== "tr" || !/^[A-Z]{2}$/.test(c.code)) return c.name;
+  try { return new Intl.DisplayNames(["tr"], { type: "region" }).of(c.code) ?? c.name; } catch { return c.name; }
+}
 const EMAIL_REQUIRED: Record<string, string> = { fa: "یک ایمیل معتبر وارد کنید.", en: "Enter a valid email address.", de: "Bitte eine gültige E-Mail-Adresse eingeben.", tr: "Geçerli bir e-posta adresi gir." };
 
 export function LiveLogin() {
@@ -372,7 +376,7 @@ export function LiveRegister() {
           {copy.countryLabel}
           <select value={form.country} onChange={set("country")}>
             <option value="">{copy.countryPlaceholder}</option>
-            {auth.countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+            {auth.countries.map((c) => <option key={c.code} value={c.code}>{countryName(c, lang)}</option>)}
           </select>
         </label>
         <fieldset className="auth-langs">

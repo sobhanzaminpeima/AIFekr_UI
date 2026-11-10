@@ -152,7 +152,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 </div>
                 <h3>{s.name}</h3>
                 <p>
-                  {s.teacher || (fa ? "مدرس مشخص نشده" : "No teacher assigned")}
+                  {s.teacher || (tl("مدرس مشخص نشده", "No teacher assigned"))}
                 </p>
                 <div className="row-between">
                   <span>{tl("پیشرفت ثبت‌شده", "Recorded progress")}</span>
@@ -164,7 +164,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                     {tl("منابع", "Resources")}
                   </Link>
                   <Link className="btn" href="/student?view=planner">
-                    {fa ? "برنامه مطالعه" : "Study plan"}
+                    {tl("برنامه مطالعه", "Study plan")}
                   </Link>
                 </div>
               </article>
@@ -191,7 +191,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             >
               <div className="domain-fields">
                 <label>
-                  {fa ? "نام درس" : "Subject name"}
+                  {tl("نام درس", "Subject name")}
                   <input
                     required
                     value={subject.name}
@@ -253,14 +253,10 @@ export function StudentWorkspace({ view }: { view: string }) {
             <Icon name="Upload" size={35} />
           </span>
           <h2>
-            {fa
-              ? "منابع هر درس، در جای خودش."
-              : "Every subject’s resources, in one place."}
+            {tl("منابع هر درس، در جای خودش.", "Every subject’s resources, in one place.")}
           </h2>
           <p>
-            {fa
-              ? "فایل را انتخاب کن تا نام، نوع و اندازه آن در کتابخانه محلی ثبت شود. متن فایل‌های TXT و Markdown نیز نگه‌داری می‌شود."
-              : "Choose a file to record its name, type and size in your local library. TXT and Markdown text is also retained."}
+            {tl("فایل را انتخاب کن تا نام، نوع و اندازه آن در کتابخانه محلی ثبت شود. متن فایل‌های TXT و Markdown نیز نگه‌داری می‌شود.", "Choose a file to record its name, type and size in your local library. TXT and Markdown text is also retained.")}
           </p>
           <label className="study-upload-control">
             {tl("افزودن منبع محلی", "Add local resource")}
@@ -290,9 +286,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             />
           </label>
           <small>
-            {fa
-              ? "PDF و DOCX فقط به صورت اطلاعات فایل ثبت می‌شوند؛ پردازش محتوای آن‌ها متصل نیست."
-              : "PDF and DOCX are recorded as metadata; content processing is not connected."}
+            {tl("PDF و DOCX فقط به صورت اطلاعات فایل ثبت می‌شوند؛ پردازش محتوای آن‌ها متصل نیست.", "PDF and DOCX are recorded as metadata; content processing is not connected.")}
           </small>
         </section>
         <section className="panel">
@@ -308,7 +302,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                   <strong>{m.name}</strong>
                   <small>
                     {subjects.find((s) => s.id === m.subject)?.name ||
-                      (fa ? "بدون درس" : "Unassigned")}{" "}
+                      (tl("بدون درس", "Unassigned"))}{" "}
                     · {n(Math.round(m.size / 1024))} KB
                   </small>
                 </div>
@@ -349,7 +343,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               })
             }
           >
-            {fa ? "یادداشت تازه" : "New note"}
+            {tl("یادداشت تازه", "New note")}
           </Button>
         </div>
         <div className="study-notes-grid">
@@ -359,7 +353,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               <article className="panel study-note" key={note.id}>
                 <span className="eyebrow">
                   {subjects.find((s) => s.id === note.subject)?.name ||
-                    (fa ? "دفتر شخصی" : "Personal notebook")}
+                    (tl("دفتر شخصی", "Personal notebook"))}
                 </span>
                 <h3>{note.title}</h3>
                 <p>{note.text}</p>
@@ -386,7 +380,7 @@ export function StudentWorkspace({ view }: { view: string }) {
         {!notes.length && <Empty />}
         {note && (
           <Modal
-            title={fa ? "دفتر یادداشت" : "Study notebook"}
+            title={tl("دفتر یادداشت", "Study notebook")}
             onClose={() => setNote(null)}
           >
             <form
@@ -420,7 +414,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                     }
                   >
                     <option value="">
-                      {fa ? "دفتر شخصی" : "Personal notebook"}
+                      {tl("دفتر شخصی", "Personal notebook")}
                     </option>
                     {subjects.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -431,7 +425,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 </label>
               </div>
               <label>
-                {fa ? "متن یادداشت" : "Note content"}
+                {tl("متن یادداشت", "Note content")}
                 <textarea
                   required
                   rows={13}
@@ -469,7 +463,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           </Button>
         </div>
         <section className="panel">
-          <h2>{fa ? "تقویم مطالعه و امتحان‌ها" : "Study & exam agenda"}</h2>
+          <h2>{tl("تقویم مطالعه و امتحان‌ها", "Study & exam agenda")}</h2>
           {[...tasks]
             .filter((x) => selected === "all" || x.subject === selected)
             .sort((a, b) => a.due.localeCompare(b.due))
@@ -502,7 +496,7 @@ export function StudentWorkspace({ view }: { view: string }) {
         </section>
         {task && (
           <Modal
-            title={fa ? "برنامه مطالعه" : "Study plan"}
+            title={tl("برنامه مطالعه", "Study plan")}
             onClose={() => setTask(null)}
           >
             <form
@@ -531,7 +525,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                       setTask({ ...task, subject: e.target.value })
                     }
                   >
-                    <option value="">{fa ? "عمومی" : "General"}</option>
+                    <option value="">{tl("عمومی", "General")}</option>
                     {subjects.map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.name}
@@ -573,7 +567,7 @@ export function StudentWorkspace({ view }: { view: string }) {
         <div className="study-timer panel">
           <span className="eyebrow">FOCUS SESSION</span>
           <h2>
-            {fa ? "برای یک قدم کوچک، تمرکز کن." : "Focus on one small step."}
+            {tl("برای یک قدم کوچک، تمرکز کن.", "Focus on one small step.")}
           </h2>
           {selectSubject()}
           <strong className="study-timer-value" role="timer">
@@ -590,7 +584,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                 setActiveTimer(true);
               }}
             >
-              {fa ? "شروع مطالعه" : "Start studying"}
+              {tl("شروع مطالعه", "Start studying")}
             </Button>
             <Button
               disabled={!activeTimer}
@@ -610,11 +604,11 @@ export function StudentWorkspace({ view }: { view: string }) {
                 ]);
                 setActiveTimer(false);
                 toast.success(
-                  fa ? "جلسه مطالعه ذخیره شد" : "Study session saved",
+                  tl("جلسه مطالعه ذخیره شد", "Study session saved"),
                 );
               }}
             >
-              {fa ? "پایان و ثبت جلسه" : "Finish & save session"}
+              {tl("پایان و ثبت جلسه", "Finish & save session")}
             </Button>
           </div>
         </div>
@@ -622,13 +616,13 @@ export function StudentWorkspace({ view }: { view: string }) {
           <h3>{tl("زمان واقعی ثبت‌شده", "Actual recorded study time")}</h3>
           <strong>
             {n(Math.round(sessions.reduce((s, x) => s + x.seconds, 0) / 60))}{" "}
-            {fa ? "دقیقه" : "minutes"}
+            {tl("دقیقه", "minutes")}
           </strong>
           {sessions.map((s) => (
             <div className="domain-card row-between" key={s.id}>
               <span>
                 {subjects.find((x) => x.id === s.subject)?.name ||
-                  (fa ? "مطالعه آزاد" : "Independent study")}
+                  (tl("مطالعه آزاد", "Independent study"))}
               </span>
               <span>
                 {n(s.seconds)} s · {s.date.slice(0, 16).replace("T", " ")}
@@ -660,7 +654,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           >
             <input
               required
-              aria-label={fa ? "نام گروه" : "Group name"}
+              aria-label={tl("نام گروه", "Group name")}
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
@@ -681,9 +675,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             <>
               <h3>{group.name}</h3>
               <p className="fine-print">
-                {fa
-                  ? "پیام‌ها محلی‌اند؛ به کاربران دیگر ارسال نمی‌شوند."
-                  : "Messages are local and are not sent to other users."}
+                {tl("پیام‌ها محلی‌اند؛ به کاربران دیگر ارسال نمی‌شوند.", "Messages are local and are not sent to other users.")}
               </p>
               {(groups.find((g) => g.id === group.id)?.messages || []).map(
                 (m) => (
@@ -788,9 +780,7 @@ export function StudentWorkspace({ view }: { view: string }) {
                       ". " +
                       s +
                       "\n" +
-                      (fa
-                        ? "یادداشت و منابع خود را اینجا اضافه کن."
-                        : "Add your own notes and sources here."),
+                      (tl("یادداشت و منابع خود را اینجا اضافه کن.", "Add your own notes and sources here.")),
                   )
                   .join("\n\n"),
             );
@@ -798,12 +788,8 @@ export function StudentWorkspace({ view }: { view: string }) {
         >
           <h2>
             {view === "thesis"
-              ? fa
-                ? "طرح اولیه پژوهش"
-                : "Research outline"
-              : fa
-                ? "ساختار تکلیف"
-                : "Assignment structure"}
+              ? tl("طرح اولیه پژوهش", "Research outline")
+              : tl("ساختار تکلیف", "Assignment structure")}
           </h2>
           <label>
             {tl("موضوع", "Topic")}
@@ -814,7 +800,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             />
           </label>
           <label>
-            {fa ? "خواسته استاد و محدودیت‌ها" : "Requirements & constraints"}
+            {tl("خواسته استاد و محدودیت‌ها", "Requirements & constraints")}
             <textarea
               required
               rows={7}
@@ -823,17 +809,15 @@ export function StudentWorkspace({ view }: { view: string }) {
             />
           </label>
           <Button type="submit" variant="primary">
-            {fa ? "ساخت قالب قابل‌ویرایش" : "Create editable outline"}
+            {tl("ساخت قالب قابل‌ویرایش", "Create editable outline")}
           </Button>
           <p className="fine-print">
-            {fa
-              ? "این قالب ساختاری است؛ پژوهش یا پاسخ تولیدشده توسط AI نیست."
-              : "This is a structural template, not AI-generated research or an answer."}
+            {tl("این قالب ساختاری است؛ پژوهش یا پاسخ تولیدشده توسط AI نیست.", "This is a structural template, not AI-generated research or an answer.")}
           </p>
         </form>
         <section className="panel">
           <label>
-            {fa ? "طرح و یادداشت‌های من" : "My outline & notes"}
+            {tl("طرح و یادداشت‌های من", "My outline & notes")}
             <textarea
               rows={18}
               value={outline}
@@ -856,7 +840,7 @@ export function StudentWorkspace({ view }: { view: string }) {
               toast.success(t("save"));
             }}
           >
-            {fa ? "ذخیره در یادداشت‌ها" : "Save to notes"}
+            {tl("ذخیره در یادداشت‌ها", "Save to notes")}
           </Button>
           <Button
             disabled={!outline}
@@ -944,9 +928,7 @@ export function StudentWorkspace({ view }: { view: string }) {
             </span>
             <h3>{fa ? a : b}</h3>
             <p>
-              {fa
-                ? "مهارتت را به یک پروژه واقعی نزدیک کن."
-                : "Bring your skill closer to a real project."}
+              {tl("مهارتت را به یک پروژه واقعی نزدیک کن.", "Bring your skill closer to a real project.")}
             </p>
           </Link>
         ))}
@@ -962,17 +944,13 @@ export function StudentWorkspace({ view }: { view: string }) {
               ? fa
                 ? `وقت یادگیریه، ${profile.name}.`
                 : `Time to learn, ${profile.name}.`
-              : fa
-                ? "کنجکاوی امروز، توانایی فردا."
-                : "Today’s curiosity. Tomorrow’s confidence."}
+              : tl("کنجکاوی امروز، توانایی فردا.", "Today’s curiosity. Tomorrow’s confidence.")}
           </h2>
           <p>
-            {fa
-              ? "درس‌ها، یادداشت‌ها و قدم‌های بعدی‌ات را در یک فضای روشن نگه دار."
-              : "Keep your subjects, notes and next steps in one clear space."}
+            {tl("درس‌ها، یادداشت‌ها و قدم‌های بعدی‌ات را در یک فضای روشن نگه دار.", "Keep your subjects, notes and next steps in one clear space.")}
           </p>
           <Link href="/student?view=courses" className="btn primary">
-            {fa ? "مدیریت درس‌ها" : "Manage subjects"}
+            {tl("مدیریت درس‌ها", "Manage subjects")}
           </Link>
         </div>
         <Icon name="GraduationCap" size={82} />
@@ -982,11 +960,11 @@ export function StudentWorkspace({ view }: { view: string }) {
           [tl("درس‌های من", "My subjects"), subjects.length],
           [tl("منابع ثبت‌شده", "Saved resources"), materials.length],
           [
-            fa ? "کارهای باز" : "Open tasks",
+            tl("کارهای باز", "Open tasks"),
             tasks.filter((t) => !t.done).length,
           ],
           [
-            fa ? "دقیقه مطالعه" : "Study minutes",
+            tl("دقیقه مطالعه", "Study minutes"),
             Math.round(sessions.reduce((s, x) => s + x.seconds, 0) / 60),
           ],
         ].map(([a, b]) => (
@@ -997,7 +975,7 @@ export function StudentWorkspace({ view }: { view: string }) {
         ))}
       </div>
       <section className="panel">
-        <h3>{fa ? "قدم‌های بعدی" : "Your next steps"}</h3>
+        <h3>{tl("قدم‌های بعدی", "Your next steps")}</h3>
         {tasks
           .filter((t) => !t.done)
           .slice(0, 5)
@@ -1009,7 +987,7 @@ export function StudentWorkspace({ view }: { view: string }) {
           ))}
         {!tasks.some((t) => !t.done) && <Empty />}
         <Link href="/student?view=planner" className="text-link">
-          {fa ? "برنامه مطالعه را باز کن" : "Open your study plan"} ←
+          {tl("برنامه مطالعه را باز کن", "Open your study plan")} ←
         </Link>
       </section>
     </>

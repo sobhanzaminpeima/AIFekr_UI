@@ -54,7 +54,7 @@ export function LiveStudent({
       {courses.data && (
         <>
           <label>
-            {fa ? "درس فعال" : "Current subject"}
+            {tl("درس فعال", "Current subject")}
             <select value={course} onChange={(e) => setCourse(e.target.value)}>
               <option value="">{tl("انتخاب درس", "Choose subject")}</option>
               {items.map((c) => (
@@ -95,16 +95,12 @@ export function LiveStudent({
                     />
                     <LiveForm
                       title={
-                        fa
-                          ? "حذف درس و منابع وابسته"
-                          : "Delete subject and its materials"
+                        tl("حذف درس و منابع وابسته", "Delete subject and its materials")
                       }
                       url={API + "courses/" + enc(String(c.id))}
                       method="DELETE"
                       caution={
-                        fa
-                          ? "درس و محتوای وابسته به آن حذف می‌شود."
-                          : "This deletes the subject and its dependent content."
+                        tl("درس و محتوای وابسته به آن حذف می‌شود.", "This deletes the subject and its dependent content.")
                       }
                       onDone={courses.reload}
                     />
@@ -112,16 +108,14 @@ export function LiveStudent({
                 )}
               />
               <p>
-                {fa
-                  ? "ابتدا یک درس اضافه کن، سپس منابع را بارگذاری کن و از تمرین، فلش‌کارت و دستیار درس استفاده کن."
-                  : "Add a subject, upload its sources, then use practice, flashcards and the tutor."}
+                {tl("ابتدا یک درس اضافه کن، سپس منابع را بارگذاری کن و از تمرین، فلش‌کارت و دستیار درس استفاده کن.", "Add a subject, upload its sources, then use practice, flashcards and the tutor.")}
               </p>
               <div className="domain-actions">
                 <Link className="btn" href="/student?view=upload">
                   {tl("منابع درس", "Course sources")}
                 </Link>
                 <Link className="btn" href="/learn">
-                  {fa ? "مسیرهای آکادمی" : "Academy learning paths"}
+                  {tl("مسیرهای آکادمی", "Academy learning paths")}
                 </Link>
               </div>
             </section>
@@ -153,12 +147,10 @@ export function LiveStudent({
           {view.id === "business" && (
             <section className="panel">
               <h2>
-                {fa ? "ابزارهای کسب‌وکار دانشجویی" : "Student business tools"}
+                {tl("ابزارهای کسب‌وکار دانشجویی", "Student business tools")}
               </h2>
               <p>
-                {fa
-                  ? "دسترسی هر ابزار با پکیج واقعی حساب شما بررسی می‌شود."
-                  : "Each tool checks your current account entitlement."}
+                {tl("دسترسی هر ابزار با پکیج واقعی حساب شما بررسی می‌شود.", "Each tool checks your current account entitlement.")}
               </p>
               <div className="domain-actions">
                 {[
@@ -241,7 +233,7 @@ function Notes({ course, choice }: { course: string; choice: LiveField }) {
     <section className="panel">
       <LiveLoad {...r} />
       <LiveForm
-        title={fa ? "یادداشت جدید" : "New note"}
+        title={tl("یادداشت جدید", "New note")}
         url={API + "notes"}
         fields={[
           choice,
@@ -256,7 +248,7 @@ function Notes({ course, choice }: { course: string; choice: LiveField }) {
           <summary>{String(n.title)}</summary>
           <p style={{ whiteSpace: "pre-wrap" }}>{String(n.content)}</p>
           <LiveForm
-            title={fa ? "ویرایش یادداشت" : "Edit note"}
+            title={tl("ویرایش یادداشت", "Edit note")}
             url={API + "notes"}
             initial={n}
             fields={[
@@ -362,9 +354,7 @@ function Planner({ choice }: { choice: LiveField }) {
             <LiveForm
               title={
                 t.completedAt
-                  ? fa
-                    ? "بازگشایی"
-                    : "Reopen"
+                  ? tl("بازگشایی", "Reopen")
                   : tl("انجام شد", "Complete")
               }
               url={API + "tasks/" + enc(String(t.id))}
@@ -413,7 +403,7 @@ function Planner({ choice }: { choice: LiveField }) {
         actions={(e) => (
           <>
             <LiveForm
-              title={fa ? "ساخت برنامه مطالعه" : "Build study plan"}
+              title={tl("ساخت برنامه مطالعه", "Build study plan")}
               url={API + "study-plan"}
               map={() => ({ examId: e.id })}
               onDone={tasks.reload}
@@ -496,12 +486,12 @@ function StudyTimer({ course }: { course: string }) {
                 : tl("توقف موقت", "Pause")}
             </Button>
             <Button disabled={busy} onClick={() => void act("stop")}>
-              {fa ? "پایان و ذخیره" : "Finish & save"}
+              {tl("پایان و ذخیره", "Finish & save")}
             </Button>
           </>
         ) : (
           <Button disabled={busy || !r.data} onClick={() => void act("start")}>
-            {fa ? "شروع مطالعه" : "Start studying"}
+            {tl("شروع مطالعه", "Start studying")}
           </Button>
         )}
       </div>
@@ -511,10 +501,10 @@ function StudyTimer({ course }: { course: string }) {
         aria-label={tl("بازه گزارش", "Report period")}
       >
         <option value={7}>{tl("هفتگی", "Weekly")}</option>
-        <option value={30}>{fa ? "ماهانه" : "Monthly"}</option>
+        <option value={30}>{tl("ماهانه", "Monthly")}</option>
       </select>
       <p>
-        {fa ? "مجموع ثانیه‌های ثبت‌شده: " : "Recorded seconds: "}
+        {tl("مجموع ثانیه‌های ثبت‌شده: ", "Recorded seconds: ")}
         {String(r.data?.totalSeconds ?? 0)}
       </p>
       <LiveTable
@@ -553,26 +543,22 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
       <p>
         {isThesis
           ? tl("کردیت این درخواست: ", "Credits per request: ")
-          : fa
-            ? "هزینه وابسته به مدل انتخاب‌شدهٔ سرور است؛ حداکثر نرخ مدل‌های فعلی: "
-            : "Cost depends on the server-selected model; highest current model rate: "}
+          : tl("هزینه وابسته به مدل انتخاب‌شدهٔ سرور است؛ حداکثر نرخ مدل‌های فعلی: ", "Cost depends on the server-selected model; highest current model rate: ")}
         {String(estimate ?? "—")}
         {!isThesis && (
           <>
             <br />
-            {fa ? "حداقل موجودی لازم: " : "Minimum balance required: "}
+            {tl("حداقل موجودی لازم: ", "Minimum balance required: ")}
             {String(costs?.minimumBalance ?? "—")}
           </>
         )}
       </p>
       {typeof estimate === "number" && (
         <LiveForm
-          title={fa ? "تأیید و اجرای دستیار" : "Confirm & run assistant"}
+          title={tl("تأیید و اجرای دستیار", "Confirm & run assistant")}
           url={url}
           caution={
-            fa
-              ? "این درخواست از کردیت حساب استفاده می‌کند. خروجی باید توسط شما بررسی شود؛ ارسال خودکار یا تحویل تکلیف انجام نمی‌شود."
-              : "This uses account credits. Review the output; nothing is submitted on your behalf."
+            tl("این درخواست از کردیت حساب استفاده می‌کند. خروجی باید توسط شما بررسی شود؛ ارسال خودکار یا تحویل تکلیف انجام نمی‌شود.", "This uses account credits. Review the output; nothing is submitted on your behalf.")
           }
           fields={[
             {
@@ -587,8 +573,8 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
                   (
                     {
                       ask: tl("پرسش از منابع", "Ask sources"),
-                      flashcards: fa ? "ساخت فلش‌کارت" : "Generate flashcards",
-                      quiz: fa ? "ساخت آزمون" : "Generate quiz",
+                      flashcards: tl("ساخت فلش‌کارت", "Generate flashcards"),
+                      quiz: tl("ساخت آزمون", "Generate quiz"),
                     } as Record<string, string>
                   )[value] ?? value,
               })),
@@ -642,7 +628,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
                 );
               }}
             >
-              {fa ? "باز کردن آزمون" : "Open quiz"}
+              {tl("باز کردن آزمون", "Open quiz")}
             </Button>
           )}
         </div>
@@ -707,9 +693,7 @@ function StudentQuiz({
           <h3>{String(quiz.title)}</h3>
           {quiz.timeLimitSeconds && !attemptToken ? (
             <p role="alert">
-              {fa
-                ? "آزمون زمان‌دار فقط با توکن شروع همان اجرای تولید قابل ثبت است؛ این آزمون را از نتیجه تولید باز کنید."
-                : "A timed quiz requires the original start token. Open it from the generation result."}
+              {tl("آزمون زمان‌دار فقط با توکن شروع همان اجرای تولید قابل ثبت است؛ این آزمون را از نتیجه تولید باز کنید.", "A timed quiz requires the original start token. Open it from the generation result.")}
             </p>
           ) : null}
           {liveRows(quiz.questions).map((q, i) => (
@@ -730,7 +714,7 @@ function StudentQuiz({
           ))}
           <LiveForm
             title={
-              fa ? "ثبت پاسخ‌ها و دریافت نمره" : "Submit answers & get grade"
+              tl("ثبت پاسخ‌ها و دریافت نمره", "Submit answers & get grade")
             }
             url={API + "quizzes/" + enc(id)}
             map={() => ({
@@ -777,7 +761,7 @@ function Groups({ choice }: { choice: LiveField }) {
         onDone={r.reload}
       />
       <LiveForm
-        title={fa ? "پیوستن با کد دعوت" : "Join by invite code"}
+        title={tl("پیوستن با کد دعوت", "Join by invite code")}
         url={API + "groups/join"}
         fields={[field("inviteCode", "کد دعوت", "Invite code")]}
         onDone={r.reload}
@@ -821,7 +805,7 @@ function GroupMessages({ id }: { id: string }) {
       />
       <LiveForm
         title={
-          fa ? "ارسال پیام به اعضای گروه" : "Send message to group members"
+          tl("ارسال پیام به اعضای گروه", "Send message to group members")
         }
         url={url}
         fields={[field("content", "پیام", "Message", "textarea")]}
@@ -842,9 +826,9 @@ function StudentPublicProfile() {
       <LiveLoad {...r} />
       {p && (
         <>
-          <h3>{fa ? "نمایه عمومی دانشجو" : "Public student profile"}</h3>
+          <h3>{tl("نمایه عمومی دانشجو", "Public student profile")}</h3>
           <LiveForm
-            title={fa ? "ذخیره تنظیمات انتشار" : "Save publishing settings"}
+            title={tl("ذخیره تنظیمات انتشار", "Save publishing settings")}
             url={API + "profile"}
             method="PATCH"
             initial={{
@@ -862,14 +846,12 @@ function StudentPublicProfile() {
               ),
             ]}
             caution={
-              fa
-                ? "با انتشار، اطلاعات نمایه عمومی می‌شوند."
-                : "Publishing makes your profile publicly accessible."
+              tl("با انتشار، اطلاعات نمایه عمومی می‌شوند.", "Publishing makes your profile publicly accessible.")
             }
             onDone={r.reload}
           />
           <Link className="btn" href="/settings">
-            {fa ? "ویرایش نام و عکس حساب" : "Edit account name & photo"}
+            {tl("ویرایش نام و عکس حساب", "Edit account name & photo")}
           </Link>
         </>
       )}

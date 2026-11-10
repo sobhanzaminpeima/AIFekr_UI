@@ -76,7 +76,7 @@ function LivePlatform({ path }: { path: string }) {
   // Signed-in pages: the design's own frame and screens, with real data.
   if (useShell()) return (
     <>
-      <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
+      <a className="skip-link" href="#main">{tl("رفتن به محتوا", "Skip to content")}</a>
       <Shell path={path}>{
         path === "/credits" ? <LiveCredits/> : path === "/wallet" ? <LiveWallet/> : path === "/notifications" ? <LiveNotifications/> : path === "/settings" ? <LiveSettings />
         : path === "/home" ? <Dashboard />
@@ -106,7 +106,7 @@ function LivePlatform({ path }: { path: string }) {
     : <PublicPage path={path} />;
   return (
     <>
-      <a className="skip-link" href="#main">{fa ? "رفتن به محتوا" : "Skip to content"}</a>
+      <a className="skip-link" href="#main">{tl("رفتن به محتوا", "Skip to content")}</a>
       <PublicShell>{content}</PublicShell>
     </>
   );
@@ -380,7 +380,7 @@ function PlatformContent({ path }: { path: string }) {
   return (
     <>
       <a className="skip-link" href="#main">
-        {fa ? "رفتن به محتوا" : "Skip to content"}
+        {tl("رفتن به محتوا", "Skip to content")}
       </a>
       <Suspense fallback={<Skeleton />}>
         {publicRoute ? (

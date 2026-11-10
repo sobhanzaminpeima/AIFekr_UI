@@ -94,24 +94,20 @@ export function LandingJourney() {
     <section className="public-section connected-journey" id="workspace-demo">
       <div className="center-heading">
         <span className="eyebrow orange-text">
-          AIFekr / CONNECTED WORKSPACE
+          AIFekr / {tl("CONNECTED WORKSPACE", "CONNECTED WORKSPACE")}
         </span>
         <h2>
-          {fa
-            ? "ابزارهای جدا؟ نه، یک مسیر روشن."
-            : "Your tools, connected by a clear path."}
+          {tl("ابزارهای جدا؟ نه، یک مسیر روشن.", "Your tools, connected by a clear path.")}
         </h2>
         <p>
-          {fa
-            ? "ببین هر ایده چطور در فضای مناسب ادامه پیدا می‌کند."
-            : "See how each idea moves forward in the right workspace."}
+          {tl("ببین هر ایده چطور در فضای مناسب ادامه پیدا می‌کند.", "See how each idea moves forward in the right workspace.")}
         </p>
       </div>
       <div
         className="journey-tabs"
         role="tablist"
         onKeyDown={e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const buttons=Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('[role=tab]'));const current=buttons.indexOf(document.activeElement as HTMLButtonElement);const delta=e.key==='ArrowRight'?(fa?-1:1):(fa?1:-1);const next=e.key==='Home'?0:e.key==='End'?buttons.length-1:(current+delta+buttons.length)%buttons.length;buttons[next]?.focus();buttons[next]?.click();}}
-        aria-label={fa ? "مسیرهای استفاده" : "Workspace journeys"}
+        aria-label={tl("مسیرهای استفاده", "Workspace journeys")}
       >
         {journeys.map((j) => (
           <button
@@ -146,9 +142,7 @@ export function LandingJourney() {
             <Icon name="ArrowLeft" size={17} />
           </Link>
           <span className="journey-preview-note">
-            {fa
-              ? "پیش‌نمایش تعاملی؛ بدون مصرف اعتبار"
-              : "Interactive preview. No credits used."}
+            {tl("پیش‌نمایش تعاملی؛ بدون مصرف اعتبار", "Interactive preview. No credits used.")}
           </span>
         </div>
         <div className="journey-canvas">
@@ -158,7 +152,7 @@ export function LandingJourney() {
               <i />
               <i />
             </span>
-            <small>AIFekr WORKSPACE</small>
+            <small>AIFekr {tl("WORKSPACE", "WORKSPACE")}</small>
             <Icon name="Sparkles" size={16} />
           </div>
           <div className="journey-flow">
@@ -170,7 +164,7 @@ export function LandingJourney() {
                 onClick={() => setStep(i)}
               >
                 <Icon name={icon} size={22} />
-                <strong>{fa ? a : b}</strong>
+                <strong>{tl(a, b)}</strong>
                 <span>0{i + 1}</span>
               </button>
             ))}
@@ -181,10 +175,10 @@ export function LandingJourney() {
             </span>
             <div>
               <small>{tl("قدم انتخاب‌شده", "SELECTED STEP")}</small>
-              <h4>{journey.steps[step][fa ? 0 : 1]}</h4>
+              <h4>{tl(journey.steps[step][0], journey.steps[step][1])}</h4>
             </div>
             <span className="badge">
-              {fa ? "در کنترل تو" : "You’re in control"}
+              {tl("در کنترل تو", "You’re in control")}
             </span>
           </div>
           <div className="journey-copilot">
@@ -225,14 +219,10 @@ function DemoModuleExplorer() {
         <div>
           <span className="eyebrow orange-text">AIFekr / YOUR TOOLKIT</span>
           <h2>
-            {fa
-              ? "فضای مناسب کارت را پیدا کن."
-              : "Find the right workspace for your work."}
+            {tl("فضای مناسب کارت را پیدا کن.", "Find the right workspace for your work.")}
           </h2>
           <p>
-            {fa
-              ? "هر ماژول، ابزارها و مسیر مخصوص خودش را دارد."
-              : "Every module has its own tools and workflow."}
+            {tl("هر ماژول، ابزارها و مسیر مخصوص خودش را دارد.", "Every module has its own tools and workflow.")}
           </p>
         </div>
         <label className="explorer-search">
@@ -240,7 +230,7 @@ function DemoModuleExplorer() {
           <input
             aria-label={tl("جستجوی ماژول‌ها", "Search modules")}
             placeholder={
-              fa ? "دنبال چه ابزاری هستی؟" : "What tool are you looking for?"
+              tl("دنبال چه ابزاری هستی؟", "What tool are you looking for?")
             }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -264,7 +254,7 @@ function DemoModuleExplorer() {
               setQuery("");
             }}
           >
-            {fa ? a : b}
+            {tl(a, b)}
           </button>
         ))}
       </div>
@@ -278,7 +268,7 @@ function DemoModuleExplorer() {
             <p>{tl(m.subtitle[0], m.subtitle[1])}</p>
             <div>
               <span>
-                {n(m.views.length)} {fa ? "بخش تخصصی" : "specialist sections"}
+                {n(m.views.length)} {tl("بخش تخصصی", "specialist sections")}
               </span>
               <Icon name="ArrowUpLeft" size={17} />
             </div>
@@ -287,9 +277,7 @@ function DemoModuleExplorer() {
       </div>
       {!visible.length && (
         <p className="explorer-empty" role="status">
-          {fa
-            ? "ابزاری با این نام در این دسته پیدا نشد."
-            : "No matching tools in this category."}
+          {tl("ابزاری با این نام در این دسته پیدا نشد.", "No matching tools in this category.")}
         </p>
       )}
     </section>
@@ -304,17 +292,13 @@ export function LandingDetails() {
       <section className="public-section landing-business" id="business-tools">
         <div className="business-feature-copy">
           <span className="eyebrow orange-text">
-            AIFekr / BUSINESS INTELLIGENCE
+            AIFekr / {tl("BUSINESS INTELLIGENCE", "BUSINESS INTELLIGENCE")}
           </span>
           <h2>
-            {fa
-              ? "از رابطه با مشتری،\nتا تصویر مالی کسب‌وکار."
-              : "From customer relationships\nto your financial picture."}
+            {tl("از رابطه با مشتری،\nتا تصویر مالی کسب‌وکار.", "From customer relationships\nto your financial picture.")}
           </h2>
           <p>
-            {fa
-              ? "CRM و حسابداری، هرکدام فضای تخصصی خودشان را دارند؛ همراه با بینش‌هایی که کمک می‌کنند موضوع مهم بعدی را پیدا کنی."
-              : "CRM and accounting each have specialist workspaces, with insights that help you find what needs attention next."}
+            {tl("CRM و حسابداری، هرکدام فضای تخصصی خودشان را دارند؛ همراه با بینش‌هایی که کمک می‌کنند موضوع مهم بعدی را پیدا کنی.", "CRM and accounting each have specialist workspaces, with insights that help you find what needs attention next.")}
           </p>
           <div className="domain-actions">
             <Link href="/crm?tab=board" className="btn primary">
@@ -322,26 +306,21 @@ export function LandingDetails() {
               <Icon name="ArrowLeft" size={16} />
             </Link>
             <Link href="/accounting" className="btn">
-              {fa ? "دیدن دفتر مالی" : "Explore accounting"}
+              {tl("دیدن دفتر مالی", "Explore accounting")}
             </Link>
           </div>
         </div>
         <div className="business-preview-stack">
           <div className="panel">
             <div className="row-between">
-              <span className="eyebrow">RELATIONSHIP INTELLIGENCE</span>
+              <span className="eyebrow">{tl("RELATIONSHIP INTELLIGENCE", "RELATIONSHIP INTELLIGENCE")}</span>
               <Icon name="Users" size={21} />
             </div>
             <h3>
-              {fa
-                ? "فروش را با قدم بعدی جلو ببر."
-                : "Move sales forward with a next step."}
+              {tl("فروش را با قدم بعدی جلو ببر.", "Move sales forward with a next step.")}
             </h3>
             <div className="mini-pipeline">
-              {(fa
-                ? ["آشنایی", "مذاکره", "همکاری"]
-                : ["Connect", "Discuss", "Partner"]
-              ).map((s, i) => (
+              {[tl("آشنایی", "Connect"), tl("مذاکره", "Discuss"), tl("همکاری", "Partner")].map((s, i) => (
                 <div key={s}>
                   <span>{s}</span>
                   <i />
@@ -350,41 +329,33 @@ export function LandingDetails() {
               ))}
             </div>
             <Link href="/features/crm" className="text-link">
-              {fa
-                ? "مخاطبان، فرصت‌ها و پیگیری‌ها"
-                : "Contacts, opportunities & follow-ups"}{" "}
+              {tl("مخاطبان، فرصت‌ها و پیگیری‌ها", "Contacts, opportunities & follow-ups")}{" "}
               ↗
             </Link>
           </div>
           <div className="panel finance-feature-card">
             <div className="row-between">
-              <span className="eyebrow">FINANCIAL INTELLIGENCE</span>
+              <span className="eyebrow">{tl("FINANCIAL INTELLIGENCE", "FINANCIAL INTELLIGENCE")}</span>
               <Icon name="BookOpen" size={21} />
             </div>
             <h3>
-              {fa
-                ? "هر ثبت، یک تصویر روشن‌تر."
-                : "Every entry makes the picture clearer."}
+              {tl("هر ثبت، یک تصویر روشن‌تر.", "Every entry makes the picture clearer.")}
             </h3>
             <div className="finance-preview-check">
               <Icon name="CheckCircle2" size={18} />
-              {fa
-                ? "سند تراز · تطبیق بانک · کنترل دوره"
-                : "Balanced journals · Bank matching · Period control"}
+              {tl("سند تراز · تطبیق بانک · کنترل دوره", "Balanced journals · Bank matching · Period control")}
             </div>
             <Link href="/features/accounting" className="text-link">
-              {fa
-                ? "آشنایی با فضای حسابداری"
-                : "Explore the financial workspace"}{" "}
+              {tl("آشنایی با فضای حسابداری", "Explore the financial workspace")}{" "}
               ↗
             </Link>
           </div>
         </div>
       </section>
       <section className="public-section landing-learning">
-        <span className="eyebrow">LEARN. PRACTICE. KEEP GOING.</span>
+        <span className="eyebrow">{tl("LEARN. PRACTICE. KEEP GOING.", "LEARN. PRACTICE. KEEP GOING.")}</span>
         <h2>
-          {fa ? "رشد، فقط برای کسب‌وکار نیست." : "Growth is personal, too."}
+          {tl("رشد، فقط برای کسب‌وکار نیست.", "Growth is personal, too.")}
         </h2>
         <div className="personal-worlds">
           {[
@@ -415,10 +386,10 @@ export function LandingDetails() {
               <span className={`icon-chip ${color}`}>
                 <Icon name={icon} size={38} />
               </span>
-              <h3>{fa ? a : b}</h3>
-              <p>{fa ? c : d}</p>
+              <h3>{tl(a, b)}</h3>
+              <p>{tl(c, d)}</p>
               <span className="text-link">
-                {fa ? cta : ctaEn}
+                {tl(cta, ctaEn)}
                 <Icon name="ArrowLeft" size={17} />
               </span>
               <div className="personal-orbit" aria-hidden="true" />
@@ -476,7 +447,7 @@ export function LandingDetails() {
                 <span>0{i + 1}</span>
                 <Icon name={icon} size={26} />
               </div>
-              <h3>{fa ? a : b}</h3>
+              <h3>{tl(a, b)}</h3>
               <p>{fa ? c : d}</p>
               <span className="text-link">
                 {tl("خواندن راهنما", "Read guide")} ↗

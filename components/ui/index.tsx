@@ -492,7 +492,7 @@ export function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
         <Icon name={tool.icon} size={25} />
       </span>
       <h3>{tl(tool.fa, tool.en)}</h3>
-      <p>{fa ? tool.description : tool.descriptionEn}</p>
+      <p>{tl(tool.description, tool.descriptionEn)}</p>
       <span className="tool-bottom">
         {cost != null ? <span>
           ✦ {n(cost)} {t("credits")}
@@ -544,18 +544,18 @@ export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string
     "/404": ["صفحه پیدا نشد", "Page not found"],
     "/500": ["خطای صفحه", "Page error"],
   };
-  if (common[path]) return common[path][fa ? 0 : 1];
+  if (common[path]) return tl(common[path][0], common[path][1]);
   const [, category, root, child] = path.split("/");
   if (category === "business" && child) {
     const entry = businessPages[root]?.find(([s]) => s === child);
-    if (entry) return entry[fa ? 1 : 2];
+    if (entry) return tl(entry[1], entry[2]);
   }
   if (path.startsWith("/checkout/"))
     return tl("پرداخت آزمایشی", "Demo checkout");
   if (path.startsWith("/learn/courses/"))
     return tl("جزئیات دوره", "Course details");
   if (path.startsWith("/assistants/"))
-    return fa ? "دستیار تخصصی" : "Specialist assistant";
+    return tl("دستیار تخصصی", "Specialist assistant");
   const tool = tools.find((t) => "/" + t.slug === path);
   if (tool) return tl(tool.fa, tool.en);
   const a = adminSections.find(([s]) => "/admin/" + s === path);
@@ -566,7 +566,7 @@ export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string
       ? p[1]
       : p[2]
     : path.split("/").filter(Boolean).join(" / ") ||
-        (fa ? "صفحه اصلی" : "Landing");
+        (tl("صفحه اصلی", "Landing"));
 }
 export function Command({ onClose }: { onClose: () => void }) {
   const { t, fa, tl } = useApp();

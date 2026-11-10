@@ -102,13 +102,11 @@ export function Dashboard() {
     fetch("/api/growth/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dismiss_invite" }) }).catch(() => {});
   }
   const router = useRouter();
-  const suggestions = fa
-    ? [
-        "یک تصویر خلاقانه بساز",
-        "برای کسب‌وکارم ایده بده",
-        "یک چیز تازه یاد بگیر",
-      ]
-    : ["Create a beautiful image", "Grow my business", "Learn something new"];
+  const suggestions = [
+    tl("یک تصویر خلاقانه بساز", "Create a beautiful image"),
+    tl("برای کسب‌وکارم ایده بده", "Grow my business"),
+    tl("یک چیز تازه یاد بگیر", "Learn something new"),
+  ];
   function routePrompt(value: string) {
     // Chat is a page of the main site, so it loads in full.
     if (live) return location.assign((/تصویر|image/i.test(value) ? "/chat?mode=image&prompt=" : "/chat?prompt=") + encodeURIComponent(value));
@@ -176,9 +174,7 @@ export function Dashboard() {
           </div>
           <h2>{primary ? primary.title : t("question")}</h2>
           <p>
-            {primary ? primary.benefit : fa
-              ? "از اولین جرقه تا آخرین جزئیات، ای آی فکر کنار توست."
-              : "From your first spark to the finishing touch, we’re with you."}
+            {primary ? primary.benefit : tl("از اولین جرقه تا آخرین جزئیات، ای آی فکر کنار توست.", "From your first spark to the finishing touch, we’re with you.")}
           </p>
           {primary && (
             <a className="btn primary hero-action" href={primary.href}>
@@ -248,9 +244,7 @@ export function Dashboard() {
       <SectionTitle
         title={suggested ? personal!.copy.recommended : tl("با یک جرقه شروع کن", "Start with a spark")}
         subtitle={
-          suggested ? personal!.copy.recommendedHint : fa
-            ? "ابزار درست، برای ایدهٔ بعدی تو"
-            : "The right tool for your next idea"
+          suggested ? personal!.copy.recommendedHint : tl("ابزار درست، برای ایدهٔ بعدی تو", "The right tool for your next idea")
         }
       >
         {personal ? (
@@ -397,15 +391,13 @@ export function Dashboard() {
             <span className="eyebrow blue-text">
               {tl("هر روز، یک قدم جلوتر", "A LITTLE BETTER, EVERY DAY")}
             </span>
-            <h3>{fa ? "آینده را یاد بگیر" : "Learn your way forward"}</h3>
+            <h3>{tl("آینده را یاد بگیر", "Learn your way forward")}</h3>
             <p>
               {live
                 ? course
                   ? fa ? `مسیر «${course.title}» را ادامه بده.` : `Continue your ${course.title} course.`
-                  : fa ? "دوره‌های آکادمی را ببین و یادگیری را شروع کن." : "Browse the academy courses and start learning."
-                : fa
-                ? "مسیر «مقدمات هوش مصنوعی» را ادامه بده."
-                : "Continue your Introduction to AI course."}
+                  : tl("دوره‌های آکادمی را ببین و یادگیری را شروع کن.", "Browse the academy courses and start learning.")
+                : tl("مسیر «مقدمات هوش مصنوعی» را ادامه بده.", "Continue your Introduction to AI course.")}
             </p>
             {(!live || course?.percent != null) && (
             <div className="course-progress">
@@ -428,18 +420,14 @@ export function Dashboard() {
               {tl("فکر خوب، با هم بهتر می‌شود", "GOOD IDEAS ARE BETTER TOGETHER")}
             </span>
             <h3>
-              {fa
-                ? "دوستت را دعوت کن، اعتبار بگیر"
-                : "Share a spark. Earn credits."}
+              {tl("دوستت را دعوت کن، اعتبار بگیر", "Share a spark. Earn credits.")}
             </h3>
             <p>
               {live
                 ? fa
                   ? `از هر خرید دوستانی که دعوت می‌کنی، ${n(data?.commissionPercent ?? 0)}٪ پورسانت به کیف پولت اضافه می‌شود.`
                   : `Earn a ${data?.commissionPercent ?? 0}% commission on every purchase your invited friends make.`
-                : fa
-                ? "برای هر دعوت موفق، ۱۰۰ اعتبار هدیه بگیر."
-                : "Earn 100 credits for every successful invitation."}
+                : tl("برای هر دعوت موفق، ۱۰۰ اعتبار هدیه بگیر.", "Earn 100 credits for every successful invitation.")}
             </p>
           </div>
           <Icon name="ArrowUpLeft" className="directional" />
@@ -448,12 +436,10 @@ export function Dashboard() {
       <div className="daily-tip">
         <Icon name="Lightbulb" size={16} />
         <span>
-          {fa
-            ? "فکر روز: به جای «یک متن بنویس»، بگو برای چه کسی و با چه هدفی می‌نویسی."
-            : "A little tip: tell your assistant who you’re writing for and what you want to achieve."}
+          {tl("فکر روز: به جای «یک متن بنویس»، بگو برای چه کسی و با چه هدفی می‌نویسی.", "A little tip: tell your assistant who you’re writing for and what you want to achieve.")}
         </span>
         <Link href="/guides/getting-started">
-          {fa ? "بیشتر بدان" : "Learn more"}
+          {tl("بیشتر بدان", "Learn more")}
           <Icon name="ArrowLeft" size={13} />
         </Link>
       </div>

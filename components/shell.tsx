@@ -86,9 +86,9 @@ export function Shell({
   // Saved chats can be removed from the sidebar (main site DELETE /api/chat/history/:id); "All" shows every recent chat.
   const [allRecent, setAllRecent] = useState(false);
   async function removeChat(id: string) {
-    if (!confirm(fa ? "این گفتگو برای همیشه پاک شود؟" : "Delete this chat permanently?")) return;
+    if (!confirm(tl("این گفتگو برای همیشه پاک شود؟", "Delete this chat permanently?"))) return;
     const response = await fetch(`/api/chat/history/${encodeURIComponent(id)}`, { method: "DELETE", credentials: "include" }).catch(() => null);
-    if (!response?.ok) { alert(fa ? "پاک کردن گفتگو انجام نشد؛ دوباره تلاش کنید." : "Could not delete the chat; please try again."); return; }
+    if (!response?.ok) { alert(tl("پاک کردن گفتگو انجام نشد؛ دوباره تلاش کنید.", "Could not delete the chat; please try again.")); return; }
     setRecent((prev) => prev.filter((c) => c.id !== id));
     if (path === "/chat/" + id) router.push("/chat");
   }
@@ -98,7 +98,7 @@ export function Shell({
   const [shortcuts, setShortcuts] = useState(false);
   const [directory,setDirectory]=useState(false);
   const [loggingOut,setLoggingOut]=useState(false);
-  async function logout(){setLoggingOut(true);try{const response=await fetch("/api/auth/logout",{method:"POST",credentials:"include"});if(!response.ok)throw Error("LOGOUT_FAILED");window.location.assign("/login");}catch{setLoggingOut(false);alert(fa?"خروج انجام نشد؛ دوباره تلاش کنید.":"Unable to log out. Please retry.");}}
+  async function logout(){setLoggingOut(true);try{const response=await fetch("/api/auth/logout",{method:"POST",credentials:"include"});if(!response.ok)throw Error("LOGOUT_FAILED");window.location.assign("/login");}catch{setLoggingOut(false);alert(tl("خروج انجام نشد؛ دوباره تلاش کنید.", "Unable to log out. Please retry."));}}
   // The home page's "All tools" opens the same directory.
   useEffect(()=>{const open=()=>setDirectory(true);window.addEventListener("aifekr:directory",open);return()=>window.removeEventListener("aifekr:directory",open);},[]);
   const router = useRouter();
@@ -223,13 +223,13 @@ export function Shell({
             )) : (
             <Link href="/gallery" className="project-link">
               <span className="tiny-dot" />
-              {fa ? "برند استودیو نارنج" : "Narenj studio brand"}
+              {tl("برند استودیو نارنج", "Narenj studio brand")}
               <Icon name="ChevronDown" size={14} />
             </Link>
             )}
           </>
         )}
-        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{fa?"کیف پول و درآمد":"Wallet & earnings"}</Link>}
+        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{tl("کیف پول و درآمد", "Wallet & earnings")}</Link>}
           <Link href="/credits" className="wallet">
             <div>
               <span>
@@ -324,9 +324,7 @@ export function Shell({
         <footer className="app-footer">
           <span>
             ✦{" "}
-            {fa
-              ? "کمی فکر، بی‌نهایت امکان"
-              : "A little spark. Endless possibilities."}
+            {tl("کمی فکر، بی‌نهایت امکان", "A little spark. Endless possibilities.")}
           </span>
           <div>
             {!live && <Link href="/sitemap-ui">{t("sitemap")}</Link>}
@@ -393,7 +391,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         <Brand />
         <nav
           className={open ? "open" : ""}
-          aria-label={fa ? "ناوبری سایت" : "Website navigation"}
+          aria-label={tl("ناوبری سایت", "Website navigation")}
           onClick={(e) => {
             if ((e.target as HTMLElement).closest("a")) {setOpen(false);e.currentTarget.querySelectorAll('details[open]').forEach(detail=>detail.removeAttribute('open'));}
           }}
@@ -421,7 +419,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           </details>
           <details className="public-nav-menu">
             <summary>
-              {fa ? "راهکارها" : "Solutions"}
+              {tl("راهکارها", "Solutions")}
               <Icon name="ChevronDown" size={13} />
             </summary>
             <div>
@@ -469,9 +467,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         <div>
           <Brand />
           <p>
-            {fa
-              ? "یک فکر، هزار امکان."
-              : "One spark. A thousand possibilities."}
+            {tl("یک فکر، هزار امکان.", "One spark. A thousand possibilities.")}
           </p>
           {!live && <small>{t("mock")}</small>}
         </div>
@@ -482,21 +478,21 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
               [
                 ["/chat", tl("گفتگوی هوشمند", "AI chat")],
                 ["/features/crm", tl("CRM و فروش", "CRM & sales")],
-                ["/features/accounting", fa ? "حسابداری" : "Accounting"],
+                ["/features/accounting", tl("حسابداری", "Accounting")],
                 ["/voice-studio", tl("استودیوی صدا", "Voice Studio")],
-                ["/features/seo", fa ? "محتوا و سئو" : "Content & SEO"],
+                ["/features/seo", tl("محتوا و سئو", "Content & SEO")],
                 ["/features/factory", tl("کارخانه ویدیو", "Video factory")],
               ],
             ],
             [
-              fa ? "راهکارها" : "Solutions",
+              tl("راهکارها", "Solutions"),
               [
-                ["/business", fa ? "کسب‌وکار و تیم" : "Business & teams"],
+                ["/business", tl("کسب‌وکار و تیم", "Business & teams")],
                 ["/solutions/creators", tl("تولیدکنندگان محتوا", "Creators")],
                 ["/solutions/real-estate", tl("املاک", "Real estate")],
-                ["/student", fa ? "دانشجویان" : "Students"],
+                ["/student", tl("دانشجویان", "Students")],
                 ["/fitness", tl("ورزش و سلامت", "FIT")],
-                ["/pricing", fa ? "طرح‌ها و قیمت‌گذاری" : "Plans & pricing"],
+                ["/pricing", tl("طرح‌ها و قیمت‌گذاری", "Plans & pricing")],
               ],
             ],
             [
@@ -504,7 +500,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
               [
                 ["/about", tl("درباره ای آی فکر", "About AIFekr")],
                 ["/guides", tl("راهنماها", "Guides")],
-                ["/contact", fa ? "تماس با ما" : "Contact"],
+                ["/contact", tl("تماس با ما", "Contact")],
                 ["/security", tl("داده و امنیت", "Data & security")],
                 ["/privacy", tl("حریم خصوصی", "Privacy")],
                 ["/terms", tl("شرایط استفاده", "Terms")],
@@ -524,7 +520,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         <div className="footer-bottom">
           <span>
             © {new Date().getFullYear()} AIFekr ·{" "}
-            {fa ? "یک فکر، هزار امکان" : "One spark. Endless possibilities."}
+            {tl("یک فکر، هزار امکان", "One spark. Endless possibilities.")}
           </span>
           <div>
             {(live ? [] : [

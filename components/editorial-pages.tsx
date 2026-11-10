@@ -182,8 +182,8 @@ export function EditorialPage({ path }: { path: string }) {
           <p>{doc.updated ?? live.copy.noPromise}</p>
         </header>
         <div className="editorial-layout">
-          <nav className="panel editorial-toc" aria-label={fa ? "فهرست مطالب" : "On this page"}>
-            <strong>{fa ? "در این صفحه" : "On this page"}</strong>
+          <nav className="panel editorial-toc" aria-label={tl("فهرست مطالب", "On this page")}>
+            <strong>{tl("در این صفحه", "On this page")}</strong>
             {doc.sections.map((s, i) => (
               <a key={i} href={"#section-" + i}>
                 <span>{num(i)}</span>
@@ -200,7 +200,7 @@ export function EditorialPage({ path }: { path: string }) {
               </section>
             ))}
             <Link href="/contact" className="btn">
-              {fa ? "تماس با ما" : "Contact us"} <Icon name="ArrowLeft" size={16} />
+              {tl("تماس با ما", "Contact us")} <Icon name="ArrowLeft" size={16} />
             </Link>
           </article>
         </div>
@@ -217,17 +217,15 @@ export function EditorialPage({ path }: { path: string }) {
           <span className="eyebrow">AIFekr / {part.toUpperCase()}</span>
           <h1>{tl(legal.fa, legal.en)}</h1>
           <p>
-            {fa
-              ? "اطلاعات مربوط به همین نسخهٔ نمایشی، بدون ادعای سیاست‌های یک سرویس عملیاتی."
-              : "Information about this preview, without assuming policies for a production service."}
+            {tl("اطلاعات مربوط به همین نسخهٔ نمایشی، بدون ادعای سیاست‌های یک سرویس عملیاتی.", "Information about this preview, without assuming policies for a production service.")}
           </p>
         </header>
         <div className="editorial-layout">
           <nav
             className="panel editorial-toc"
-            aria-label={fa ? "فهرست مطالب" : "On this page"}
+            aria-label={tl("فهرست مطالب", "On this page")}
           >
-            <strong>{fa ? "در این صفحه" : "On this page"}</strong>
+            <strong>{tl("در این صفحه", "On this page")}</strong>
             {legal.sections.map((s, i) => (
               <a key={i} href={"#section-" + i}>
                 <span>0{i + 1}</span>
@@ -244,7 +242,7 @@ export function EditorialPage({ path }: { path: string }) {
               </section>
             ))}
             <Link href="/settings" className="btn">
-              {fa ? "مدیریت اطلاعات من" : "Manage my data"}{" "}
+              {tl("مدیریت اطلاعات من", "Manage my data")}{" "}
               <Icon name="ArrowLeft" size={16} />
             </Link>
           </article>
@@ -256,12 +254,10 @@ export function EditorialPage({ path }: { path: string }) {
       <header className="editorial-hero about-hero">
         <span className="eyebrow">AIFekr / ABOUT</span>
         <h1>
-          {fa ? "یک فکر،\nهزار مسیر تازه." : "One idea.\nA thousand new paths."}
+          {tl("یک فکر،\nهزار مسیر تازه.", "One idea.\nA thousand new paths.")}
         </h1>
         <p>
-          {fa
-            ? "فضایی برای کنار هم آوردن خلاقیت، یادگیری و کار روزانه؛ با ابزارهایی که مسیر ایده تا اجرا را روشن‌تر می‌کنند."
-            : "A place where creativity, learning and everyday work come together, making the path from idea to action clearer."}
+          {tl("فضایی برای کنار هم آوردن خلاقیت، یادگیری و کار روزانه؛ با ابزارهایی که مسیر ایده تا اجرا را روشن‌تر می‌کنند.", "A place where creativity, learning and everyday work come together, making the path from idea to action clearer.")}
         </p>
         <div className="domain-actions">
           <Link className="btn primary" href="/home">
@@ -269,7 +265,7 @@ export function EditorialPage({ path }: { path: string }) {
             <Icon name="ArrowLeft" size={16} />
           </Link>
           <Link className="btn" href="/contact">
-            {fa ? "ارتباط با ما" : "Get in touch"}
+            {tl("ارتباط با ما", "Get in touch")}
           </Link>
         </div>
         <div className="about-orbit" aria-hidden="true">
@@ -281,14 +277,10 @@ export function EditorialPage({ path }: { path: string }) {
       <section className="about-story">
         <span className="eyebrow">{tl("چرایی ای آی فکر", "WHY AIFekr")}</span>
         <h2>
-          {fa
-            ? "ابزارها کنار هم،\nفکر تو در مرکز."
-            : "Tools together.\nYour ideas at the center."}
+          {tl("ابزارها کنار هم،\nفکر تو در مرکز.", "Tools together.\nYour ideas at the center.")}
         </h2>
         <p>
-          {fa
-            ? "برای ساختن محتوا، مدیریت ارتباط با مشتری و یادگیری، بارها میان ابزارها جابه‌جا می‌شویم. طراحی ای آی فکر این کارها را در فضاهای مشخص گرد هم می‌آورد تا قدم بعدی واضح باشد."
-            : "Creating content, managing customers and learning often means moving between tools. AIFekr brings these activities into focused workspaces so your next step is clear."}
+          {tl("برای ساختن محتوا، مدیریت ارتباط با مشتری و یادگیری، بارها میان ابزارها جابه‌جا می‌شویم. طراحی ای آی فکر این کارها را در فضاهای مشخص گرد هم می‌آورد تا قدم بعدی واضح باشد.", "Creating content, managing customers and learning often means moving between tools. AIFekr brings these activities into focused workspaces so your next step is clear.")}
         </p>
       </section>
       <div className="tool-grid">
@@ -339,14 +331,10 @@ function ContactPage() {
       <header className="editorial-hero">
         <span className="eyebrow">AIFekr / CONTACT</span>
         <h1>
-          {fa
-            ? "گفتگو، شروع\nیک امکان تازه است."
-            : "A conversation starts\na new possibility."}
+          {tl("گفتگو، شروع\nیک امکان تازه است.", "A conversation starts\na new possibility.")}
         </h1>
         <p>
-          {fa
-            ? "پرسش، پیشنهاد یا بازخوردت را برای این پیش‌نمایش ثبت کن."
-            : "Record your question, suggestion or feedback for this preview."}
+          {tl("پرسش، پیشنهاد یا بازخوردت را برای این پیش‌نمایش ثبت کن.", "Record your question, suggestion or feedback for this preview.")}
         </p>
       </header>
       <div className="contact-layout">
@@ -359,9 +347,7 @@ function ContactPage() {
               {tl("درباره چه چیزی صحبت کنیم؟", "What would you like to discuss?")}
             </h2>
             <p>
-              {fa
-                ? "موضوع پیام را انتخاب کن تا درخواستت روشن‌تر ثبت شود. این فرم پیام خارجی ارسال نمی‌کند."
-                : "Choose a topic to organize your request. This form does not send an external message."}
+              {tl("موضوع پیام را انتخاب کن تا درخواستت روشن‌تر ثبت شود. این فرم پیام خارجی ارسال نمی‌کند.", "Choose a topic to organize your request. This form does not send an external message.")}
             </p>
           </div>
           <Link className="contact-guide-link" href="/guides">
@@ -391,9 +377,7 @@ function ContactPage() {
             );
             setSent(true);
             toast.success(
-              fa
-                ? "پیام در این مرورگر ثبت شد"
-                : "Message saved in this browser",
+              tl("پیام در این مرورگر ثبت شد", "Message saved in this browser"),
             );
           }}
         >
@@ -404,12 +388,10 @@ function ContactPage() {
               </span>
               <h2>{tl("بازخوردت ثبت شد.", "Your feedback is saved.")}</h2>
               <p>
-                {fa
-                  ? "این ثبت محلی است و پیام ارسال نشده است."
-                  : "This is a local record; no message was sent."}
+                {tl("این ثبت محلی است و پیام ارسال نشده است.", "This is a local record; no message was sent.")}
               </p>
               <Button onClick={() => setSent(false)}>
-                {fa ? "ثبت پیام دیگر" : "Record another message"}
+                {tl("ثبت پیام دیگر", "Record another message")}
               </Button>
             </div>
           ) : (
@@ -432,9 +414,9 @@ function ContactPage() {
               <label>
                 {tl("موضوع گفتگو", "Topic")}
                 <select name="topic">
-                  <option>{fa ? "بازخورد طراحی" : "Design feedback"}</option>
-                  <option>{fa ? "گزارش مشکل" : "Report an issue"}</option>
-                  <option>{fa ? "همکاری" : "Collaboration"}</option>
+                  <option>{tl("بازخورد طراحی", "Design feedback")}</option>
+                  <option>{tl("گزارش مشکل", "Report an issue")}</option>
+                  <option>{tl("همکاری", "Collaboration")}</option>
                 </select>
               </label>
               <label>
@@ -469,29 +451,23 @@ function Guides({ path }: { path: string }) {
           </span>
           <h1>
             {topic?.[fa ? 1 : 2] ||
-              (fa ? "راهنمای شروع کار" : "Getting started")}
+              (tl("راهنمای شروع کار", "Getting started"))}
           </h1>
           <p>{topic?.[fa ? 4 : 5]}</p>
         </header>
         <div className="panel editorial-document">
           {[
             [
-              fa ? "۱. هدف را روشن کن" : "1. Define the goal",
-              fa
-                ? "قبل از انتخاب ابزار، بنویس چه نتیجه‌ای می‌خواهی و برای چه کسی."
-                : "Before choosing a tool, describe the desired result and its audience.",
+              tl("۱. هدف را روشن کن", "1. Define the goal"),
+              tl("قبل از انتخاب ابزار، بنویس چه نتیجه‌ای می‌خواهی و برای چه کسی.", "Before choosing a tool, describe the desired result and its audience."),
             ],
             [
               tl("۲. یک نسخه کوچک بساز", "2. Start small"),
-              fa
-                ? "اطلاعات لازم را وارد کن، پیش‌نمایش را ببین و جزئیات را اصلاح کن."
-                : "Enter the required information, review the preview and refine the details.",
+              tl("اطلاعات لازم را وارد کن، پیش‌نمایش را ببین و جزئیات را اصلاح کن.", "Enter the required information, review the preview and refine the details."),
             ],
             [
-              fa ? "۳. ذخیره و بازبینی کن" : "3. Save and review",
-              fa
-                ? "داده‌ها در همین مرورگر ذخیره می‌شوند. برای نگه‌داری مستقل از فایل خروجی استفاده کن."
-                : "Data is stored in this browser. Export a file to keep an independent copy.",
+              tl("۳. ذخیره و بازبینی کن", "3. Save and review"),
+              tl("داده‌ها در همین مرورگر ذخیره می‌شوند. برای نگه‌داری مستقل از فایل خروجی استفاده کن.", "Data is stored in this browser. Export a file to keep an independent copy."),
             ],
           ].map(([a, b]) => (
             <section key={a}>
@@ -500,7 +476,7 @@ function Guides({ path }: { path: string }) {
             </section>
           ))}
           <Link href="/home" className="btn primary">
-            {fa ? "ورود به فضای کار" : "Open workspace"}
+            {tl("ورود به فضای کار", "Open workspace")}
           </Link>
         </div>
       </div>
@@ -510,19 +486,15 @@ function Guides({ path }: { path: string }) {
       <header className="editorial-hero center">
         <span className="eyebrow">AIFekr / GUIDES</span>
         <h1>
-          {fa
-            ? "قدم بعدی را\nآسان‌تر پیدا کن."
-            : "Find your next step\na little more easily."}
+          {tl("قدم بعدی را\nآسان‌تر پیدا کن.", "Find your next step\na little more easily.")}
         </h1>
         <p>
-          {fa
-            ? "راهنماهای کوتاه برای شروع، ساختن و مدیریت کارها."
-            : "Short guides for getting started, creating and managing your work."}
+          {tl("راهنماهای کوتاه برای شروع، ساختن و مدیریت کارها.", "Short guides for getting started, creating and managing your work.")}
         </p>
         <input
           className="guide-search"
           aria-label={tl("جستجوی راهنما", "Search guides")}
-          placeholder={fa ? "دنبال چه چیزی هستی؟" : "What are you looking for?"}
+          placeholder={tl("دنبال چه چیزی هستی؟", "What are you looking for?")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />

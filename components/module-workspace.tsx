@@ -406,7 +406,7 @@ function seedRows(model: string, fields: Field[], fa: boolean): Row[] {
                   : f.default && !/[([]/.test(f.default)
                     ? f.default
                     : /title|name|description/i.test(f.name)
-                      ? `${fa ? "نمونه" : "Sample"} ${i + 1}`
+                      ? `Sample ${i + 1}`
                       : "",
       ]),
     ]),
@@ -442,7 +442,7 @@ export function ModuleWorkspace({
   path: string;
 }) {
   const search = useSearchParams();
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   const live = !!useShell();
   const params = new URLSearchParams(search.toString());
   if (live && module.id === "image" && params.get("tab") === "character") params.set("tab", "characters");
@@ -485,8 +485,8 @@ export function ModuleWorkspace({
   return (
     <div className={`module-workspace accent-${module.accent}`}>
       <SectionTitle
-        title={module.title[fa ? 0 : 1]}
-        subtitle={module.subtitle[fa ? 0 : 1]}
+        title={tl(module.title[0], module.title[1])}
+        subtitle={tl(module.subtitle[0], module.subtitle[1])}
       >
         <span className={`icon-chip ${module.accent}`}>
           <Icon name={module.icon} />
@@ -495,7 +495,7 @@ export function ModuleWorkspace({
       <nav
         className="module-tabs"
         ref={tabsRef}
-        aria-label={fa ? "بخش‌های ماژول" : "Module sections"}
+        aria-label={tl("بخش‌های ماژول", "Module sections")}
       >
         {module.views.map((v) => (
           <Link
@@ -504,7 +504,7 @@ export function ModuleWorkspace({
             aria-current={view.id === v.id ? "page" : undefined}
             className={view.id === v.id ? "selected" : ""}
           >
-            {v.title[fa ? 0 : 1]}
+            {tl(v.title[0], v.title[1])}
           </Link>
         ))}
       </nav>
@@ -525,7 +525,7 @@ export function ModuleWorkspace({
 }
 
 function ViewContent({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   // On aifekr.com the create modules show the account's real creations and generate for real.
   const live = !!useShell();
   if (live && ['image','video','music'].includes(module.id) && ['gallery','history'].includes(view.id)) return <LiveMediaLibrary type={module.id as 'image'|'video'|'music'}/>;
@@ -595,7 +595,7 @@ function ViewContent({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
     return <SocialWorkspace view={view.id} />;
   if (module.id === "website") return <WebsiteWorkspace view={view.id} />;
   if (module.id === "startup") return <StartupWorkspace view={view.id} />;
-  if (view.kind === "chat") return <Chat persona={module.title[fa ? 0 : 1]} />;
+  if (view.kind === "chat") return <Chat persona={tl(module.title[0], module.title[1])} />;
   if (
     module.id === "factory" &&
     ["production", "script", "timeline", "edit"].includes(view.id)
@@ -635,7 +635,7 @@ function DomainWorkspace({
   module: ModuleSpec;
   view: ViewSpec;
 }) {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const [model, setModel] = useState(view.model || "Record");
   const models = [view.model || "Record", ...(view.models || [])];
   return (
@@ -656,7 +656,7 @@ function DomainWorkspace({
                   size={17}
                 />
               )}
-              {m === view.model ? view.title[fa ? 0 : 1] : fieldLabel(m, fa)}
+              {m === view.model ? tl(view.title[0], view.title[1]) : fieldLabel(m, fa)}
             </button>
           ))}
       </div>
@@ -679,7 +679,7 @@ function DomainRecords({
   view: ViewSpec;
   model: string;
 }) {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const fields = editableFields(view, model);
   const key = "aifekr-domain:" + model;
   const { rows, save } = useRecords(key, seedRows(model, fields, fa));
@@ -725,7 +725,7 @@ function DomainRecords({
     );
     setEdit(null);
     toast.success(
-      fa ? "اطلاعات در این مرورگر ذخیره شد" : "Saved in this browser",
+      tl("اطلاعات در این مرورگر ذخیره شد", "Saved in this browser"),
     );
   }
   const isForm = ["form", "editor", "wizard", "studio"].includes(view.kind);
@@ -745,7 +745,7 @@ function DomainRecords({
               {steps.map((s, i) => (
                 <li key={i} className={step === i ? "selected" : ""}>
                   <span>{n(i + 1)}</span>
-                  {s[fa ? 0 : 1]}
+                  {tl(s[0], s[1])}
                 </li>
               ))}
             </ol>
@@ -780,42 +780,38 @@ function DomainRecords({
             <div className="domain-actions">
               {step > 0 && (
                 <Button onClick={() => setStep(step - 1)}>
-                  {fa ? "مرحله قبل" : "Back"}
+                  {tl("مرحله قبل", "Back")}
                 </Button>
               )}
               <Button type="submit" variant="primary" disabled={!loaded}>
                 {view.kind === "wizard" && step < steps.length - 1
-                  ? fa
-                    ? "مرحله بعد"
-                    : "Continue"
+                  ? tl("مرحله بعد", "Continue")
                   : t("save")}
               </Button>
               <Button
                 onClick={() => {
                   localStorage.setItem(key + ":form", JSON.stringify(draft));
-                  toast.success(fa ? "پیش‌نویس ذخیره شد" : "Draft saved");
+                  toast.success(tl("پیش‌نویس ذخیره شد", "Draft saved"));
                 }}
               >
-                {fa ? "ذخیره پیش‌نویس" : "Save draft"}
+                {tl("ذخیره پیش‌نویس", "Save draft")}
               </Button>
             </div>
           </form>
         </div>
         <aside className="panel domain-aside">
           <Icon name={module.icon} size={32} />
-          <h3>{view.title[fa ? 0 : 1]}</h3>
-          <p>{module.subtitle[fa ? 0 : 1]}</p>
+          <h3>{tl(view.title[0], view.title[1])}</h3>
+          <p>{tl(module.subtitle[0], module.subtitle[1])}</p>
           <span className="badge">
-            {fa ? "پیش‌نمایش محلی" : "Local preview"}
+            {tl("پیش‌نمایش محلی", "Local preview")}
           </span>
           <p>
-            {fa
-              ? "اطلاعات این بخش به صورت مستقل در مرورگر نگه‌داری می‌شود."
-              : "This workspace stores its own data in your browser."}
+            {tl("اطلاعات این بخش به صورت مستقل در مرورگر نگه‌داری می‌شود.", "This workspace stores its own data in your browser.")}
           </p>
           {view.cost && (
             <p>
-              {fa ? "هزینه در سرویس اصلی" : "Service credit cost"}:{" "}
+              {tl("هزینه در سرویس اصلی", "Service credit cost")}:{" "}
               {n(view.cost)}
             </p>
           )}
@@ -827,17 +823,17 @@ function DomainRecords({
       {["overview", "report"].includes(view.kind) && (
         <div className="stats-grid">
           {[
-            [fa ? "کل رکوردها" : "Total records", rows.length],
+            [tl("کل رکوردها", "Total records"), rows.length],
             [
-              fa ? "فعال" : "Active",
+              tl("فعال", "Active"),
               rows.filter((r) => r.status === "active").length,
             ],
             [
-              fa ? "پیش‌نویس" : "Drafts",
+              tl("پیش‌نویس", "Drafts"),
               rows.filter((r) => r.status === "draft").length,
             ],
             [
-              fa ? "تکمیل‌شده" : "Completed",
+              tl("تکمیل‌شده", "Completed"),
               rows.filter((r) => r.status === "completed").length,
             ],
           ].map(([label, value]) => (
@@ -850,7 +846,7 @@ function DomainRecords({
       )}
       {view.kind === "report" && (
         <div className="panel">
-          <h3>{fa ? "توزیع وضعیت رکوردها" : "Record status distribution"}</h3>
+          <h3>{tl("توزیع وضعیت رکوردها", "Record status distribution")}</h3>
           <div className="domain-bars">
             {["draft", "active", "completed"].map((status) => (
               <div key={status}>
@@ -867,17 +863,17 @@ function DomainRecords({
       )}
       <div className="domain-toolbar">
         <input
-          aria-label={fa ? "جستجوی رکوردها" : "Search records"}
+          aria-label={tl("جستجوی رکوردها", "Search records")}
           placeholder={t("search")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <select
-          aria-label={fa ? "فیلتر وضعیت" : "Status filter"}
+          aria-label={tl("فیلتر وضعیت", "Status filter")}
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
-          <option value="all">{fa ? "همه وضعیت‌ها" : "All statuses"}</option>
+          <option value="all">{tl("همه وضعیت‌ها", "All statuses")}</option>
           {["draft", "active", "completed"].map((s) => (
             <option key={s}>{s}</option>
           ))}
@@ -930,7 +926,7 @@ function DomainRecords({
                       {String(r[titleField] || r.id)}
                     </button>
                     <select
-                      aria-label={fa ? "انتقال به مرحله" : "Move to stage"}
+                      aria-label={tl("انتقال به مرحله", "Move to stage")}
                       value={String(r.status)}
                       onChange={(e) =>
                         save(
@@ -992,7 +988,7 @@ function DomainRecords({
                 {columns.map((f) => (
                   <th key={f.name}>{fieldLabel(f.name, fa)}</th>
                 ))}
-                <th>{fa ? "عملیات" : "Actions"}</th>
+                <th>{tl("عملیات", "Actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -1009,10 +1005,10 @@ function DomainRecords({
                         {t("preview")}
                       </Button>
                       <Button onClick={() => setEdit(r)}>
-                        {fa ? "ویرایش" : "Edit"}
+                        {tl("ویرایش", "Edit")}
                       </Button>
                       <Button onClick={() => setRemove(String(r.id))}>
-                        {fa ? "حذف" : "Delete"}
+                        {tl("حذف", "Delete")}
                       </Button>
                     </div>
                   </td>
@@ -1024,7 +1020,7 @@ function DomainRecords({
       )}
       {edit && (
         <Modal
-          title={fa ? "ویرایش اطلاعات" : "Edit record"}
+          title={tl("ویرایش اطلاعات", "Edit record")}
           onClose={() => setEdit(null)}
         >
           <form
@@ -1042,7 +1038,7 @@ function DomainRecords({
       )}
       {detail && (
         <Modal
-          title={String(detail[titleField] || view.title[fa ? 0 : 1])}
+          title={String(detail[titleField] || tl(view.title[0], view.title[1]))}
           onClose={() => setDetail(null)}
         >
           <dl className="domain-detail">
@@ -1060,7 +1056,7 @@ function DomainRecords({
                 setDetail(null);
               }}
             >
-              {fa ? "ویرایش" : "Edit"}
+              {tl("ویرایش", "Edit")}
             </Button>
             <Button
               onClick={() =>
@@ -1078,13 +1074,11 @@ function DomainRecords({
       )}
       {remove && (
         <Modal
-          title={fa ? "حذف رکورد" : "Delete record"}
+          title={tl("حذف رکورد", "Delete record")}
           onClose={() => setRemove(null)}
         >
           <p>
-            {fa
-              ? "این رکورد از داده‌های محلی حذف شود؟"
-              : "Delete this record from local data?"}
+            {tl("این رکورد از داده‌های محلی حذف شود؟", "Delete this record from local data?")}
           </p>
           <Button
             onClick={() => {
@@ -1092,7 +1086,7 @@ function DomainRecords({
               setRemove(null);
             }}
           >
-            {fa ? "تأیید حذف" : "Confirm deletion"}
+            {tl("تأیید حذف", "Confirm deletion")}
           </Button>
         </Modal>
       )}
@@ -1109,7 +1103,7 @@ function FieldForm({
   value: Row;
   onChange: (r: Row) => void;
 }) {
-  const { fa } = useApp();
+  const { fa, tl } = useApp();
   return (
     <div className="domain-fields">
       {fields.map((f) => {
@@ -1131,11 +1125,11 @@ function FieldForm({
                 onChange={(e) => change(e.target.value)}
               >
                 <option value="">
-                  {fa ? "انتخاب کنید" : "Select an option"}
+                  {tl("انتخاب کنید", "Select an option")}
                 </option>
                 {[1, 2, 3].map((i) => (
                   <option key={i} value={"sample-" + i}>
-                    {fa ? "نمونه" : "Sample"} {i}
+                    {tl("نمونه", "Sample")} {i}
                   </option>
                 ))}
               </select>
@@ -1144,12 +1138,12 @@ function FieldForm({
                 value={String(value[f.name] || "draft")}
                 onChange={(e) => change(e.target.value)}
               >
-                <option value="draft">{fa ? "پیش‌نویس" : "Draft"}</option>
-                <option value="active">{fa ? "فعال" : "Active"}</option>
+                <option value="draft">{tl("پیش‌نویس", "Draft")}</option>
+                <option value="active">{tl("فعال", "Active")}</option>
                 <option value="completed">
-                  {fa ? "تکمیل‌شده" : "Completed"}
+                  {tl("تکمیل‌شده", "Completed")}
                 </option>
-                <option value="archived">{fa ? "بایگانی" : "Archived"}</option>
+                <option value="archived">{tl("بایگانی", "Archived")}</option>
               </select>
             ) : /Json/.test(f.type) ||
               /description|notes|content|script|prompt|body|message|goals|challenge|equipment|limitations|customFields/i.test(
@@ -1192,7 +1186,7 @@ function FieldForm({
 }
 
 function AccessMatrix({ module }: { module: ModuleSpec }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const key = "aifekr-matrix:" + module.id;
   const [values, setValues] = useState<Record<string, boolean>>({});
   useEffect(() => {
@@ -1206,7 +1200,7 @@ function AccessMatrix({ module }: { module: ModuleSpec }) {
         <table className="domain-table">
           <thead>
             <tr>
-              <th>{fa ? "ماژول" : "Module"}</th>
+              <th>{tl("ماژول", "Module")}</th>
               {["view", "create", "edit", "delete"].map((a) => (
                 <th key={a}>
                   {(
@@ -1235,12 +1229,12 @@ function AccessMatrix({ module }: { module: ModuleSpec }) {
               .filter((m) => m.group !== "admin")
               .map((m) => (
                 <tr key={m.id}>
-                  <td>{m.title[fa ? 0 : 1]}</td>
+                  <td>{tl(m.title[0], m.title[1])}</td>
                   {["view", "create", "edit", "delete"].map((a) => (
                     <td key={a}>
                       <input
                         type="checkbox"
-                        aria-label={m.title[fa ? 0 : 1] + " " + a}
+                        aria-label={tl(m.title[0], m.title[1]) + " " + a}
                         checked={values[m.id + a] ?? a === "view"}
                         onChange={(e) =>
                           setValues({ ...values, [m.id + a]: e.target.checked })
@@ -1266,7 +1260,7 @@ function AccessMatrix({ module }: { module: ModuleSpec }) {
   );
 }
 function Connections({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const key = "aifekr-connections:" + module.id + view.id;
   const [value, setValue] = useState<Row>({});
   useEffect(() => {
@@ -1279,11 +1273,9 @@ function Connections({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
       <span className="icon-chip blue">
         <Icon name="Globe" size={32} />
       </span>
-      <h3>{view.title[fa ? 0 : 1]}</h3>
+      <h3>{tl(view.title[0], view.title[1])}</h3>
       <p>
-        {fa
-          ? "پیکربندی اتصال آزمایشی؛ هیچ حساب خارجی متصل نمی‌شود."
-          : "Demo connection configuration. No external account is connected."}
+        {tl("پیکربندی اتصال آزمایشی؛ هیچ حساب خارجی متصل نمی‌شود.", "Demo connection configuration. No external account is connected.")}
       </p>
       <form
         onSubmit={(e) => {
@@ -1292,7 +1284,7 @@ function Connections({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
           setValue(next);
           localStorage.setItem(key, JSON.stringify(next));
           toast.success(
-            fa ? "پیکربندی محلی ذخیره شد" : "Local configuration saved",
+            tl("پیکربندی محلی ذخیره شد", "Local configuration saved"),
           );
         }}
       >
@@ -1310,7 +1302,7 @@ function Connections({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
         </Button>
         {value.configured && (
           <span className="badge">
-            {fa ? "پیکربندی ذخیره‌شده" : "Configuration saved"}
+            {tl("پیکربندی ذخیره‌شده", "Configuration saved")}
           </span>
         )}
       </form>
@@ -1318,7 +1310,7 @@ function Connections({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
   );
 }
 function Game() {
-  const { fa, n } = useApp();
+  const { fa, n, tl } = useApp();
   const [answer, setAnswer] = useState<number | null>(null);
   const [round, setRound] = useState(1);
   const a = round + 2,
@@ -1326,7 +1318,7 @@ function Game() {
   return (
     <div className="panel play-card">
       <Icon name="BrainCircuit" size={56} />
-      <h2>{fa ? "چالش ذهنی" : "Brain challenge"}</h2>
+      <h2>{tl("چالش ذهنی", "Brain challenge")}</h2>
       <p dir="ltr">
         {a} × {b} = ?
       </p>
@@ -1345,10 +1337,8 @@ function Game() {
         <>
           <p role="status">
             {answer === a * b
-              ? fa
-                ? "درست بود!"
-                : "Correct!"
-              : (fa ? "پاسخ درست: " : "Correct answer: ") + n(a * b)}
+              ? tl("درست بود!", "Correct!")
+              : (tl("پاسخ درست: ", "Correct answer: ")) + n(a * b)}
           </p>
           <Button
             onClick={() => {
@@ -1356,7 +1346,7 @@ function Game() {
               setAnswer(null);
             }}
           >
-            {fa ? "چالش بعدی" : "Next challenge"}
+            {tl("چالش بعدی", "Next challenge")}
           </Button>
         </>
       )}
@@ -1364,12 +1354,12 @@ function Game() {
   );
 }
 function Gym() {
-  const { fa, n } = useApp();
+  const { fa, n, tl } = useApp();
   const [sets, setSets] = useState([false, false, false]);
   return (
     <div className="panel">
-      <h2>{fa ? "جلسه تمرین امروز" : "Today’s workout"}</h2>
-      <p>{fa ? "اسکوات · ۳ ست × ۱۲ تکرار" : "Squats · 3 sets × 12 reps"}</p>
+      <h2>{tl("جلسه تمرین امروز", "Today’s workout")}</h2>
+      <p>{tl("اسکوات · ۳ ست × ۱۲ تکرار", "Squats · 3 sets × 12 reps")}</p>
       {sets.map((done, i) => (
         <label className="domain-card" key={i}>
           <input
@@ -1377,7 +1367,7 @@ function Gym() {
             checked={done}
             onChange={() => setSets(sets.map((v, j) => (j === i ? !v : v)))}
           />
-          {fa ? "ست" : "Set"} {n(i + 1)}
+          {tl("ست", "Set")} {n(i + 1)}
         </label>
       ))}
       <progress max={3} value={sets.filter(Boolean).length} />
@@ -1387,25 +1377,23 @@ function Gym() {
             "aifekr-workout",
             JSON.stringify({ sets, date: new Date().toISOString() }),
           );
-          toast.success(fa ? "تمرین ثبت شد" : "Workout saved");
+          toast.success(tl("تمرین ثبت شد", "Workout saved"));
         }}
       >
-        {fa ? "ثبت جلسه" : "Save workout"}
+        {tl("ثبت جلسه", "Save workout")}
       </Button>
     </div>
   );
 }
 function Inbox({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
-  const { fa, t } = useApp();
+  const { fa, t, tl } = useApp();
   const [selected, setSelected] = useState(0);
   const [text, setText] = useState("");
   const { rows, save } = useRecords("aifekr-inbox:" + module.id + view.id, [
     {
       id: "welcome",
       thread: 0,
-      body: fa
-        ? "سلام، برای شروع راهنمایی می‌خواهم."
-        : "Hello, I would like help getting started.",
+      body: tl("سلام، برای شروع راهنمایی می‌خواهم.", "Hello, I would like help getting started."),
       direction: "in",
     },
   ]);
@@ -1418,7 +1406,7 @@ function Inbox({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
             key={i}
             onClick={() => setSelected(i)}
           >
-            {fa ? "گفتگو" : "Conversation"} {i + 1}
+            {tl("گفتگو", "Conversation")} {i + 1}
           </button>
         ))}
       </aside>
@@ -1452,14 +1440,12 @@ function Inbox({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
             ]);
             setText("");
             toast.success(
-              fa
-                ? "پاسخ در پیش‌نمایش محلی ثبت شد"
-                : "Reply saved to local preview",
+              tl("پاسخ در پیش‌نمایش محلی ثبت شد", "Reply saved to local preview"),
             );
           }}
         >
           <label>
-            {fa ? "پاسخ آزمایشی" : "Demo reply"}
+            {tl("پاسخ آزمایشی", "Demo reply")}
             <textarea
               required
               value={text}
@@ -1476,13 +1462,13 @@ function Inbox({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
   );
 }
 function Timeline({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
-  const { fa, n } = useApp();
+  const { fa, n, tl } = useApp();
   const { rows, save } = useRecords("aifekr-timeline:" + module.id + view.id, [
-    { id: "1", title: fa ? "شروع مسیر" : "Getting started", done: false },
-    { id: "2", title: fa ? "تمرین و اجرا" : "Practice and apply", done: false },
+    { id: "1", title: tl("شروع مسیر", "Getting started"), done: false },
+    { id: "2", title: tl("تمرین و اجرا", "Practice and apply"), done: false },
     {
       id: "3",
-      title: fa ? "ارزیابی و بازبینی" : "Review and assess",
+      title: tl("ارزیابی و بازبینی", "Review and assess"),
       done: false,
     },
   ]);
@@ -1514,7 +1500,7 @@ function Timeline({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
               save(next);
             }}
           >
-            {fa ? "انتقال به بالا" : "Move up"}
+            {tl("انتقال به بالا", "Move up")}
           </Button>
         </div>
       ))}

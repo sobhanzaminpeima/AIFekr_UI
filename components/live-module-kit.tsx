@@ -100,13 +100,13 @@ export function LiveLoad({
     <div role="alert" className="plan-notice">
       {error}{" "}
       {activationUrlFor(error) ? (
-        <a className="btn primary" href={activationUrlFor(error)!}>{fa ? "انتخاب و فعال‌سازی پکیج" : "Choose and activate a package"}</a>
+        <a className="btn primary" href={activationUrlFor(error)!}>{tl("انتخاب و فعال‌سازی پکیج", "Choose and activate a package")}</a>
       ) : reload && (
         <Button onClick={reload}>{tl("تلاش دوباره", "Retry")}</Button>
       )}
     </div>
   ) : !data ? (
-    <p role="status">{fa ? "در حال دریافت…" : "Loading…"}</p>
+    <p role="status">{tl("در حال دریافت…", "Loading…")}</p>
   ) : null;
 }
 export function LiveModuleFrame({
@@ -162,7 +162,7 @@ export function LiveTable({
             {columns.map((c) => (
               <th key={c.key}>{tl(c.label[0], c.label[1])}</th>
             ))}
-            {actions && <th>{fa ? "عملیات" : "Actions"}</th>}
+            {actions && <th>{tl("عملیات", "Actions")}</th>}
           </tr>
         </thead>
         <tbody>
@@ -176,9 +176,7 @@ export function LiveTable({
                       : typeof r[c.key] === "boolean"
                         ? r[c.key]
                           ? tl("فعال", "Active")
-                          : fa
-                            ? "غیرفعال"
-                            : "Inactive"
+                          : tl("غیرفعال", "Inactive")
                         : String(r[c.key])}
                   </bdi>
                 </td>
@@ -327,7 +325,7 @@ export function LiveForm({
             {progress}
             {error && <p role="alert">{error}</p>}
             <Button type="submit" variant="primary" disabled={busy}>
-              {busy ? (fa ? "در حال انجام…" : "Working…") : title}
+              {busy ? (tl("در حال انجام…", "Working…")) : title}
             </Button>
           </form>
         </Modal>

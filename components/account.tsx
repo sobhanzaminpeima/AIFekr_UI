@@ -47,15 +47,13 @@ function DemoPlans() {
           {tl("فضای بیشتر، برای فکرهای بزرگ‌تر.", "More room for your big ideas.")}
         </h1>
         <p>
-          {fa
-            ? "ساده شروع کن؛ همراه ایده‌هایت رشد کن. قیمت‌ها نمونه و پرداخت آزمایشی است."
-            : "Start simply. Grow as your ideas do. Sample prices; demo payments only."}
+          {tl("ساده شروع کن؛ همراه ایده‌هایت رشد کن. قیمت‌ها نمونه و پرداخت آزمایشی است.", "Start simply. Grow as your ideas do. Sample prices; demo payments only.")}
         </p>
         <div className="chips">
           {[
             [1, t("monthly")],
             [3, tl("۳ ماهه", "Quarterly")],
-            [6, fa ? "۶ ماهه" : "6 months"],
+            [6, tl("۶ ماهه", "6 months")],
             [12, t("yearly")],
           ].map(([p, label]) => (
             <button
@@ -118,7 +116,7 @@ function DemoPlans() {
                   )}
                 </strong>
                 <small>
-                  {fa ? "برای دورهٔ انتخاب‌شده" : "per selected billing period"}
+                  {tl("برای دورهٔ انتخاب‌شده", "per selected billing period")}
                 </small>
                 <Link
                   href={
@@ -128,14 +126,14 @@ function DemoPlans() {
                   }
                   className={`btn full ${i === 1 ? "primary" : ""}`}
                 >
-                  {i === 0 ? t("start") : fa ? "انتخاب این طرح" : "Choose plan"}
+                  {i === 0 ? t("start") : tl("انتخاب این طرح", "Choose plan")}
                   <Icon name="ArrowLeft" size={17} />
                 </Link>
                 <ul>
                   {[
                     `${n(plan.credits)} ${t("credits")}`,
                     tl("دسترسی به مدل‌های هوشمند", "Smart model access"),
-                    fa ? "تاریخچه و فضای شخصی" : "Personal workspace & history",
+                    tl("تاریخچه و فضای شخصی", "Personal workspace & history"),
                     fa
                       ? [
                           "ابزارهای پایه",
@@ -159,7 +157,7 @@ function DemoPlans() {
         )}
       </div>
       <div className="panel compare-plans">
-        <SectionTitle title={fa ? "در هر طرح چه خبر است؟" : "Find your fit"} />
+        <SectionTitle title={tl("در هر طرح چه خبر است؟", "Find your fit")} />
         {[
           "Chat",
           "Image & video",
@@ -197,7 +195,7 @@ function DemoFAQ() {
   return (
     <section className="faq">
       <h2>
-        {fa ? "شاید سؤال تو هم باشد" : "A few things you might be wondering"}
+        {tl("شاید سؤال تو هم باشد", "A few things you might be wondering")}
       </h2>
       {(fa
         ? [
@@ -245,9 +243,7 @@ export function Credits() {
       <SectionTitle
         title={tl("کیف پول اعتبار", "Your credit wallet")}
         subtitle={
-          fa
-            ? "شفاف، ساده، همیشه در اختیار تو."
-            : "Simple, transparent, always in your hands."
+          tl("شفاف، ساده، همیشه در اختیار تو.", "Simple, transparent, always in your hands.")
         }
       />
       <div className="wallet-hero panel">
@@ -259,7 +255,7 @@ export function Credits() {
         <SparkChart />
       </div>
       <SectionTitle
-        title={fa ? "به ایده‌هایت سوخت برسان" : "Fuel your next idea"}
+        title={tl("به ایده‌هایت سوخت برسان", "Fuel your next idea")}
       />
       <div className="credit-packs">
         {[500, 1500, 5000].map((v, i) => (
@@ -278,7 +274,7 @@ export function Credits() {
           </Link>
         ))}
       </div>
-      <DataTable title={fa ? "تاریخچهٔ تراکنش‌ها" : "Transaction history"} />
+      <DataTable title={tl("تاریخچهٔ تراکنش‌ها", "Transaction history")} />
     </>
   );
 }
@@ -334,9 +330,7 @@ export function Checkout({ path }: { path: string }) {
         <h1>
           {id === "success"
             ? tl("اعتبار تازه، ایده‌های تازه!", "Fresh credits. Fresh possibilities.")
-            : fa
-              ? "پرداخت آزمایشی انجام نشد"
-              : "Demo payment failed"}
+            : tl("پرداخت آزمایشی انجام نشد", "Demo payment failed")}
         </h1>
         <p>{t("mock")}</p>
         <Link
@@ -350,7 +344,7 @@ export function Checkout({ path }: { path: string }) {
   return (
     <div className="checkout panel">
       <span className="eyebrow">AIFekr CHECKOUT</span>
-      <h1>{fa ? "یک قدم تا شروع" : "One step closer"}</h1>
+      <h1>{tl("یک قدم تا شروع", "One step closer")}</h1>
       <p className="badge">{t("mock")}</p>
       <dl className="cost-summary">
         <dt>{tl("سفارش", "Your order")}</dt>
@@ -361,11 +355,11 @@ export function Checkout({ path }: { path: string }) {
         <dd>{value}</dd>
       </dl>
       <label>
-        {fa ? "کد تخفیف" : "Discount code"}
+        {tl("کد تخفیف", "Discount code")}
         <div className="inline-field">
           <input
             value={discount}
-            aria-label={fa?'کد تخفیف':'Discount code'}
+            aria-label={tl('کد تخفیف', 'Discount code')}
             onChange={(e) => {
               setDiscount(e.target.value);
               setApplied(false);
@@ -389,11 +383,11 @@ export function Checkout({ path }: { path: string }) {
         </div>
       </label>
       <label>
-        {fa ? "روش پرداخت" : "Payment method"}
+        {tl("روش پرداخت", "Payment method")}
         <select>
-          <option>{fa ? "زرین‌پال (آزمایشی)" : "Zarinpal (simulated)"}</option>
+          <option>{tl("زرین‌پال (آزمایشی)", "Zarinpal (simulated)")}</option>
           <option>
-            {fa ? "کارت‌به‌کارت (آزمایشی)" : "Card transfer (simulated)"}
+            {tl("کارت‌به‌کارت (آزمایشی)", "Card transfer (simulated)")}
           </option>
           <option>{tl("رمزارز (آزمایشی)", "Crypto (simulated)")}</option>
         </select>
@@ -404,7 +398,7 @@ export function Checkout({ path }: { path: string }) {
           checked={failure}
           onChange={(e) => setFailure(e.target.checked)}
         />
-        {fa ? "شبیه‌سازی پرداخت ناموفق" : "Simulate a failed payment"}
+        {tl("شبیه‌سازی پرداخت ناموفق", "Simulate a failed payment")}
       </label>
       <Button
         variant="primary full"
@@ -433,9 +427,7 @@ export function Checkout({ path }: { path: string }) {
         <Icon name="LockKeyhole" size={16} />
       </Button>
       <p className="fine-print">
-        {fa
-          ? "هیچ مبلغی از حساب واقعی کسر نمی‌شود."
-          : "No real payment will be collected."}
+        {tl("هیچ مبلغی از حساب واقعی کسر نمی‌شود.", "No real payment will be collected.")}
       </p>
     </div>
   );
@@ -593,9 +585,7 @@ export function Settings() {
                   onChange={(e) => setFailure(e.target.checked)}
                   type="checkbox"
                 />
-                {fa
-                  ? "فعال‌سازی خطای تصادفی برای بررسی حالت‌ها (۳۵٪)"
-                  : "Enable random failures for testing (35%)"}
+                {tl("فعال‌سازی خطای تصادفی برای بررسی حالت‌ها (۳۵٪)", "Enable random failures for testing (35%)")}
               </label>
             </>
           ) : tab === "security" ? (
@@ -611,9 +601,7 @@ export function Settings() {
               </label>
               <label className="check-label">
                 <input type="checkbox" onChange={() => setDirty(true)} />
-                {fa
-                  ? "تأیید دومرحله‌ای (نمایشی)"
-                  : "Two-factor authentication (demo)"}
+                {tl("تأیید دومرحله‌ای (نمایشی)", "Two-factor authentication (demo)")}
               </label>
               <div className="inline-banner">
                 Chrome · Windows · {t("today")}
@@ -647,9 +635,7 @@ export function Settings() {
                   <span>
                     {s}
                     <small>
-                      {fa
-                        ? "نیازمند اتصال؛ عملیات آزمایشی"
-                        : "Connection required · demo only"}
+                      {tl("نیازمند اتصال؛ عملیات آزمایشی", "Connection required · demo only")}
                     </small>
                   </span>
                   <button
@@ -660,7 +646,7 @@ export function Settings() {
                       toast.info(t("mock"));
                     }}
                   >
-                    {fa ? "اتصال" : "Connect"}
+                    {tl("اتصال", "Connect")}
                   </button>
                 </div>
               ))}
@@ -702,9 +688,7 @@ export function Settings() {
               <div className="danger-zone">
                 <h3>{tl("حذف حساب آزمایشی", "Delete demo data")}</h3>
                 <p>
-                  {fa
-                    ? "اطلاعات ذخیره‌شده در این مرورگر پاک می‌شوند."
-                    : "This clears AIFekr data saved in this browser."}
+                  {tl("اطلاعات ذخیره‌شده در این مرورگر پاک می‌شوند.", "This clears AIFekr data saved in this browser.")}
                 </p>
                 <Button variant="danger" onClick={() => setDialog(true)}>
                   {t("delete")}
@@ -715,7 +699,7 @@ export function Settings() {
           <div className="form-footer">
             {dirty && (
               <span className="amber-text">
-                {fa ? "تغییرات ذخیره نشده" : "Unsaved changes"}
+                {tl("تغییرات ذخیره نشده", "Unsaved changes")}
               </span>
             )}
             <Button type="submit" variant="primary" disabled={busy}>
@@ -759,9 +743,7 @@ export function Referral() {
       <SectionTitle
         title={t("referral")}
         subtitle={
-          fa
-            ? "فکرهای خوب را با دوستانت قسمت کن."
-            : "Good ideas deserve good company."
+          tl("فکرهای خوب را با دوستانت قسمت کن.", "Good ideas deserve good company.")
         }
       />
       <div className="referral-hero panel">
@@ -770,16 +752,14 @@ export function Referral() {
         </span>
         <h1>{tl("با هم، بیشتر می‌سازیم.", "Make more. Together.")}</h1>
         <p>
-          {fa
-            ? "هر دعوت موفق، ۱۰۰ اعتبار برای هر دوی شما."
-            : "Every successful invitation means 100 credits for both of you."}
+          {tl("هر دعوت موفق، ۱۰۰ اعتبار برای هر دوی شما.", "Every successful invitation means 100 credits for both of you.")}
         </p>
         <div className="inline-field">
           <input
             readOnly
             value="https://aifekr.example/invite/sara"
             dir="ltr"
-            aria-label={fa ? "لینک دعوت" : "Referral link"}
+            aria-label={tl("لینک دعوت", "Referral link")}
           />
           <Button
             variant="primary"
@@ -808,13 +788,11 @@ export function Referral() {
       </Button>
       {withdraw && (
         <Modal
-          title={fa ? "کیف پول درآمد" : "Earnings wallet"}
+          title={tl("کیف پول درآمد", "Earnings wallet")}
           onClose={() => setWithdraw(false)}
         >
           <p>
-            {fa
-              ? "این کیف پول آزمایشی است و موجودی قابل برداشت ندارد."
-              : "This demo wallet has no withdrawable funds."}
+            {tl("این کیف پول آزمایشی است و موجودی قابل برداشت ندارد.", "This demo wallet has no withdrawable funds.")}
           </p>
         </Modal>
       )}
@@ -858,7 +836,7 @@ export function Notifications() {
                       ][i]}
                 </h3>
                 <p>
-                  {t("mock")} · {fa ? "چند دقیقه پیش" : "A few minutes ago"}
+                  {t("mock")} · {tl("چند دقیقه پیش", "A few minutes ago")}
                 </p>
               </div>
               <i className="tiny-dot" />

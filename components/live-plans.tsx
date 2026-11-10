@@ -9,7 +9,7 @@ import { useApp } from "./providers";
 import { Button, Icon, Modal } from "./ui";
 
 type Offer = { period: string; minor: number; currency: string; credits: number; days: number; compareAtMinor?: number };
-type Pkg = { planCode: string; name: string; nameEn?: string | null; category: string; features?: string | null; featuresEn?: string | null; isFeatured?: boolean; offers?: Record<string, Offer>; purchaseAvailable?: boolean };
+type Pkg = { duration?: number; planCode: string; name: string; nameEn?: string | null; category: string; features?: string | null; featuresEn?: string | null; isFeatured?: boolean; offers?: Record<string, Offer>; purchaseAvailable?: boolean };
 type Quote = { id: string; planCode: string; period: string; currency: string; amountMinor: number };
 
 const CATEGORY: Record<string, [string, string, string]> = {
@@ -25,6 +25,9 @@ const features = (raw?: string | null) => {
   try { const v = JSON.parse(raw); if (Array.isArray(v)) return v.map(String); } catch { /* plain text */ }
   return raw.split(/\r?\n|•/).map((x) => x.trim()).filter(Boolean);
 };
+
+/** The length the buyer really gets: some packages keep a 3-month term under the "monthly" price key. */
+const termKey = (o: Offer, duration = 0) => { const days = Math.max(o.days, o.period === "monthly" ? duration : 0); return days >= 350 ? "annual" : days >= 170 ? "semiannual" : days >= 85 ? "quarterly" : days >= 25 && days <= 35 ? "monthly" : o.period; };
 
 export function LivePlans() {
   const { fa, locale, n, tl } = useApp();
@@ -140,7 +143,7 @@ export function LivePlans() {
                   <h2>{tl(p.name, p.nameEn || p.name)}</h2>
                   {o.compareAtMinor != null && o.compareAtMinor > o.minor && <del>{money(o.compareAtMinor, o.currency)}</del>}
                   <strong className="plan-price">{money(o.minor, o.currency)}</strong>
-                  <small className="muted">{tl(...(PERIOD[o.period] ?? [o.period, o.period]))} · {n(o.credits)} {tx("اعتبار", "credits")}</small>
+                  <small className="muted">{tl(...(PERIOD[termKey(o, p.duration)] ?? [o.period, o.period]))} · {n(o.credits)} {tx("اعتبار", "credits")}</small>
                   <ul className="check-list">{list.map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}</ul>
                   <Button variant="primary" className="full" disabled={!!busy || noRoute || p.purchaseAvailable === false} onClick={() => void choose(p)}>
                     {busy === p.planCode ? <Icon name="LoaderCircle" size={16} className="spin" /> : null}{tx("انتخاب و فعال‌سازی", "Choose and activate")}
