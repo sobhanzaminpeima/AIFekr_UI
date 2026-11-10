@@ -47,6 +47,7 @@ import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
 import { LiveContentPage } from "./live-content-page";
+import { LiveCertificate, LiveOwnerLogin, LiveStartupContact } from "./live-forms";
 import { LiveTool, LiveTryFree } from "./live-tool";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
@@ -89,6 +90,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/complete-phone" ? <LiveCompletePhone />
         : path === "/payments" || path === "/fitness/payments" ? <LivePayments />
         : path === "/fitness/credits" ? <LiveCredits fitness />
+        : path === "/startup/contact" ? <LiveStartupContact />
         : path === "/tools/try-free-ai" ? <LiveTryFree />
         : path.startsWith("/tools/") ? <LiveTool slug={path.split("/")[2]} />
         : path === "/live" ? <LiveTalk />
@@ -110,6 +112,8 @@ function LivePlatform({ path }: { path: string }) {
     : path === "/login" ? <LiveLogin />
     : path === "/register" ? <LiveRegister />
     : path === "/ai-chat" || path === "/start" ? <LiveContentPage />
+    : path === "/owner/login" ? <LiveOwnerLogin />
+    : path.startsWith("/verify-certificate/") ? <LiveCertificate />
     : ["about", "contact", "guides"].includes(section) ? <EditorialPage path={path} />
     : <PublicPage path={path} />;
   return (

@@ -6673,3 +6673,30 @@ tr:hover td {
 .content-blocks h2{font-size:20px;font-weight:800;margin:0 0 10px}
 .content-blocks p,.content-blocks li{color:var(--text-secondary);line-height:2}
 .content-blocks ol{padding-inline-start:22px;margin:0}
+
+
+/* ---- Small forms and certificate ---- */
+.form-page{display:grid;place-items:center;min-height:62vh;padding:48px 18px}
+.form-card{width:100%;max-width:440px;padding:30px;border-radius:24px;border:1px solid var(--border-strong);background:linear-gradient(150deg,#f9731618,transparent 60%),var(--surface-1)}
+.form-card h1{font-size:24px;font-weight:800;margin:0 0 6px}
+.form-card>p{color:var(--text-secondary);font-size:13px;line-height:1.9;margin:0 0 18px}
+.form-label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.form-segments{display:flex;gap:8px}
+.form-segments button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text-secondary);font:inherit;cursor:pointer}
+.form-segments button[aria-pressed="true"]{background:var(--brand-gradient);color:#fff;border-color:transparent}
+.form-done{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0;text-align:center;color:var(--success)}
+.form-done strong{color:var(--text-primary)}
+.form-done span{font-size:13px;color:var(--text-secondary)}
+.startup-features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.startup-features .panel{margin:0;color:var(--module-accent)}
+.startup-features h3{font-size:14px;margin:8px 0 4px;color:var(--text-primary)}
+.startup-features p{font-size:12px;margin:0;color:var(--text-secondary)}
+.cert-card{max-width:560px}
+.cert-state{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border-radius:99px;font-weight:800;margin-bottom:16px}
+.cert-state.ok{color:var(--success);background:color-mix(in srgb,var(--success) 14%,transparent)}
+.cert-state.bad{color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
+.cert-card dl>div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--border)}
+.cert-card dt{font-size:13px;color:var(--text-muted)}
+.cert-card dd{margin:0;font-weight:600;overflow-wrap:anywhere;text-align:end}
+.cert-card>p{margin:16px 0 0;font-size:12px}
+@media(max-width:560px){.startup-features{grid-template-columns:1fr}}
