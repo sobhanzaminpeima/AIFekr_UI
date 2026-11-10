@@ -586,40 +586,62 @@ function CalendarDraft() {
 function Webhooks() {
   const { fa } = useSocial();
   const [state, setState] = useState<Row | null>(null);
+  const [error, setError] = useState("");
+  const [checking, setChecking] = useState(false);
+  const yes = fa ? "بله" : "Yes", no = fa ? "خیر" : "No", none = fa ? "ثبت نشده" : "None recorded";
+  const when = (v: unknown) => v ? new Date(String(v)).toLocaleString(fa ? "fa-IR" : "en") : none;
+  async function check() {
+    setChecking(true);
+    setError("");
+    try {
+      const response = await fetch(IG + "webhooks/subscribe", { credentials: "include" });
+      const body = (await response.json().catch(() => ({}))) as Row;
+      if (!response.ok) throw Error(String(body.error ?? (fa ? "بررسی انجام نشد." : "The check failed.")));
+      setState(body);
+    } catch (e) {
+      setState(null);
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setChecking(false);
+    }
+  }
+  const rows: [string, string][] = state ? [
+    [fa ? "حساب متصل" : "Connected account", state.igUsername ? "@" + String(state.igUsername) : none],
+    [fa ? "اعتبار توکن (آزمایش واقعی)" : "Token valid (live test)", state.tokenValid ? yes : no],
+    [fa ? "پایان اعتبار توکن" : "Token expires", when(state.tokenExpiry)],
+    [fa ? "دریافت رویدادها فعال است" : "Events subscribed", !state.subscriptionChecked ? (fa ? "بررسی نشد" : "Could not check") : state.subscribed ? yes : no],
+    [fa ? "آخرین رویداد دریافتی" : "Last event received", when(state.lastEventAt)],
+    [fa ? "نتیجهٔ آخرین پاسخ" : "Last delivery result", state.lastDeliveryResult ? String(state.lastDeliveryResult) : none],
+    [fa ? "زمان بررسی" : "Checked at", when(state.checkedAt)],
+  ] : [];
   return (
     <section className="panel">
       <h3>
-        {fa ? "اتصال رویدادهای اینستاگرام" : "Instagram event subscription"}
+        {fa ? "سلامت اتصال اینستاگرام" : "Instagram connection health"}
       </h3>
-      <Form
-        title={fa ? "بررسی وضعیت" : "Check status"}
-        fields={[]}
-        url={IG + "webhooks/subscribe"}
-        method="GET"
-        onDone={setState}
-      />
+      <Button onClick={check} disabled={checking}>
+        {checking ? (fa ? "در حال بررسی…" : "Checking…") : fa ? "بررسی وضعیت" : "Run check"}
+      </Button>
       <Confirm
         title={fa ? "فعال‌سازی دریافت رویدادها" : "Enable event subscription"}
         url={IG + "webhooks/subscribe"}
-        onDone={() => {
-          setState({ subscribed: true });
-        }}
+        onDone={() => void check()}
         caution={
           fa
             ? "با این انتخاب دریافت رویدادهای مجاز حساب متصل برای قوانین پاسخ فعال می‌شود."
             : "This subscribes the connected account's authorized events for reply rules."
         }
       />
-      {state && (
-        <p role="status">
-          {state.subscribed
-            ? fa
-              ? "اشتراک تأیید شد"
-              : "Subscription confirmed"
-            : fa
-              ? "اشتراک تأیید نشده است"
-              : "Subscription not confirmed"}
-        </p>
+      {error && <p role="alert">{error}</p>}
+      {rows.length > 0 && (
+        <dl role="status">
+          {rows.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd><bdi>{value}</bdi></dd>
+            </div>
+          ))}
+        </dl>
       )}
     </section>
   );
