@@ -46,6 +46,7 @@ import { PublicLeadForm } from "./leads-workspace";
 import { AdminUserDetail } from "./admin-user-detail";
 import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
+import { LiveTool, LiveTryFree } from "./live-tool";
 import { EmptyStateContext } from "./ui";
 import { LiveLogin, LiveRegister } from "./live-auth";
 import { useShell } from "./live-shell-context";
@@ -85,7 +86,10 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/welcome" ? <Onboarding />
         // Required mobile number before anything else (main site lib/auth/phoneRequirement).
         : path === "/complete-phone" ? <LiveCompletePhone />
-        : path === "/payments" ? <LivePayments />
+        : path === "/payments" || path === "/fitness/payments" ? <LivePayments />
+        : path === "/fitness/credits" ? <LiveCredits fitness />
+        : path === "/tools/try-free-ai" ? <LiveTryFree />
+        : path.startsWith("/tools/") ? <LiveTool slug={path.split("/")[2]} />
         : path === "/live" ? <LiveTalk />
         : path === "/plans" ? <LivePlans />
         : /^\/(fitness\/)?checkout\/[^/]+$/.test(path) ? <LiveCheckout id={decodeURIComponent(path.split("/").pop()!)} />

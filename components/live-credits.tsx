@@ -22,7 +22,7 @@ const json = (url: string) => fetch(url, { credentials: "include", cache: "no-st
  * credit tiers (bought through the classic flow, /api/credits/purchase) and
  * both histories. Wording: the classic page's (main site lib/billing/creditsCopy.ts).
  */
-export function LiveCredits() {
+export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
   const { locale, n } = useApp();
   const { strings: s, labels: l, tools } = useShell()!.credits!;
   const [rates,setRates]=useState<{usdToToman:number;usdToTry:number}|null>(null);
@@ -39,22 +39,26 @@ export function LiveCredits() {
   const [buying, setBuying] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([json("/api/credits/tiers"), json("/api/user/profile"), json("/api/credits/usage-summary")])
-      .then(([t, p, u]) => { setTiers(t.tiers || []); setRates(t.fxRates||null); setProfile(p.user || null); setWallets(u.wallets || null); setBreakdown(u.breakdown || []); })
+    const own = json(fitness ? "/api/fitness/credits" : "/api/user/profile");
+    Promise.all([json("/api/credits/tiers"), own, fitness ? own : json("/api/credits/usage-summary")])
+      .then(([t, p, u]) => { setTiers(t.tiers || []); setRates(fitness ? p.fxRates || null : t.fxRates || null); setProfile(p.user || null); setWallets(u.wallets || null); setBreakdown(u.breakdown || []); })
       .catch(() => setFailed(true))
       .finally(() => setLoading(false));
     json("/api/user/payments").then((d) => setPurchases((d.payments || []).filter((p: Purchase) => p.plan.startsWith("CREDITS_")))).catch(() => {});
-    json("/api/user/usage/history").then((d) => setUsage(d.entries || [])).catch(() => setUsage([]));
-    json("/api/app/dashboard").then((d) => setDays(d.usage?.days ?? null)).catch(() => {});
+    if (fitness) setUsage([]);
+    else {
+      json("/api/user/usage/history").then((d) => setUsage(d.entries || [])).catch(() => setUsage([]));
+      json("/api/app/dashboard").then((d) => setDays(d.usage?.days ?? null)).catch(() => {});
+    }
     const q = new URLSearchParams(location.search).get("payment");
     if (q === "success") toast.success(s["Credit purchase successful"]);
     if (q === "failed") toast.error(s["Payment failed"]);
-  }, [s]);
+  }, [s, fitness]);
 
   async function buy(tierId: string) {
     setBuying(tierId);
     try {
-      const res = await fetch("/api/credits/purchase", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ tierId, currency: locale === "fa" ? "IRR" : locale === "tr" ? "TRY" : "USD" }) });
+      const res = await fetch("/api/credits/purchase", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ tierId, currency: locale === "fa" ? "IRR" : locale === "tr" ? "TRY" : "USD", context: fitness ? "FITNESS" : undefined }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       location.href = data.paymentUrl;

@@ -6645,3 +6645,13 @@ tr:hover td {
 .pay-status p{font-size:13px;color:var(--text-secondary)}
 .pay-status small{color:var(--text-muted)}
 @media(max-width:800px){.pay-grid{grid-template-columns:1fr}}
+
+
+/* ---- Guided tools ---- */
+.tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.tool-grid .panel{margin:0}
+.tool-field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.tool-field label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.tool-field input,.tool-field textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text-primary);font:inherit}
+.tool-image{width:100%;border-radius:14px;margin-top:12px;border:1px solid var(--border)}
+@media(max-width:800px){.tool-grid{grid-template-columns:1fr}}
