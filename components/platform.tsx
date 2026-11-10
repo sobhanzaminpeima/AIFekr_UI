@@ -52,6 +52,7 @@ import { LiveFit } from "./live-fit";
 import { LiveWelcomeSetup } from "./live-welcome-setup";
 import { LiveAdminUserDetail } from "./live-admin-user-detail";
 import { AdminCenter } from "./admin-center";
+import { AdminFinance } from "./admin-finance";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -103,6 +104,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/startup/contact" ? <LiveStartupContact />
         // Admin pages (the main site forwards them for admins only).
         : path === "/admin" || path === "/admin/dashboard" ? <AdminCenter />
+        : path === "/admin/financial" ? <div className="admin-live-page"><AdminFinance section="payments" /></div>
         : path === "/admin/users" ? <AdminUsers />
         : /^\/admin\/users\/[^/]+$/.test(path) ? <LiveAdminUserDetail key={path} id={decodeURIComponent(path.split("/")[3])} />
         : path === "/tools/try-free-ai" ? <LiveTryFree />

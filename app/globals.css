@@ -6940,3 +6940,11 @@ tr:hover td {
 .admin-pulse-plan{display:grid;grid-template-columns:minmax(80px,1fr) 2fr auto;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
 .admin-pulse-plan i{height:8px;border-radius:8px;background:var(--surface-3);overflow:hidden}
 .admin-pulse-plan b{display:block;height:100%;background:var(--brand-gradient)}
+/* ---- Admin payments (live) ---- */
+.admin-live-page{display:grid;gap:16px}
+.admin-finance-links{display:flex;flex-wrap:wrap;gap:10px}
+.admin-payment-review{display:grid;gap:12px;margin-top:14px}
+.admin-payment-review label{display:grid;gap:6px}
+.admin-payment-link{display:flex;gap:8px}.admin-payment-link input{flex:1;min-width:0}
+.admin-finance-table td small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}
+button.panel.stat{font:inherit;color:inherit;text-align:start;cursor:pointer}

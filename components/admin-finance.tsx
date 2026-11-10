@@ -9,12 +9,18 @@ import { modules } from "@/lib/upstream/registry";
 import { useApp } from "./providers";
 import { Button, Empty, Icon, Modal, download } from "./ui";
 import { toast } from "sonner";
+import { useShell } from "./live-shell-context";
+import { LiveAdminPayments } from "./live-admin-payments";
 
 type Payment = Purchase & { userId?: string; currency?: string };
 const exportJson = (name: string, data: unknown) =>
   download(name + ".json", JSON.stringify(data, null, 2), "application/json");
 
 export function AdminFinance({ section }: { section: string }) {
+  if (useShell() && section === "payments") return <LiveAdminPayments />;
+  return <PreviewAdminFinance section={section} />;
+}
+function PreviewAdminFinance({ section }: { section: string }) {
   const { fa, t, n, price } = useApp();
   const path = usePathname();
   const [payments] = useLocalState<Payment[]>("aifekr-billing-purchases", []);
