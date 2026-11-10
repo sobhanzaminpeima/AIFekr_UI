@@ -6901,3 +6901,19 @@ tr:hover td {
 .explore-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:13px}
 .explore-links a{color:var(--text-muted)}
 .explore-auth{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+
+
+/* ---- Welcome wizard ---- */
+.welcome-setup{display:grid;place-items:center;min-height:70vh;padding:32px 16px}
+.welcome-card{width:100%;max-width:560px;padding:32px 28px;border-radius:26px;border:1px solid var(--border-strong);background:linear-gradient(150deg,#f9731618,transparent 55%),var(--surface-1)}
+.welcome-card h1{font-size:22px;font-weight:800;line-height:1.6;margin:0 0 20px}
+.welcome-progress{display:flex;gap:6px;margin-bottom:24px}
+.welcome-progress i{flex:1;height:4px;border-radius:4px;background:var(--surface-3);transition:background .3s}
+.welcome-progress i.on{background:var(--brand-gradient)}
+.welcome-options{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.welcome-options button{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text-primary);font:inherit;text-align:start;cursor:pointer;transition:border-color .15s,background .15s}
+.welcome-options button:hover,.welcome-options button[aria-pressed="true"]{border-color:#f9731688;background:#f9731614}
+.welcome-options button span{font-size:20px}
+.welcome-options button small{display:block;font-size:12px;color:var(--text-muted);margin-inline-start:auto}
+.welcome-foot{display:flex;justify-content:space-between;gap:12px;margin-top:6px}
+.welcome-note{display:block;margin-top:16px;font-size:12px;color:var(--text-muted);text-align:center}

@@ -49,6 +49,7 @@ import { LiveCheckout } from "./live-checkout";
 import { LiveContentPage } from "./live-content-page";
 import { LiveIndustries, LiveIndustry } from "./live-industry";
 import { LiveFit } from "./live-fit";
+import { LiveWelcomeSetup } from "./live-welcome-setup";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -92,6 +93,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/home" ? <Dashboard />
         // Onboarding inside the signed-in frame: every page stays one click away.
         : path === "/welcome" ? <Onboarding />
+        : path === "/welcome/setup" ? <LiveWelcomeSetup />
         // Required mobile number before anything else (main site lib/auth/phoneRequirement).
         : path === "/complete-phone" ? <LiveCompletePhone />
         : path === "/payments" || path === "/fitness/payments" ? <LivePayments />
