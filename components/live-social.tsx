@@ -11,7 +11,7 @@ import Link from "@/components/site-link";
 import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import { moduleViewHref } from "@/lib/upstream/registry";
 import { useShell } from "./live-shell-context";
-import { Button, Modal, SectionTitle } from "./ui";
+import { Button, Modal } from "./ui";
 import { socialDraft, campaignLinks, socialPillars } from "@/lib/social-contract";
 import { socialLabel } from "@/lib/social-copy";
 
@@ -301,6 +301,47 @@ function Confirm({
   );
 }
 
+const STUDIO_GROUPS = [
+  { fa: "ساخت", en: "Create", views: ["content", "brand", "calendar"] },
+  { fa: "انتشار", en: "Publish", views: ["publish", "queue"] },
+  { fa: "گفت‌وگو", en: "Engage", views: ["messages", "campaigns", "direct-rules"] },
+  { fa: "تحلیل", en: "Insights", views: ["analytics", "growth-report", "competitors"] },
+  { fa: "اتصال", en: "Connection", views: ["connections"] },
+];
+const STUDIO_VIEWS = new Set(STUDIO_GROUPS.flatMap((g) => g.views));
+/** The studio's control bar: which account is on air, at a glance. */
+function StudioBar({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
+  const { fa } = useSocial();
+  const [status, setStatus] = useState<Row | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch(IG + "status", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (alive) setStatus(d as Row | null); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const connected = status?.connected === true;
+  return (
+    <header className="studio-bar">
+      <div className="studio-brand">
+        <span className="studio-mark" aria-hidden="true" />
+        <div>
+          <h1>{module.title[fa ? 0 : 1]}</h1>
+          <p>{module.subtitle[fa ? 0 : 1]}</p>
+        </div>
+      </div>
+      {status && (
+        <div className={"studio-live" + (connected ? " on" : "")} role="status" aria-label={view.title[fa ? 0 : 1]}>
+          <i aria-hidden="true" />
+          {connected
+            ? <bdi>{status.igUsername ? "@" + String(status.igUsername) : fa ? "متصل" : "Connected"}</bdi>
+            : <span>{fa ? "حساب متصل نیست" : "No account connected"}</span>}
+        </div>
+      )}
+    </header>
+  );
+}
 const CONNECT_RESULT: Record<string, [string, string]> = {
   connected_other_account: ["این حساب اینستاگرام به حساب دیگری در AIFekr وصل است. از صاحب آن بخواهید اتصال را قطع کند یا با پشتیبانی تماس بگیرید.", "This Instagram account is connected to a different AIFekr account. Ask its owner to disconnect it, or contact support."],
   connected_other_workspace: ["این حساب اینستاگرام در فضای کاری دیگری از حساب خودتان وصل است. آنجا اتصال را قطع کنید و دوباره وصل شوید.", "This Instagram account is connected in another of your workspaces. Disconnect it there, then connect here."],
@@ -337,27 +378,42 @@ export function LiveSocial({
   const fa = shell.lang === "fa";
   return (
     <SocialContext.Provider value={{ fa, lang: shell.lang }}>
-      <div className="module-workspace accent-pink">
+      <div className="module-workspace accent-pink social-studio" data-module="social">
+        <StudioBar module={module} view={view} />
         <InstagramConnectNotice fa={fa} />
-        <SectionTitle
-          title={module.title[fa ? 0 : 1]}
-          subtitle={module.subtitle[fa ? 0 : 1]}
-        />
-        <nav
-          className="module-tabs"
-          aria-label={fa ? "بخش‌های شبکه‌های اجتماعی" : "Social sections"}
-        >
-          {module.views.map((v) => (
-            <Link
-              key={v.id}
-              href={moduleViewHref(module, v)}
-              aria-current={v.id === view.id ? "page" : undefined}
-            >
-              {v.title[fa ? 0 : 1]}
-            </Link>
-          ))}
-        </nav>
-        <SocialView key={view.id} view={view.id} />
+        <div className="studio-body">
+          <nav className="studio-rail" aria-label={fa ? "بخش‌های استودیو" : "Studio sections"}>
+            {STUDIO_GROUPS.map((group) => {
+              const views = module.views.filter((v) => group.views.includes(v.id));
+              if (!views.length) return null;
+              return (
+                <div className="studio-group" key={group.en}>
+                  <small>{fa ? group.fa : group.en}</small>
+                  {views.map((v) => (
+                    <Link key={v.id} href={moduleViewHref(module, v)} aria-current={v.id === view.id ? "page" : undefined}>
+                      {v.title[fa ? 0 : 1]}
+                    </Link>
+                  ))}
+                </div>
+              );
+            })}
+            {module.views.some((v) => !STUDIO_VIEWS.has(v.id)) && (
+              <div className="studio-group">
+                {module.views.filter((v) => !STUDIO_VIEWS.has(v.id)).map((v) => (
+                  <Link key={v.id} href={moduleViewHref(module, v)} aria-current={v.id === view.id ? "page" : undefined}>
+                    {v.title[fa ? 0 : 1]}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </nav>
+          <div className="studio-canvas">
+            <div className="studio-canvas-head">
+              <h2>{view.title[fa ? 0 : 1]}</h2>
+            </div>
+            <SocialView key={view.id} view={view.id} />
+          </div>
+        </div>
       </div>
     </SocialContext.Provider>
   );

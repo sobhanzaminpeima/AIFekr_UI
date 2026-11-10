@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Modal, SectionTitle } from "./ui";
+import { Button, Icon, Modal, SectionTitle } from "./ui";
 import { useApp } from "./providers";
 import Link from "./site-link";
 import { AIText } from "./ai-text";
@@ -122,11 +122,14 @@ export function LiveModuleFrame({
 }) {
   const { fa, tl } = useApp();
   return (
-    <div className={`module-workspace accent-${module.accent}`}>
-      <SectionTitle
-        title={tl(module.title[0], module.title[1])}
-        subtitle={tl(module.subtitle[0], module.subtitle[1])}
-      />
+    <div className={`module-workspace accent-${module.accent}`} data-module={module.id}>
+      <div className="module-hero">
+        <span className="module-hero-icon" aria-hidden="true"><Icon name={module.icon} size={26} /></span>
+        <SectionTitle
+          title={tl(module.title[0], module.title[1])}
+          subtitle={tl(module.subtitle[0], module.subtitle[1])}
+        />
+      </div>
       <nav className="module-tabs" aria-label={tl(module.title[0], module.title[1])}>
         {module.views.map((v) => (
           <Link

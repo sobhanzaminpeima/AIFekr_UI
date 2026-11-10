@@ -1,5 +1,6 @@
 "use client";
 import { AIText } from "./ai-text";
+import { FlashcardDeck, type Flashcard } from "./flashcard-deck";
 import { useEffect, useState } from "react";
 import { useApp } from "./providers";
 import Link from "./site-link";
@@ -283,7 +284,7 @@ function Notes({ course, choice }: { course: string; choice: LiveField }) {
   );
 }
 function Cards({ course }: { course: string }) {
-  const { fa, tl } = useApp(),
+  const { tl } = useApp(),
     r = useLiveData(API + "flashcards?courseId=" + enc(course));
   return (
     <section className="panel">
@@ -298,28 +299,13 @@ function Cards({ course }: { course: string }) {
         map={(b) => ({ ...b, courseId: course })}
         onDone={r.reload}
       />
-      {liveRows(r.data?.flashcards).map((c) => (
-        <details className="panel" key={String(c.id)}>
-          <summary>{String(c.question)}</summary>
-          <p>{String(c.answer)}</p>
-          <p>
-            {tl("مرور بعدی: ", "Next review: ")}
-            {String(c.nextReviewAt ?? "—")}
-          </p>
-          {["hard", "good", "easy"].map((rating, i) => (
-            <LiveForm
-              key={rating}
-              title={
-                (fa ? ["سخت", "مناسب", "آسان"] : ["Hard", "Good", "Easy"])[i]
-              }
-              url={API + "flashcards/" + enc(String(c.id))}
-              method="PATCH"
-              map={() => ({ rating })}
-              onDone={r.reload}
-            />
-          ))}
-        </details>
-      ))}
+      {r.data && (
+        <FlashcardDeck
+          key={liveRows(r.data.flashcards).map((c) => c.id).join()}
+          cards={liveRows(r.data.flashcards) as unknown as Flashcard[]}
+          url={(id) => API + "flashcards/" + enc(id)}
+        />
+      )}
     </section>
   );
 }

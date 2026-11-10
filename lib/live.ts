@@ -87,7 +87,6 @@ const EXACT: Record<string, string> = {
   "/fit/workouts": "/fitness?tab=programs",
   "/fit/nutrition": "/fitness?tab=nutrition",
   "/fit/coaches": "/fitness?tab=trainers",
-  "/social?tab=content": "/social",
   "/fit/dashboard": "/fitness",
   "/business": "/solutions/business",
   "/features/seo": "/features/content",
