@@ -99,6 +99,8 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/payments" || path === "/fitness/payments" ? <LivePayments />
         : path === "/fitness/credits" ? <LiveCredits fitness />
         : path === "/startup/contact" ? <LiveStartupContact />
+        // Admin pages (the main site forwards them for admins only).
+        : path === "/admin/users" ? <AdminUsers />
         : path === "/tools/try-free-ai" ? <LiveTryFree />
         : path.startsWith("/tools/") ? <LiveTool slug={path.split("/")[2]} />
         : path === "/live" ? <LiveTalk />
