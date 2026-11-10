@@ -36,6 +36,8 @@ export type SiteData = {
   legal?: { title: string; updated: string | null; sections: { title: string; body: string }[] } | null;
   /** Only on /verify-certificate/<code>; null when the code matches nothing. */
   certificate?: { id: string; studentName: string; courseTitle: string; version: number; status: string; issuedAt: string } | null;
+  /** Only on a public student profile. */
+  studentProfile?: { name: string | null; avatar: string | null; slug: string } | null;
   /** Only on /share/<token>. */
   shared?: { badge: string; title: string; subtitle: string; author: string | null; date: string; content: string } | null;
   /** Only on /f/<slug>. */
@@ -45,9 +47,10 @@ export type SiteData = {
 };
 
 /** Pages this app renders on aifekr.com; must match V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
-export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/share"];
+export const V2_READY = ["/", "/pricing", "/about", "/contact", "/guides", "/features", "/solutions", "/login", "/register", "/privacy", "/terms", "/security", "/ai-chat", "/start", "/owner/login", "/verify-certificate", "/f", "/p", "/o", "/share"];
 export function v2Ready(path: string) {
   const clean = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  if (/^\/student\/(?!chat$)[^/]+$/.test(clean)) return true;
   return V2_READY.some((r) => (r === "/" ? clean === "/" : clean === r || clean.startsWith(r + "/")));
 }
 

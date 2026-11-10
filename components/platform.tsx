@@ -48,6 +48,7 @@ import { AdminUsers } from "./admin-users";
 import { LiveCheckout } from "./live-checkout";
 import { LiveContentPage } from "./live-content-page";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
+import { LiveOwnerStatement, LiveStudentCard } from "./live-links-2";
 import { LiveCertificate, LiveOwnerLogin, LiveStartupContact } from "./live-forms";
 import { LiveTool, LiveTryFree } from "./live-tool";
 import { EmptyStateContext } from "./ui";
@@ -108,6 +109,8 @@ function LivePlatform({ path }: { path: string }) {
   );
   // Links opened by people outside the platform, some inside an iframe: no site frame around them.
   if (path.startsWith("/share/")) return <LiveSharedResult />;
+  if (path.startsWith("/o/")) return <LiveOwnerStatement token={decodeURIComponent(path.split("/")[2])} />;
+  if (/^\/student\/[^/]+$/.test(path)) return <LiveStudentCard />;
   if (path.startsWith("/f/")) return <LiveLeadForm />;
   if (path.startsWith("/p/")) return <LiveProperty id={decodeURIComponent(path.split("/")[2])} />;
   const section = path.split("/")[1];

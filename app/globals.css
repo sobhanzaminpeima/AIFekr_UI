@@ -6732,3 +6732,28 @@ tr:hover td {
 .listing-off{padding:12px;border-radius:12px;color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
 .listing-body form{margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
 .listing-body h2{font-size:15px;font-weight:700;margin:0 0 12px}
+
+
+/* ---- Owner statement and student card ---- */
+.statement{max-width:720px;margin:0 auto;padding:40px 16px 60px}
+.statement-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}
+.statement-head h1{font-size:22px;font-weight:800;margin:0 0 4px}
+.statement-head p{margin:0;font-size:13px;color:var(--text-secondary)}
+.statement-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:22px}
+.statement-totals div{padding:14px;border-radius:16px;text-align:center;background:var(--surface-1);border:1px solid var(--border)}
+.statement-totals div:last-child{background:#f9731618;border-color:#f9731640}
+.statement-totals small{display:block;font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.statement-totals strong{font-size:14px;overflow-wrap:anywhere}
+.statement h2{font-size:13px;color:var(--text-muted);margin:0 0 10px}
+.statement-row{display:flex;justify-content:space-between;gap:14px;padding:12px 14px;margin-bottom:8px;border-radius:12px;background:var(--surface-1);border:1px solid var(--border)}
+.statement-row small{display:block;font-size:11px;color:var(--text-muted);margin-top:3px}
+.statement-row b.in{color:var(--success)}
+.statement-row b.out{color:var(--danger)}
+.statement-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text-muted)}
+.statement-foot a{display:inline-block;margin-top:8px;color:var(--orange)}
+.student-card-page{max-width:380px;margin:0 auto;padding:36px 16px 56px;display:flex;flex-direction:column;gap:14px}
+.student-card-frame{aspect-ratio:9/16;border-radius:24px;overflow:hidden;background:#10162f;border:1px solid var(--border-strong)}
+.student-card-frame img{width:100%;height:100%;object-fit:contain;display:block}
+.student-card-actions{display:flex;gap:10px}
+.student-card-actions .btn{flex:1}
+@media(max-width:560px){.statement-totals{grid-template-columns:1fr}}
