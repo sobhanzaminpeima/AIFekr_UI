@@ -6924,3 +6924,19 @@ tr:hover td {
 .admin-credit-form .btn{justify-self:start}
 .admin-user-modal-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:8px}
 .table-wrap[aria-busy="true"]{opacity:.6;transition:opacity .2s}
+.admin-fit-access{margin:18px 0;padding:16px;border-radius:16px;border:1px solid var(--border-strong);background:var(--surface-2);display:grid;gap:12px}
+.admin-fit-access h3{display:flex;align-items:center;gap:10px;margin:0}
+.danger-zone{margin-top:20px;padding-top:16px;border-top:1px dashed var(--border-strong);display:flex;justify-content:flex-end}
+/* ---- Admin control center pulse (live) ---- */
+.admin-pulse{display:grid;gap:16px;margin:4px 0 22px}
+.admin-pulse-stat{text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.admin-pulse-stat:hover{border-color:#f9731688;transform:translateY(-1px)}
+.admin-pulse-stat small{display:block;margin-top:4px;font-size:12px;color:var(--text-muted)}
+.admin-pulse-stat small.up{color:#22c55e}.admin-pulse-stat small.down{color:#ef4444}
+.admin-pulse-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.admin-pulse-grid h3{margin:0 0 14px;font-size:15px}
+.admin-pulse-bars{display:flex;align-items:flex-end;gap:3px;height:120px}
+.admin-pulse-bars i{flex:1;min-width:3px;border-radius:3px 3px 0 0;background:var(--brand-gradient);opacity:.85}
+.admin-pulse-plan{display:grid;grid-template-columns:minmax(80px,1fr) 2fr auto;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.admin-pulse-plan i{height:8px;border-radius:8px;background:var(--surface-3);overflow:hidden}
+.admin-pulse-plan b{display:block;height:100%;background:var(--brand-gradient)}
