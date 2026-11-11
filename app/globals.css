@@ -3707,6 +3707,13 @@ tr:hover td {
   font-size: 12px;
   margin-bottom: 20px;
 }
+/* In the two-column dialog form, the notice, messages and action take a full row, so the action never stretches beside a tall field. */
+.modal form.form-grid > .plan-notice,
+.modal form.form-grid > [role="status"],
+.modal form.form-grid > [role="alert"],
+.modal form.form-grid > .btn {
+  grid-column: 1 / -1;
+}
 /* Long forms scroll inside the dialog; the action stays in view. */
 .modal form > .btn {
   margin-top: 22px;
