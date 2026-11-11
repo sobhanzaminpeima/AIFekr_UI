@@ -66,6 +66,7 @@ import { LiveAdminGames, LiveAdminCloudflare } from "./live-admin-infra";
 import { LiveGeneratedWebsites, LiveLeadConnectors } from "./live-admin-content";
 import { LiveAdminTeam } from "./live-admin-team";
 import { LiveIndustryPacks } from "./live-admin-packs";
+import { LiveAdminAffiliate } from "./live-admin-affiliate";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -138,6 +139,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/lead-connectors" ? <div className="admin-live-page"><LiveLeadConnectors /></div>
         : path === "/admin/admins" ? <div className="admin-live-page"><LiveAdminTeam /></div>
         : path === "/admin/industry-packs" ? <div className="admin-live-page"><LiveIndustryPacks /></div>
+        : path === "/admin/affiliate" ? <div className="admin-live-page"><LiveAdminAffiliate /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
         : path === "/admin/users" ? <AdminUsers />
