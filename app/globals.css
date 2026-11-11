@@ -7030,10 +7030,11 @@ button.panel.stat.selected{border-color:#f97316}
 .invite-layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}.invite-main{display:grid;gap:16px}.invite-main>.panel{display:grid;gap:10px}.invite-main h3,.invite-preview h3{margin:0;font-size:15px}.invite-main small{display:block;color:var(--text-muted);font-size:12px}
 .invite-field{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface-2)}.invite-field>div:first-child{min-width:0}.invite-field bdi{display:block;overflow-wrap:anywhere;font-weight:600}.invite-field .domain-actions{margin:0;flex:none}
 .invite-text{width:100%;min-height:220px;line-height:1.9}
-.invite-preview{display:grid;gap:12px;position:sticky;top:12px}.invite-card-frame{overflow:hidden;border-radius:16px;margin:0 auto;box-shadow:0 10px 30px #0006}
+.invite-preview{display:grid;gap:12px;position:sticky;top:12px}.invite-card-frame{position:relative;overflow:hidden;border-radius:16px;margin:0 auto;box-shadow:0 10px 30px #0006}
 .invite-saved{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.invite-saved img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;border:1px solid var(--border)}
 .access-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.access-layout>.panel{display:grid;gap:10px}.access-layout .domain-toolbar{margin:0 0 10px}
 .admin-pick-list button.selected{border-color:#f97316;background:#f9731618}
 .access-group{display:grid;gap:8px}.access-group h3{margin:6px 0 0;font-size:14px;color:var(--text-muted)}
 .access-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}.access-row small{display:block;color:var(--text-muted);font-size:12px}
 @media (max-width:900px){.invite-layout,.access-layout{grid-template-columns:1fr}.invite-preview{position:static}}
+.table-scroll{overflow-x:auto;max-width:100%}.admin-live-page>*{min-width:0}

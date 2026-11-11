@@ -312,8 +312,8 @@ export function LiveInviteTool() {
 
           <aside className="panel invite-preview">
             <h3>{tx(["پیش‌نمایش کارت دعوت", "Invite card preview", "Kartenvorschau", "Kart önizlemesi"])}</h3>
-            <div className="invite-card-frame" style={{ width: CARD_WIDTH * scale, height: CARD_HEIGHT * scale }}>
-              <div style={{ width: CARD_WIDTH, height: CARD_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top left" }} dir="ltr">
+            <div className="invite-card-frame" dir="ltr" style={{ width: CARD_WIDTH * scale, height: CARD_HEIGHT * scale }}>
+              <div style={{ position: "absolute", top: 0, left: 0, width: CARD_WIDTH, height: CARD_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top left" }}>
                 <InviteCard ref={cardRef} lang={lang} name={user.name || username} username={username} password={password || "••••••••"} link={link} trialDays={trialDays} qr={qr} text={text} />
               </div>
             </div>
