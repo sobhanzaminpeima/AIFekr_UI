@@ -15,6 +15,7 @@ import { Button, Modal } from "./ui";
 import { socialDraft, campaignLinks, socialPillars } from "@/lib/social-contract";
 import { socialLabel } from "@/lib/social-copy";
 import { LineChart } from "./seo-charts";
+import { ConnectionHealth } from "./connection-health";
 
 type Row = Record<string, unknown>;
 type Field = {
@@ -430,6 +431,7 @@ function SocialView({ view }: { view: string }) {
     return (
       <>
         <Publishing />
+        {view === "connections" && <ConnectionHealth />}
         {view === "connections" && <Webhooks />}
         {view === "calendar" && <CalendarDraft />}
       </>
