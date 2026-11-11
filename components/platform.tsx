@@ -105,6 +105,7 @@ function LivePlatform({ path }: { path: string }) {
         // Admin pages (the main site forwards them for admins only).
         : path === "/admin" || path === "/admin/dashboard" ? <AdminCenter />
         : path === "/admin/financial" ? <div className="admin-live-page"><AdminFinance section="payments" /></div>
+        : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
         : path === "/admin/users" ? <AdminUsers />
         : /^\/admin\/users\/[^/]+$/.test(path) ? <LiveAdminUserDetail key={path} id={decodeURIComponent(path.split("/")[3])} />
         : path === "/tools/try-free-ai" ? <LiveTryFree />

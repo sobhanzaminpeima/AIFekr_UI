@@ -6948,3 +6948,7 @@ tr:hover td {
 .admin-payment-link{display:flex;gap:8px}.admin-payment-link input{flex:1;min-width:0}
 .admin-finance-table td small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}
 button.panel.stat{font:inherit;color:inherit;text-align:start;cursor:pointer}
+.admin-customer-paid{margin:6px 0 0;font-size:13px;color:var(--text-muted)}
+.admin-expiry-form{display:grid;gap:12px}.admin-expiry-form label{display:grid;gap:6px}
+.admin-expiry-history{margin-top:18px;display:grid;gap:10px}.admin-expiry-history h3{margin:0;font-size:15px}
+button.panel.stat.selected{border-color:#f97316}

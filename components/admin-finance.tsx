@@ -11,13 +11,16 @@ import { Button, Empty, Icon, Modal, download } from "./ui";
 import { toast } from "sonner";
 import { useShell } from "./live-shell-context";
 import { LiveAdminPayments } from "./live-admin-payments";
+import { LiveAdminCustomers } from "./live-admin-customers";
 
 type Payment = Purchase & { userId?: string; currency?: string };
 const exportJson = (name: string, data: unknown) =>
   download(name + ".json", JSON.stringify(data, null, 2), "application/json");
 
 export function AdminFinance({ section }: { section: string }) {
-  if (useShell() && section === "payments") return <LiveAdminPayments />;
+  const live = !!useShell();
+  if (live && section === "payments") return <LiveAdminPayments />;
+  if (live && (section === "customers" || section === "subscriptions")) return <LiveAdminCustomers subscriptions={section === "subscriptions"} />;
   return <PreviewAdminFinance section={section} />;
 }
 function PreviewAdminFinance({ section }: { section: string }) {
