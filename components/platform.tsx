@@ -69,6 +69,7 @@ import { LiveIndustryPacks } from "./live-admin-packs";
 import { LiveAdminAffiliate } from "./live-admin-affiliate";
 import { LiveAdminReferrals } from "./live-admin-referrals";
 import { LiveInviteTool, LiveModuleAccess, LiveSocialConnections } from "./live-admin-access";
+import { LiveInvoice, LiveUsage, LiveLlm } from "./live-admin-ai";
 import { LiveGrowthCenter, LiveGrowthCustomer } from "./live-admin-growth-center";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
@@ -145,6 +146,9 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/affiliate" ? <div className="admin-live-page"><LiveAdminAffiliate /></div>
         : path === "/admin/referrals" ? <div className="admin-live-page"><LiveAdminReferrals /></div>
         : path === "/admin/invites" ? <div className="admin-live-page"><LiveInviteTool /></div>
+        : path === "/admin/usage" ? <div className="admin-live-page"><LiveUsage /></div>
+        : path === "/admin/llm" ? <div className="admin-live-page"><LiveLlm /></div>
+        : /^\/admin\/financial\/invoices\/[^/]+$/.test(path) ? <div className="admin-live-page"><LiveInvoice key={path} id={decodeURIComponent(path.split("/")[4])} /></div>
         : path === "/admin/module-access" ? <div className="admin-live-page"><LiveModuleAccess /></div>
         : path === "/admin/social-connections" ? <div className="admin-live-page"><LiveSocialConnections /></div>
         : path === "/admin/customer-growth" ? <div className="admin-live-page"><LiveGrowthCenter /></div>

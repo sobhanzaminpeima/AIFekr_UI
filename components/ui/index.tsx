@@ -556,6 +556,8 @@ export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string
     return tl("جزئیات دوره", "Course details");
   if (path.startsWith("/assistants/"))
     return tl("دستیار تخصصی", "Specialist assistant");
+  if (pathname.startsWith("/admin/financial/invoices/"))
+    return tl("فاکتور خرید", "Purchase invoice");
   if (pathname === "/admin/social-connections")
     return tl("اتصال‌های اینستاگرام", "Instagram connections");
   if (pathname === "/admin/customer-growth")
