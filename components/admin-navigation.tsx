@@ -15,7 +15,7 @@ const groups=[
  {id:'content',fa:'تولید محتوا و تماس',en:'Content & calls',icon:'Clapperboard',roots:['video-factory','voice-studio','voice-agent','generated-websites','public-share','moderation']},
  {id:'system',fa:'تنظیمات و زیرساخت',en:'Settings & infrastructure',icon:'Settings',roots:['modules','module-access','tools','settings','cloudflare','system','social-connections','logs','backups']},
 ] as const;
-const extras:[string,string,string][]=[['customer-growth','رشد و پیگیری مشتریان','Customer growth & follow-up'],['social-connections','اتصال‌های اینستاگرام','Instagram connections'],['payment-providers','درگاه‌های پرداخت','Payment providers'],['moderation','بازبینی محتوا','Content review'],['backups','پشتیبان‌ها','Backups']];
+const extras:[string,string,string][]=[['customer-growth','رشد و پیگیری مشتریان','Customer growth & follow-up'],['payment-providers','درگاه‌های پرداخت','Payment providers'],['moderation','بازبینی محتوا','Content review'],['backups','پشتیبان‌ها','Backups']];
 const entries=[...adminDefinitions.filter(([slug])=>!slug.includes('[')&&slug!=='dashboard').map(([slug,fa,en])=>({href:'/admin/'+slug,fa,en,root:slug.split('/')[0]})),...extras.map(([slug,fa,en])=>({href:'/admin/'+slug,fa,en,root:slug}))];
 const aliases:Record<string,string>={overview:'dashboard',roles:'admins',finance:'financial',customers:'financial/customers',invoices:'financial',plans:'packages','billing-rates':'billing/rates',promotions:'billing/promotions',providers:'llm',fallback:'provider-fallback','chat-settings':'ai-chat','video-jobs':'video-factory','voice-jobs':'voice-studio',courses:'ai-courses',fit:'fitness',coaches:'fitness/marketplace',websites:'generated-websites',connectors:'lead-connectors',seo:'seo-intelligence',status:'system'};
 const normalize=(s:string)=>s.toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\s\u200c]/g,'');
@@ -29,7 +29,7 @@ export function AdminNavigation({path,onExpand}:{path:string;onExpand?:()=>void}
  useEffect(()=>{setOpen(activeGroup);setQuery('');},[path,activeGroup]);
  const live=!!useShell();
  // The extra design-only sections have no page on aifekr.com.
- const matches=entries.filter(e=>!live||['/admin/customer-growth','/admin/social-connections'].includes(e.href)||!extras.some(([slug])=>'/admin/'+slug===e.href)).filter(e=>normalize(e.fa+' '+e.en+' '+e.href).includes(normalize(query)));
+ const matches=entries.filter(e=>!live||e.href==='/admin/customer-growth'||!extras.some(([slug])=>'/admin/'+slug===e.href)).filter(e=>normalize(e.fa+' '+e.en+' '+e.href).includes(normalize(query)));
  return <div className="admin-navigation"><label className="admin-nav-search"><Icon name="Search" size={16}/><input aria-label={fa?'جست‌وجوی بخش مدیریت':'Search admin sections'} placeholder={fa?'جست‌وجوی بخش مدیریت…':'Find an admin section…'} value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label={fa?'پاک‌کردن جست‌وجو':'Clear search'} onClick={()=>setQuery('')}><Icon name="X" size={14}/></button>}</label>
  <nav className="admin-nav-groups" aria-label={fa?'بخش‌های مدیریت':'Administration sections'}>
  <Link href="/admin/dashboard" className={'admin-overview-link '+(current==='/admin/dashboard'?'active':'')} aria-current={current==='/admin/dashboard'?'page':undefined} title={fa?'نمای کلی مدیریت':'Admin overview'}><Icon name="LayoutDashboard" size={19}/><span>{fa?'نمای کلی مدیریت':'Admin overview'}</span></Link>
