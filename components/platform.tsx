@@ -63,6 +63,7 @@ import { LiveAdminPrompts } from "./live-admin-prompts";
 import { LiveAdminCategories, LiveAdminCompanies } from "./live-admin-directory";
 import { LiveAdminModules, LivePublicShare } from "./live-admin-platform";
 import { LiveAdminGames, LiveAdminCloudflare } from "./live-admin-infra";
+import { LiveGeneratedWebsites, LiveLeadConnectors } from "./live-admin-content";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -131,6 +132,8 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/public-share" ? <div className="admin-live-page"><LivePublicShare /></div>
         : path === "/admin/games" ? <div className="admin-live-page"><LiveAdminGames /></div>
         : path === "/admin/cloudflare" ? <div className="admin-live-page"><LiveAdminCloudflare /></div>
+        : path === "/admin/generated-websites" ? <div className="admin-live-page"><LiveGeneratedWebsites /></div>
+        : path === "/admin/lead-connectors" ? <div className="admin-live-page"><LiveLeadConnectors /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
         : path === "/admin/users" ? <AdminUsers />
