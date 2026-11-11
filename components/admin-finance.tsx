@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useShell } from "./live-shell-context";
 import { LiveAdminPayments } from "./live-admin-payments";
 import { LiveAdminCustomers } from "./live-admin-customers";
+import { LiveCreditTiers, LiveExchangeRates } from "./live-admin-pricing";
 
 type Payment = Purchase & { userId?: string; currency?: string };
 const exportJson = (name: string, data: unknown) =>
@@ -19,7 +20,9 @@ const exportJson = (name: string, data: unknown) =>
 
 export function AdminFinance({ section }: { section: string }) {
   const live = !!useShell();
-  if (live && section === "payments") return <LiveAdminPayments />;
+  if (live && (section === "payments" || section === "revenue")) return <LiveAdminPayments />;
+  if (live && section === "tiers") return <LiveCreditTiers />;
+  if (live && section === "rates") return <LiveExchangeRates />;
   if (live && (section === "customers" || section === "subscriptions")) return <LiveAdminCustomers subscriptions={section === "subscriptions"} />;
   return <PreviewAdminFinance section={section} />;
 }
