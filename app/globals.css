@@ -7054,3 +7054,8 @@ button.panel.stat.selected{border-color:#f97316}
 .llm-strengths{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.llm-strengths span{font-size:11px;padding:2px 8px;border-radius:8px;background:#f9731614;color:#f6ac79}
 .llm-actions{display:grid;gap:6px}.llm-custom{display:grid;gap:8px}.access-row.off{opacity:.6}.access-row code{font-size:11px;color:var(--text-muted)}.llm-contract{line-height:1.9}
 @media (max-width:760px){.usage-figures{grid-template-columns:repeat(2,1fr)}.llm-card{grid-template-columns:1fr}.llm-initials{display:none}.llm-routing>div{grid-template-columns:1fr}}
+.academy-attempts{display:grid;gap:8px}.academy-attempts .access-row{flex-wrap:wrap}.academy-attempts details{flex-basis:100%}.academy-attempts pre{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:240px;overflow:auto;background:var(--surface-1);padding:8px;border-radius:8px}
+.academy-cert{display:grid;gap:8px;align-content:start}.academy-cert p{margin:0}.academy-cert small{color:var(--text-muted);overflow-wrap:anywhere}.academy-cert.revoked{opacity:.65}
+.academy-path-courses{display:grid;gap:8px;border:1px solid var(--border);border-radius:12px;padding:12px}.academy-path-courses legend{padding:0 6px;font-weight:700}
+.academy-path-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto;gap:8px;align-items:center}
+@media (max-width:640px){.academy-path-row{grid-template-columns:24px 1fr}.academy-path-row>label,.academy-path-row>button{grid-column:2}}
