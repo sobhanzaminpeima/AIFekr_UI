@@ -65,6 +65,8 @@ export function LiveAcademy() {
   const [reason, setReason] = useState("");
   const [download, setDownload] = useState("");
   const [busy, setBusy] = useState(false);
+  const [courseList, setCourseList] = useState<{ id: string; title: string; status: string }[] | null>(null);
+  useEffect(() => { if (tab === "paths" && !courseList) api<{ courses: { id: string; title: string; status: string }[] }>("/api/admin/ai-courses").then((d) => setCourseList(d.courses)).catch(() => setCourseList([])); }, [tab, courseList]);
   const q = userId ? "userId=" + encodeURIComponent(userId) : "";
   const loadCerts = useCallback(async () => {
     const p = new URLSearchParams({ search: filter.search, status: filter.status, from: filter.from, to: filter.to });
@@ -83,7 +85,11 @@ export function LiveAcademy() {
   async function mutate(url: string, method: string, body: unknown) {
     setBusy(true);
     try { await api(url, { method, body: JSON.stringify(body) }); await load(); toast.success(tx(["ذخیره شد", "Saved", "Gespeichert", "Kaydedildi"])); return true; }
-    catch (e) { toast.error(e instanceof Error ? e.message : "FAILED"); return false; } finally { setBusy(false); }
+    catch (e) {
+      const m = e instanceof Error ? e.message : "FAILED";
+      toast.error(m === "INVALID_PATH" ? tx(["عنوان حداقل ۳ حرف و دست‌کم یک دوره لازم است.", "A title of 3+ characters and at least one course are required.", "Titel mit mind. 3 Zeichen und mindestens ein Kurs sind nötig.", "En az 3 karakterlik başlık ve en az bir kurs gerekli."]) : m === "INVALID_PATH_COURSES" ? tx(["یک دوره تکراری است یا پیدا نشد؛ برای مسیر منتشرشده همهٔ دوره‌ها باید منتشر شده باشند.", "A course is repeated or missing; a published path needs every course published.", "Ein Kurs ist doppelt oder fehlt; veröffentlichte Pfade brauchen veröffentlichte Kurse.", "Bir kurs tekrarlı veya yok; yayınlanan yol için tüm kurslar yayınlanmış olmalı."]) : m);
+      return false;
+    } finally { setBusy(false); }
   }
   async function doReissue() {
     if (!reissue) return;
@@ -181,14 +187,18 @@ export function LiveAcademy() {
             <legend>{tx(["دوره‌ها به ترتیب", "Courses in order", "Kurse in Reihenfolge", "Sırayla kurslar"])}</legend>
             {path.courses.map((c, k) => <div key={k} className="academy-path-row">
               <span>{n(k + 1)}</span>
-              <input dir="ltr" aria-label={tx(["شناسهٔ دوره", "Course id", "Kurs-ID", "Kurs kimliği"])} placeholder={tx(["شناسهٔ دوره", "Course id", "Kurs-ID", "Kurs kimliği"])} value={c.courseId} onChange={(e) => setPath({ ...path, courses: path.courses.map((x, j) => (j === k ? { ...x, courseId: e.target.value } : x)) })} />
+              <select aria-label={tx(["دوره", "Course", "Kurs", "Kurs"])} value={c.courseId} onChange={(e) => setPath({ ...path, courses: path.courses.map((x, j) => (j === k ? { ...x, courseId: e.target.value } : x)) })}>
+                <option value="">{courseList ? tx(["— یک دوره انتخاب کنید —", "— pick a course —", "— Kurs wählen —", "— bir kurs seçin —"]) : "…"}</option>
+                {c.courseId && courseList && !courseList.some((x) => x.id === c.courseId) && <option value={c.courseId}>{c.courseId}</option>}
+                {courseList?.map((x) => <option key={x.id} value={x.id}>{x.title} · {x.status}</option>)}
+              </select>
               <label className="gc-switch"><input type="checkbox" checked={c.requiredBeforeNext} onChange={(e) => setPath({ ...path, courses: path.courses.map((x, j) => (j === k ? { ...x, requiredBeforeNext: e.target.checked } : x)) })} />{tx(["پیش‌نیاز دورهٔ بعد", "Required before next", "Pflicht vor dem nächsten", "Sonrakinden önce zorunlu"])}</label>
               <Button label={tx(["حذف", "Remove", "Entfernen", "Kaldır"])} onClick={() => setPath({ ...path, courses: path.courses.filter((_, j) => j !== k) })}><Icon name="X" size={14} /></Button>
             </div>)}
             <Button onClick={() => setPath({ ...path, courses: [...path.courses, { courseId: "", requiredBeforeNext: false }] })}><Icon name="Plus" size={14} />{tx(["افزودن دوره", "Add course", "Kurs hinzufügen", "Kurs ekle"])}</Button>
-            <p className="fine-print">{tx(["شناسهٔ دوره را از صفحهٔ «دوره‌ها و تولید AI» بردارید.", "Take the course id from the Courses & AI generator page.", "Die Kurs-ID steht auf der Seite Kurse & KI-Generator.", "Kurs kimliğini Kurslar ve AI oluşturucu sayfasından alın."])}</p>
+            {courseList && !courseList.length && <p className="fine-print">{tx(["هنوز دوره‌ای ساخته نشده است؛ اول از «دوره‌ها و تولید AI» یک دوره بسازید.", "No courses yet; create one under Courses & AI generator first.", "Noch keine Kurse; zuerst unter Kurse & KI-Generator anlegen.", "Henüz kurs yok; önce Kurslar ve AI oluşturucu'dan oluşturun."])}</p>}
           </fieldset>
-          <div className="span-2 domain-actions"><Button type="submit" variant="primary" disabled={busy}>{tx(["ذخیرهٔ مسیر", "Save path", "Lernpfad speichern", "Yolu kaydet"])}</Button></div>
+          <div className="span-2 domain-actions"><Button type="submit" variant="primary" disabled={busy || !path.courses.some((c) => c.courseId)}>{tx(["ذخیرهٔ مسیر", "Save path", "Lernpfad speichern", "Yolu kaydet"])}</Button></div>
         </form>
       </div>}
 
