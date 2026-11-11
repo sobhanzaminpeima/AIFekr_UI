@@ -20,6 +20,7 @@ import { BusinessShell } from "./business-shell";
 import { CRM_CHANGED, CreditCost, CrmContext, EmptyText, FormError, Loading, useCrm } from "./live-crm-context";
 import { ContractsView, InvoicesView, ProductsView, ProjectsView } from "./live-crm-ops";
 import { MatchesView, OwnersView, PerformanceView, PropertiesView, ViewingsView } from "./live-crm-estate";
+import { AutomationOverview } from "./automation-overview";
 
 // ── Shared state ───────────────────────────────────────────────────────────
 function useCrmState() {
@@ -93,7 +94,7 @@ function CrmView({ view }: { view: string }) {
   const x = useCrm();
   const content =
     view === "contacts" ? <ContactsView />
-    : view === "automation" ? <AutomationView />
+    : view === "automation" ? <><AutomationOverview /><AutomationView /></>
     : view === "agent" ? <AgentView />
     : view === "calendar" ? <CalendarView />
     : view === "analytics" ? <AnalyticsView />
