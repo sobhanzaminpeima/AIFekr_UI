@@ -7018,3 +7018,4 @@ button.panel.stat.selected{border-color:#f97316}
 .gc-confirm ul{margin:8px 0;padding-inline-start:20px}
 .admin-finance-table td .badge{margin-inline-start:6px}
 @media (max-width:760px){.gc-two{grid-template-columns:1fr}.gc-bar-row{grid-template-columns:1fr auto}.gc-bar-row .gc-bar{grid-column:1/-1;grid-row:2}.gc-timeline li{grid-template-columns:1fr}}
+.admin-referral-card .domain-fields{grid-template-columns:1fr;gap:12px}

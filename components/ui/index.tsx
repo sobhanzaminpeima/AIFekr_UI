@@ -556,6 +556,10 @@ export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string
     return tl("جزئیات دوره", "Course details");
   if (path.startsWith("/assistants/"))
     return tl("دستیار تخصصی", "Specialist assistant");
+  if (pathname === "/admin/customer-growth")
+    return tl("رشد و پیگیری مشتریان", "Customer growth & follow-up");
+  if (pathname.startsWith("/admin/customer-growth/"))
+    return tl("رشد مشتریان · پروفایل مشتری", "Customer growth · profile");
   const tool = tools.find((t) => "/" + t.slug === path);
   if (tool) return tl(tool.fa, tool.en);
   const a = adminSections.find(([s]) => "/admin/" + s === path);
