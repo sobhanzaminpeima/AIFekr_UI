@@ -14,6 +14,7 @@ import { useShell } from "./live-shell-context";
 import { Button, Modal } from "./ui";
 import { socialDraft, campaignLinks, socialPillars } from "@/lib/social-contract";
 import { socialLabel } from "@/lib/social-copy";
+import { LineChart } from "./seo-charts";
 
 type Row = Record<string, unknown>;
 type Field = {
@@ -95,15 +96,18 @@ function Records({
   items,
   columns,
   actions,
+  empty,
 }: {
   items: Row[];
   columns: Field[];
   actions?: (row: Row) => React.ReactNode;
+  /** What "nothing here" means for this dataset; one generic line misread as "no data at all". */
+  empty?: string;
 }) {
   const { fa } = useSocial();
   return !items.length ? (
     <p className="crm-empty">
-      {fa ? "هنوز داده‌ای ثبت نشده است." : "No records yet."}
+      {empty ?? (fa ? "هنوز داده‌ای ثبت نشده است." : "No records yet.")}
     </p>
   ) : (
     <div className="domain-table-wrap">
@@ -132,7 +136,9 @@ function Records({
                               c.key,
                             )
                           ? socialLabel(String(row[c.key]), fa)
-                          : String(row[c.key])}
+                          : c.key === "caption"
+                            ? <span className="cell-clamp">{String(row[c.key])}</span>
+                            : String(row[c.key])}
                   </bdi>
                 </td>
               ))}
@@ -345,6 +351,7 @@ function StudioBar({ module, view }: { module: ModuleSpec; view: ViewSpec }) {
 const CONNECT_RESULT: Record<string, [string, string]> = {
   connected_other_account: ["این حساب اینستاگرام به حساب دیگری در AIFekr وصل است. از صاحب آن بخواهید اتصال را قطع کند یا با پشتیبانی تماس بگیرید.", "This Instagram account is connected to a different AIFekr account. Ask its owner to disconnect it, or contact support."],
   connected_other_workspace: ["این حساب اینستاگرام در فضای کاری دیگری از حساب خودتان وصل است. آنجا اتصال را قطع کنید و دوباره وصل شوید.", "This Instagram account is connected in another of your workspaces. Disconnect it there, then connect here."],
+  workspace_has_account: ["این فضای کاری از قبل به یک حساب اینستاگرام وصل است و هر فضای کاری یک حساب دارد. برای حساب دوم یک فضای کاری تازه بسازید؛ برای عوض کردن حساب، اول اتصال فعلی را قطع کنید. چیزی پاک نشد.", "This workspace is already connected to an Instagram account, and each workspace holds one. Create a new workspace for a second account; to switch accounts, disconnect the current one first. Nothing was deleted."],
   denied: ["اجازهٔ دسترسی در اینستاگرام داده نشد.", "Access was not granted on Instagram."],
   session_expired: ["زمان اتصال تمام شد. دوباره تلاش کنید.", "The connection attempt expired. Please try again."],
 };
@@ -704,6 +711,19 @@ function Webhooks() {
 }
 function CompetitorAnalysis() {
   const { fa } = useSocial();
+  const source = useData(API + "competitors");
+  if (!source.data) return null;
+  if (!source.data.enabled)
+    return (
+      <section className="panel">
+        <h3>{fa ? "تحلیل الگوهای رقبا" : "Competitor pattern analysis"}</h3>
+        <p className="crm-empty">
+          {fa
+            ? "این تحلیل به آمار تازهٔ رقبا نیاز دارد و منبع آن غیرفعال است؛ تا فعال شدن منبع، اجرا نمی‌شود و هزینه‌ای کسر نمی‌شود."
+            : "This analysis needs fresh competitor metrics, and their data source is disabled; it cannot run, and nothing is charged, until the source is enabled."}
+        </p>
+      </section>
+    );
   return (
     <>
       <PaidResult
@@ -728,42 +748,92 @@ function CompetitorAnalysis() {
     </>
   );
 }
+const PROFILE_FAILED: [string, string] = ["اطلاعات پروفایل از اینستاگرام دریافت نشد: ", "Couldn't load the profile from Instagram: "];
+function AccountCard({ data, reload }: { data: Row; reload: () => void }) {
+  const { fa, lang } = useSocial();
+  const locale = fa ? "fa-IR" : lang;
+  const count = (v: unknown) => (typeof v === "number" ? v.toLocaleString(locale) : "—");
+  const day = (v: unknown) => (v ? new Date(String(v)).toLocaleDateString(locale) : "—");
+  if (!data.connected)
+    return (
+      <div className="domain-toolbar">
+        <strong>{fa ? "حساب متصل نیست" : "No connected account"}</strong>
+        <a className="btn primary" href={IG + "connect"}>
+          {fa ? "اتصال اینستاگرام" : "Connect Instagram"}
+        </a>
+      </div>
+    );
+  const profile = (data.profile ?? null) as Row | null;
+  const picture = profile?.profilePictureUrl ? IG + "media-proxy?url=" + enc(String(profile.profilePictureUrl)) : null;
+  const expiry = data.tokenExpiry ? new Date(String(data.tokenExpiry)).getTime() : null;
+  const expiring = expiry != null && expiry - Date.now() < 7 * 864e5;
+  const reconnect = (
+    <a className="text-link" href={IG + "connect"}>
+      {fa ? "اتصال دوباره" : "Reconnect"}
+    </a>
+  );
+  return (
+    <div className="ig-account">
+      {picture ? <img className="ig-avatar" src={picture} alt="" width={56} height={56} /> : <span className="ig-avatar" aria-hidden="true" />}
+      <div className="ig-account-body">
+        <strong>
+          {profile?.name ? String(profile.name) + " " : ""}
+          <bdi>@{String(profile?.username ?? data.igUsername ?? "")}</bdi>
+        </strong>
+        {!!profile?.biography && <p className="ig-bio">{String(profile.biography)}</p>}
+        <dl className="ig-counts">
+          <div><dt>{fa ? "دنبال‌کننده" : "Followers"}</dt><dd>{count(profile?.followersCount)}</dd></div>
+          <div><dt>{fa ? "دنبال‌شونده" : "Following"}</dt><dd>{count(profile?.followsCount)}</dd></div>
+          <div><dt>{fa ? "پست" : "Posts"}</dt><dd>{count(profile?.mediaCount)}</dd></div>
+        </dl>
+        <p className="muted">
+          {fa ? "اتصال از " : "Connected since "}{day(data.connectedAt)} · {fa ? "اعتبار دسترسی تا " : "Access valid until "}{day(data.tokenExpiry)}
+        </p>
+        {!!data.profileError && (
+          <p role="alert">{PROFILE_FAILED[fa ? 0 : 1]}{String(data.profileError)} {reconnect}</p>
+        )}
+        {expiring && !data.profileError && (
+          <p role="alert">{fa ? "اعتبار دسترسی به‌زودی تمام می‌شود. " : "Access expires soon. "}{reconnect}</p>
+        )}
+        <p role="status" className="muted">
+          {fa ? "به‌روزشده: " : "Updated: "}
+          {data.checkedAt ? new Date(String(data.checkedAt)).toLocaleTimeString(locale) : "—"}
+        </p>
+      </div>
+      <div className="domain-actions">
+        <Button onClick={reload}>{fa ? "تازه‌سازی" : "Refresh"}</Button>
+        <Confirm
+          title={fa ? "قطع اتصال" : "Disconnect"}
+          url={IG + "status"}
+          method="DELETE"
+          onDone={reload}
+          caution={
+            fa
+              ? "قطع اتصال، قوانین، کمپین‌ها و صف مرتبط با این حساب را حذف می‌کند. حساب جدید این داده‌ها را به ارث نمی‌برد."
+              : "Disconnecting removes this account's rules, campaigns and publishing queue. A new account will not inherit them."
+          }
+        />
+      </div>
+    </div>
+  );
+}
 function Publishing() {
   const { fa } = useSocial();
-  const state = useData(IG + "status");
+  const state = useData(IG + "status?profile=1");
   return (
     <section className="panel">
       <Status {...state} />
       {state.data && (
         <>
-          <div className="domain-toolbar">
-            <strong>
-              {state.data.connected
-                ? `@${String(state.data.igUsername ?? "")}`
-                : fa
-                  ? "حساب متصل نیست"
-                  : "No connected account"}
-            </strong>
-            <a className="btn primary" href={IG + "connect"}>
-              {fa ? "اتصال اینستاگرام" : "Connect Instagram"}
-            </a>
-            <Button onClick={state.reload}>
-              {fa ? "تازه‌سازی" : "Refresh"}
-            </Button>
-            {!!state.data.connected && (
-              <Confirm
-                title={fa ? "قطع اتصال" : "Disconnect"}
-                url={IG + "status"}
-                method="DELETE"
-                onDone={state.reload}
-                caution={
-                  fa
-                    ? "قطع اتصال، قوانین، کمپین‌ها و صف مرتبط با این حساب را حذف می‌کند. حساب جدید این داده‌ها را به ارث نمی‌برد."
-                    : "Disconnecting removes this account's rules, campaigns and publishing queue. A new account will not inherit them."
-                }
-              />
-            )}
-          </div>
+          <AccountCard data={state.data} reload={state.reload} />
+          {!state.data.canAutoPublish && (
+            <p className="plan-notice">
+              {fa
+                ? "در پلن فعلی فقط انتشار دستی ممکن است: پست در صف می‌ماند و با «انتشار اکنون» منتشر می‌شود. انتشار خودکار در زمان تعیین‌شده در پلن‌های Pro و Team فعال است."
+                : "Your current plan publishes manually only: posts wait in the queue until you choose “Publish now”. Automatic publishing at the set time comes with the Pro and Team plans."}{" "}
+              <a className="text-link" href="/plans">{fa ? "دیدن پلن‌ها" : "See plans"}</a>
+            </p>
+          )}
           <Form
             title={fa ? "زمان‌بندی پست" : "Schedule post"}
             url={IG + "schedule"}
@@ -787,12 +857,18 @@ function Publishing() {
             })}
             onDone={state.reload}
             caution={
-              fa
-                ? "حالت خودکار، پست را در زمان انتخاب‌شده روی حساب متصل منتشر می‌کند."
-                : "Auto mode publishes to the connected account at the chosen time."
+              state.data.canAutoPublish
+                ? fa
+                  ? "حالت خودکار، پست را در زمان انتخاب‌شده روی حساب متصل منتشر می‌کند."
+                  : "Auto mode publishes to the connected account at the chosen time."
+                : fa
+                  ? "پست به صف دستی اضافه می‌شود و تا «انتشار اکنون» منتشر نمی‌شود."
+                  : "The post joins the manual queue and is not published until you choose “Publish now”."
             }
           />
+          <h3>{fa ? "صف انتشار" : "Publishing queue"}</h3>
           <Records
+            empty={fa ? "هنوز پستی زمان‌بندی نشده است." : "No posts scheduled yet."}
             items={rows(state.data.posts)}
             columns={[
               f("caption", "متن", "Caption"),
@@ -834,6 +910,7 @@ function Publishing() {
     </section>
   );
 }
+const BRAND_KEYS = ["pageType", "specialty", "audience", "tone", "positioning", "avoidTopics"];
 function Brand() {
   const { fa } = useSocial();
   const state = useData(API + "brand-profile");
@@ -886,6 +963,13 @@ function Brand() {
             })}
             onDone={state.reload}
           />
+          {!BRAND_KEYS.some((k) => !!profile[k]) && !pillars.length ? (
+            <p className="crm-empty">
+              {fa
+                ? "هنوز هویت برند ثبت نشده است. با «ویرایش هویت برند» نوع صفحه، مخاطب و لحن را بنویسید تا محتوای تولیدشده با صدای برند شما باشد."
+                : "No brand profile yet. Use “Edit brand profile” to set your page type, audience and tone, so generated content speaks in your brand's voice."}
+            </p>
+          ) : (
           <Records
             items={[profile]}
             columns={[
@@ -895,6 +979,7 @@ function Brand() {
               f("positioning", "جایگاه", "Positioning"),
             ]}
           />
+          )}
         </>
       )}
     </section>
@@ -907,6 +992,7 @@ function PaidResult({
   fields,
   map,
   resultKey,
+  after,
 }: {
   title: string;
   feature: string;
@@ -914,6 +1000,8 @@ function PaidResult({
   fields: Field[];
   map?: (d: Row) => Row;
   resultKey: string;
+  /** Next step offered under a finished result. */
+  after?: (result: string) => React.ReactNode;
 }) {
   const { fa } = useSocial();
   const costs = useData("/api/credits/costs");
@@ -955,7 +1043,32 @@ function PaidResult({
           {result}
         </div>
       )}
+      {result && after?.(result)}
     </section>
+  );
+}
+/** Hands a generated draft to the publishing queue; nothing is published from here. */
+function ScheduleDraft({ caption }: { caption: string }) {
+  const { fa } = useSocial();
+  return (
+    <Form
+      title={fa ? "زمان‌بندی این پیش‌نویس" : "Schedule this draft"}
+      url={IG + "schedule"}
+      fields={[
+        f("caption", "کپشن", "Caption", "textarea"),
+        f("hashtags", "هشتگ‌ها", "Hashtags", "text", undefined, true),
+        f("imageUrl", "لینک تصویر", "Image URL", "url", undefined, true),
+        f("scheduledFor", "زمان انتشار", "Publish at", "datetime-local"),
+      ]}
+      initial={{ caption: caption.slice(0, 2200) }}
+      map={(d) => ({ ...d, mode: "manual", scheduledFor: new Date(String(d.scheduledFor)).toISOString() })}
+      onDone={() => {}}
+      caution={
+        fa
+          ? "پیش‌نویس به صف انتشار در «حساب و انتشار» اضافه می‌شود؛ اینجا چیزی منتشر نمی‌شود."
+          : "The draft joins the publishing queue under “Account & publishing”; nothing is published from here."
+      }
+    />
   );
 }
 function Studio() {
@@ -966,6 +1079,7 @@ function Studio() {
       feature="social.generate"
       url={IG + "studio"}
       resultKey="content"
+      after={(result) => <ScheduleDraft caption={result} />}
       fields={[
         f("task", "نوع خروجی", "Output type", "select", [
           "caption",
@@ -982,6 +1096,30 @@ function Studio() {
     />
   );
 }
+function AnalyticsSummary({ data }: { data: Row }) {
+  const { fa, lang } = useSocial();
+  const current = (data.current ?? null) as Row | null;
+  const analysis = (data.analysis ?? null) as Row | null;
+  const locale = fa ? "fa-IR" : lang;
+  const count = (v: unknown) => (typeof v === "number" ? v.toLocaleString(locale) : "—");
+  const pct = (v: unknown) => (typeof v === "number" ? v.toLocaleString(locale, { maximumFractionDigits: 1 }) + "٪" : "—");
+  const tiles: [string, string][] = [
+    [fa ? "دنبال‌کننده" : "Followers", count(current?.followersCount)],
+    [fa ? "پست" : "Posts", count(current?.mediaCount)],
+    [fa ? "رشد دنبال‌کننده" : "Follower growth", pct(analysis?.growthRatePct)],
+    [fa ? "نرخ تعامل" : "Engagement rate", pct(analysis?.engagementRatePct)],
+  ];
+  return (
+    <div className="stats-grid">
+      {tiles.map(([label, value]) => (
+        <div className="panel stat" key={label}>
+          <span>{label}</span>
+          <strong>{value}</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
 function Analytics({ report }: { report: boolean }) {
   const { fa, lang } = useSocial();
   const state = useData(IG + "analytics");
@@ -994,18 +1132,29 @@ function Analytics({ report }: { report: boolean }) {
             <Button onClick={state.reload}>
               {fa ? "تازه‌سازی آمار" : "Refresh analytics"}
             </Button>
-            {!!state.data.mediaError && (
-              <p role="alert">{String(state.data.mediaError)}</p>
+            <AnalyticsSummary data={state.data} />
+            <h3>{fa ? "روند دنبال‌کننده" : "Follower trend"}</h3>
+            {rows(state.data.trend).length > 1 && (
+              <LineChart
+                labels={rows(state.data.trend).map((t) => new Date(String(t.date)).toLocaleDateString(fa ? "fa-IR" : lang))}
+                series={[{ label: fa ? "دنبال‌کننده" : "Followers", color: "var(--viz-1)", values: rows(state.data.trend).map((t) => (typeof t.followersCount === "number" ? t.followersCount : null)) }]}
+              />
             )}
             <Records
-              items={rows(state.data.trend)}
+              empty={fa ? "روند هر روز یک بار ثبت می‌شود؛ هنوز ثبتی برای این حساب نیست." : "The trend is recorded once a day; nothing is recorded for this account yet."}
+              items={rows(state.data.trend).length > 1 ? [] : rows(state.data.trend)}
               columns={[
                 f("date", "تاریخ", "Date"),
                 f("followersCount", "دنبال‌کننده", "Followers"),
                 f("mediaCount", "پست‌ها", "Posts"),
               ]}
             />
+            <h3>{fa ? "آخرین پست‌ها" : "Latest posts"}</h3>
+            {!!state.data.mediaError && (
+              <p role="alert">{String(state.data.mediaError)}</p>
+            )}
             <Records
+              empty={state.data.mediaError ? (fa ? "پست‌ها دریافت نشدند." : "Posts could not be loaded.") : fa ? "این حساب هنوز پستی ندارد." : "This account has no posts yet."}
               items={rows(state.data.recentMedia)}
               columns={[
                 f("caption", "پست", "Post"),
@@ -1031,6 +1180,27 @@ function Analytics({ report }: { report: boolean }) {
         />
       )}
     </>
+  );
+}
+/** Messages arrive only through Meta's webhook, so an empty inbox can mean events are off; say which. */
+function InboxSync() {
+  const { fa, lang } = useSocial();
+  const health = useData(IG + "webhooks/subscribe");
+  if (health.error) return <p role="alert">{fa ? "وضعیت دریافت پیام بررسی نشد: " : "Could not check message delivery: "}{health.error}</p>;
+  if (!health.data) return <p role="status">{fa ? "در حال بررسی دریافت پیام…" : "Checking message delivery…"}</p>;
+  const last = health.data.lastEventAt ? new Date(String(health.data.lastEventAt)).toLocaleString(fa ? "fa-IR" : lang) : null;
+  const off = health.data.subscriptionChecked && !health.data.subscribed;
+  const stale = !last || Date.now() - new Date(String(health.data.lastEventAt)).getTime() > 7 * 864e5;
+  return (
+    <p role={off || !health.data.tokenValid ? "alert" : "status"} className={off || stale ? "plan-notice" : "muted"}>
+      {!health.data.tokenValid
+        ? fa ? "دسترسی به حساب اینستاگرام معتبر نیست؛ پیام تازه‌ای دریافت نمی‌شود. حساب را دوباره وصل کنید." : "Access to the Instagram account is not valid, so no new messages arrive. Reconnect the account."
+        : off
+          ? fa ? "دریافت رویدادهای اینستاگرام فعال نیست، پس پیام تازه‌ای اینجا نمی‌آید. در «اتصال و وب‌هوک» آن را فعال کنید." : "Instagram event delivery is off, so no new messages arrive here. Enable it under “Connection & webhooks”."
+          : null}{" "}
+      {fa ? "آخرین رویداد دریافتی: " : "Last event received: "}
+      {last ?? (fa ? "هیچ" : "none")}
+    </p>
   );
 }
 function Direct({ inbox }: { inbox: boolean }) {
@@ -1152,7 +1322,9 @@ function Direct({ inbox }: { inbox: boolean }) {
             </>
           )}
           <h3>{fa ? "پیام‌های اخیر" : "Recent messages"}</h3>
+          {inbox && <InboxSync />}
           <Records
+            empty={fa ? "هنوز پیامی از اینستاگرام دریافت نشده است." : "No Instagram messages received yet."}
             items={rows(state.data.recentMessages)}
             columns={[
               f("senderId", "فرستنده", "Sender"),
