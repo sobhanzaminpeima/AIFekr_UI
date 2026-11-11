@@ -17,6 +17,7 @@ import { TemplateGallery } from "./live-chat";
 import { fill } from "@/lib/live-app";
 import type { Tool } from "@/mocks/catalog";
 import { failureGuidance, type MediaFailure } from "@/lib/media-outcome";
+import { CreationLibrary } from "./creation-library";
 
 export type Creation = { id: string; type: MediaKind | "voice"; prompt: string; url: string; isPublic?: boolean; createdAt: string; projectId?: string };
 const ART = ["/art/orbit.svg", "/art/waves.svg", "/art/voice.svg"];
@@ -403,6 +404,7 @@ export function LiveGallery() {
       <SectionTitle title={t("gallery")} subtitle={fa ? "هرچه ساخته‌ای، بخشی از داستان توست." : "Everything you’ve made is a part of your story."}>
         <Link href="/create" className="btn primary"><Icon name="Plus" size={17} />{t("generate")}</Link>
       </SectionTitle>
+      <CreationLibrary />
       <div className="chips">
         {(["all", "image", "video", "voice", "music"] as const).map((s) => (
           <button key={s} className={s === filter ? "selected" : ""} onClick={() => setFilter(s)}>{t(s)}</button>
