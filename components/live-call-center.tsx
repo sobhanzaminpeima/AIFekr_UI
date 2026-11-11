@@ -4,6 +4,7 @@ import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import { useShell } from "./live-shell-context";
 import { Button } from "./ui";
 import { LiveUpload } from "./live-upload";
+import { browserTimeZone } from "@/lib/timezone";
 import {
   field,
   LiveForm,
@@ -174,7 +175,7 @@ function Assistants({
           ]}
           initial={{
             language: shell.lang,
-            timezone: "Europe/Istanbul",
+            timezone: browserTimeZone(),
             openingHour: 9,
             closingHour: 18,
             appointmentMinutes: "30",

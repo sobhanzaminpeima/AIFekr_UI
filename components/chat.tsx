@@ -8,6 +8,7 @@ import { Button, copy, Icon, Modal } from "./ui";
 import * as api from "@/lib/api/client";
 import { toast } from "sonner";
 import { ActionCard, Answer, dataSourceLabel, MediaResult, MediaSettings, PromptBoxCard, TemplateGallery, useLiveChat, type LiveMessage } from "./live-chat";
+import { composerShouldReset } from "@/lib/chat-composer";
 type Message = { role: "user" | "assistant"; text: string };
 export function Chat({ persona }: { persona?: string }) {
   const { t, fa, n, spend, topup } = useApp();
@@ -48,11 +49,19 @@ export function Chat({ persona }: { persona?: string }) {
   const cancel = useRef(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const bottom = useRef<HTMLDivElement>(null);
+  // Only a navigation (a new query string) resets the composer. The same effect also
+  // runs when `live` turns on after the chat settings load, and resetting then wiped
+  // what the user had already typed: the first message lost its first letter
+  // (production 2026-11-09: «سلام!» was stored as «لام!»).
+  const lastQuery = useRef<string | null>(null);
   useEffect(() => {
-    setMessages([]);
-    setPrompt(query.get("prompt") || "");
-    cancel.current = true;
-    setBusy(false);
+    if (composerShouldReset(lastQuery.current, query.toString())) {
+      setMessages([]);
+      setPrompt(query.get("prompt") || "");
+      cancel.current = true;
+      setBusy(false);
+    }
+    lastQuery.current = query.toString();
     const start = query.get("mode");
     if (live && (start === "image" || start === "video" || start === "music")) { setMode(start); lc.setMediaType(start); }
     // eslint-disable-next-line react-hooks/exhaustive-deps

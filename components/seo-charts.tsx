@@ -76,7 +76,7 @@ function useWidth() {
 }
 
 /** Lines over time on one axis. */
-function LineChart({ labels, series, max, unit = "" }: { labels: string[]; series: { label: string; color: string; values: (number | null)[] }[]; max?: number; unit?: string }) {
+export function LineChart({ labels, series, max, unit = "" }: { labels: string[]; series: { label: string; color: string; values: (number | null)[] }[]; max?: number; unit?: string }) {
   const { num } = useT();
   const [hover, setHover] = useState<number | null>(null);
   const box = useRef<SVGSVGElement>(null);

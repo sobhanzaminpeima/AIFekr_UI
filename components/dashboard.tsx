@@ -390,7 +390,7 @@ export function Dashboard() {
             </span>
             {live ? (
               <span>
-                {n(data?.usage.thisWeek ?? 0)} {trend !== null && <small className={trend > 0 ? "orange-text" : "green"}>{trend > 0 ? "↗" : "↘"} {n(Math.abs(trend))}٪</small>}
+                {data ? n(data.usage.thisWeek) : "—"} {trend !== null && <small className={trend > 0 ? "orange-text" : "green"}>{trend > 0 ? "↗" : "↘"} {n(Math.abs(trend))}٪</small>}
               </span>
             ) : (
             <span>
@@ -445,10 +445,13 @@ export function Dashboard() {
               {tl("دوستت را دعوت کن، اعتبار بگیر", "Share a spark. Earn credits.")}
             </h3>
             <p>
-              {live
+              {/* Only a real, positive rate is promised; loading or a zero rate never reads as "0% commission". */}
+              {live && data && data.commissionPercent > 0
                 ? fa
-                  ? `از هر خرید دوستانی که دعوت می‌کنی، ${n(data?.commissionPercent ?? 0)}٪ پورسانت به کیف پولت اضافه می‌شود.`
-                  : `Earn a ${data?.commissionPercent ?? 0}% commission on every purchase your invited friends make.`
+                  ? `از هر خرید دوستانی که دعوت می‌کنی، ${n(data.commissionPercent)}٪ پورسانت به کیف پولت اضافه می‌شود.`
+                  : `Earn a ${data.commissionPercent}% commission on every purchase your invited friends make.`
+                : live
+                ? tl("دوستانت را دعوت کن؛ جزئیات پاداش را در صفحهٔ دعوت ببین.", "Invite your friends; see the reward details on the referral page.")
                 : tl("برای هر دعوت موفق، ۱۰۰ اعتبار هدیه بگیر.", "Earn 100 credits for every successful invitation.")}
             </p>
           </div>
