@@ -163,6 +163,9 @@ export function LiveStudio({ tool }: { tool: Tool }) {
               <div>
                 <strong>{type === "video" ? access.notice.videoTitle : access.notice.musicTitle}</strong>
                 <p>{access.notice.body}</p>
+                {!!(type === "video" ? access.videoPackages : access.musicPackages)?.length && (
+                  <p>{access.notice.includedIn} {(type === "video" ? access.videoPackages : access.musicPackages)!.map((p) => (fa ? p.name : p.nameEn)).join(fa ? "، " : ", ")}</p>
+                )}
                 <div className="domain-actions">
                   <Link className="btn primary" href="/image/generate">{access.notice.createImage}</Link>
                   <a className="btn" href="/plans">{access.notice.packages}</a>

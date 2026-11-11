@@ -101,7 +101,7 @@ export type ChatData = {
   /** Only on /image/generate: the character creator's wording, styles and sample people. */
   characters: { strings: Record<string, string>; genres: { value: string; label: string }[]; samples: { id: string; label: string; portraitPrompt: string }[] } | null;
   /** Whether the account's plan allows video and music (the generate routes' own checks), and the notice shown before a user starts. */
-  planAccess?: { video: boolean; music: boolean; notice: { videoTitle: string; musicTitle: string; body: string; createImage: string; packages: string } };
+  planAccess?: { video: boolean; music: boolean; videoPackages?: { name: string; nameEn: string }[]; musicPackages?: { name: string; nameEn: string }[]; notice: { includedIn?: string; videoTitle: string; musicTitle: string; body: string; createImage: string; packages: string } };
 };
 
 /** Signed-in pages this app renders; must match the app entries of V2_ROUTES in the main site's lib/theme/uiTheme.ts. */
