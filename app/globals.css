@@ -7082,3 +7082,4 @@ button.panel.stat.selected{border-color:#f97316}
 .fit-pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:var(--surface-2);padding:8px;border-radius:8px;margin:0;max-height:160px;overflow:auto}
 .fit-moves{display:grid;gap:8px;border:1px solid var(--border);border-radius:12px;padding:12px}.fit-move{display:grid;grid-template-columns:minmax(0,1fr) 80px 80px 100px auto;gap:8px;align-items:end}.fit-move label{display:grid;gap:4px;font-size:12px}
 @media (max-width:640px){.fit-move{grid-template-columns:1fr 1fr 1fr}.fit-move select{grid-column:1/-1}}
+.voice-steps{margin:6px 0 10px;padding-inline-start:20px;line-height:1.9}.stat strong.small-stat{font-size:14px}
