@@ -55,6 +55,7 @@ import { AdminCenter } from "./admin-center";
 import { AdminFinance } from "./admin-finance";
 import { LivePromotions, LiveInviteRegister } from "./live-admin-growth";
 import { LiveAdminPackages } from "./live-admin-packages";
+import { LiveAdminAnalytics } from "./live-admin-analytics";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -111,6 +112,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/billing/rates" ? <div className="admin-live-page"><AdminFinance section="rates" /></div>
         : path === "/admin/billing/promotions" ? <div className="admin-live-page"><LivePromotions /></div>
         : path === "/admin/packages" ? <div className="admin-live-page"><LiveAdminPackages /></div>
+        : path === "/admin/analytics" ? <div className="admin-live-page"><LiveAdminAnalytics /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
         : path === "/admin/users" ? <AdminUsers />
