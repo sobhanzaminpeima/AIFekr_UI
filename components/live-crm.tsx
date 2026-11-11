@@ -17,7 +17,7 @@ import { useApp } from "./providers";
 import { useShell } from "./live-shell-context";
 import { Button, Empty, Icon, Modal } from "./ui";
 import { BusinessShell } from "./business-shell";
-import { CreditCost, CrmContext, EmptyText, FormError, Loading, useCrm } from "./live-crm-context";
+import { CRM_CHANGED, CreditCost, CrmContext, EmptyText, FormError, Loading, useCrm } from "./live-crm-context";
 import { ContractsView, InvoicesView, ProductsView, ProjectsView } from "./live-crm-ops";
 import { MatchesView, OwnersView, PerformanceView, PropertiesView, ViewingsView } from "./live-crm-estate";
 
@@ -39,6 +39,7 @@ function useCrmState() {
     }
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.error || s("Error"));
+    if (method !== "GET") dispatchEvent(new Event(CRM_CHANGED));
     return d as T;
   }, [s]);
   const get = useCallback(<T,>(url: string) => api<T>(url, undefined, "GET"), [api]);
@@ -257,12 +258,35 @@ function BoardView() {
   );
 }
 
+/** Sales-assistant note categories as people read them (they showed as "lead_source", "risk"...). */
+const NOTE_CATEGORY: Record<string, [string, string]> = {
+  general: ["عمومی", "General"],
+  risk: ["ریسک", "Risk"],
+  lead_source: ["منبع سرنخ", "Lead source"],
+  pipeline: ["قیف فروش", "Pipeline"],
+  opportunity: ["فرصت", "Opportunity"],
+  followup: ["پیگیری", "Follow-up"],
+};
+
 function NewDealModal({ pipeline, onClose, onCreated }: { pipeline: Pipeline; onClose: () => void; onCreated: () => void }) {
-  const { c, s, lang, api, contacts } = useCrm();
+  const { c, s, lang, api, contacts, loadContacts } = useCrm();
   const stages = [...pipeline.stages].sort((a, b) => a.order - b.order);
   const [f, setF] = useState({ contactId: "", title: "", value: "", stageId: stages[0]?.id ?? "", expectedCloseDate: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  // A deal needs a contact; a new account has none, so one can be added right here (production 2026-11-09: a dead end).
+  const [quick, setQuick] = useState<{ name: string; phone: string } | null>(contacts.length ? null : { name: "", phone: "" });
+  const t4 = (fa: string, en: string, de: string, tr: string) => (lang === "fa" ? fa : lang === "de" ? de : lang === "tr" ? tr : en);
+  async function addContact() {
+    if (!quick?.name.trim()) { setError(t4("نام مخاطب را بنویسید.", "Enter the contact's name.", "Namen des Kontakts eingeben.", "Kişinin adını girin.")); return; }
+    setSaving(true); setError("");
+    try {
+      const d = await api<{ contact: { id: string } }>("/api/crm/contacts", { name: quick.name.trim(), phone: quick.phone.trim() || undefined, source: "manual" });
+      await loadContacts();
+      setF((v) => ({ ...v, contactId: d.contact.id }));
+      setQuick(null);
+    } catch (e) { setError((e as Error).message || c.newDealModal.errorGeneric); } finally { setSaving(false); }
+  }
   async function submit() {
     if (!f.contactId || !f.title.trim()) { setError(c.newDealModal.errorRequired); return; }
     setSaving(true); setError("");
@@ -280,7 +304,15 @@ function NewDealModal({ pipeline, onClose, onCreated }: { pipeline: Pipeline; on
               <option value="">{c.newDealModal.selectContact}</option>
               {contacts.map((ct) => <option key={ct.id} value={ct.id}>{ct.name}</option>)}
             </select>
+            {!quick && <button type="button" className="text-link" onClick={() => setQuick({ name: "", phone: "" })}>{t4("+ مخاطب جدید", "+ New contact", "+ Neuer Kontakt", "+ Yeni kişi")}</button>}
           </label>
+          {quick && (
+            <div className="span-2 domain-fields">
+              <label>{t4("نام مخاطب جدید", "New contact name", "Name des neuen Kontakts", "Yeni kişinin adı")}<input value={quick.name} onChange={(e) => setQuick({ ...quick, name: e.target.value })} /></label>
+              <label>{t4("تلفن (اختیاری)", "Phone (optional)", "Telefon (optional)", "Telefon (isteğe bağlı)")}<input type="tel" dir="ltr" value={quick.phone} onChange={(e) => setQuick({ ...quick, phone: e.target.value })} /></label>
+              <Button type="button" disabled={saving} onClick={() => void addContact()}>{t4("ثبت مخاطب و انتخاب آن", "Add and select this contact", "Kontakt anlegen und wählen", "Kişiyi ekle ve seç")}</Button>
+            </div>
+          )}
           <label>{c.newDealModal.titlePlaceholder}<input value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder={c.newDealModal.titlePlaceholder} /></label>
           <label>{c.newDealModal.valuePlaceholder}<input type="number" value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} placeholder={c.newDealModal.valuePlaceholder} /></label>
           <label>{s("Stage")}
@@ -1048,7 +1080,7 @@ function AgentView() {
       <section className="panel">
         <h3>{c.agent.savedNotesTitle}</h3>
         {!insights ? <Loading /> : !insights.length ? <p className="fine-print">{c.agent.noAnalysis}</p> : insights.map((i) => (
-          <div className="crm-note" key={i.id}><span className="badge">{i.category}</span><span>{i.text}</span></div>
+          <div className="crm-note" key={i.id}><span className="badge">{(NOTE_CATEGORY[i.category] ?? [i.category, i.category])[lang === "fa" ? 0 : 1]}</span><span>{i.text}</span></div>
         ))}
       </section>
     </>

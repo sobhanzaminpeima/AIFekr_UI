@@ -222,7 +222,7 @@ function ScriptView({ v }: { v: VoiceCtx }) {
       <div className="domain-toolbar">
         <select aria-label={fa ? "پروژه صوتی" : "Voice project"} value={current?.id || ""} onChange={(e) => { setActive(e.target.value); setDraft(null); }}>
           <option value="">{fa ? "انتخاب پروژه" : "Choose project"}</option>
-          {data!.projects.filter((p) => !p.archivedAt).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          {data!.projects.filter((p) => !p.archivedAt).map((p, _i, all) => <option key={p.id} value={p.id}>{projectLabel(p, all, fa)}</option>)}
         </select>
         <Button variant="primary" onClick={create}>{fa ? "پروژه صوتی تازه" : "New voice project"}</Button>
       </div>
@@ -515,7 +515,7 @@ function GenerateView({ v }: { v: VoiceCtx }) {
           <label className="field-label">{k("Project")}</label>
           <select aria-label={k("Project")} value={project?.id || ""} onChange={(e) => setActive(e.target.value)}>
             <option value="">{k("New project")}</option>
-            {data!.projects.filter((p) => !p.archivedAt || p.id === project?.id).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            {data!.projects.filter((p) => !p.archivedAt || p.id === project?.id).map((p, _i, all) => <option key={p.id} value={p.id}>{projectLabel(p, all, fa)}</option>)}
           </select>
           <input aria-label={k("Project name")} placeholder={k("Project name (optional)")} value={name} maxLength={120} onChange={(e) => setName(e.target.value)} />
           <label className="field-label">{k("Narration text")}</label>
@@ -686,4 +686,10 @@ function AudioFiles({ v }: { v: VoiceCtx }) {
       ) : <Empty />}
     </section>
   );
+}
+
+/** Several projects share a default name; the list adds when each was last edited, so each option can be told apart. */
+function projectLabel(p: { id: string; name: string; updatedAt?: string }, all: { name: string }[], fa: boolean) {
+  if (all.filter((x) => x.name === p.name).length < 2 || !p.updatedAt) return p.name;
+  return `${p.name} · ${new Date(p.updatedAt).toLocaleString(fa ? "fa-IR" : "en", { dateStyle: "short", timeStyle: "short" })}`;
 }

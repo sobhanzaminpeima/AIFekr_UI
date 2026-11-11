@@ -37,19 +37,37 @@ export function CreditCost({ feature }: { feature: string }) {
   return <small className="crm-cost"><Icon name="Coins" size={12} /> {n} {word}</small>;
 }
 
-/** For BusinessShell's pulse and copilot: the real open deals, won revenue and overdue follow-ups. */
+/** Fired after any CRM change, so figures computed elsewhere on the page refresh. */
+export const CRM_CHANGED = "aifekr-crm-changed";
+
+/**
+ * For BusinessShell's pulse and copilot: the real open deals, won revenue and
+ * overdue follow-ups. A failed request used to count as "no deals", so the
+ * pulse flickered 0 → 1 → 0 between loads (production 2026-11-09); now the
+ * figures stay unknown until every request has answered, and refresh after
+ * each CRM change.
+ */
 export function useCrmPulse(enabled: boolean) {
   const [pulse, setPulse] = useState<{ open: Deal[]; wonValue: number; overdue: Task[] } | null>(null);
+  const [version, setVersion] = useState(0);
   useEffect(() => {
     if (!enabled) return;
-    Promise.all([
-      fetch("/api/crm/deals?status=open").then((r) => (r.ok ? r.json() : { deals: [] })),
-      fetch("/api/crm/deals?status=won").then((r) => (r.ok ? r.json() : { deals: [] })),
-      fetch("/api/crm/tasks?status=pending").then((r) => (r.ok ? r.json() : { tasks: [] })),
-    ]).then(([open, won, tasks]: [{ deals: Deal[] }, { deals: Deal[] }, { tasks: Task[] }]) => {
-      const now = Date.now();
-      setPulse({ open: open.deals || [], wonValue: (won.deals || []).reduce((sum, d) => sum + d.value, 0), overdue: (tasks.tasks || []).filter((t) => t.dueDate && new Date(t.dueDate).getTime() < now) });
-    }).catch(() => setPulse({ open: [], wonValue: 0, overdue: [] }));
+    const bump = () => setVersion((v) => v + 1);
+    addEventListener(CRM_CHANGED, bump);
+    return () => removeEventListener(CRM_CHANGED, bump);
   }, [enabled]);
+  useEffect(() => {
+    if (!enabled) return;
+    let alive = true;
+    const read = (url: string) => fetch(url, { cache: "no-store" }).then((r) => { if (!r.ok) throw Error(String(r.status)); return r.json(); });
+    Promise.all([read("/api/crm/deals?status=open"), read("/api/crm/deals?status=won"), read("/api/crm/tasks?status=pending")])
+      .then(([open, won, tasks]: [{ deals: Deal[] }, { deals: Deal[] }, { tasks: Task[] }]) => {
+        if (!alive) return;
+        const now = Date.now();
+        setPulse({ open: open.deals || [], wonValue: (won.deals || []).reduce((sum, d) => sum + d.value, 0), overdue: (tasks.tasks || []).filter((t) => t.dueDate && new Date(t.dueDate).getTime() < now) });
+      })
+      .catch(() => { if (alive) setPulse(null); });
+    return () => { alive = false; };
+  }, [enabled, version]);
   return pulse;
 }

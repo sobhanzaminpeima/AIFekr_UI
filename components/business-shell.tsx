@@ -360,7 +360,11 @@ export function BusinessShell({
             <strong>{fa ? "نبض فضای کاری" : "Workspace pulse"}</strong>
           </span>
           <p>
-            {crm
+            {crm && live && !pulse
+              ? fa
+                ? "در حال خواندن فرصت‌ها و پیگیری‌ها…"
+                : "Reading opportunities and follow-ups…"
+              : crm
               ? fa
                 ? `${n(openDeals.length)} فرصت باز · ${n(overdue.length)} پیگیری نیازمند توجه`
                 : `${openDeals.length} open opportunities · ${overdue.length} follow-ups need attention`
