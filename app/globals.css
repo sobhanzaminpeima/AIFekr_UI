@@ -6970,3 +6970,4 @@ button.panel.stat.selected{border-color:#f97316}
 .admin-package-form{display:grid;gap:14px}.admin-package-form>label{display:grid;gap:6px}.admin-package-form h3{margin:8px 0 0;font-size:15px}
 .admin-fixed-prices{display:grid}
 .admin-finance-heading>.btn{margin-inline-start:auto}
+.admin-reason{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
