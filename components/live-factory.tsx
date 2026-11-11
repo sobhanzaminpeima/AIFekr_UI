@@ -47,6 +47,13 @@ const STATUS: Record<string, string> = { QUEUED: "Queued", RUNNING: "Running", P
 const STAGE: Record<string, string> = { PLANNING: "Grounded idea lab", SCRIPT_REVIEW: "Script review", STORYBOARD_REVIEW: "Storyboard review", ASSET_GENERATION: "Media generation", SCRIPTING: "Script & storyboard", SHOT_RENDERING: "Shot rendering", ASSEMBLY: "Assembly & quality checks" };
 const ACTIONS: Record<string, string> = { script_storyboard: "Script & storyboard · 2", silent_animatic_render: "Render & assembly", idea_lab: "Grounded idea lab", images: "Images", video_seconds: "Generated clip seconds", voice_shots: "Shot narration", music_minutes: "Instrumental music minutes" };
 
+/** Estimate lines the classic wording never named; they showed as raw keys like "gemini_scene_animation". */
+const EXTRA_ACTIONS: Record<string, [string, string]> = {
+  gemini_scene_animation: ["متحرک‌سازی صحنه‌ها", "Scene animation"],
+  completed_film_package: ["بستهٔ فیلم کامل", "Finished film package"],
+  creator_bundle_video: ["ویدیوی بستهٔ سازنده", "Creator bundle video"],
+};
+
 /** Projects, the active project (kept per browser, like the design's draft) and the classic wording. */
 export function useFactory() {
   const shell = useShell();
@@ -546,7 +553,7 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
       {!canStart && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f(STATUS[job!.status] || job!.status)} · {f(STAGE[job!.stage] || job!.stage)}</span></div>}
       {estimate && (
         <dl className="cost-summary">
-          {estimate.items.map((item) => <div className="cost-row" key={item.action}><dt>{f(ACTIONS[item.action] || item.action)} × {n(item.quantity)}</dt><dd>~✦ {n(item.credits)}</dd></div>)}
+          {estimate.items.map((item) => <div className="cost-row" key={item.action}><dt>{EXTRA_ACTIONS[item.action] ? EXTRA_ACTIONS[item.action][fa ? 0 : 1] : f(ACTIONS[item.action] || item.action)} × {n(item.quantity)}</dt><dd>~✦ {n(item.credits)}</dd></div>)}
           <div className="cost-row total"><dt>{fa ? "مجموع" : "Total"}</dt><dd>~✦ {n(estimate.credits)}</dd></div>
           <div className="cost-row"><dt>{t("balance")}</dt><dd>{n(credits)}</dd></div>
         </dl>

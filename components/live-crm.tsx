@@ -258,6 +258,16 @@ function BoardView() {
   );
 }
 
+/** Sales-assistant note categories as people read them (they showed as "lead_source", "risk"...). */
+const NOTE_CATEGORY: Record<string, [string, string]> = {
+  general: ["عمومی", "General"],
+  risk: ["ریسک", "Risk"],
+  lead_source: ["منبع سرنخ", "Lead source"],
+  pipeline: ["قیف فروش", "Pipeline"],
+  opportunity: ["فرصت", "Opportunity"],
+  followup: ["پیگیری", "Follow-up"],
+};
+
 function NewDealModal({ pipeline, onClose, onCreated }: { pipeline: Pipeline; onClose: () => void; onCreated: () => void }) {
   const { c, s, lang, api, contacts, loadContacts } = useCrm();
   const stages = [...pipeline.stages].sort((a, b) => a.order - b.order);
@@ -1070,7 +1080,7 @@ function AgentView() {
       <section className="panel">
         <h3>{c.agent.savedNotesTitle}</h3>
         {!insights ? <Loading /> : !insights.length ? <p className="fine-print">{c.agent.noAnalysis}</p> : insights.map((i) => (
-          <div className="crm-note" key={i.id}><span className="badge">{i.category}</span><span>{i.text}</span></div>
+          <div className="crm-note" key={i.id}><span className="badge">{(NOTE_CATEGORY[i.category] ?? [i.category, i.category])[lang === "fa" ? 0 : 1]}</span><span>{i.text}</span></div>
         ))}
       </section>
     </>
