@@ -6982,3 +6982,6 @@ button.panel.stat.selected{border-color:#f97316}
 .admin-prompt-card>p{margin:0;font-size:13px;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .admin-prompt-thumb{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.admin-prompt-thumb img{width:64px;height:64px;object-fit:cover;border-radius:12px}
 .admin-package-form textarea{width:100%}
+.admin-category-card{display:grid;gap:8px;border-top:3px solid var(--cat,#f97316)}.admin-category-card.inactive{opacity:.6}
+.admin-category-card h3{margin:4px 0 0}.admin-category-card small{color:var(--text-muted)}
+.admin-category-icon{font-size:28px}
