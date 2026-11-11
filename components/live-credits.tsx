@@ -6,6 +6,7 @@ import { ErrorState, Icon, SectionTitle, Modal, Button } from "./ui";
 import { useShell } from "./live-shell-context";
 import { UsageChart } from "./dashboard";
 import { fill } from "@/lib/live-app";
+import { CreditLedger } from "./credit-ledger";
 
 type Tier = { id: string; creditsAmount: number; priceToman: number; discountPercent: number; badge: string | null };
 type Profile = { credits: number; displayCredits: number; plan: string; planExpiry?: string | null };
@@ -147,6 +148,7 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
           </div>
         ))}
       </section>
+      {!fitness && <CreditLedger />}
       <section className="panel">
         <h2>{s["Credit usage"]}</h2>
         {usage === null ? <p className="muted">…</p> : !usage.length ? <p className="muted">{s["No credits used yet."]}</p> : usage.map((e) => (

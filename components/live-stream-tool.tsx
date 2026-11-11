@@ -5,6 +5,7 @@ import { consumeToolStream } from "@/lib/live-stream";
 import { AIText } from "./ai-text";
 import { AIResultActions } from "./ai-result-actions";
 import {
+  newIdempotencyKey,
   LiveForm,
   LiveLoad,
   useLiveData,
@@ -32,6 +33,7 @@ export function LiveStreamTool({
     [state, setState] = useState<"idle" | "running" | "complete" | "failed">(
       "idle",
     );
+  const [idempotency] = useState(() => ({ key: newIdempotencyKey() }));
   const rates = costs.data?.costs as LiveRow | undefined,
     rate = rates?.["tool_" + feature.replace(/[.-]/g, "_")] ?? rates?.tool;
   return (
@@ -62,7 +64,7 @@ export function LiveStreamTool({
                 const response = await fetch(url, {
                   method: "POST",
                   credentials: "include",
-                  headers: { "Content-Type": "application/json" },
+                  headers: { "Content-Type": "application/json", "Idempotency-Key": idempotency.key },
                   body: JSON.stringify(body),
                 });
                 await consumeToolStream(response, (e) => {
@@ -72,6 +74,7 @@ export function LiveStreamTool({
                   }
                 });
                 setState("complete");
+                idempotency.key = newIdempotencyKey();
                 return { complete: true };
               } catch (e) {
                 setState("failed");
