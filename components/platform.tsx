@@ -58,6 +58,7 @@ import { LiveAdminPackages } from "./live-admin-packages";
 import { LiveAdminAnalytics } from "./live-admin-analytics";
 import { LiveProviderFallback } from "./live-admin-fallback";
 import { LiveAiChatPolicy } from "./live-admin-ai-chat";
+import { LiveAdminLogs, LiveAdminSystem } from "./live-admin-ops";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -117,6 +118,8 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/analytics" ? <div className="admin-live-page"><LiveAdminAnalytics /></div>
         : path === "/admin/provider-fallback" ? <div className="admin-live-page"><LiveProviderFallback /></div>
         : path === "/admin/ai-chat" ? <div className="admin-live-page"><LiveAiChatPolicy /></div>
+        : path === "/admin/logs" ? <div className="admin-live-page"><LiveAdminLogs /></div>
+        : path === "/admin/system" ? <div className="admin-live-page"><LiveAdminSystem /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
         : path === "/admin/users" ? <AdminUsers />
