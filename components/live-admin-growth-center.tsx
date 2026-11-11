@@ -419,7 +419,7 @@ function SmsListCard() {
 }
 
 type Campaign = { id: string; name: string; status: string; targetModule: string | null; landingPath: string; utmSource: string; utmMedium: string; spendToman: number | null; startsAt: string | null; endsAt: string | null; recommendedPlan: string | null; notes: string };
-type CampaignRow = { key: string; campaign: Campaign | null; visits: number | null; visitors: number | null; signups: number; firstValue: number; repeat: number; pricingViews: number; checkouts: number; paid: number; revenueToman: number; creditsUsed: number; activationRate: number | null; conversionRate: number | null; cacToman: number | null };
+type CampaignRow = { activation?: Activation | null; key: string; campaign: Campaign | null; visits: number | null; visitors: number | null; signups: number; firstValue: number; repeat: number; pricingViews: number; checkouts: number; paid: number; revenueToman: number; creditsUsed: number; activationRate: number | null; conversionRate: number | null; cacToman: number | null };
 type CampaignsData = { disabled?: boolean; campaigns: CampaignRow[]; modules: { id: string; name: Two; landingPath: string }[]; origin: string };
 type CampaignForm = { id?: string; name: string; utmCampaign: string; utmSource: string; utmMedium: string; targetModule: string; landingPath: string; status: string; startsAt: string; endsAt: string; spendToman: string; recommendedPlan: string; notes: string };
 const LIVE_PRESET: CampaignForm = { name: "AIFekr لایو — اینستاگرام", utmCampaign: "instagram_aifekr_live_launch", utmSource: "instagram", utmMedium: "comment_dm", targetModule: "live", landingPath: "/live", status: "draft", startsAt: "", endsAt: "", spendToman: "", recommendedPlan: "", notes: "کامنت «لایو» زیر پست ← دایرکت با لینک ← /live" };
@@ -461,7 +461,7 @@ function Campaigns() {
           <thead><tr>{([["کمپین / منبع", "Campaign / source", "Kampagne / Quelle", "Kampanya / kaynak"], ["وضعیت", "Status", "Status", "Durum"], ["بازدید", "Visits", "Besuche", "Ziyaret"], ["بازدیدکننده", "Visitors", "Besucher", "Ziyaretçi"], ["ثبت‌نام", "Signups", "Registrierungen", "Kayıt"], ["نتیجهٔ اول", "First value", "Erster Nutzen", "İlk değer"], ["فعال‌سازی", "Activation", "Aktivierung", "Etkinleşme"], ["تکرار", "Repeat", "Wiederholt", "Tekrar"], ["دیدن قیمت", "Pricing", "Preise", "Fiyat"], ["پرداخت", "Checkout", "Checkout", "Ödeme"], ["خرید", "Paid", "Bezahlt", "Satın alma"], ["تبدیل", "Conv.", "Conv.", "Dönüşüm"], ["درآمد (تومان)", "Revenue (T)", "Umsatz (T)", "Gelir (T)"], ["کردیت مصرفی", "Credits used", "Verbrauchte Credits", "Harcanan kredi"], ["CAC", "CAC", "CAC", "CAC"]] as Tx[]).map((h) => <th key={h[1]}>{tx(h)}</th>)}</tr></thead>
           <tbody>{data.campaigns.map((r) => <tr key={r.key}>
             <td><button className="link-button" onClick={() => edit(r)} title={tx(["ویرایش / ساخت لینک", "Edit / build link", "Bearbeiten / Link erstellen", "Düzenle / bağlantı oluştur"])}>{r.campaign?.name ?? (r.key === "unknown" ? tx(["نامشخص (بدون شاهد)", "Unknown (no evidence)", "Unbekannt (ohne Nachweis)", "Bilinmiyor (kanıt yok)"]) : r.key)}</button><small><bdi dir="ltr">{r.key}</bdi>{r.campaign?.startsAt ? " · " + date(r.campaign.startsAt) : ""}</small></td>
-            <td>{r.campaign ? <span className="badge">{lbl(CAMPAIGN_STATUS, r.campaign.status, i)}</span> : <small>{tx(["ثبت‌نشده", "Unregistered", "Nicht registriert", "Kayıtsız"])}</small>}</td>
+            <td>{r.activation ? <ActivationText activation={r.activation} short /> : r.campaign ? <span className="badge">{lbl(CAMPAIGN_STATUS, r.campaign.status, i)}</span> : <small>{tx(["ثبت‌نشده", "Unregistered", "Nicht registriert", "Kayıtsız"])}</small>}</td>
             <td>{num(r.visits)}</td><td>{num(r.visitors)}</td><td>{n(r.signups)}</td><td>{n(r.firstValue)}</td><td>{pct(r.activationRate)}</td><td>{n(r.repeat)}</td><td>{n(r.pricingViews)}</td><td>{n(r.checkouts)}</td><td>{n(r.paid)}</td><td>{pct(r.conversionRate)}</td><td>{n(r.revenueToman)}</td><td>{n(r.creditsUsed)}</td>
             <td>{r.cacToman != null ? n(r.cacToman) : <Missing>{r.campaign?.spendToman == null ? tx(["هزینه وارد نشده", "No spend", "Keine Kosten", "Harcama yok"]) : tx(["خریدار ندارد", "No buyers", "Keine Käufer", "Alıcı yok"])}</Missing>}</td>
           </tr>)}</tbody>
@@ -492,11 +492,29 @@ function Campaigns() {
   );
 }
 
+type Activation = { live: boolean; blockers: string[] };
+const BLOCKERS: Record<string, Tx> = {
+  record_missing: ["رکورد کمپین ساخته نشده", "the campaign record does not exist", "der Kampagnendatensatz fehlt", "kampanya kaydı yok"],
+  record_not_active: ["وضعیت رکورد کمپین «فعال» نیست", "the campaign record is not set to active", "der Kampagnendatensatz ist nicht aktiv", "kampanya kaydı aktif değil"],
+  instagram_not_connected: ["اینستاگرام AIFekr با حساب مدیر وصل نیست", "AIFekr's Instagram is not connected to an admin account", "AIFekrs Instagram ist mit keinem Admin-Konto verbunden", "AIFekr Instagram'ı bir yönetici hesabına bağlı değil"],
+  comment_campaign_missing: ["کمپین کامنت «لایو» فعال با لینک ردیابی‌شده وجود ندارد", "there is no active «لایو» comment campaign with the tracked link", "keine aktive «لایو»-Kommentarkampagne mit Tracking-Link", "izlenen bağlantılı aktif «لایو» yorum kampanyası yok"],
+};
 type LiveData = {
   enabled: boolean;
-  status: { definition: { utmCampaign: string; keyword: string; url: string }; growthCampaign: { id: string; status: string } | null; instagram: { connected: boolean; accounts: string[]; expired: number }; commentCampaigns: { id: string; name: string; isActive: boolean; linkHasUtm: boolean; linkClicks: number }[]; state: "ready" | "needs_comment_campaign" | "not_connected" };
+  status: { activation: Activation; definition: { utmCampaign: string; keyword: string; url: string }; growthCampaign: { id: string; status: string } | null; instagram: { connected: boolean; accounts: string[]; expired: number }; commentCampaigns: { id: string; name: string; isActive: boolean; linkHasUtm: boolean; linkClicks: number }[]; state: "ready" | "needs_comment_campaign" | "not_connected" };
   funnel: { comments: Record<string, number>; visits: number; visitors: number; attributedUsers: number; signups: number; liveStarted: number; liveFirstValue: number; buyers: number; revenueToman: number };
 };
+/** The Live campaign's running state, worded the same in the table and on its card. */
+function ActivationText({ activation, short }: { activation: Activation; short?: boolean }) {
+  const { tx } = useG();
+  if (activation.live) return short
+    ? <span className="badge">{tx(["در حال اجرا", "Running", "Läuft", "Çalışıyor"])}</span>
+    : <>{tx(["در حال اجرا: رکورد فعال است و کامنت «لایو» روی اینستاگرام متصل، دایرکت با لینک ردیابی می‌فرستد.", "Running: the record is active, and a «لایو» comment on the connected Instagram gets a DM with the tracked link.", "Läuft: Datensatz aktiv, ein «لایو»-Kommentar auf dem verbundenen Instagram erhält eine DM mit Tracking-Link.", "Çalışıyor: kayıt aktif; bağlı Instagram'daki «لایو» yorumu izlenen bağlantılı DM alır."])}</>;
+  const reasons = activation.blockers.map((b) => tx(BLOCKERS[b] ?? [b, b, b, b])).join("؛ ");
+  return short
+    ? <span className="badge" title={reasons}>{tx(["اجرا نمی‌شود", "Not running", "Läuft nicht", "Çalışmıyor"])}</span>
+    : <>{tx(["اجرا نمی‌شود: ", "Not running: ", "Läuft nicht: ", "Çalışmıyor: "])}{reasons}</>;
+}
 function LiveCampaignCard() {
   const { n, tx } = useG();
   const { data, error, reload } = useData<LiveData>(FOLLOWUP, "view=live");
@@ -504,10 +522,10 @@ function LiveCampaignCard() {
   if (error) return <Problem error={error} />;
   if (!data) return <section className="panel" aria-busy="true" />;
   const { status: s, funnel: f } = data;
-  const state = !data.enabled ? tx(["غیرفعال (در تنظیمات موتور پیگیری روشن می‌شود)", "Disabled (switch on in follow-up engine settings)", "Deaktiviert (in den Engine-Einstellungen einschalten)", "Kapalı (takip motoru ayarlarından açılır)"])
-    : s.state === "ready" ? tx(["آماده: اینستاگرام وصل است و کمپین «لایو» با لینک ردیابی فعال است", "Ready: Instagram is connected and the «لایو» campaign with the tracked link is active", "Bereit: Instagram verbunden, «لایو»-Kampagne mit Tracking-Link aktiv", "Hazır: Instagram bağlı, «لایو» kampanyası izlenen bağlantıyla aktif"])
-    : s.state === "needs_comment_campaign" ? tx(["اینستاگرام وصل است، ولی کمپین کامنت «لایو» با لینک ردیابی‌شده وجود ندارد", "Instagram is connected, but there is no «لایو» comment campaign with the tracked link", "Instagram verbunden, aber keine «لایو»-Kommentarkampagne mit Tracking-Link", "Instagram bağlı ama izlenen bağlantılı «لایو» yorum kampanyası yok"])
-    : tx(["اینستاگرام AIFekr با حساب مدیر وصل نیست", "AIFekr's Instagram is not connected to an admin account", "AIFekrs Instagram ist mit keinem Admin-Konto verbunden", "AIFekr Instagram'ı bir yönetici hesabına bağlı değil"]);
+  const state = <ActivationText activation={s.activation} />;
+  const followups = data.enabled
+    ? tx(["پیام‌های پیگیری لایو: روشن", "Live follow-up messages: on", "Live-Folgenachrichten: an", "Canlı takip mesajları: açık"])
+    : tx(["پیام‌های پیگیری لایو: خاموش (در تنظیمات موتور پیگیری روشن می‌شود؛ روی اجرای خود کمپین اثری ندارد)", "Live follow-up messages: off (switch on in follow-up engine settings; this does not affect whether the campaign runs)", "Live-Folgenachrichten: aus (in den Engine-Einstellungen einschalten; beeinflusst nicht, ob die Kampagne läuft)", "Canlı takip mesajları: kapalı (takip motoru ayarlarından açılır; kampanyanın çalışmasını etkilemez)"]);
   const steps: [Tx, number | null][] = [
     [["کامنت‌های پاسخ‌داده‌شده", "Comments answered", "Beantwortete Kommentare", "Yanıtlanan yorumlar"], f.comments.sent ?? (Object.keys(f.comments).length ? 0 : null)],
     [["بازدید از لینک", "Link visits", "Linkbesuche", "Bağlantı ziyaretleri"], f.visits], [["بازدیدکنندهٔ یکتا", "Unique visitors", "Eindeutige Besucher", "Tekil ziyaretçi"], f.visitors],
@@ -523,6 +541,10 @@ function LiveCampaignCard() {
     <details className="panel gc-live-card">
       <summary><Icon name="Radio" size={16} /> {tx(["کمپین اینستاگرام AIFekr لایو", "AIFekr Live Instagram campaign", "AIFekr-Live-Instagram-Kampagne", "AIFekr Canlı Instagram kampanyası"])} <bdi dir="ltr" className="badge">{s.definition.utmCampaign}</bdi></summary>
       <p className="fine-print" role="status">{state}</p>
+      <p className="fine-print">{followups}</p>
+      {s.activation.blockers.includes("comment_campaign_missing") && (
+        <p className="plan-notice">{tx(["این صفحه فقط «برچسب ردیابی» کمپین را نگه می‌دارد. خود خودکارسازی، یعنی پاسخ به کامنت «لایو» با دایرکت، در استودیوی اجتماعیِ همان حسابی ساخته می‌شود که اینستاگرام AIFekr به آن وصل است: یک کمپین «کامنت به دایرکت» با کلمهٔ «لایو» و لینک بالا بسازید.", "This page holds only the campaign's tracking label. The automation itself, answering a «لایو» comment with a DM, is built in Social Studio of the account AIFekr's Instagram is connected to: create a Comment-to-DM campaign with the keyword «لایو» and the link above.", "Diese Seite enthält nur das Tracking-Label. Die Automatisierung selbst (Antwort-DM auf «لایو») wird im Social Studio des Kontos angelegt, mit dem AIFekrs Instagram verbunden ist: Kommentar-zu-DM-Kampagne mit «لایو» und dem Link oben anlegen.", "Bu sayfa yalnızca kampanyanın izleme etiketini tutar. Otomasyonun kendisi («لایو» yorumuna DM) AIFekr Instagram'ının bağlı olduğu hesabın Sosyal Stüdyo'sunda kurulur: «لایو» anahtar kelimesi ve yukarıdaki bağlantıyla bir Yorumdan DM'e kampanyası oluşturun."])} <a className="text-link" href="/social?tab=campaigns">{tx(["رفتن به کمپین‌های استودیو", "Open studio campaigns", "Studio-Kampagnen öffnen", "Stüdyo kampanyalarını aç"])}</a></p>
+      )}
       <dl className="domain-detail">
         <dt>{tx(["کلمهٔ کامنت", "Comment keyword", "Kommentar-Stichwort", "Yorum anahtar kelimesi"])}</dt><dd>«{s.definition.keyword}»</dd>
         <dt>{tx(["لینک داخل دایرکت", "Link to put in the DM", "Link für die DM", "DM'ye konacak bağlantı"])}</dt><dd><bdi dir="ltr">{s.definition.url}</bdi></dd>
@@ -690,7 +712,7 @@ function Engine() {
     if (draft.engine_enabled && !before.engine_enabled) out.push(tx(["روشن‌کردن موتور", "turning the engine on", "Engine einschalten", "motoru açma"]));
     if (draft.mode === "live" && before.mode !== "live") out.push(tx(["حالت واقعی (ارسال)", "live (sending) mode", "Live-Modus (Senden)", "canlı (gönderim) modu"]));
     for (const c of Object.keys(draft.channels)) if (draft.channels[c] && !before.channels[c]) out.push(lbl(CHANNELS, c, i));
-    if (draft.live_campaign_enabled && !before.live_campaign_enabled) out.push(tx(["کمپین لایو", "the Live campaign", "die Live-Kampagne", "Canlı kampanya"]));
+    if (draft.live_campaign_enabled && !before.live_campaign_enabled) out.push(tx(["پیام‌های پیگیری کمپین لایو", "Live campaign follow-ups", "Live-Kampagnen-Folgenachrichten", "Canlı kampanya takipleri"]));
     for (const k of Object.keys(draft.ruleModes)) if (["live", "internal_test"].includes(draft.ruleModes[k]) && before.ruleModes[k] !== draft.ruleModes[k]) out.push(two(data.rules.find((r) => r.key === k)?.name, k) + " → " + lbl(RULE_MODES, draft.ruleModes[k], i));
     return out;
   })();
@@ -727,7 +749,7 @@ function Engine() {
         </section>
         <section className="panel">
           <h3>{tx(["کانال‌ها", "Channels", "Kanäle", "Kanallar"])}</h3>
-          <dl className="domain-detail">{Object.entries(data.channels).map(([k, c]) => <Fragment key={k}><dt>{lbl(CHANNELS, k, i)}</dt><dd>{c.available ? tx(["آماده روی سرور", "Available on the server", "Auf dem Server verfügbar", "Sunucuda hazır"]) : tx(["در دسترس نیست", "Not available", "Nicht verfügbar", "Kullanılamıyor"])}{c.needs && <small><bdi dir="ltr">{c.needs}</bdi></small>}</dd></Fragment>)}</dl>
+          <dl className="domain-detail">{Object.entries(data.channels).map(([k, c]) => <Fragment key={k}><dt>{lbl(CHANNELS, k, i)}</dt><dd>{k === "instagram_dm" && !c.available ? tx(["برای پیگیری‌ها به کار نمی‌رود: اینستاگرام دایرکت را فقط در پاسخ به کامنت یا پیام کاربر اجازه می‌دهد. همین دایرکت در «کامنت به دایرکت» استودیوی اجتماعی کار می‌کند.", "Not used for follow-ups: Instagram allows a DM only in reply to the user's comment or message. That reply DM works in Social Studio's Comment-to-DM.", "Nicht für Folgenachrichten: Instagram erlaubt DMs nur als Antwort auf Kommentar oder Nachricht. Diese Antwort-DM läuft im Social Studio (Kommentar-zu-DM).", "Takipte kullanılmaz: Instagram DM'e yalnızca yorum veya mesaja yanıt olarak izin verir. Bu yanıt DM'i Sosyal Stüdyo'daki Yorumdan DM'e ile çalışır."]) : <>{c.available ? tx(["آماده روی سرور", "Available on the server", "Auf dem Server verfügbar", "Sunucuda hazır"]) : tx(["در دسترس نیست", "Not available", "Nicht verfügbar", "Kullanılamıyor"])}{c.needs && <small><bdi dir="ltr">{c.needs}</bdi></small>}</>}</dd></Fragment>)}</dl>
         </section>
       </div>
       <section className="panel">
@@ -753,7 +775,7 @@ function Engine() {
           <label className="gc-switch"><input type="checkbox" checked={s.engine_enabled} onChange={(e) => set({ engine_enabled: e.target.checked })} />{tx(["موتور روشن", "Engine on", "Engine an", "Motor açık"])}</label>
           <label>{tx(["حالت", "Mode", "Modus", "Mod"])}<select value={s.mode} onChange={(e) => set({ mode: e.target.value as FollowupSettings["mode"] })}><option value="dry_run">{tx(["آزمایشی (فقط ثبت)", "Dry run (record only)", "Testlauf (nur Protokoll)", "Deneme (yalnızca kayıt)"])}</option><option value="live">{tx(["واقعی (ارسال)", "Live (send)", "Live (senden)", "Canlı (gönder)"])}</option></select></label>
           {(["in_app", "email", "push"] as const).map((c) => <label key={c} className="gc-switch"><input type="checkbox" checked={!!s.channels[c]} onChange={(e) => set({ channels: { ...s.channels, [c]: e.target.checked } })} />{lbl(CHANNELS, c, i)}</label>)}
-          <label className="gc-switch"><input type="checkbox" checked={s.live_campaign_enabled} onChange={(e) => set({ live_campaign_enabled: e.target.checked })} />{tx(["کمپین اینستاگرام AIFekr لایو", "AIFekr Live Instagram campaign", "AIFekr-Live-Instagram-Kampagne", "AIFekr Canlı Instagram kampanyası"])}</label>
+          <label className="gc-switch"><input type="checkbox" checked={s.live_campaign_enabled} onChange={(e) => set({ live_campaign_enabled: e.target.checked })} />{tx(["پیام‌های پیگیری برای کاربران کمپین لایو", "Follow-up messages for Live campaign users", "Folgenachrichten für Nutzer der Live-Kampagne", "Canlı kampanya kullanıcılarına takip mesajları"])}<small>{tx(["فقط پیگیری بعد از ثبت‌نام را روشن می‌کند. دایرکتِ خود کمپین را «کامنت به دایرکت» در استودیوی اجتماعی می‌فرستد و به این تیک وابسته نیست.", "Turns on post-signup follow-ups only. The campaign's own DM is sent by Comment-to-DM in Social Studio and does not depend on this switch.", "Schaltet nur Folgenachrichten nach der Registrierung ein. Die DM der Kampagne sendet Kommentar-zu-DM im Social Studio, unabhängig von diesem Schalter.", "Yalnızca kayıt sonrası takipleri açar. Kampanyanın DM'ini Sosyal Stüdyo'daki Yorumdan DM'e gönderir; bu anahtara bağlı değildir."])}</small></label>
           <label>{tx(["حداکثر پیام در ۲۴ ساعت", "Max per 24 hours", "Max. pro 24 Stunden", "24 saatte en fazla"])}<input type="number" min={1} max={5} value={s.caps.per24h} onChange={(e) => numSet("per24h", e.target.value)} /></label>
           <label>{tx(["حداکثر پیام در ۷ روز", "Max per 7 days", "Max. pro 7 Tage", "7 günde en fazla"])}<input type="number" min={1} max={20} value={s.caps.per7d} onChange={(e) => numSet("per7d", e.target.value)} /></label>
           <label>{tx(["تعداد تلاش ارسال", "Send attempts", "Sendeversuche", "Gönderim denemesi"])}<input type="number" min={1} max={10} value={s.retry.maxAttempts} onChange={(e) => set({ retry: { ...s.retry, maxAttempts: Number(e.target.value) || 1 } })} /></label>
