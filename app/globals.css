@@ -6976,3 +6976,9 @@ button.panel.stat.selected{border-color:#f97316}
 .admin-error-row pre{max-height:320px;overflow:auto;font-size:12px;padding:12px;border-radius:12px;background:var(--surface-2);white-space:pre-wrap}
 .stat strong.ok{color:#22c55e}.stat strong.bad{color:#ef4444}
 .admin-integration{display:grid;gap:8px}.admin-integration h3{margin:0;font-size:15px}.admin-integration small{color:var(--text-muted);overflow-wrap:anywhere}
+.admin-prompt-card{display:grid;gap:10px}.admin-prompt-card.inactive{opacity:.6}
+.admin-prompt-card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px}
+.admin-prompt-card h3{margin:0;font-size:15px}
+.admin-prompt-card>p{margin:0;font-size:13px;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.admin-prompt-thumb{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.admin-prompt-thumb img{width:64px;height:64px;object-fit:cover;border-radius:12px}
+.admin-package-form textarea{width:100%}
