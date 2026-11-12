@@ -12,6 +12,7 @@ import { useShell } from "./live-shell-context";
 import { Icon } from "./ui";
 import { fill } from "@/lib/live-app";
 import { useMediaTools, type Media, type Template } from "./live-media";
+import { chatCostRange } from "@/lib/chat-cost";
 
 export type MediaType = "chat" | "image" | "video" | "music";
 type PromptBox = { name: string; type: string; targetAI: string; language: string; category: string; content: string };
@@ -236,6 +237,7 @@ export function useLiveChat(conversationFromPath: string | null) {
     setGenerating(false);
   }
   const chatCost = model === "auto" ? baseCost : providers.find((p) => p.model === model)?.creditCost ?? null;
+  const chatCostRangeValue = chatCostRange(model, baseCost, providers);
 
   // ── Files ──────────────────────────────────────────────────────────────────
   async function attachDocument(file: File) {
@@ -289,7 +291,7 @@ export function useLiveChat(conversationFromPath: string | null) {
   }
 
   return {
-    enabled: !!chat, chat, s, lang, messages, setMessages, conversationId, providers, model, setModel, chatCost, expertMode, setExpertMode,
+    enabled: !!chat, chat, s, lang, messages, setMessages, conversationId, providers, model, setModel, chatCost, chatCostRange: chatCostRangeValue, expertMode, setExpertMode,
     mediaType, setMediaType, streaming, generating, activeProvider, send, branchFrom, generate, stop: () => abort.current?.abort(), mediaCost: tools.mediaCost,
     documents, setDocuments, documentBusy, attachDocument, sourceImages, setSourceImages, uploading: tools.uploading, uploadReference: tools.uploadReference, refLimit: tools.refLimit,
     translate: tools.translate, templates: tools.templates, pickTemplate: tools.pickTemplate, settings, setSettings, imageProviders: tools.imageProviders, videoProviders: tools.videoProviders, puterReady: tools.puterReady,

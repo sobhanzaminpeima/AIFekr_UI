@@ -153,7 +153,7 @@ export function Chat({ persona }: { persona?: string }) {
       <div className="chat-heading">
         {live ? (
           <select aria-label={lc.s("AI model")} value={lc.model} onChange={(e) => lc.setModel(e.target.value)} disabled={lc.mediaType !== "chat"}>
-            <option value="auto">{lc.chat!.t.models.auto}{lc.chatCost != null && lc.model === "auto" ? ` · ${n(lc.chatCost)}+ ✦` : ""}</option>
+            <option value="auto">{lc.chat!.t.models.auto}{lc.chatCostRange && lc.model === "auto" ? ` · ${lc.chatCostRange[0] === lc.chatCostRange[1] ? n(lc.chatCostRange[0]) : `${n(lc.chatCostRange[0])}–${n(lc.chatCostRange[1])}`} ✦` : ""}</option>
             {lc.providers.map((p) => <option key={p.id} value={p.model}>{p.name}{p.creditCost != null ? ` · ${n(p.creditCost)} ✦` : ""}</option>)}
           </select>
         ) : (
@@ -403,7 +403,9 @@ export function Chat({ persona }: { persona?: string }) {
               )}
             </div>
             {cost != null && <span className="muted">
-              ≈ {n(cost)} {t("credits")}
+              {live && mode === "all" && lc.chatCostRange && lc.chatCostRange[0] !== lc.chatCostRange[1]
+                ? `${n(lc.chatCostRange[0])}–${n(lc.chatCostRange[1])}`
+                : `≈ ${n(cost)}`} {t("credits")}
             </span>}
             {live ? (
               lc.streaming ? (
