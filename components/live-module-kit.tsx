@@ -33,10 +33,14 @@ export const field = (
  */
 const activationUrls = new Map<string, string>();
 export const activationUrlFor = (message: string) => activationUrls.get(message) ?? null;
+/** A fresh key for one paid submission; the server refuses a second request with the same key. */
+export const newIdempotencyKey = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `k${Date.now()}${Math.random().toString(36).slice(2)}`);
+
 export async function liveRequest(
   url: string,
   method = "GET",
   body?: unknown,
+  headers?: Record<string, string>,
 ): Promise<LiveRow> {
   const res = await fetch(url, {
     method,
@@ -44,10 +48,10 @@ export async function liveRequest(
     cache: "no-store",
     ...(body !== undefined && method !== "GET"
       ? {
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...headers },
           body: JSON.stringify(body),
         }
-      : {}),
+      : headers ? { headers } : {}),
   });
   const data = await res.json().catch(() => null);
   if (!res.ok) {
@@ -251,6 +255,7 @@ export function LiveForm({
   caution,
   submit,
   progress,
+  example,
 }: {
   title: string;
   url: string;
@@ -262,12 +267,18 @@ export function LiveForm({
   caution?: string;
   submit?: (body: LiveRow) => Promise<LiveRow>;
   progress?: React.ReactNode;
+  /** A ready sample input a first-time user can load with one click (roadmap E5). */
+  example?: LiveRow;
 }) {
   const { fa, tl } = useApp();
   const [open, setOpen] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const lock = useRef(false);
+  // One key per submission: a retry after a failure reuses it, so a paid action is charged once (E2).
+  const idempotency = useRef(newIdempotencyKey());
+  const [seed, setSeed] = useState<LiveRow | null>(null);
+  const values = seed ?? initial;
   return (
     <>
       <Button
@@ -286,6 +297,7 @@ export function LiveForm({
           }}
         >
           <form
+            key={seed ? "example" : "initial"}
             className="form-grid"
             onSubmit={async (e) => {
               e.preventDefault();
@@ -316,7 +328,8 @@ export function LiveForm({
                 });
                 const d = submit
                   ? await submit(map ? map(body) : body)
-                  : await liveRequest(url, method, map ? map(body) : body);
+                  : await liveRequest(url, method, map ? map(body) : body, { "Idempotency-Key": idempotency.current });
+                idempotency.current = newIdempotencyKey();
                 onDone(d);
                 setOpen(false);
               } catch (e) {
@@ -328,6 +341,7 @@ export function LiveForm({
             }}
           >
             {caution && <p className="plan-notice">{caution}</p>}
+            {example && !seed && <button type="button" className="text-link" onClick={() => setSeed({ ...initial, ...example })}>{tl("امتحان با یک مثال", "Try an example")}</button>}
             {fields.map((f) => (
               <label key={f.key}>
                 {tl(f.label[0], f.label[1])}
@@ -335,7 +349,7 @@ export function LiveForm({
                   <select
                     name={f.key}
                     defaultValue={String(
-                      initial[f.key] ?? f.choices[0]?.value ?? "",
+                      values[f.key] ?? f.choices[0]?.value ?? "",
                     )}
                   >
                     {f.choices.map((c) => (
@@ -349,20 +363,20 @@ export function LiveForm({
                     name={f.key}
                     required={!f.optional}
                     rows={5}
-                    defaultValue={String(initial[f.key] ?? "")}
+                    defaultValue={String(values[f.key] ?? "")}
                   />
                 ) : f.type === "checkbox" ? (
                   <input
                     name={f.key}
                     type="checkbox"
-                    defaultChecked={!!initial[f.key]}
+                    defaultChecked={!!values[f.key]}
                   />
                 ) : (
                   <input
                     name={f.key}
                     type={f.type ?? "text"}
                     required={!f.optional}
-                    defaultValue={String(initial[f.key] ?? "")}
+                    defaultValue={String(values[f.key] ?? "")}
                     step={f.type === "number" ? "any" : undefined}
                   />
                 )}
