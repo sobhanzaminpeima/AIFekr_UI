@@ -19,6 +19,7 @@ export function LiveStreamTool({
   fields,
   map,
   onDone,
+  example,
 }: {
   title: string;
   feature: string;
@@ -26,6 +27,7 @@ export function LiveStreamTool({
   fields: LiveField[];
   map?: (body: LiveRow) => LiveRow;
   onDone?: () => void;
+  example?: LiveRow;
 }) {
   const fa = useShell()!.lang === "fa",
     costs = useLiveData("/api/credits/costs");
@@ -51,6 +53,7 @@ export function LiveStreamTool({
             url={url}
             fields={fields}
             map={map}
+            example={example}
             caution={
               fa
                 ? `پس از تأیید، تولید با هزینهٔ ${rate} کردیت شروع می‌شود. در صورت قطع ارتباط، پیش از تکرار تاریخچه را بررسی کنید. خروجی خودکار منتشر نمی‌شود.`

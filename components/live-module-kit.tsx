@@ -255,6 +255,7 @@ export function LiveForm({
   caution,
   submit,
   progress,
+  example,
 }: {
   title: string;
   url: string;
@@ -266,6 +267,8 @@ export function LiveForm({
   caution?: string;
   submit?: (body: LiveRow) => Promise<LiveRow>;
   progress?: React.ReactNode;
+  /** A ready sample input a first-time user can load with one click (roadmap E5). */
+  example?: LiveRow;
 }) {
   const { fa, tl } = useApp();
   const [open, setOpen] = useState(false),
@@ -274,6 +277,8 @@ export function LiveForm({
   const lock = useRef(false);
   // One key per submission: a retry after a failure reuses it, so a paid action is charged once (E2).
   const idempotency = useRef(newIdempotencyKey());
+  const [seed, setSeed] = useState<LiveRow | null>(null);
+  const values = seed ?? initial;
   return (
     <>
       <Button
@@ -292,6 +297,7 @@ export function LiveForm({
           }}
         >
           <form
+            key={seed ? "example" : "initial"}
             className="form-grid"
             onSubmit={async (e) => {
               e.preventDefault();
@@ -335,6 +341,7 @@ export function LiveForm({
             }}
           >
             {caution && <p className="plan-notice">{caution}</p>}
+            {example && !seed && <button type="button" className="text-link" onClick={() => setSeed({ ...initial, ...example })}>{tl("امتحان با یک مثال", "Try an example")}</button>}
             {fields.map((f) => (
               <label key={f.key}>
                 {tl(f.label[0], f.label[1])}
@@ -342,7 +349,7 @@ export function LiveForm({
                   <select
                     name={f.key}
                     defaultValue={String(
-                      initial[f.key] ?? f.choices[0]?.value ?? "",
+                      values[f.key] ?? f.choices[0]?.value ?? "",
                     )}
                   >
                     {f.choices.map((c) => (
@@ -356,20 +363,20 @@ export function LiveForm({
                     name={f.key}
                     required={!f.optional}
                     rows={5}
-                    defaultValue={String(initial[f.key] ?? "")}
+                    defaultValue={String(values[f.key] ?? "")}
                   />
                 ) : f.type === "checkbox" ? (
                   <input
                     name={f.key}
                     type="checkbox"
-                    defaultChecked={!!initial[f.key]}
+                    defaultChecked={!!values[f.key]}
                   />
                 ) : (
                   <input
                     name={f.key}
                     type={f.type ?? "text"}
                     required={!f.optional}
-                    defaultValue={String(initial[f.key] ?? "")}
+                    defaultValue={String(values[f.key] ?? "")}
                     step={f.type === "number" ? "any" : undefined}
                   />
                 )}
