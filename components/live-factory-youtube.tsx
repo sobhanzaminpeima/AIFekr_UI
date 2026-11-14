@@ -23,6 +23,12 @@ type Config = Record<string, unknown> & { characterReferenceAssetId?: string; th
 const configOf = (x: FactoryCtx): Config => JSON.parse(String(x.project!.configuration || "{}"));
 /** A running production locks the configuration server-side; mirror that here. */
 const busyJob = (x: FactoryCtx) => !!x.job && ["QUEUED", "RUNNING", "PAUSED", "AWAITING_APPROVAL", "PAUSING", "CANCELLING"].includes(String(x.job.status));
+/** Upload buttons stay clickable; without the rights confirmation they explain why and point at the checkbox. */
+function needRights() {
+  const lang = document.documentElement.lang;
+  toast.error(lang === "fa" ? "اول تیک «حق استفاده از تصویر را دارم» را بزنید، بعد بارگذاری کنید." : lang === "de" ? "Bitte zuerst bestätigen, dass du die Rechte am Bild hast." : lang === "tr" ? "Önce görselin haklarına sahip olduğunuzu onaylayın." : "First confirm you hold the rights to the image, then upload.");
+  document.querySelectorAll<HTMLElement>(".rights-check").forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); el.querySelector("input")?.focus(); });
+}
 const assetUrl = (id: string) => `/api/video-factory/assets/${encodeURIComponent(id)}`;
 
 async function saveConfig(x: FactoryCtx, patch: Partial<Config>) {
@@ -150,10 +156,10 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
             {current && <Button disabled={busy || locked} onClick={() => void choose("")}>{tx(["برداشتن", "Remove", "Entfernen", "Kaldır"])}</Button>}
           </div>
           <p className="fine-print">{tx(["ساخت کاراکتر به اندازهٔ یک تصویر استاندارد از اعتبار شما کم می‌کند.", "Generating uses the price of one standard image from your credits.", "Kostet den Preis eines Standardbildes.", "Bir standart görsel ücreti kadar kredi kullanır."])}</p>
-          <label className="check-label"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the image I upload.", "Ich habe die Rechte am Bild.", "Görselin haklarına sahibim."])}</label>
-          <label className={"btn" + (rights && !locked ? "" : " disabled")}>
+          <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the image I upload.", "Ich habe die Rechte am Bild.", "Görselin haklarına sahibim."])}</label>
+          <label className={"btn" + (locked ? " disabled" : "")} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }}>
             <Icon name="Upload" size={16} />{tx(["بارگذاری تصویر کاراکتر", "Upload character image", "Figurbild hochladen", "Karakter görseli yükle"])}
-            <input type="file" hidden accept="image/png,image/jpeg,image/webp" disabled={!rights || busy || locked} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void act(async () => { const id = await uploadImage(x, file); await load(); await saveConfig(x, { characterReferenceAssetId: id }); }); }} />
+            <input type="file" hidden accept="image/png,image/jpeg,image/webp" disabled={busy || locked} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void act(async () => { const id = await uploadImage(x, file); await load(); await saveConfig(x, { characterReferenceAssetId: id }); }); }} />
           </label>
         </div>
       </div>
@@ -273,6 +279,52 @@ export function VisualStyleStudio({ x }: { x: FactoryCtx }) {
         <Button variant="primary" disabled={busy || locked} onClick={() => save({ visualBible: full }, tx(["کتاب بصری ذخیره شد · رایگان", "Visual bible saved · free", "Visuelle Bibel gespeichert · kostenlos", "Görsel kılavuz kaydedildi · ücretsiz"]))}>{tx(["ذخیره · رایگان", "Save · free", "Speichern · kostenlos", "Kaydet · ücretsiz"])}</Button>
       </details>
       {locked && <small>{tx(["در حین تولید قابل تغییر نیست.", "Locked while a production is running.", "Während der Produktion gesperrt.", "Üretim sürerken kilitli."])}</small>}
+    </section>
+  );
+}
+
+// ── Channel logo on the video ─────────────────────────────────────────────
+const CORNERS: { id: string; t: Tx }[] = [
+  { id: "TOP_RIGHT", t: ["بالا راست", "Top right", "Oben rechts", "Sağ üst"] },
+  { id: "TOP_LEFT", t: ["بالا چپ", "Top left", "Oben links", "Sol üst"] },
+  { id: "BOTTOM_RIGHT", t: ["پایین راست", "Bottom right", "Unten rechts", "Sağ alt"] },
+  { id: "BOTTOM_LEFT", t: ["پایین چپ", "Bottom left", "Unten links", "Sol alt"] },
+];
+/** Uploads the channel logo and picks its corner; the renderer draws it on every shot from the next render. */
+export function LogoPicker({ x }: { x: FactoryCtx }) {
+  const tx = useTx();
+  const config = configOf(x);
+  const current = String(config.logoAssetId || "");
+  const position = String(config.logoPosition || "TOP_RIGHT");
+  const [busy, setBusy] = useState(false);
+  const [rights, setRights] = useState(false);
+  const locked = busyJob(x);
+  const act = async (work: () => Promise<void>, message: string) => {
+    setBusy(true);
+    try { await work(); toast.success(message); } catch (e) { toast.error(x.err((e as Error).message)); } finally { setBusy(false); }
+  };
+  const saved = tx(["ذخیره شد؛ از رندر بعدی روی ویدیو می‌آید.", "Saved; it appears from the next render.", "Gespeichert; ab dem nächsten Rendern sichtbar.", "Kaydedildi; bir sonraki renderda görünür."]);
+  return (
+    <section className="panel factory-logo">
+      <h2><Icon name="BadgeCheck" size={18} /> {tx(["لوگوی کانال روی ویدیو", "Channel logo on the video", "Kanal-Logo im Video", "Videoda kanal logosu"])}</h2>
+      <p className="muted">{tx(["لوگو کوچک و نیمه‌شفاف در گوشهٔ همهٔ صحنه‌ها قرار می‌گیرد. PNG با پس‌زمینهٔ شفاف بهترین نتیجه را می‌دهد.", "The logo sits small and semi-transparent in a corner of every scene. A PNG with a transparent background works best.", "Das Logo erscheint klein und halbtransparent in einer Ecke jeder Szene. Am besten ein PNG mit transparentem Hintergrund.", "Logo her sahnenin bir köşesinde küçük ve yarı saydam durur. Şeffaf arka planlı PNG en iyisidir."])}</p>
+      <div className="factory-logo-row">
+        {current ? <img className="factory-logo-preview" src={assetUrl(current)} alt="" /> : <span className="factory-logo-empty"><Icon name="Image" size={22} /></span>}
+        <div className="factory-logo-actions">
+          <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از این لوگو را دارم.", "I have the right to use this logo.", "Ich darf dieses Logo verwenden.", "Bu logoyu kullanma hakkım var."])}</label>
+          <label className={"btn file-pick" + (busy || locked ? " disabled" : "")} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }}>
+            <Icon name="Upload" size={16} />{current ? tx(["تغییر لوگو", "Change logo", "Logo ändern", "Logoyu değiştir"]) : tx(["بارگذاری لوگو", "Upload logo", "Logo hochladen", "Logo yükle"])}
+            <input type="file" accept="image/png,image/jpeg,image/webp" hidden disabled={busy || locked}
+              onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void act(async () => { const id = await uploadImage(x, file); await saveConfig(x, { logoAssetId: id }); }, saved); }} />
+          </label>
+          <label>{tx(["جای لوگو", "Position", "Position", "Konum"])}
+            <select value={position} disabled={busy || locked} onChange={(e) => void act(() => saveConfig(x, { logoPosition: e.target.value }), saved)}>
+              {CORNERS.map((c) => <option key={c.id} value={c.id}>{tx(c.t)}</option>)}
+            </select>
+          </label>
+          {current && <Button disabled={busy || locked} onClick={() => void act(() => saveConfig(x, { logoAssetId: "" }), tx(["لوگو برداشته شد.", "Logo removed.", "Logo entfernt.", "Logo kaldırıldı."]))}>{tx(["حذف لوگو", "Remove logo", "Logo entfernen", "Logoyu kaldır"])}</Button>}
+        </div>
+      </div>
     </section>
   );
 }

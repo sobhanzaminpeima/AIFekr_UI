@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { useApp } from "./providers";
 import { Button, Icon } from "./ui";
 import type { FactoryCtx } from "./live-factory";
-import { ThumbnailPicker } from "./live-factory-youtube";
+import { LogoPicker, ThumbnailPicker } from "./live-factory-youtube";
 
 type Shot = { order: number; code: string; id: string; chapter: number; title: string; narration: string; visualPrompt: string; image: { id: string; url: string; source: "chosen" | "generated" } | null };
 type Media = { version: number; ready: boolean; shots: Shot[]; withImage?: number };
@@ -145,6 +145,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
         ))}
       </div>
       <ThumbnailPicker x={x} shotImages={media.shots.filter((s) => s.image).map((s) => ({ id: s.image!.id, code: s.code }))} />
+      <LogoPicker x={x} />
       {open && (
         <div className="panel factory-media-detail" role="dialog" aria-label={open.code}>
           <div className="row-between"><strong dir="ltr">{open.code}</strong><Button onClick={() => setOpen(null)}>{tx(["بستن", "Close", "Schließen", "Kapat"])}</Button></div>

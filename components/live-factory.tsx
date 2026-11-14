@@ -39,6 +39,8 @@ const FAILURES: Record<string, string> = {
   RENDERER_UNAVAILABLE: "The server renderer is unavailable.",
   APPROVED_PROVIDER_UNAVAILABLE: "The approved model is unavailable; ask an administrator to check it.",
   BUDGET_EXCEEDED: "The estimate exceeds the budget cap.",
+  MUSIC_UNAVAILABLE: "Background music is not available yet. Turn music off to continue.",
+  NO_APPROVED_MUSIC_PROVIDER: "Background music is not available yet. Turn music off to continue.",
   LONG_FORM_DISABLED: "Long-form production is not enabled.",
   VIDEO_FACTORY_UNAVAILABLE: "The service is unavailable; check connectivity and database migrations.",
   PROJECT_BUSY: "Wait for the active job to finish or cancel it before editing.",
@@ -555,10 +557,20 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
   const [short, setShort] = useState(false);
   // Set when the estimate is above the project's own budget cap; the server says how many credits the cap must cover.
   const [over, setOver] = useState<{ required: number; budgetCap: number; maxProjectCredits: number } | null>(null);
+  // Set when music is on but no music service is enabled on the server.
+  const [noMusic, setNoMusic] = useState(false);
   const estimateNow = async () => {
     setOver(null);
+    setNoMusic(false);
     try { const d = await api<{ estimate: Estimate }>(`/api/video-factory/projects/${project!.id}`, { action: "estimate" }); setEstimate(d.estimate); }
-    catch (e) { const d = (e as Error & { details?: Record<string, number> }).details; if ((e as Error).message === "BUDGET_EXCEEDED" && d?.required) { setEstimate(null); setOver({ required: d.required, budgetCap: d.budgetCap, maxProjectCredits: d.maxProjectCredits }); return; } throw e; }
+    catch (e) { const d = (e as Error & { details?: Record<string, number> }).details; if (/^(MUSIC_UNAVAILABLE|NO_APPROVED_MUSIC_PROVIDER)$/.test((e as Error).message)) { setEstimate(null); setNoMusic(true); return; } if ((e as Error).message === "BUDGET_EXCEEDED" && d?.required) { setEstimate(null); setOver({ required: d.required, budgetCap: d.budgetCap, maxProjectCredits: d.maxProjectCredits }); return; } throw e; }
+  };
+  const musicOff = async () => {
+    const latest = await refresh(project!.id);
+    const p = latest || project!;
+    await api(`/api/video-factory/projects/${p.id}`, { action: "configuration", expectedVersion: p.version, configuration: { ...JSON.parse(String(p.configuration || "{}")), music: false } });
+    await refresh(p.id);
+    await estimateNow();
   };
   const raiseCap = async () => {
     const latest = await refresh(project!.id);
@@ -589,6 +601,13 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
         {canStart && <Button disabled={busy} onClick={() => run(estimateNow)}>{f("Estimate credits")}</Button>}
         {canStart && estimate && <Button variant="primary" disabled={busy} onClick={() => setConfirm(true)}><Icon name="Sparkles" size={18} />{f("Approve & start · ~{0} credits", { 0: estimate.credits })}</Button>}
       </div>
+      {canStart && noMusic && (
+        <div className="notice-banner budget-over">
+          <Icon name="Info" size={16} />
+          <span>{tl("موسیقی پس‌زمینه فعلاً روی سایت فعال نیست. برای ادامه، ویدیو را بدون موسیقی بساز.", "Background music is not available yet. Make this video without music to continue.")}</span>
+          <Button variant="primary" disabled={busy} onClick={() => run(musicOff)}>{tl("بدون موسیقی ادامه بده", "Continue without music")}</Button>
+        </div>
+      )}
       {canStart && over && (
         <div className="notice-banner budget-over">
           <Icon name="Info" size={16} />
@@ -611,7 +630,7 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
             setConfirm(false);
             setShort(false);
             try { await api(`/api/video-factory/projects/${project!.id}`, { action: "start", idempotencyKey: crypto.randomUUID(), expectedCredits: estimate.credits }); }
-            catch (e) { if (/INSUFFICIENT_CREDITS/.test((e as Error).message)) setShort(true); throw e; }
+            catch (e) { if (/INSUFFICIENT_CREDITS/.test((e as Error).message)) setShort(true); if (/^(MUSIC_UNAVAILABLE|NO_APPROVED_MUSIC_PROVIDER)$/.test((e as Error).message)) { setEstimate(null); setNoMusic(true); return; } throw e; }
             setEstimate(null);
             await refresh(project!.id);
             onStarted();
