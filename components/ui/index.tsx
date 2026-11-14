@@ -152,8 +152,12 @@ import {
   ThumbsDown,
   Volume2,
   VolumeX,
+  Palette,
+  PersonStanding,
 } from "lucide-react";
 const Icons = {
+  Palette,
+  PersonStanding,
   Coins,
   UserSquare2,
   FileText,
