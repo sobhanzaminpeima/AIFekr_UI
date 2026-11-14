@@ -1,4 +1,5 @@
 "use client";
+import { LandingVideoFactory } from "./landing-video-factory";
 import Link, { useHref, useSite } from "@/components/site-link";
 import { WebAppInstallCallout } from "./webapp-install";
 import { LiveCreditCalculator } from "./live-public";
@@ -254,6 +255,7 @@ export function Landing() {
         </div>
       </section>
       <LandingJourney />
+      <LandingVideoFactory />
       <LandingDetails />
       <LandingModuleExplorer />
       <section className="public-section">

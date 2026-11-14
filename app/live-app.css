@@ -624,3 +624,10 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .style-card:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .visual-bible{margin-top:14px}.visual-bible summary{cursor:pointer;font-weight:600;font-size:13px;margin-bottom:10px}
 .visual-bible-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px}.visual-bible-grid label{display:grid;gap:6px;font-size:12px}
+/* Landing: YouTube Video Factory */
+.landing-vf-steps{list-style:none;margin:26px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.landing-vf-steps li{display:grid;gap:8px;justify-items:start;padding:16px;border:1px solid var(--border);border-radius:14px}
+.landing-vf-steps small{color:var(--text-secondary);font-variant-numeric:tabular-nums}.landing-vf-steps strong{font-size:14px;line-height:1.6}
+.landing-vf-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;padding:16px;border:1px solid #ea580c33;border-radius:14px;background:#ea580c0d}
+.landing-vf-styles{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0;padding:0}.landing-vf-styles li{padding:4px 10px;border:1px solid var(--border);border-radius:999px;font-size:12px}
+.landing-vf-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.landing-vf-cta span{font-size:13px;color:var(--text-secondary)}
