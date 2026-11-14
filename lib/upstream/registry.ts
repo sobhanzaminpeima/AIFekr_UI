@@ -1352,6 +1352,13 @@ export const modules: ModuleSpec[] = [
       v("timeline", "تایم‌لاین", "Timeline", "timeline", "VideoFactoryStep"),
       v("edit", "ویرایش نماها", "Edit shots", "editor", "VideoFactoryProject"),
       v(
+        "media",
+        "مدیا و پرامپت‌ها",
+        "Media & prompts",
+        "gallery",
+        "VideoFactoryAsset",
+      ),
+      v(
         "library",
         "کتابخانهٔ دارایی‌ها",
         "Asset library",

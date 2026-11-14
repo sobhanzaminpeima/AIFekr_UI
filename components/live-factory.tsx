@@ -18,6 +18,7 @@ import { useShell } from "./live-shell-context";
 import { useLiveCredits } from "./live-shell-widgets";
 import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
+import { MediaStudio } from "./live-factory-media";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
 /** A purchasable video package; `offer` is its price in the visitor's currency, resolved by the main site like the landing (absent = not offered). */
@@ -114,6 +115,7 @@ export function LiveFactory({ view }: { view: string }) {
   if (view === "ideas") return <IdeasStudio x={x} />;
   if (view === "characters") return <CharactersStudio x={x} />;
   if (view === "library") return <LibraryStudio x={x} />;
+  if (view === "media") return <MediaStudio x={x} />;
   if (view === "publishing") return <PublishingStudio x={x} />;
   if (view === "advanced") return <AdvancedStudio x={x} />;
   return <ProjectsView x={x} />;
@@ -384,6 +386,7 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
             )}
             <label className="check-label"><input type="checkbox" checked={config.ideaLab} onChange={(e) => change({ ideaLab: e.target.checked })} />{f("Include ideation & outline in project budget")}</label>
             <label>{f("Maximum shots per chapter")}<input type="number" min="1" max="30" value={config.shotsPerChapter} onChange={(e) => change({ shotsPerChapter: +e.target.value })} /></label>
+            {config.mediaMode === "MULTIMEDIA" && <label className="check-label"><input type="checkbox" checked={!!config.imageEveryShot} onChange={(e) => change({ imageEveryShot: e.target.checked })} />{x.lang === "fa" ? "برای هر شات یک تصویر جدا ساخته شود (همهٔ پرامپت‌ها خودکار تصویر می‌شوند؛ در «مدیا و پرامپت‌ها» دیده و دانلود می‌شوند)" : "Generate an image for every shot (all prompts become images automatically; see and download them under “Media & prompts”)"}</label>}
             <label>{f("Target duration")}<select value={config.durationSeconds} onChange={(e) => change({ durationSeconds: +e.target.value })}>{[30, 60, 180, 360, 480].map((s) => <option key={s} value={s}>{duration(s)}</option>)}</select></label>
             <label>{f("Language")}<select value={config.language} onChange={(e) => change({ language: e.target.value as Configuration["language"] })}><option value="fa">فارسی</option><option value="en">English</option><option value="de">Deutsch</option><option value="tr">Türkçe</option></select></label>
             <label>{f("Aspect ratio")}<select value={config.ratio} onChange={(e) => change({ ratio: e.target.value as Configuration["ratio"] })}>{["16:9", "9:16", "1:1"].map((r) => <option key={r}>{r}</option>)}</select></label>

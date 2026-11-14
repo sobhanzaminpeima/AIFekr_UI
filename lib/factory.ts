@@ -17,7 +17,7 @@ export type Configuration = {
   durationSeconds: number; language: "fa" | "en" | "de" | "tr"; ratio: "16:9" | "9:16" | "1:1";
   mode: "AUTOPILOT" | "REVIEW_GATES" | "PRO_STUDIO"; quality: "SMART" | "CINEMATIC_HYBRID" | "FILM_STUDIO";
   budgetCap: number; audience: string; genre: string; styleBible: string; mediaMode: "ANIMATIC" | "MULTIMEDIA";
-  shotsPerChapter: number; narration: boolean; music: boolean; musicPrompt: string; voice: string;
+  shotsPerChapter: number; imageEveryShot?: boolean; narration: boolean; music: boolean; musicPrompt: string; voice: string;
   resolution: "720p" | "1080p"; captions: boolean; captionStyle: string; transition: string; ideaLab: boolean;
   voiceProfileId: string; forcedAlignment: boolean; semanticReview: boolean; exportStems: boolean;
   transcriptionAssetId: string; pronunciation: { word: string; replacement: string }[]; audioTracks: AudioTrack[];
