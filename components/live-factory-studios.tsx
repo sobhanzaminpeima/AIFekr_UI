@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
 import { CharacterReference } from "./live-factory-youtube";
+import { TimelineEditor } from "./live-factory-timeline";
 import { useApp } from "./providers";
 import { Button, Empty, Icon } from "./ui";
 import { ErrorBanner, type FactoryCtx } from "./live-factory";
@@ -139,6 +140,8 @@ export function EditStudio({ x }: { x: FactoryCtx }) {
     <>
       <h1>{f("Edit shot timing & order")}</h1>
       <p>{f("Times are relative weights within the film duration. Unchanged shots are reused on the next production; review the estimate before starting.")}</p>
+      <TimelineEditor x={x} manifest={manifest} setManifest={setManifest} durationSeconds={config.durationSeconds}
+        onLength={async (seconds) => { const p = project!; await x.api(`/api/video-factory/projects/${p.id}`, { action: "edit", expectedVersion: p.version, manifest, configuration: { ...configOf(p), durationSeconds: seconds } }); await x.refresh(p.id); toast.success(f("Save timeline · no charge")); }} />
       {manifest.chapters.map((chapter, ci) => (
         <section className="factory-chapter" key={ci}>
           <label>{f("Chapter title")}<input maxLength={180} value={chapter.title} onChange={(e) => setManifest({ ...manifest, chapters: manifest.chapters.map((c, i) => (i === ci ? { ...c, title: e.target.value } : c)) })} /></label>
