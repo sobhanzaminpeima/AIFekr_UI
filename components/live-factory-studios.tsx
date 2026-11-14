@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
+import { CharacterReference } from "./live-factory-youtube";
 import { useApp } from "./providers";
 import { Button, Empty, Icon } from "./ui";
 import { ErrorBanner, type FactoryCtx } from "./live-factory";
@@ -93,6 +94,8 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
   const [styleBible, setStyleBible] = useState(configOf(project!).styleBible);
   useEffect(() => { setManifest(manifestOf(project!)); setStyleBible(configOf(project!).styleBible); }, [project]);
   return (
+    <>
+    <CharacterReference x={x} />
     <section className="panel">
       <h2>{f("Character & continuity bible")}</h2>
       {manifest ? (
@@ -115,6 +118,7 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
         </>
       ) : <p>{f("Generate the script and shots first.")}</p>}
     </section>
+    </>
   );
 }
 

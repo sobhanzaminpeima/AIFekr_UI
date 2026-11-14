@@ -19,6 +19,7 @@ import { useLiveCredits } from "./live-shell-widgets";
 import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 import { MediaStudio } from "./live-factory-media";
+import { ChannelStudio } from "./live-factory-youtube";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
 /** A purchasable video package; `offer` is its price in the visitor's currency, resolved by the main site like the landing (absent = not offered). */
@@ -109,6 +110,7 @@ export function LiveFactory({ view }: { view: string }) {
   if (view === "packages") return <PackagesView x={x} />;
   if (view === "projects") return <ProjectsView x={x} />;
   if (["production", "script", "timeline", "edit", "assets"].includes(view)) return <Wizard x={x} view={view} />;
+  if (view === "channel") return <ChannelStudio x={x} />;
   if (!x.active) return <NeedProject x={x} />;
   if (!x.project) return x.loadError ? <ErrorBanner text={x.err(x.loadError)} /> : <div className="skeleton" />;
   if (view === "history") return <HistoryView x={x} />;

@@ -1321,6 +1321,13 @@ export const modules: ModuleSpec[] = [
         "VideoFactoryProject",
       ),
       v(
+        "channel",
+        "کانال یوتیوب من",
+        "My YouTube channel",
+        "form",
+        "VideoFactoryChannelProfile",
+      ),
+      v(
         "production",
         "تولید فصل‌به‌فصل",
         "Production",
