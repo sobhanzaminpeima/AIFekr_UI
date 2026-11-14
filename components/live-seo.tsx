@@ -188,6 +188,11 @@ export function LiveSeo({
           ]}
           map={(b) => ({ ...b, tool: view.id, language: fa ? "fa" : "en" })}
           onDone={() => setSaved((n) => n + 1)}
+          example={
+            view.id === "meta"
+              ? { keyword: fa ? "خرید قهوه" : "buy coffee beans", content: fa ? "فروشگاه آنلاین قهوهٔ تازه‌برشته با ارسال در همان روز." : "Online shop for freshly roasted coffee with same-day delivery." }
+              : { keyword: fa ? "خرید قهوه" : "buy coffee beans" }
+          }
         />
       )}{" "}
       {["keyword", "content", "meta"].includes(view.id) && (

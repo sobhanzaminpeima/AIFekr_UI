@@ -5,6 +5,7 @@ import { consumeToolStream } from "@/lib/live-stream";
 import { AIText } from "./ai-text";
 import { AIResultActions } from "./ai-result-actions";
 import {
+  newIdempotencyKey,
   LiveForm,
   LiveLoad,
   useLiveData,
@@ -18,6 +19,7 @@ export function LiveStreamTool({
   fields,
   map,
   onDone,
+  example,
 }: {
   title: string;
   feature: string;
@@ -25,6 +27,7 @@ export function LiveStreamTool({
   fields: LiveField[];
   map?: (body: LiveRow) => LiveRow;
   onDone?: () => void;
+  example?: LiveRow;
 }) {
   const fa = useShell()!.lang === "fa",
     costs = useLiveData("/api/credits/costs");
@@ -32,6 +35,7 @@ export function LiveStreamTool({
     [state, setState] = useState<"idle" | "running" | "complete" | "failed">(
       "idle",
     );
+  const [idempotency] = useState(() => ({ key: newIdempotencyKey() }));
   const rates = costs.data?.costs as LiveRow | undefined,
     rate = rates?.["tool_" + feature.replace(/[.-]/g, "_")] ?? rates?.tool;
   return (
@@ -49,6 +53,7 @@ export function LiveStreamTool({
             url={url}
             fields={fields}
             map={map}
+            example={example}
             caution={
               fa
                 ? `پس از تأیید، تولید با هزینهٔ ${rate} کردیت شروع می‌شود. در صورت قطع ارتباط، پیش از تکرار تاریخچه را بررسی کنید. خروجی خودکار منتشر نمی‌شود.`
@@ -62,7 +67,7 @@ export function LiveStreamTool({
                 const response = await fetch(url, {
                   method: "POST",
                   credentials: "include",
-                  headers: { "Content-Type": "application/json" },
+                  headers: { "Content-Type": "application/json", "Idempotency-Key": idempotency.key },
                   body: JSON.stringify(body),
                 });
                 await consumeToolStream(response, (e) => {
@@ -72,6 +77,7 @@ export function LiveStreamTool({
                   }
                 });
                 setState("complete");
+                idempotency.key = newIdempotencyKey();
                 return { complete: true };
               } catch (e) {
                 setState("failed");
