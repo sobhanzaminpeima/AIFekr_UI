@@ -24,7 +24,7 @@ const configOf = (x: FactoryCtx): Config => JSON.parse(String(x.project!.configu
 /** A running production locks the configuration server-side; mirror that here. */
 const busyJob = (x: FactoryCtx) => !!x.job && ["QUEUED", "RUNNING", "PAUSED", "AWAITING_APPROVAL", "PAUSING", "CANCELLING"].includes(String(x.job.status));
 /** Upload buttons stay clickable; without the rights confirmation they explain why and point at the checkbox. */
-function needRights() {
+export function needRights() {
   const lang = document.documentElement.lang;
   toast.error(lang === "fa" ? "اول تیک «حق استفاده از تصویر را دارم» را بزنید، بعد بارگذاری کنید." : lang === "de" ? "Bitte zuerst bestätigen, dass du die Rechte am Bild hast." : lang === "tr" ? "Önce görselin haklarına sahip olduğunuzu onaylayın." : "First confirm you hold the rights to the image, then upload.");
   document.querySelectorAll<HTMLElement>(".rights-check").forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); el.querySelector("input")?.focus(); });

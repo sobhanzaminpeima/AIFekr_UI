@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { useApp } from "./providers";
 import { Button, Icon } from "./ui";
 import type { FactoryCtx } from "./live-factory";
-import { LogoPicker, ThumbnailPicker } from "./live-factory-youtube";
+import { LogoPicker, needRights, ThumbnailPicker } from "./live-factory-youtube";
 
 type Shot = { order: number; code: string; id: string; chapter: number; title: string; narration: string; visualPrompt: string; image: { id: string; url: string; source: "chosen" | "generated" } | null };
 type Media = { version: number; ready: boolean; shots: Shot[]; withImage?: number };
@@ -109,10 +109,10 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
             <a className={"btn primary" + (done ? "" : " disabled")} aria-disabled={!done} href={done ? `${base}?format=zip` : undefined} download>{tx(["دانلود همهٔ تصاویر (ZIP)", "Download all images (ZIP)", "Alle Bilder (ZIP)", "Tüm görseller (ZIP)"])}</a>
           </div>
         </div>
-        <label className="check-label"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصاویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the images I upload.", "Ich habe die Rechte an den hochgeladenen Bildern.", "Yüklediğim görsellerin haklarına sahibim."])}</label>
-        <label className={"production-library-upload" + (rights ? "" : " disabled")}>
+        <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصاویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the images I upload.", "Ich habe die Rechte an den hochgeladenen Bildern.", "Yüklediğim görsellerin haklarına sahibim."])}</label>
+        <label className={"production-library-upload" + (rights ? "" : " needs-rights")} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }}>
           <Icon name="Upload" size={20} /> {tx(["بارگذاری گروهی: فایل‌هایی با نام SHOT_001.png، SHOT_002.png و… را انتخاب کنید تا هرکدام روی شات خودش بنشیند.", "Bulk upload: pick files named SHOT_001.png, SHOT_002.png… and each lands on its own shot.", "Massen-Upload: Dateien SHOT_001.png… landen beim passenden Shot.", "Toplu yükleme: SHOT_001.png… adlı dosyalar kendi shot'ına yerleşir."])}
-          <input type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={!rights || busy} onChange={(e) => { const files = [...(e.target.files ?? [])]; e.target.value = ""; if (files.length) void bulk(files); }} />
+          <input type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={(e) => { const files = [...(e.target.files ?? [])]; e.target.value = ""; if (files.length) void bulk(files); }} />
         </label>
         {progress && <p role="status">{tx(["در حال بارگذاری ", "Uploading ", "Lade hoch ", "Yükleniyor "])}{progress}</p>}
         {selected.size > 0 && (
@@ -138,7 +138,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
             <p className="cell-clamp">{s.visualPrompt}</p>
             <div className="domain-actions">
               <Button disabled={busy} onClick={() => { void navigator.clipboard?.writeText(s.visualPrompt).then(() => toast.success(tx(["کپی شد", "Copied", "Kopiert", "Kopyalandı"]))); }}>{tx(["کپی پرامپت", "Copy prompt", "Prompt kopieren", "Prompt'u kopyala"])}</Button>
-              <Button disabled={busy || !rights} onClick={() => { target.current = s.id; one.current?.click(); }}>{s.image ? tx(["جایگزینی", "Replace", "Ersetzen", "Değiştir"]) : tx(["بارگذاری", "Upload", "Hochladen", "Yükle"])}</Button>
+              <Button disabled={busy} onClick={() => { if (!rights) { needRights(); return; } target.current = s.id; one.current?.click(); }}>{s.image ? tx(["جایگزینی", "Replace", "Ersetzen", "Değiştir"]) : tx(["بارگذاری", "Upload", "Hochladen", "Yükle"])}</Button>
               {s.image && <a className="btn" href={s.image.url} download={`${s.code}.png`}>{tx(["دانلود", "Download", "Laden", "İndir"])}</a>}
             </div>
           </article>

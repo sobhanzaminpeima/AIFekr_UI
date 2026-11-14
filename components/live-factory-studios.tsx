@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
-import { CharacterReference, VisualStyleStudio } from "./live-factory-youtube";
+import { CharacterReference, needRights, VisualStyleStudio } from "./live-factory-youtube";
 import { TimelineEditor } from "./live-factory-timeline";
 import { useApp } from "./providers";
 import { Button, Empty, Icon } from "./ui";
@@ -206,9 +206,9 @@ export function LibraryStudio({ x }: { x: FactoryCtx }) {
       <section className="panel production-library-upload">
         <span className="icon-chip orange"><Icon name="Upload" size={36} /></span>
         <h2>{f("Private asset library")}</h2>
-        <label className="check-label"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{f("I hold usage rights and consent from people represented in the file.")}</label>
+        <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{f("I hold usage rights and consent from people represented in the file.")}</label>
         <label>{f("Upload image, video or audio")}
-          <input disabled={busy || !rights} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,audio/mpeg,audio/wav" onChange={(e) => {
+          <input disabled={busy} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,audio/mpeg,audio/wav" onChange={(e) => {
             const file = e.target.files?.[0];
             e.target.value = "";
             if (file) void run(async () => {
