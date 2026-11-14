@@ -154,8 +154,16 @@ import {
   VolumeX,
   Palette,
   PersonStanding,
+  Undo2,
+  Redo2,
+  PanelTop,
+  PanelBottom,
 } from "lucide-react";
 const Icons = {
+  Undo2,
+  Redo2,
+  PanelTop,
+  PanelBottom,
   Palette,
   PersonStanding,
   Coins,
