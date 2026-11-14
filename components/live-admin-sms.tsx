@@ -12,7 +12,7 @@ import { Button, Modal } from "./ui";
 
 type Tx = [string, string, string, string];
 type Row = Record<string, unknown>;
-type Config = { configured: boolean; keyHint: string | null; lineNumber: string; otpTemplateId: string; otpParam: string; source: string };
+type Config = { provider?: "smsir" | "onesms"; configured: boolean; keyHint: string | null; lineNumber: string; otpTemplateId: string; otpParam: string; source: string };
 type Broadcast = { id: string; text: string; audience: string; recipients: number; sent: number; failed: number; cost: number | null; status: string; error: string | null; createdAt: string };
 type State = { config: Config; phoneSignup: boolean; broadcasts: Broadcast[] };
 type Audience = { type: "users"; userIds: string[] } | { type: "phones"; phones: string[] } | { type: "segment"; segment: Row };
@@ -48,7 +48,7 @@ export function LiveAdminSms() {
     <div className="admin-sms">
       <header className="panel">
         <h1>{tx(["پیامک", "SMS", "SMS", "SMS"])}</h1>
-        <p className="muted">{tx(["تنظیم سامانهٔ پیامک (sms.ir)، ثبت‌نام با موبایل و ارسال پیامک به کاربران.", "SMS provider settings (sms.ir), mobile sign-up, and messages to users.", "SMS-Anbieter (sms.ir), Registrierung per Handy und Nachrichten an Nutzer.", "SMS sağlayıcısı (sms.ir), cep telefonuyla kayıt ve kullanıcılara mesaj."])}</p>
+        <p className="muted">{tx(["تنظیم سامانهٔ پیامک (onesms یا sms.ir)، ثبت‌نام با موبایل و ارسال پیامک به کاربران.", "SMS provider settings (sms.ir), mobile sign-up, and messages to users.", "SMS-Anbieter (sms.ir), Registrierung per Handy und Nachrichten an Nutzer.", "SMS sağlayıcısı (sms.ir), cep telefonuyla kayıt ve kullanıcılara mesaj."])}</p>
       </header>
       <Settings config={state.config} onSaved={load} />
       <PhoneSignup enabled={state.phoneSignup} configured={state.config.configured && !!state.config.otpTemplateId} onChanged={load} />
@@ -60,7 +60,7 @@ export function LiveAdminSms() {
 
 function Settings({ config, onSaved }: { config: Config; onSaved: () => void }) {
   const { tx, num } = useT();
-  const [form, setForm] = useState({ apiKey: "", lineNumber: config.lineNumber, otpTemplateId: config.otpTemplateId, otpParam: config.otpParam || "CODE" });
+  const [form, setForm] = useState({ provider: config.provider ?? "smsir", apiKey: "", lineNumber: config.lineNumber, otpTemplateId: config.otpTemplateId, otpParam: config.otpParam || "CODE" });
   const [busy, setBusy] = useState(false);
   const [check, setCheck] = useState<Row | null>(null);
   const [templates, setTemplates] = useState<unknown>(null);
@@ -73,18 +73,24 @@ function Settings({ config, onSaved }: { config: Config; onSaved: () => void }) 
           ? tx(["کلید ثبت شده است", "A key is saved", "Ein Schlüssel ist gespeichert", "Bir anahtar kayıtlı"]) + ` (${config.keyHint})` + (config.source === "env" ? tx([" — از تنظیمات سرور", " — from server settings", " — aus der Serverkonfiguration", " — sunucu ayarlarından"]) : "")
           : tx(["هنوز کلیدی ثبت نشده است.", "No key is saved yet.", "Noch kein Schlüssel gespeichert.", "Henüz anahtar kaydedilmedi."])}
       </p>
-      <form className="domain-fields" onSubmit={(e) => { e.preventDefault(); void run(async () => { await call(API, "PUT", { provider: "smsir", ...form }); setForm((f) => ({ ...f, apiKey: "" })); toast.success(tx(["ذخیره شد", "Saved", "Gespeichert", "Kaydedildi"])); onSaved(); }); }}>
-        <label>{tx(["کلید API (مقدار کامل از پنل sms.ir)", "API key (the full value from the sms.ir panel)", "API-Schlüssel (vollständiger Wert aus sms.ir)", "API anahtarı (sms.ir panelindeki tam değer)"])}
-          <input type="password" autoComplete="off" dir="ltr" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} placeholder={config.configured ? tx(["برای تغییر، کلید تازه را وارد کنید", "Enter a new key to replace it", "Neuen Schlüssel eingeben, um ihn zu ersetzen", "Değiştirmek için yeni anahtarı girin"]) : ""} />
-          <small>{tx(["شناسهٔ کلید (به شکل 02f5…-…) کلید نیست؛ مقدار طولانی خود کلید را وارد کنید.", "The key id (like 02f5…-…) is not the key; enter the long key value.", "Die Schlüssel-ID (wie 02f5…-…) ist nicht der Schlüssel.", "Anahtar kimliği (02f5…-… gibi) anahtar değildir."])}</small>
+      <form className="domain-fields" onSubmit={(e) => { e.preventDefault(); void run(async () => { await call(API, "PUT", form); setForm((f) => ({ ...f, apiKey: "" })); toast.success(tx(["ذخیره شد", "Saved", "Gespeichert", "Kaydedildi"])); onSaved(); }); }}>
+        <label>{tx(["سامانهٔ پیامک", "SMS provider", "SMS-Anbieter", "SMS sağlayıcısı"])}
+          <select value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value as "smsir" | "onesms", otpParam: e.target.value === "onesms" ? "1" : "CODE" })}>
+            <option value="onesms">onesms.ir</option>
+            <option value="smsir">sms.ir</option>
+          </select>
+          <small>{form.provider === "onesms" ? tx(["شناسهٔ الگو همان «شناسه الگو» در پنل onesms است؛ نام متغیر، عدد داخل آکولاد متن الگو است (مثلاً 1 برای {1}). خط ارسال به شکل 98… است.", "The template id is the pattern id from the onesms panel; the variable is the number inside the braces (e.g. 1 for {1}). The sender line looks like 98….", "Vorlagen-ID aus dem onesms-Panel; Variable = Zahl in den Klammern (z. B. 1 für {1}). Absender beginnt mit 98….", "Şablon kimliği onesms panelinden; değişken parantez içindeki sayıdır (ör. {1} için 1). Gönderici hat 98… biçimindedir."]) : tx(["شناسهٔ الگو در sms.ir عددی است؛ با «فهرست الگوها» آن را ببینید.", "sms.ir template ids are numeric; use “List templates” to see them.", "sms.ir-Vorlagen-IDs sind numerisch; siehe „Vorlagen anzeigen“.", "sms.ir şablon kimlikleri sayısaldır; “Şablonları listele” ile görün."])}</small>
         </label>
-        <label>{tx(["شمارهٔ خط ارسال", "Sender line number", "Absendernummer", "Gönderici hat numarası"])}<input dir="ltr" inputMode="numeric" value={form.lineNumber} onChange={(e) => setForm({ ...form, lineNumber: e.target.value.replace(/\D/g, "") })} /></label>
+        <label>{tx(["کلید API (مقدار کامل از پنل سامانه)", "API key (the full value from the provider panel)", "API-Schlüssel (vollständiger Wert aus dem Panel)", "API anahtarı (paneldeki tam değer)"])}
+          <input type="password" autoComplete="off" dir="ltr" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} placeholder={config.configured ? tx(["برای تغییر، کلید تازه را وارد کنید", "Enter a new key to replace it", "Neuen Schlüssel eingeben, um ihn zu ersetzen", "Değiştirmek için yeni anahtarı girin"]) : ""} />
+                  </label>
+        <label>{tx(["شمارهٔ خط ارسال", "Sender line number", "Absendernummer", "Gönderici hat numarası"])}<input dir="ltr" inputMode="numeric" value={form.lineNumber} onChange={(e) => setForm({ ...form, lineNumber: e.target.value.replace(/[^\d+]/g, "") })} /></label>
         <label>{tx(["شناسهٔ الگوی کد ورود", "Sign-in code template id", "Vorlagen-ID für den Anmeldecode", "Giriş kodu şablon kimliği"])}<input dir="ltr" value={form.otpTemplateId} onChange={(e) => setForm({ ...form, otpTemplateId: e.target.value.trim() })} /></label>
         <label>{tx(["نام متغیر کد در الگو", "Code placeholder in the template", "Platzhalter für den Code", "Şablondaki kod değişkeni"])}<input dir="ltr" value={form.otpParam} onChange={(e) => setForm({ ...form, otpParam: e.target.value.trim() })} /></label>
         <div className="span-2 domain-actions">
           <Button type="submit" variant="primary" disabled={busy}>{tx(["ذخیره", "Save", "Speichern", "Kaydet"])}</Button>
           <Button type="button" disabled={busy || !config.configured} onClick={() => void run(async () => setCheck(await call(API, "POST", { action: "check" })))}>{tx(["بررسی کلید و اعتبار", "Check key and credit", "Schlüssel und Guthaben prüfen", "Anahtarı ve krediyi kontrol et"])}</Button>
-          <Button type="button" disabled={busy || !config.configured} onClick={() => void run(async () => setTemplates((await call(API, "POST", { action: "templates" })).templates))}>{tx(["فهرست الگوها", "List templates", "Vorlagen anzeigen", "Şablonları listele"])}</Button>
+          {form.provider !== "onesms" && <Button type="button" disabled={busy || !config.configured} onClick={() => void run(async () => setTemplates((await call(API, "POST", { action: "templates" })).templates))}>{tx(["فهرست الگوها", "List templates", "Vorlagen anzeigen", "Şablonları listele"])}</Button>}
         </div>
       </form>
       {check && (
