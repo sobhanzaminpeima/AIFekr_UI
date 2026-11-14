@@ -70,7 +70,7 @@ export function useFactory() {
   const api = useCallback(async <T,>(url: string, data?: unknown, method = "POST"): Promise<T> => {
     const r = await fetch(url, data === undefined ? { cache: "no-store" } : { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
     const d = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(d.code || d.error || "REQUEST_FAILED");
+    if (!r.ok) throw Object.assign(new Error(d.code || d.error || "REQUEST_FAILED"), { details: d.details as Record<string, number> | undefined });
     return d as T;
   }, []);
   const refresh = useCallback(async (id = active) => {
@@ -553,6 +553,20 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
   const [confirm, setConfirm] = useState(false);
   // Set when the server refuses the start for lack of credits (package wallets are checked there, not here).
   const [short, setShort] = useState(false);
+  // Set when the estimate is above the project's own budget cap; the server says how many credits the cap must cover.
+  const [over, setOver] = useState<{ required: number; budgetCap: number; maxProjectCredits: number } | null>(null);
+  const estimateNow = async () => {
+    setOver(null);
+    try { const d = await api<{ estimate: Estimate }>(`/api/video-factory/projects/${project!.id}`, { action: "estimate" }); setEstimate(d.estimate); }
+    catch (e) { const d = (e as Error & { details?: Record<string, number> }).details; if ((e as Error).message === "BUDGET_EXCEEDED" && d?.required) { setEstimate(null); setOver({ required: d.required, budgetCap: d.budgetCap, maxProjectCredits: d.maxProjectCredits }); return; } throw e; }
+  };
+  const raiseCap = async () => {
+    const latest = await refresh(project!.id);
+    const p = latest || project!;
+    await api(`/api/video-factory/projects/${p.id}`, { action: "configuration", expectedVersion: p.version, configuration: { ...JSON.parse(String(p.configuration || "{}")), budgetCap: over!.required } });
+    await refresh(p.id);
+    await estimateNow();
+  };
   const canStart = !job || FINAL.includes(job.status);
   return (
     <>
@@ -567,9 +581,22 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
         </dl>
       )}
       <div className="domain-actions">
-        {canStart && <Button disabled={busy} onClick={() => run(async () => { const d = await api<{ estimate: Estimate }>(`/api/video-factory/projects/${project!.id}`, { action: "estimate" }); setEstimate(d.estimate); })}>{f("Estimate credits")}</Button>}
+        {canStart && <Button disabled={busy} onClick={() => run(estimateNow)}>{f("Estimate credits")}</Button>}
         {canStart && estimate && <Button variant="primary" disabled={busy} onClick={() => setConfirm(true)}><Icon name="Sparkles" size={18} />{f("Approve & start · ~{0} credits", { 0: estimate.credits })}</Button>}
       </div>
+      {canStart && over && (
+        <div className="notice-banner budget-over">
+          <Icon name="Info" size={16} />
+          {over.required <= over.maxProjectCredits ? (
+            <>
+              <span>{fa ? `این ویدیو حدود ${n(over.required)} کردیت لازم دارد، ولی سقف بودجهٔ این پروژه ${n(over.budgetCap)} کردیت است.` : `This video needs about ${over.required} credits, but this project's budget cap is ${over.budgetCap}.`}</span>
+              <Button variant="primary" disabled={busy} onClick={() => run(raiseCap)}>{fa ? `افزایش سقف به ${n(over.required)} و برآورد دوباره` : `Raise cap to ${over.required} and re-estimate`}</Button>
+            </>
+          ) : (
+            <span>{fa ? `این ویدیو حدود ${n(over.required)} کردیت لازم دارد که از حداکثر مجاز هر پروژه (${n(over.maxProjectCredits)}) بیشتر است. مدت ویدیو یا تعداد نماها را کم کنید.` : `This video needs about ${over.required} credits, above the per-project maximum of ${over.maxProjectCredits}. Shorten the video or use fewer shots.`}</span>
+          )}
+        </div>
+      )}
       {canStart && estimate && short && <BuyCreditsInline need={estimate.credits} balance={credits} returnPath="/video-factory" />}
       {confirm && estimate && (
         <Modal title={fa ? "تأیید تولید" : "Approve production"} onClose={() => setConfirm(false)}>

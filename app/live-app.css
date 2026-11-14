@@ -581,3 +581,4 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 @media (max-width: 640px) { .factory-character-ref-row { grid-template-columns: 1fr; } }
 .buy-credits-inline{border-color:var(--orange,#f97316);margin-top:12px}
 .buy-credits-inline .buy-credits-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.notice-banner.budget-over{flex-wrap:wrap}.notice-banner.budget-over .btn{margin-inline-start:auto}
