@@ -74,6 +74,7 @@ import { LiveAcademy, LiveStudentAdmin } from "./live-admin-learning";
 import { LiveCourses, LiveCoursePreview } from "./live-admin-courses";
 import { LiveFitnessAdmin, LiveFitnessUsers, LiveFitnessMarketplace } from "./live-admin-fitness";
 import { LiveVoiceStudioAdmin, LiveVoiceAgentAdmin } from "./live-admin-voice";
+import { LiveVideoFactoryAdmin } from "./live-admin-video-factory";
 import { LiveGrowthCenter, LiveGrowthCustomer } from "./live-admin-growth-center";
 import { LiveAdminSms } from "./live-admin-sms";
 import { LiveExplore } from "./live-explore";
@@ -156,6 +157,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/ai-courses" ? <div className="admin-live-page"><LiveCourses /></div>
         : path === "/admin/fitness" ? <div className="admin-live-page"><LiveFitnessAdmin /></div>
         : path === "/admin/voice-studio" ? <div className="admin-live-page"><LiveVoiceStudioAdmin /></div>
+        : path === "/admin/video-factory" ? <div className="admin-live-page"><LiveVideoFactoryAdmin /></div>
         : path === "/admin/voice-agent" ? <div className="admin-live-page"><LiveVoiceAgentAdmin /></div>
         : path === "/admin/fitness/users" ? <div className="admin-live-page"><LiveFitnessUsers /></div>
         : path === "/admin/fitness/marketplace" ? <div className="admin-live-page"><LiveFitnessMarketplace /></div>
