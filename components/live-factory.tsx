@@ -20,6 +20,7 @@ import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 import { MediaStudio } from "./live-factory-media";
 import { ChannelStudio } from "./live-factory-youtube";
+import { BuyCreditsInline } from "./buy-credits-inline";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
 /** A purchasable video package; `offer` is its price in the visitor's currency, resolved by the main site like the landing (absent = not offered). */
@@ -550,6 +551,8 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
   const credits = useLiveCredits(shell?.user.credits ?? 0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [confirm, setConfirm] = useState(false);
+  // Set when the server refuses the start for lack of credits (package wallets are checked there, not here).
+  const [short, setShort] = useState(false);
   const canStart = !job || FINAL.includes(job.status);
   return (
     <>
@@ -567,13 +570,16 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
         {canStart && <Button disabled={busy} onClick={() => run(async () => { const d = await api<{ estimate: Estimate }>(`/api/video-factory/projects/${project!.id}`, { action: "estimate" }); setEstimate(d.estimate); })}>{f("Estimate credits")}</Button>}
         {canStart && estimate && <Button variant="primary" disabled={busy} onClick={() => setConfirm(true)}><Icon name="Sparkles" size={18} />{f("Approve & start · ~{0} credits", { 0: estimate.credits })}</Button>}
       </div>
+      {canStart && estimate && short && <BuyCreditsInline need={estimate.credits} balance={credits} returnPath="/video-factory" />}
       {confirm && estimate && (
         <Modal title={fa ? "تأیید تولید" : "Approve production"} onClose={() => setConfirm(false)}>
           <h3><Icon name="Coins" size={18} /> {f("Estimate before reservation")}</h3>
           <p>✦ {n(estimate.credits)} {t("credits")}</p>
           <Button variant="primary full" disabled={busy} onClick={() => run(async () => {
             setConfirm(false);
-            await api(`/api/video-factory/projects/${project!.id}`, { action: "start", idempotencyKey: crypto.randomUUID(), expectedCredits: estimate.credits });
+            setShort(false);
+            try { await api(`/api/video-factory/projects/${project!.id}`, { action: "start", idempotencyKey: crypto.randomUUID(), expectedCredits: estimate.credits }); }
+            catch (e) { if (/INSUFFICIENT_CREDITS/.test((e as Error).message)) setShort(true); throw e; }
             setEstimate(null);
             await refresh(project!.id);
             onStarted();

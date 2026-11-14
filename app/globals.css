@@ -7085,3 +7085,10 @@ button.panel.stat.selected{border-color:#f97316}
 .voice-steps{margin:6px 0 10px;padding-inline-start:20px;line-height:1.9}.stat strong.small-stat{font-size:14px}
 .vf-unsaved{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:8px;z-index:5;border-color:#f97316}.vf-unsaved .domain-actions{margin:0}
 .vf-rates{display:grid;gap:8px;margin:10px 0}
+/* Admin sidebar: the section menu gets the height; long plan/role text never spills. */
+.admin-shell .sidebar .admin-badge{align-self:flex-start;font-size:10px;margin-bottom:6px}
+.admin-shell .sidebar .admin-navigation{min-height:220px}
+.admin-shell .sidebar .admin-nav-groups{flex:1;min-height:0}
+.sidebar .user-menu>div{min-width:0;flex:1}
+.sidebar .user-menu strong,.sidebar .user-menu small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar .user-menu small span{unicode-bidi:isolate}
