@@ -546,7 +546,7 @@ function SoundStep({ x }: { x: FactoryCtx }) {
 
 /** Cost approval: the classic estimate, then approve & start with the estimate as the ceiling. */
 function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
-  const { fa, t, n } = useApp();
+  const { fa, t, n, tl } = useApp();
   const { f, project, job, api, run, busy, refresh, shell } = x;
   const credits = useLiveCredits(shell?.user.credits ?? 0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
@@ -578,6 +578,11 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
           {estimate.items.map((item) => <div className="cost-row" key={item.action}><dt>{EXTRA_ACTIONS[item.action] ? EXTRA_ACTIONS[item.action][fa ? 0 : 1] : f(ACTIONS[item.action] || item.action)} × {n(item.quantity)}</dt><dd>~✦ {n(item.credits)}</dd></div>)}
           <div className="cost-row total"><dt>{fa ? "مجموع" : "Total"}</dt><dd>~✦ {n(estimate.credits)}</dd></div>
           <div className="cost-row"><dt>{t("balance")}</dt><dd>{n(credits)}</dd></div>
+          {estimate.characterConsistency
+            ? <div className="cost-row"><dt>{tl("شخصیت ثابت در همهٔ تصویرها", "Same character in every image")}</dt><dd><Icon name="CircleCheck" size={16} /></dd></div>
+            : JSON.parse(String(project?.configuration || "{}")).characterReferenceAssetId
+              ? <div className="cost-row"><dt>{tl("شخصیت مرجع فعلاً فقط به‌عنوان راهنمای متنی استفاده می‌شود.", "The character image is used as text guidance only for now.")}</dt><dd>—</dd></div>
+              : null}
         </dl>
       )}
       <div className="domain-actions">
