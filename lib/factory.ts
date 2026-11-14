@@ -31,7 +31,7 @@ export type Project = {
   id: string; title: string; brief: string; configuration: string; manifest: string; version: number; jobs: Job[];
   research?: string; planning?: string; publishing?: string; updatedAt?: string;
 };
-export type Estimate = { credits: number; items: { action: string; quantity: number; credits: number }[] };
+export type Estimate = { credits: number; characterConsistency?: boolean; items: { action: string; quantity: number; credits: number }[] };
 
 /** The classic new-project defaults (the server fills the remaining schema defaults). */
 export const NEW_CONFIGURATION = {
