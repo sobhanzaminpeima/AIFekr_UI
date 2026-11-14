@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
-import { CharacterReference } from "./live-factory-youtube";
+import { CharacterReference, VisualStyleStudio } from "./live-factory-youtube";
 import { TimelineEditor } from "./live-factory-timeline";
 import { useApp } from "./providers";
 import { Button, Empty, Icon } from "./ui";
@@ -96,7 +96,8 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
   useEffect(() => { setManifest(manifestOf(project!)); setStyleBible(configOf(project!).styleBible); }, [project]);
   return (
     <>
-    <CharacterReference x={x} />
+    <VisualStyleStudio x={x} />
+      <CharacterReference x={x} />
     <section className="panel">
       <h2>{f("Character & continuity bible")}</h2>
       {manifest ? (

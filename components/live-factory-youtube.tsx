@@ -115,7 +115,7 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
       : tx(["کاراکتر ثابت برداشته شد.", "Fixed character removed.", "Feste Figur entfernt.", "Sabit karakter kaldırıldı."]));
   });
   const generate = () => act(async () => {
-    const r = await fetch("/api/image/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: `Character sheet of one consistent character on a plain white background, full body, front view, clean lines. ${prompt}`, ratio: "1:1", count: 1, kind: "character_sheet" }) });
+    const r = await fetch("/api/image/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: `Character turnaround sheet of ONE consistent original character on a plain white background: the same character shown three times side by side, front view, three-quarter view and side profile, full body, identical outfit and colours, clean lines, no text. ${STYLE_HINT[String(config.visualStyle || "NONE")] ?? ""} ${prompt}`, ratio: "16:9", count: 1, kind: "character_sheet" }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.error || d.code || "IMAGE_FAILED");
     const generated = d.images?.[0]?.id;
@@ -205,6 +205,74 @@ export function ThumbnailPicker({ x, shotImages }: { x: FactoryCtx; shotImages: 
           ))}
         </div>
       ) : <p className="muted">{tx(["بعد از ساخت تصاویر، این‌جا قابل انتخاب‌اند.", "Images appear here once they are made.", "Bilder erscheinen hier, sobald sie erstellt sind.", "Görseller oluşturulunca burada görünür."])}</p>}
+    </section>
+  );
+}
+
+// ── Visual style and visual bible ─────────────────────────────────────────
+const STYLE_HINT: Record<string, string> = {
+  STICKMAN: "Stickman documentary style: round white head, minimal face, 2D flat colours.",
+  CUSTOM_CHARACTER: "Original illustrated character, not resembling any real person.",
+  CINEMATIC: "Cinematic illustrated realism.",
+  HYBRID: "Clean illustrated look that also suits diagrams.",
+};
+const STYLES: { id: string; icon: string; t: Tx; d: Tx }[] = [
+  { id: "STICKMAN", icon: "PersonStanding", t: ["مستند استیکمن", "Stickman documentary", "Strichmännchen-Doku", "Çöp adam belgesel"], d: ["آدمک‌های دوبعدی با سر سفید گرد، پس‌زمینهٔ دقیق و لباس متناسب با دوره.", "2D figures with round white heads, detailed backgrounds, period clothing.", "2D-Figuren mit runden weißen Köpfen, detailreiche Hintergründe.", "Yuvarlak beyaz kafalı 2D figürler, ayrıntılı arka planlar."] },
+  { id: "CUSTOM_CHARACTER", icon: "UserRound", t: ["کاراکتر اختصاصی", "Custom character", "Eigene Figur", "Özel karakter"], d: ["یک شخصیت ثابت با لباس، سن و رنگ دلخواه تو در همهٔ صحنه‌ها.", "One recurring character with your outfit, age and colours in every scene.", "Eine wiederkehrende Figur mit deinem Outfit und deinen Farben.", "Her sahnede kıyafeti ve renkleri sizin seçtiğiniz tek karakter."] },
+  { id: "CINEMATIC", icon: "Clapperboard", t: ["مستند سینمایی", "Cinematic documentary", "Kino-Doku", "Sinematik belgesel"], d: ["صحنه‌های واقع‌گرا با جزئیات دقیق تاریخی؛ بازسازی نمایشی.", "Realistic scenes with accurate period detail; a dramatisation.", "Realistische Szenen mit Epochendetails; nachgestellt.", "Dönem ayrıntılı gerçekçi sahneler; canlandırma."] },
+  { id: "HYBRID", icon: "LayoutGrid", t: ["روایت ترکیبی", "Hybrid storytelling", "Hybrides Erzählen", "Karma anlatım"], d: ["ترکیب شخصیت، تصویر محیط و نمودارهای تمیز با یک ظاهر یکدست.", "Characters, environment stills and clean diagrams in one look.", "Figuren, Umgebungen und Diagramme in einem Look.", "Karakterler, mekânlar ve diyagramlar tek görünümde."] },
+];
+const BIBLE: { key: string; max: number; t: Tx; ph: Tx }[] = [
+  { key: "palette", max: 400, t: ["پالت رنگ", "Palette", "Farbpalette", "Renk paleti"], ph: ["مثلاً قهوه‌ای گرم، فیروزه‌ای، کرم", "e.g. warm browns, teal, cream", "z. B. warmes Braun, Petrol, Creme", "örn. sıcak kahve, turkuaz, krem"] },
+  { key: "lighting", max: 400, t: ["نور و خط", "Lighting & line", "Licht & Linie", "Işık ve çizgi"], ph: ["مثلاً نور نرم روز، خطوط تمیز", "e.g. soft daylight, clean outlines", "z. B. weiches Tageslicht, klare Konturen", "örn. yumuşak gün ışığı, temiz hatlar"] },
+  { key: "era", max: 400, t: ["دوره و مکان", "Era & setting", "Epoche & Ort", "Dönem ve mekân"], ph: ["مثلاً تهران دههٔ ۱۳۰۰", "e.g. 1920s Tehran", "z. B. Teheran 1920er", "örn. 1920'ler Tahran"] },
+  { key: "composition", max: 400, t: ["ترکیب‌بندی", "Composition", "Komposition", "Kompozisyon"], ph: ["مثلاً سوژه وسط، فضای خالی برای زیرنویس", "e.g. subject centred, room for captions", "z. B. Motiv mittig, Platz für Untertitel", "örn. özne ortada, altyazı için boşluk"] },
+  { key: "locations", max: 600, t: ["مکان‌های تکراری", "Recurring locations", "Wiederkehrende Orte", "Tekrarlanan mekânlar"], ph: ["مثلاً بازار قدیمی، دفتر کار", "e.g. old bazaar, the office", "z. B. alter Basar, Büro", "örn. eski çarşı, ofis"] },
+  { key: "branding", max: 300, t: ["رنگ‌های برند کانال", "Channel brand colours", "Kanal-Markenfarben", "Kanal marka renkleri"], ph: ["مثلاً نارنجی و مشکی", "e.g. orange and black", "z. B. Orange und Schwarz", "örn. turuncu ve siyah"] },
+  { key: "negative", max: 600, t: ["چیزهایی که نباید باشد", "Avoid", "Vermeiden", "Kaçınılacaklar"], ph: ["مثلاً خشونت، چهرهٔ افراد واقعی", "e.g. gore, real people's faces", "z. B. Gewalt, echte Gesichter", "örn. şiddet, gerçek kişilerin yüzleri"] },
+];
+
+/** Picks one of the four visual modes and edits the visual bible; both are added to every image prompt. */
+export function VisualStyleStudio({ x }: { x: FactoryCtx }) {
+  const tx = useTx();
+  const config = configOf(x);
+  const style = String(config.visualStyle || "NONE");
+  const saved = (config.visualBible || {}) as Record<string, string>;
+  const [bible, setBible] = useState<Record<string, string>>(saved);
+  const [busy, setBusy] = useState(false);
+  const locked = busyJob(x);
+  useEffect(() => setBible((configOf(x).visualBible || {}) as Record<string, string>), [x.project?.version]); // eslint-disable-line react-hooks/exhaustive-deps
+  const save = async (patch: Partial<Config>, message: string) => {
+    setBusy(true);
+    try { await saveConfig(x, patch); toast.success(message); } catch (e) { toast.error(x.err((e as Error).message)); } finally { setBusy(false); }
+  };
+  const full = Object.fromEntries(BIBLE.map((b) => [b.key, (bible[b.key] || "").slice(0, b.max)]));
+  return (
+    <section className="panel factory-visual-style">
+      <h2><Icon name="Palette" size={18} /> {tx(["سبک تصویری ویدیو", "Video visual style", "Visueller Stil des Videos", "Videonun görsel stili"])}</h2>
+      <p>{tx(["این سبک به همهٔ پرامپت‌های تصویر اضافه می‌شود. داخل تصویرها متن ساخته نمی‌شود؛ عنوان و زیرنویس را ویرایشگر روی تصویر می‌گذارد.", "This style is added to every image prompt. No text is drawn inside images; the editor places titles and captions.", "Dieser Stil wird jedem Bild-Prompt hinzugefügt. In Bildern wird kein Text erzeugt; Titel setzt der Editor.", "Bu stil her görsel istemine eklenir. Görsellerin içine yazı çizilmez; başlıkları editör ekler."])}</p>
+      <div className="style-cards" role="radiogroup">
+        {STYLES.map((s) => (
+          <button key={s.id} type="button" role="radio" aria-checked={style === s.id} className={`style-card${style === s.id ? " selected" : ""}`} disabled={busy || locked}
+            onClick={() => save({ visualStyle: style === s.id ? "NONE" : s.id }, style === s.id ? tx(["سبک برداشته شد.", "Style cleared.", "Stil entfernt.", "Stil kaldırıldı."]) : tx(["سبک ذخیره شد.", "Style saved.", "Stil gespeichert.", "Stil kaydedildi."]))}>
+            <Icon name={s.icon} size={22} />
+            <strong>{tx(s.t)}</strong>
+            <small>{tx(s.d)}</small>
+          </button>
+        ))}
+      </div>
+      <details className="visual-bible" open={Object.values(saved).some(Boolean)}>
+        <summary>{tx(["کتاب بصری (اختیاری)", "Visual bible (optional)", "Visuelle Bibel (optional)", "Görsel kılavuz (isteğe bağlı)"])}</summary>
+        <div className="visual-bible-grid">
+          {BIBLE.map((b) => (
+            <label key={b.key}>{tx(b.t)}
+              <input value={bible[b.key] || ""} placeholder={tx(b.ph)} maxLength={b.max} disabled={locked} onChange={(e) => setBible({ ...bible, [b.key]: e.target.value })} />
+            </label>
+          ))}
+        </div>
+        <Button variant="primary" disabled={busy || locked} onClick={() => save({ visualBible: full }, tx(["کتاب بصری ذخیره شد · رایگان", "Visual bible saved · free", "Visuelle Bibel gespeichert · kostenlos", "Görsel kılavuz kaydedildi · ücretsiz"]))}>{tx(["ذخیره · رایگان", "Save · free", "Speichern · kostenlos", "Kaydet · ücretsiz"])}</Button>
+      </details>
+      {locked && <small>{tx(["در حین تولید قابل تغییر نیست.", "Locked while a production is running.", "Während der Produktion gesperrt.", "Üretim sürerken kilitli."])}</small>}
     </section>
   );
 }
