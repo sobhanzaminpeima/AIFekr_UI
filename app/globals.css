@@ -7083,3 +7083,10 @@ button.panel.stat.selected{border-color:#f97316}
 .fit-moves{display:grid;gap:8px;border:1px solid var(--border);border-radius:12px;padding:12px}.fit-move{display:grid;grid-template-columns:minmax(0,1fr) 80px 80px 100px auto;gap:8px;align-items:end}.fit-move label{display:grid;gap:4px;font-size:12px}
 @media (max-width:640px){.fit-move{grid-template-columns:1fr 1fr 1fr}.fit-move select{grid-column:1/-1}}
 .voice-steps{margin:6px 0 10px;padding-inline-start:20px;line-height:1.9}.stat strong.small-stat{font-size:14px}
+/* Admin sidebar: the section menu gets the height; long plan/role text never spills. */
+.admin-shell .sidebar .admin-badge{align-self:flex-start;font-size:10px;margin-bottom:6px}
+.admin-shell .sidebar .admin-navigation{min-height:220px}
+.admin-shell .sidebar .admin-nav-groups{flex:1;min-height:0}
+.sidebar .user-menu>div{min-width:0;flex:1}
+.sidebar .user-menu strong,.sidebar .user-menu small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar .user-menu small span{unicode-bidi:isolate}

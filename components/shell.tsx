@@ -157,7 +157,7 @@ export function Shell({
           </button>
         </div>
         {admin ? (
-          <span className="badge orange">ADMIN · {t("mock")}</span>
+          <span className="badge orange admin-badge">{live ? tl("پنل مدیریت", "Admin panel") : <>ADMIN · {t("mock")}</>}</span>
         ) : (
           <>
             <Link
@@ -251,8 +251,9 @@ export function Shell({
             )}
           </>
         )}
-        <div className="sidebar-bottom"><WebAppInstallButton/>{live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{tl("کیف پول و درآمد", "Wallet & earnings")}</Link>}
-          <Link href="/credits" className="wallet">
+        {/* Admin: the menu needs the height; the balance stays in the top bar. */}
+        <div className="sidebar-bottom">{!admin&&<WebAppInstallButton/>}{!admin&&live&&<Link className="account-wallet-link" href="/wallet"><Icon name="Wallet" size={16}/>{tl("کیف پول و درآمد", "Wallet & earnings")}</Link>}
+          {!admin && <Link href="/credits" className="wallet">
             <div>
               <span>
                 <Icon name="Sparkles" size={16} /> {t("balance")}
@@ -267,14 +268,14 @@ export function Shell({
             <div className="meter">
               <i style={{ width: Math.min(100, credits / 15) + "%" }} />
             </div>
-          </Link>
+          </Link>}
           <div className="user-row">
           <Link className="user-menu" href="/settings">
             <span className="avatar">{live ? initial : "س"}</span>
             <div>
               <strong>{live ? live.user.name || live.copy.nav.settings : tl("سارا محمدی", "Sara Mohammadi")}</strong>
               <small>
-                {live ? live.user.planName : tl("طرح حرفه‌ای", "Pro workspace")} <span>{live ? live.user.plan : "PRO"}</span>
+                {admin && live ? (live.user.role === "SUPER_ADMIN" ? tl("مدیر ارشد", "Super admin") : tl("مدیر", "Admin")) : <>{live ? live.user.planName : tl("طرح حرفه‌ای", "Pro workspace")} <span>{live ? live.user.plan : "PRO"}</span></>}
               </small>
             </div>
             <Icon name="ChevronsUpDown" size={15} />
