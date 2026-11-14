@@ -35,7 +35,7 @@ export type Estimate = { credits: number; items: { action: string; quantity: num
 
 /** The classic new-project defaults (the server fills the remaining schema defaults). */
 export const NEW_CONFIGURATION = {
-  durationSeconds: 360, ratio: "16:9", mode: "AUTOPILOT", quality: "SMART", budgetCap: 3000, mediaMode: "MULTIMEDIA",
+  durationSeconds: 360, ratio: "16:9", mode: "AUTOPILOT", quality: "SMART", budgetCap: 10000, mediaMode: "MULTIMEDIA",
   narration: false, music: false, audience: "", genre: "educational", styleBible: "", shotsPerChapter: 8,
   musicPrompt: "Instrumental background, no vocals", voice: "alloy", resolution: "720p", ideaLab: false,
 } as const;
