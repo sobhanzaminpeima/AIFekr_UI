@@ -736,6 +736,7 @@ function ReviewStep({ x }: { x: FactoryCtx }) {
           <article className="panel production-asset-card" key={a.id}>
             <Icon name={a.kind === "video" ? "Clapperboard" : a.kind === "vtt" ? "Captions" : "FileText"} size={30} />
             <h3>{a.fileName}</h3>
+            {a.kind === "youtube" && <p>{fa ? "عنوان، توضیحات با زمان فصل‌ها و برچسب‌ها؛ آمادهٔ کپی در یوتیوب." : "Title, description with chapter times and tags, ready to paste into YouTube."}</p>}
             <div className="domain-actions">
               <a className="btn" href={`/api/video-factory/artifacts/${a.id}`}><Icon name="Download" size={16} />{fa ? "دانلود" : "Download"}</a>
               <Button disabled={busy} onClick={() => run(async () => setLink((await api<{ url: string }>(`/api/video-factory/artifacts/${a.id}/link`, {})).url))}>{f("Create 10-minute link")}</Button>
