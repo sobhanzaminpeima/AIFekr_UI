@@ -307,13 +307,13 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
       <SectionTitle title={t("factory")} subtitle={project && !creating ? project.title : fa ? "از یک ایده، تا یک داستان یکپارچه." : "From a little idea to a complete story."}>
         {project && !creating && <Link className="btn" href="/video-factory?tab=production&new=1">{f("New project")}</Link>}
       </SectionTitle>
-      <div className="stepper">
+      {!creating && <div className="stepper">
         {labels.map((s, i) => (
           <button key={s} className={step === i ? "current" : i < step ? "completed" : ""} disabled={busy || !reachable(i)} onClick={() => setStep(i)}>
             <span>{n(i + 1)}</span>{s}
           </button>
         ))}
-      </div>
+      </div>}
       <section className="panel factory-step">
         {step === 0 ? (creating ? <NewProject x={x} onCreated={(id) => { setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(4); }} /> : <ProjectBrief x={x} />)
           : step === 1 ? <ScriptStep x={x} manifest={manifest} />
@@ -332,44 +332,84 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
 
 /** Step 1 for a new project: the classic form (title, idea, quick and advanced settings). */
 function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) => void }) {
-  const { fa } = useApp();
+  const { locale, n } = useApp();
   const { f, api, run, busy, lang } = x;
+  const tx = (c: [string, string, string, string]) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];
   const catalog = useCatalog(x);
   const silentOnly = catalog?.capabilities?.silentOnly ?? false;
+  const musicAvailable = !!catalog?.capabilities?.musicAvailable;
   const [title, setTitle] = useState("");
   const [brief, setBrief] = useState("");
-  const [config, setConfig] = useState<Configuration>({ ...(NEW_CONFIGURATION as unknown as Configuration), language: lang as Configuration["language"] });
+  // YouTube-first defaults: narration on, an image for every shot, autopilot within the budget.
+  const [config, setConfig] = useState<Configuration>({ ...(NEW_CONFIGURATION as unknown as Configuration), durationSeconds: 180, narration: true, imageEveryShot: true, language: lang as Configuration["language"] });
+  const [style, setStyle] = useState("STICKMAN");
   const change = (patch: Partial<Configuration>) => setConfig((c) => ({ ...c, ...patch }));
-  const duration = (s: number, two = false) => (s < 60 ? `${s} ${f(two ? "seconds · 2" : "seconds")}` : `${s / 60} ${f(two ? "minutes · 2" : "minutes")}`);
+  const lengths = config.ratio === "9:16" ? [30, 60] : [60, 180, 300, 480];
+  // Shown before the exact server estimate: the live price is 500 credits per minute.
+  const approx = Math.ceil(config.durationSeconds / 60 * 500);
+  const autoTitle = (title.trim() || brief.trim().split(/\n|[.!؟?]/)[0] || "").slice(0, 120);
+  const chip = (on: boolean) => "vf-chip" + (on ? " selected" : "");
   return (
-    <form onSubmit={(e) => {
+    <form className="vf-quick" onSubmit={(e) => {
       e.preventDefault();
       void run(async () => {
+        const base = { ...config, visualStyle: style, music: config.music && musicAvailable };
         // Silent-only service: audio options are off, as the classic form disables them.
-        const configuration = silentOnly ? { ...config, narration: false, music: false } : config;
-        const { project } = await api<{ project: { id: string } }>("/api/video-factory/projects", { title, brief, configuration });
+        const configuration = silentOnly ? { ...base, narration: false, music: false } : base;
+        const { project } = await api<{ project: { id: string } }>("/api/video-factory/projects", { title: autoTitle.length >= 3 ? autoTitle : brief.trim().slice(0, 60), brief, configuration });
         onCreated(project.id);
         await x.refresh(project.id);
       });
     }}>
-      <span className="eyebrow orange-text">01 / {fa ? "اولین جرقه" : "THE FIRST SPARK"}</span>
-      <h1>{fa ? "داستان تو از کجا شروع می‌شود؟" : "Where does your story begin?"}</h1>
-      <label>{f("Title")}<input required minLength={3} maxLength={180} value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-      <label>{f("Idea or existing script")}<textarea required minLength={10} maxLength={30000} rows={5} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder={fa ? "یک ویدیوی آموزشی دربارهٔ شروع یک کسب‌وکار کوچک…" : "An explainer about starting a small business…"} /></label>
-      <div className="factory-quick-steps">
-        {[["01", "Idea or script", "Describe your idea and audience"], ["02", "Script & images", "AI prepares your scenes"], ["03", "Video & download", "Production uses your package credits"]].map(([num, a, b]) => (
-          <article key={num} className="domain-card"><span className="eyebrow">{num}</span><strong>{f(a)}</strong><p>{f(b)}</p></article>
+      <span className="eyebrow orange-text">{tx(["ساخت ویدیوی یوتیوب", "Make a YouTube video", "YouTube-Video erstellen", "YouTube videosu oluştur"])}</span>
+      <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])}</h1>
+      <p className="vf-quick-lead">{tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])}</p>
+
+      <label className="vf-quick-topic">{tx(["موضوع یا متن ویدیو", "Topic or script", "Thema oder Skript", "Konu veya senaryo"])}
+        <textarea required minLength={10} maxLength={30000} rows={4} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder={tx(["مثلاً: داستان ساخت راه‌آهن سراسری ایران، برای مخاطب عام", "e.g. The story of the first transcontinental railway, for a general audience", "z. B. Die Geschichte der ersten transkontinentalen Eisenbahn", "örn. İlk kıtalararası demiryolunun hikâyesi"])} />
+      </label>
+
+      <fieldset className="vf-quick-row">
+        <legend>{tx(["قالب", "Format", "Format", "Biçim"])}</legend>
+        <button type="button" className={chip(config.ratio === "16:9")} aria-pressed={config.ratio === "16:9"} onClick={() => change({ ratio: "16:9", durationSeconds: config.durationSeconds < 60 ? 180 : config.durationSeconds })}><Icon name="Monitor" size={16} />{tx(["یوتیوب ۱۶:۹", "YouTube 16:9", "YouTube 16:9", "YouTube 16:9"])}</button>
+        <button type="button" className={chip(config.ratio === "9:16")} aria-pressed={config.ratio === "9:16"} onClick={() => change({ ratio: "9:16", durationSeconds: 60 })}><Icon name="Smartphone" size={16} />{tx(["شورتس ۹:۱۶", "Shorts 9:16", "Shorts 9:16", "Shorts 9:16"])}</button>
+      </fieldset>
+
+      <fieldset className="vf-quick-row">
+        <legend>{tx(["مدت ویدیو", "Length", "Länge", "Süre"])}</legend>
+        {lengths.map((s) => <button type="button" key={s} className={chip(config.durationSeconds === s)} aria-pressed={config.durationSeconds === s} onClick={() => change({ durationSeconds: s })}>{s < 60 ? tx([`${n(s)} ثانیه`, `${s} sec`, `${s} Sek.`, `${s} sn`]) : tx([`${n(s / 60)} دقیقه`, `${s / 60} min`, `${s / 60} Min.`, `${s / 60} dk`])}</button>)}
+      </fieldset>
+
+      <fieldset className="vf-quick-styles">
+        <legend>{tx(["سبک تصویر", "Visual style", "Bildstil", "Görsel stil"])}</legend>
+        {QUICK_STYLES.map((s) => (
+          <button type="button" key={s.id} className={"style-card" + (style === s.id ? " selected" : "")} aria-pressed={style === s.id} onClick={() => setStyle(s.id)}>
+            <Icon name={s.icon} size={20} /><strong>{tx(s.t)}</strong>
+          </button>
         ))}
-      </div>
-      <div className="domain-fields">
-        <label>{f("Video duration")}<select value={config.durationSeconds} onChange={(e) => change({ durationSeconds: +e.target.value })}>{[30, 60, 180, 360, 480].map((s) => <option key={s} value={s}>{duration(s, true)}</option>)}</select></label>
-        <label>{f("Video format")}<select value={config.ratio} onChange={(e) => change({ ratio: e.target.value as Configuration["ratio"] })}><option value="16:9">YouTube · 16:9</option><option value="9:16">Shorts / Reels · 9:16</option><option value="1:1">1:1</option></select></label>
-      </div>
-      <p className="fine-print">{f("See the credit amount before starting. Approval reserves credits from your package balance; technical production failure refunds them.")}</p>
+      </fieldset>
+
+      {!silentOnly && (
+        <fieldset className="vf-quick-row">
+          <legend>{tx(["صدای گوینده", "Narration", "Sprecher", "Seslendirme"])}</legend>
+          <label className="check-label"><input type="checkbox" checked={config.narration} onChange={(e) => change({ narration: e.target.checked })} />{tx(["گوینده متن را بخواند", "A narrator reads the script", "Ein Sprecher liest das Skript", "Bir anlatıcı senaryoyu okusun"])}</label>
+          {config.narration && <select aria-label={f("Narrator voice")} value={config.voice} onChange={(e) => change({ voice: e.target.value })}>{VOICES.map((v) => <option key={v}>{v}</option>)}</select>}
+          {musicAvailable && <label className="check-label"><input type="checkbox" checked={config.music} onChange={(e) => change({ music: e.target.checked })} />{f("Instrumental background music")}</label>}
+        </fieldset>
+      )}
       {silentOnly && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f("Script, image and silent video generation are available. Narration and music will follow when their connections are ready.")}</span></div>}
+
+      <div className="vf-quick-submit">
+        <span>{tx([`حدود ${n(approx)} کردیت · عدد دقیق را قبل از شروع می‌بینی`, `About ${approx} credits · you see the exact number before starting`, `Etwa ${approx} Credits · den genauen Betrag siehst du vor dem Start`, `Yaklaşık ${approx} kredi · kesin tutarı başlamadan önce görürsünüz`])}</span>
+        <Button type="submit" variant="primary" disabled={busy || brief.trim().length < 10}>
+          <Icon name="Sparkles" size={17} />{tx(["ساخت ویدیو", "Make the video", "Video erstellen", "Videoyu oluştur"])}
+        </Button>
+      </div>
+
       <details className="factory-advanced">
-        <summary><Icon name="SlidersHorizontal" size={16} />{f("Advanced settings · voice, style & budget")}</summary>
+        <summary><Icon name="SlidersHorizontal" size={16} />{tx(["تنظیمات حرفه‌ای (اختیاری)", "Pro settings (optional)", "Profi-Einstellungen (optional)", "Pro ayarlar (isteğe bağlı)"])}</summary>
         <fieldset disabled={silentOnly}>
+          <label>{f("Title")}<input maxLength={180} value={title} placeholder={autoTitle} onChange={(e) => setTitle(e.target.value)} /></label>
           <div className="domain-fields">
             {(catalog?.templates.length ?? 0) > 0 && (
               <label>{f("Start from template")}<select defaultValue="" onChange={(e) => { const tpl = catalog!.templates.find((v) => v.id === e.target.value); if (tpl) { setConfig({ ...config, ...tpl.configuration.configuration }); setBrief(tpl.configuration.brief); } }}>
@@ -377,38 +417,31 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
               </select></label>
             )}
             <label>{f("Output type")}<select value={config.mediaMode} onChange={(e) => change({ mediaMode: e.target.value as Configuration["mediaMode"], ...(e.target.value === "ANIMATIC" ? { quality: "SMART" as const, narration: false, music: false } : {}) })}>
-              <option value="ANIMATIC">{f("Silent storyboard film")}</option><option value="MULTIMEDIA">{f("Film with images, clips & audio")}</option>
+              <option value="MULTIMEDIA">{f("Film with images, clips & audio")}</option><option value="ANIMATIC">{f("Silent storyboard film")}</option>
             </select></label>
-            {config.mediaMode === "MULTIMEDIA" && (
-              <>
-                <label>{f("Production preset")}<select value={config.quality} onChange={(e) => change({ quality: e.target.value as Configuration["quality"] })}><option value="SMART">Smart</option><option value="CINEMATIC_HYBRID">Cinematic Hybrid</option><option value="FILM_STUDIO">Film Studio</option></select></label>
-                <label>{f("Output resolution")}<select value={config.resolution} onChange={(e) => change({ resolution: e.target.value as Configuration["resolution"] })}><option>720p</option><option>1080p</option></select></label>
-                <label className="check-label"><input type="checkbox" checked={config.narration} onChange={(e) => change({ narration: e.target.checked })} />{f("AI-generated narration")}</label>
-                <label>{f("Narrator voice")}<select disabled={!config.narration} value={config.voice} onChange={(e) => change({ voice: e.target.value })}>{VOICES.map((v) => <option key={v}>{v}</option>)}</select></label>
-                <label className="check-label"><input type="checkbox" disabled={!catalog?.capabilities?.musicAvailable} checked={config.music} onChange={(e) => change({ music: e.target.checked })} />{f("Instrumental background music")}</label>
-                <label>{f("Music direction")}<input disabled={!config.music} maxLength={2000} value={config.musicPrompt} onChange={(e) => change({ musicPrompt: e.target.value })} /></label>
-              </>
-            )}
-            <label className="check-label"><input type="checkbox" checked={config.ideaLab} onChange={(e) => change({ ideaLab: e.target.checked })} />{f("Include ideation & outline in project budget")}</label>
-            <label>{f("Maximum shots per chapter")}<input type="number" min="1" max="30" value={config.shotsPerChapter} onChange={(e) => change({ shotsPerChapter: +e.target.value })} /></label>
-            {config.mediaMode === "MULTIMEDIA" && <label className="check-label"><input type="checkbox" checked={!!config.imageEveryShot} onChange={(e) => change({ imageEveryShot: e.target.checked })} />{x.lang === "fa" ? "برای هر شات یک تصویر جدا ساخته شود (همهٔ پرامپت‌ها خودکار تصویر می‌شوند؛ در «مدیا و پرامپت‌ها» دیده و دانلود می‌شوند)" : "Generate an image for every shot (all prompts become images automatically; see and download them under “Media & prompts”)"}</label>}
-            <label>{f("Target duration")}<select value={config.durationSeconds} onChange={(e) => change({ durationSeconds: +e.target.value })}>{[30, 60, 180, 360, 480].map((s) => <option key={s} value={s}>{duration(s)}</option>)}</select></label>
+            <label>{f("Output resolution")}<select value={config.resolution} onChange={(e) => change({ resolution: e.target.value as Configuration["resolution"] })}><option>720p</option><option>1080p</option></select></label>
+            <label>{f("Production mode")}<select value={config.mode} onChange={(e) => change({ mode: e.target.value as Configuration["mode"] })}><option value="AUTOPILOT">{f("Autopilot within budget")}</option><option value="REVIEW_GATES">{f("Review before render")}</option><option value="PRO_STUDIO">{f("Studio with review")}</option></select></label>
             <label>{f("Language")}<select value={config.language} onChange={(e) => change({ language: e.target.value as Configuration["language"] })}><option value="fa">فارسی</option><option value="en">English</option><option value="de">Deutsch</option><option value="tr">Türkçe</option></select></label>
-            <label>{f("Aspect ratio")}<select value={config.ratio} onChange={(e) => change({ ratio: e.target.value as Configuration["ratio"] })}>{["16:9", "9:16", "1:1"].map((r) => <option key={r}>{r}</option>)}</select></label>
-            <label>{f("Production mode")}<select value={config.mode} onChange={(e) => change({ mode: e.target.value as Configuration["mode"] })}><option value="REVIEW_GATES">{f("Review before render")}</option><option value="AUTOPILOT">{f("Autopilot within budget")}</option><option value="PRO_STUDIO">{f("Studio with review")}</option></select></label>
-            <label>{f("Credit budget cap")}<input type="number" min="1" max="1000000" required value={config.budgetCap} onChange={(e) => change({ budgetCap: +e.target.value })} /></label>
             <label>{f("Audience")}<input maxLength={500} value={config.audience} onChange={(e) => change({ audience: e.target.value })} /></label>
             <label>{f("Genre")}<select value={config.genre} onChange={(e) => change({ genre: e.target.value })}>{["educational", "documentary", "marketing", "real-estate", "narrative"].map((g) => <option key={g}>{g}</option>)}</select></label>
+            <label>{f("Maximum shots per chapter")}<input type="number" min="1" max="20" value={config.shotsPerChapter} onChange={(e) => change({ shotsPerChapter: +e.target.value })} /></label>
+            <label>{f("Credit budget cap")}<input type="number" min="1" max="1000000" required value={config.budgetCap} onChange={(e) => change({ budgetCap: +e.target.value })} /></label>
+            {config.music && <label>{f("Music direction")}<input maxLength={2000} value={config.musicPrompt} onChange={(e) => change({ musicPrompt: e.target.value })} /></label>}
+            <label className="check-label"><input type="checkbox" checked={config.ideaLab} onChange={(e) => change({ ideaLab: e.target.checked })} />{f("Include ideation & outline in project budget")}</label>
           </div>
           <label>{f("Style & character continuity bible")}<textarea maxLength={6000} rows={3} value={config.styleBible} onChange={(e) => change({ styleBible: e.target.value })} /></label>
         </fieldset>
       </details>
-      <Button type="submit" variant="primary" disabled={busy || title.trim().length < 3 || brief.trim().length < 10}>
-        {f("Continue to video production")}<Icon name="ArrowLeft" size={17} />
-      </Button>
     </form>
   );
 }
+const QUICK_STYLES: { id: string; icon: string; t: [string, string, string, string] }[] = [
+  { id: "STICKMAN", icon: "PersonStanding", t: ["مستند استیکمن", "Stickman documentary", "Strichmännchen-Doku", "Çöp adam belgesel"] },
+  { id: "CUSTOM_CHARACTER", icon: "UserRound", t: ["کاراکتر اختصاصی", "Custom character", "Eigene Figur", "Özel karakter"] },
+  { id: "CINEMATIC", icon: "Clapperboard", t: ["مستند سینمایی", "Cinematic documentary", "Kino-Doku", "Sinematik belgesel"] },
+  { id: "HYBRID", icon: "LayoutGrid", t: ["روایت ترکیبی", "Hybrid storytelling", "Hybrides Erzählen", "Karma anlatım"] },
+  { id: "NONE", icon: "Sparkles", t: ["آزاد", "Free style", "Freier Stil", "Serbest"] },
+];
 
 /** Step 1 for an existing project: what it is about, and where its sources are edited. */
 function ProjectBrief({ x }: { x: FactoryCtx }) {
@@ -580,6 +613,9 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
     await estimateNow();
   };
   const canStart = !job || FINAL.includes(job.status);
+  // The price is fetched as soon as this step opens, so starting is one click plus the confirmation.
+  useEffect(() => { if (canStart && project) void run(estimateNow); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.id]);
   return (
     <>
       <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."}</h1>

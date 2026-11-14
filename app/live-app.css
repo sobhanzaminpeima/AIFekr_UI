@@ -636,3 +636,18 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .factory-logo-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin-top:12px}
 .factory-logo-preview,.factory-logo-empty{width:120px;height:72px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:repeating-conic-gradient(#ffffff10 0 25%,transparent 0 50%) 0 0/16px 16px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary)}
 .factory-logo-actions{display:grid;gap:10px;flex:1 1 240px}.factory-logo-actions>label:not(.btn){display:grid;gap:6px;font-size:12px}
+/* Video factory quick start */
+.vf-quick{display:grid;gap:18px;max-width:860px}
+.vf-quick h1{margin:4px 0 0}.vf-quick-lead{margin:0;color:var(--text-secondary);line-height:1.8}
+.vf-quick-topic{display:grid;gap:8px;font-weight:600}.vf-quick-topic textarea{font-weight:400;font-size:15px}
+.vf-quick fieldset{border:0;margin:0;padding:0;min-width:0}.vf-quick legend{font-weight:600;font-size:13px;margin-bottom:8px;padding:0}
+.vf-quick-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.vf-quick-row legend{width:100%}
+.vf-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--text-primary);font:inherit;font-size:13px;cursor:pointer}
+.vf-chip.selected{border-color:var(--orange);background:#ea580c1a;color:var(--orange)}.vf-chip:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.vf-quick-styles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.vf-quick-styles legend{grid-column:1/-1}
+.vf-quick-styles .style-card{padding:12px;gap:6px}
+.vf-quick-row select{width:auto;min-width:140px}
+.vf-quick-submit{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid #ea580c33;border-radius:14px;background:#ea580c0d}
+.vf-quick-submit span{font-size:13px;color:var(--text-secondary)}
+.vf-quick .factory-advanced fieldset>label{display:grid;gap:6px;margin-bottom:12px}
+@media (max-width:640px){.vf-quick-submit .btn{width:100%;justify-content:center}}
