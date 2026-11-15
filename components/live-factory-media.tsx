@@ -14,7 +14,7 @@ import { Button, Icon } from "./ui";
 import type { FactoryCtx } from "./live-factory";
 import { LogoPicker, needRights, ThumbnailPicker } from "./live-factory-youtube";
 
-type Shot = { order: number; code: string; id: string; chapter: number; title: string; narration: string; visualPrompt: string; image: { id: string; url: string; source: "chosen" | "generated" } | null };
+type Shot = { order: number; code: string; id: string; chapter: number; title: string; narration: string; visualPrompt: string; image: { id: string; url: string; source: "chosen" | "generated" } | null; clip?: { id: string; url: string } | null };
 type Media = { version: number; ready: boolean; shots: Shot[]; withImage?: number };
 type Tx = [string, string, string, string];
 
@@ -109,7 +109,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
             <a className={"btn primary" + (done ? "" : " disabled")} aria-disabled={!done} href={done ? `${base}?format=zip` : undefined} download>{tx(["دانلود همهٔ تصاویر (ZIP)", "Download all images (ZIP)", "Alle Bilder (ZIP)", "Tüm görseller (ZIP)"])}</a>
           </div>
         </div>
-        <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصاویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the images I upload.", "Ich habe die Rechte an den hochgeladenen Bildern.", "Yüklediğim görsellerin haklarına sahibim."])}</label>
+        <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از فایل‌هایی که بارگذاری می‌کنم را دارم.", "I hold the rights to the files I upload.", "Ich habe die Rechte an den hochgeladenen Dateien.", "Yüklediğim dosyaların haklarına sahibim."])}</label>
         <label className={"production-library-upload" + (rights ? "" : " needs-rights")} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }}>
           <Icon name="Upload" size={20} /> {tx(["بارگذاری گروهی: فایل‌هایی با نام SHOT_001.png، SHOT_002.png و… را انتخاب کنید تا هرکدام روی شات خودش بنشیند.", "Bulk upload: pick files named SHOT_001.png, SHOT_002.png… and each lands on its own shot.", "Massen-Upload: Dateien SHOT_001.png… landen beim passenden Shot.", "Toplu yükleme: SHOT_001.png… adlı dosyalar kendi shot'ına yerleşir."])}
           <input type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={(e) => { const files = [...(e.target.files ?? [])]; e.target.value = ""; if (files.length) void bulk(files); }} />
@@ -124,12 +124,16 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
           </div>
         )}
       </section>
-      <input ref={one} type="file" hidden accept="image/png,image/jpeg,image/webp" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; const shotId = target.current; if (file && shotId) void act(async () => { await attach([{ shotId, assetId: await upload(file) }]); }); }} />
+      <div className="domain-actions">
+        <a className="btn" href="https://labs.google/fx/tools/flow" target="_blank" rel="noopener noreferrer">{tx(["باز کردن Google Flow", "Open Google Flow", "Google Flow öffnen", "Google Flow'u aç"])}</a>
+        <span className="muted">{tx(["پرامپت صحنه را کپی کن، در Flow خروجی بگیر و تصویر یا MP4 را روی همان صحنه بارگذاری کن.", "Copy a scene prompt, create the output in Flow, and upload the image or MP4 to that scene.", "Kopiere den Szenenprompt, erstelle die Ausgabe in Flow und lade das Bild oder MP4 zur Szene hoch.", "Sahne istemini kopyala, Flow'da oluştur ve görseli veya MP4'ü aynı sahneye yükle."])}</span>
+      </div>
+      <input ref={one} type="file" hidden accept="image/png,image/jpeg,image/webp,video/mp4" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; const shotId = target.current; if (file && shotId) void act(async () => { await attach([{ shotId, assetId: await upload(file) }]); }); }} />
       <div className="factory-media-grid">
         {media.shots.map((s) => (
           <article key={s.id} className={"panel factory-media-card" + (selected.has(s.id) ? " selected" : "")}>
             <button type="button" className="factory-media-thumb" onClick={() => setOpen(s)} aria-label={s.code}>
-              {s.image ? <img src={s.image.url} alt={s.title} loading="lazy" /> : <span className="muted">{tx(["در انتظار تصویر", "Waiting for image", "Wartet auf Bild", "Görsel bekleniyor"])}</span>}
+              {s.clip ? <video src={s.clip.url} controls preload="metadata" aria-label={s.title} style={{width:"100%"}} /> : s.image ? <img src={s.image.url} alt={s.title} loading="lazy" /> : <span className="muted">{tx(["در انتظار تصویر", "Waiting for image", "Wartet auf Bild", "Görsel bekleniyor"])}</span>}
             </button>
             <div className="row-between">
               <strong dir="ltr">{s.code}</strong>
@@ -138,7 +142,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
             <p className="cell-clamp">{s.visualPrompt}</p>
             <div className="domain-actions">
               <Button disabled={busy} onClick={() => { void navigator.clipboard?.writeText(s.visualPrompt).then(() => toast.success(tx(["کپی شد", "Copied", "Kopiert", "Kopyalandı"]))); }}>{tx(["کپی پرامپت", "Copy prompt", "Prompt kopieren", "Prompt'u kopyala"])}</Button>
-              <Button disabled={busy} onClick={() => { if (!rights) { needRights(); return; } target.current = s.id; one.current?.click(); }}>{s.image ? tx(["جایگزینی", "Replace", "Ersetzen", "Değiştir"]) : tx(["بارگذاری", "Upload", "Hochladen", "Yükle"])}</Button>
+              <Button disabled={busy} onClick={() => { if (!rights) { needRights(); return; } target.current = s.id; one.current?.click(); }}>{s.image || s.clip ? tx(["جایگزینی", "Replace", "Ersetzen", "Değiştir"]) : tx(["بارگذاری تصویر یا MP4", "Upload image or MP4", "Bild oder MP4 hochladen", "Görsel veya MP4 yükle"])}</Button>
               {s.image && <a className="btn" href={s.image.url} download={`${s.code}.png`}>{tx(["دانلود", "Download", "Laden", "İndir"])}</a>}
             </div>
           </article>
