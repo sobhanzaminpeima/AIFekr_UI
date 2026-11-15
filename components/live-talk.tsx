@@ -41,6 +41,7 @@ const COPY = {
   you: ["شما", "You", "Sie", "Siz"],
   newTalk: ["گفتگوی تازه", "New conversation", "Neues Gespräch", "Yeni konuşma"],
   noMic: ["دسترسی به میکروفون داده نشد. از تنظیمات مرورگر اجازه دهید یا بنویسید.", "Microphone access was denied. Allow it in the browser, or type instead.", "Kein Mikrofonzugriff. Erlauben Sie ihn im Browser oder tippen Sie.", "Mikrofon izni verilmedi. Tarayıcıdan izin verin veya yazın."],
+  preparing: ["در حال آماده‌سازی گفتگو…", "Getting your conversation ready…", "Gespräch wird vorbereitet …", "Sohbetiniz hazırlanıyor…"],
   unavailable: ["AIFekr Live فعلاً در دسترس نیست. کمی بعد دوباره امتحان کنید.", "AIFekr Live is unavailable right now. Please try again later.", "AIFekr Live ist gerade nicht verfügbar. Bitte später erneut versuchen.", "AIFekr Live şu anda kullanılamıyor. Lütfen daha sonra deneyin."],
   lowCredit: ["اعتبار کافی برای یک نوبت دیگر ندارید.", "You don't have enough credits for another turn.", "Ihre Credits reichen für keine weitere Runde.", "Bir tur daha için yeterli krediniz yok."],
   buy: ["خرید اعتبار", "Buy credits", "Credits kaufen", "Kredi satın al"],
@@ -325,7 +326,14 @@ export function LiveTalk() {
   }
 
   if (failed) return <section className="live-talk"><p className="live-talk-status">{say("unavailable")}</p></section>;
-  if (!boot) return <section className="live-talk"><p role="status" className="live-talk-status">…</p></section>;
+  // First paint (Issue 45): show the frame, the microphone (disabled) and a clear status at once,
+  // instead of a bare "…" until every setup value has arrived.
+  if (!boot) return (
+    <section className="live-talk" aria-busy="true">
+      <p role="status" className="live-talk-status">{say("preparing")}</p>
+      <div className="live-talk-controls"><button type="button" className="live-ctl live-mic" disabled aria-label={say("preparing")} /></div>
+    </section>
+  );
   const busy = state === "thinking";
   const rt = boot.realtime, liveMode = mode === "live" && !!rt?.enabled, calling = realtime.phase !== "idle";
   const elapsed = realtime.phase === "live" ? Math.max(0, Math.floor((clock - realtime.startedAt) / 1000)) : 0;
