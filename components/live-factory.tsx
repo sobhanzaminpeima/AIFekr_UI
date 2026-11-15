@@ -140,7 +140,7 @@ function NeedProject({ x }: { x: FactoryCtx }) {
       <Empty />
       <div className="domain-actions">
         <Link className="btn primary" href="/video-factory?tab=projects">{x.f("Your projects")}</Link>
-        <Link className="btn" href="/video-factory?tab=production&new=1">{x.f("New project")}</Link>
+        <Link className="btn" href="/video-factory?tab=production&new=1" onClick={() => x.setActive("")}>{x.f("New project")}</Link>
       </div>
       <p className="fine-print">{fa ? "این بخش مربوط به یک پروژه است؛ اول پروژه‌ای را باز یا بساز." : "This section belongs to a project; open or create one first."}</p>
     </section>
@@ -307,7 +307,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   return (
     <div>
       <SectionTitle title={t("factory")} subtitle={project && !creating ? project.title : fa ? "از یک ایده، تا یک داستان یکپارچه." : "From a little idea to a complete story."}>
-        {project && !creating && <Link className="btn" href="/video-factory?tab=production&new=1">{f("New project")}</Link>}
+        {project && !creating && <Link className="btn" href="/video-factory?tab=production&new=1" onClick={() => setActive("")}>{f("New project")}</Link>}
       </SectionTitle>
       {!creating && <div className="stepper">
         {labels.map((s, i) => (

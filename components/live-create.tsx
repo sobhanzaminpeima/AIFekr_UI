@@ -183,7 +183,7 @@ export function LiveStudio({ tool }: { tool: Tool }) {
             {styles.map((o, i) => (
               <button className={styleValue === o.value ? "selected" : ""} key={o.value}
                 onClick={() => set(type === "image" ? { imageStyle: o.value } : type === "video" ? { videoStyle: o.value } : { musicGenre: o.value })}>
-                <img src={ART[i % ART.length]} alt="" />
+                {type !== "music" && <img src={ART[i % ART.length]} alt="" />}
                 <span>{o.label}</span>
               </button>
             ))}
