@@ -46,10 +46,13 @@ async function uploadImage(x: FactoryCtx, file: File) {
 }
 function useImages(x: FactoryCtx) {
   const [images, setImages] = useState<Asset[] | null>(null);
+  const { api, project } = x;
+  const projectId = project?.id;
   const load = useCallback(async () => {
-    const d = await x.api<{ assets: Asset[] }>(`/api/video-factory/assets?projectId=${x.project!.id}`);
+    if (!projectId) return;
+    const d = await api<{ assets: Asset[] }>(`/api/video-factory/assets?projectId=${projectId}`);
     setImages(d.assets.filter((a) => a.kind === "IMAGE"));
-  }, [x]);
+  }, [api, projectId]);
   useEffect(() => { load().catch(() => setImages([])); }, [load]);
   return { images, load };
 }
@@ -109,6 +112,14 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
   const [prompt, setPrompt] = useState("");
   const [rights, setRights] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [sheets, setSheets] = useState<{id:string;url:string}[]>([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/image/gallery?kind=character_sheet", { cache:"no-store", signal:controller.signal })
+      .then(async response => { if (response.ok) setSheets((await response.json()).images || []); })
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
   const locked = busyJob(x);
   const act = async (work: () => Promise<void>) => {
     setBusy(true);
@@ -120,15 +131,18 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
       ? tx(["این کاراکتر در همهٔ تصاویر بعدی استفاده می‌شود.", "This character will be used in every new image.", "Diese Figur wird in allen neuen Bildern verwendet.", "Bu karakter tüm yeni görsellerde kullanılır."])
       : tx(["کاراکتر ثابت برداشته شد.", "Fixed character removed.", "Feste Figur entfernt.", "Sabit karakter kaldırıldı."]));
   });
+  const importCharacter = async (id: string) => {
+    const imported = await x.api<{ asset: { id: string } }>("/api/video-factory/assets/import", { projectId: x.project!.id, generatedImageId: id });
+    await load();
+    await saveConfig(x, { characterReferenceAssetId: imported.asset.id });
+  };
   const generate = () => act(async () => {
     const r = await fetch("/api/image/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: `Character turnaround sheet of ONE consistent original character on a plain white background: the same character shown three times side by side, front view, three-quarter view and side profile, full body, identical outfit and colours, clean lines, no text. ${STYLE_HINT[String(config.visualStyle || "NONE")] ?? ""} ${prompt}`, ratio: "16:9", count: 1, kind: "character_sheet" }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.error || d.code || "IMAGE_FAILED");
     const generated = d.images?.[0]?.id;
     if (!generated) throw new Error("IMAGE_FAILED");
-    const imported = await x.api<{ asset: { id: string } }>("/api/video-factory/assets/import", { projectId: x.project!.id, generatedImageId: generated });
-    await load();
-    await saveConfig(x, { characterReferenceAssetId: imported.asset.id });
+    await importCharacter(generated);
     toast.success(tx(["کاراکتر ساخته و انتخاب شد.", "Character generated and selected.", "Figur erstellt und gewählt.", "Karakter oluşturuldu ve seçildi."]));
   });
   return (
@@ -149,6 +163,9 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
             <textarea rows={3} maxLength={1000} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={tx(["مثلاً استیکمن سیاه با کراوات قرمز", "e.g. a black stickman with a red tie", "z. B. schwarzes Strichmännchen mit roter Krawatte", "ör. kırmızı kravatlı siyah çöp adam"])} />
           </label>
           <div className="domain-actions">
+            <Button disabled={busy || locked} onClick={() => setPrompt("A minimal black stick figure with a round head, expressive poses and a single orange scarf, on an uncluttered white background.")}>
+              {tx(["الگوی استیکمن آی‌فکر","AIFekr stickman template","AIFekr-Strichmännchen-Vorlage","AIFekr çöp adam şablonu"])}
+            </Button>
             <Button variant="primary" disabled={busy || locked || prompt.trim().length < 3} onClick={() => void generate()}>
               <Icon name="Sparkles" size={16} />{tx(["ساخت کاراکتر", "Generate character", "Figur erstellen", "Karakter oluştur"])}
             </Button>
@@ -162,6 +179,14 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
           </label>
         </div>
       </div>
+      {!!sheets.length && <>
+        <h3>{tx(["کاراکترهای ذخیره‌شدهٔ آی‌فکر","Saved AIFekr characters","Gespeicherte AIFekr-Figuren","Kayıtlı AIFekr karakterleri"])}</h3>
+        <div className="factory-pick-grid">
+          {sheets.slice(0,24).map((sheet,i) => <button key={sheet.id} type="button" className="factory-pick" disabled={busy || locked} onClick={() => void act(() => importCharacter(sheet.id))}>
+            <img src={sheet.url} alt={`${tx(["کاراکتر","Character","Figur","Karakter"])} ${i+1}`} loading="lazy" />
+          </button>)}
+        </div>
+      </>}
       {!!images?.length && (
         <>
           <h3>{tx(["یا یکی از تصاویر پروژه را انتخاب کنید", "Or pick one of the project images", "Oder ein Projektbild wählen", "Veya bir proje görseli seçin"])}</h3>

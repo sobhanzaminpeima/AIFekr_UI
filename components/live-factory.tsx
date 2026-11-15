@@ -7,7 +7,7 @@
 // /api/app/shell (shell.factory); the project studios are in
 // live-factory-studios.tsx.
 import { Hint } from "./factory-shell";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Link from "@/components/site-link";
@@ -21,7 +21,7 @@ import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 import { MediaStudio } from "./live-factory-media";
 import { ProductionLine } from "./live-factory-progress";
-import { ChannelStudio } from "./live-factory-youtube";
+import { ChannelStudio, CharacterReference } from "./live-factory-youtube";
 import { BuyCreditsInline } from "./buy-credits-inline";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
@@ -330,8 +330,14 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   const natural = !project ? 0 : !job || FINAL.includes(job.status) && job.status !== "DELIVERED" ? 4
     : job.status === "AWAITING_APPROVAL" ? (job.stage === "SCRIPT_REVIEW" ? 1 : job.stage === "SAMPLE_REVIEW" ? 5 : 2) : delivered ? 6 : 5;
   const [step, setStep] = useState<number>(creating ? 0 : VIEW_STEP[view] ?? natural);
-  useEffect(() => { if (!creating && project) setStep(VIEW_STEP[view] ?? natural); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project?.id, view]);
+  const draftForCharacter = useRef("");
+  useEffect(() => {
+    if (creating || !project) return;
+    const selectingCharacter = draftForCharacter.current === project.id;
+    if (selectingCharacter) draftForCharacter.current = "";
+    setStep(selectingCharacter ? 7 : VIEW_STEP[view] ?? natural);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.id, view, creating]);
   useEffect(() => { if (creating) setStep(0); }, [creating]);
   const labels = fa ? ["ایده و منابع", "فیلمنامه", "استوری‌بورد", "روایت و موسیقی", "تأیید هزینه", "تولید", "بازبینی"] : ["Idea & sources", "Script", "Storyboard", "Narration & music", "Cost approval", "Production", "Review"];
   const reachable = (i: number) => (creating ? i === 0 : i <= 4 || (i === 5 && !!job) || (i === 6 && delivered));
@@ -353,12 +359,13 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
       </div>}
       {project && !creating && job?.status === "AWAITING_APPROVAL" && job.stage === "SAMPLE_REVIEW" && <SampleReview x={x} />}
       <section className="panel factory-step">
-        {step === 0 ? (creating ? <NewProject x={x} onCreated={(id) => { setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(4); }} /> : <ProjectBrief x={x} />)
+        {step === 0 ? (creating ? <NewProject x={x} onCreated={(id, character) => { draftForCharacter.current = character ? id : ""; setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(character ? 7 : 4); }} /> : <ProjectBrief x={x} />)
           : step === 1 ? <ScriptStep x={x} manifest={manifest} />
           : step === 2 ? (view === "edit" ? <EditStudio x={x} /> : <StoryboardStep x={x} manifest={manifest} />)
           : step === 3 ? <SoundStep x={x} onSaved={() => setStep(4)} />
           : step === 4 ? <CostStep x={x} onStarted={() => setStep(5)} onSound={() => setStep(3)} />
-          : step === 5 ? <ProductionStep x={x} />
+          : step === 5 ? <ProductionStep x={x} onReview={() => setStep(6)} />
+          : step === 7 ? <><CharacterReference x={x} /><Button variant="primary" onClick={() => setStep(4)}>{f("Cost approval")}</Button></>
           : <ReviewStep x={x} onSound={() => setStep(3)} />}
       </section>
       {project && !creating && job && !["production", "assets"].includes(view) && step !== 5 && ACTIVE.includes(job.status) && (
@@ -369,7 +376,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
 }
 
 /** Step 1 for a new project: the classic form (title, idea, quick and advanced settings). */
-function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) => void }) {
+function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void }) {
   const { locale, n } = useApp();
   const { f, api, run, busy, lang } = x;
   const tx = (c: [string, string, string, string]) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];
@@ -390,12 +397,13 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
   return (
     <form className="vf-quick" onSubmit={(e) => {
       e.preventDefault();
+      const character = (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") === "character";
       void run(async () => {
-        const base = { ...config, visualStyle: style, music: config.music && musicAvailable };
+        const base = { ...config, sceneGrounding: true, visualStyle: style, music: config.music && musicAvailable };
         // Silent-only service: audio options are off, as the classic form disables them.
         const configuration = silentOnly ? { ...base, narration: false, music: false } : base;
         const { project } = await api<{ project: { id: string } }>("/api/video-factory/projects", { title: autoTitle.length >= 3 ? autoTitle : brief.trim().slice(0, 60), brief, configuration });
-        onCreated(project.id);
+        onCreated(project.id, character);
         await x.refresh(project.id);
       });
     }}>
@@ -424,6 +432,11 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
           </button>
         ))}
       </fieldset>
+      {config.mediaMode === "MULTIMEDIA" && <div className="domain-actions">
+        <button className="btn" type="submit" value="character" disabled={busy || brief.trim().length < 10}>
+          <Icon name="UserRound" size={16} />{tx(["انتخاب، ساخت یا بارگذاری کاراکتر","Choose, create or upload a character","Figur wählen, erstellen oder hochladen","Karakter seç, oluştur veya yükle"])}
+        </button>
+      </div>}
 
       {!silentOnly && (
         <fieldset className="vf-quick-row">
@@ -745,15 +758,20 @@ function CostStep({ x, onStarted, onSound }: { x: FactoryCtx; onStarted: () => v
 }
 
 /** Production: the job's status, stage, credits and controls. */
-function ProductionStep({ x }: { x: FactoryCtx }) {
-  const { fa, n } = useApp();
+function ProductionStep({ x, onReview }: { x: FactoryCtx; onReview: () => void }) {
+  const { fa, n, locale } = useApp();
   const { f, job, busy, run, err } = x;
   if (!job) return <p>{f("Draft")}</p>;
+  const video = job.status === "DELIVERED" ? job.artifacts?.find(asset => asset.kind === "video") : undefined;
   return (
     <>
-      <h1>{fa ? "داستانت در حال شکل گرفتن است." : "Your story is coming together."}</h1>
+      <h1>{video ? ({fa:"ویدیو آمادهٔ دانلود است",en:"Your video is ready to download",de:"Dein Video steht zum Download bereit",tr:"Videonuz indirmeye hazır"})[locale] : fa ? "داستانت در حال شکل گرفتن است." : "Your story is coming together."}</h1>
       {job.errorCode && <ErrorBanner text={err(job.errorCode)} />}
       <ProductionLine job={job} project={x.project!} />
+      {video && <div className="domain-actions">
+        <a className="btn primary" href={`/api/video-factory/artifacts/${video.id}`}><Icon name="Download" size={16} />{({fa:"دانلود ویدیو",en:"Download video",de:"Video herunterladen",tr:"Videoyu indir"})[locale]}</a>
+        <Button onClick={onReview}>{({fa:"پیش‌نمایش و همهٔ فایل‌ها",en:"Preview and all files",de:"Vorschau und alle Dateien",tr:"Önizleme ve tüm dosyalar"})[locale]}</Button>
+      </div>}
       <p className="vf-line-credits">{f("Used / reserved credits")}: {n(job.spentCredits)} / {n(job.credits)}</p>
       <div className="domain-actions">
         {job.status === "AWAITING_APPROVAL" && <ApproveButton x={x} />}
