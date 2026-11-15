@@ -157,8 +157,25 @@ function NeedProject({ x }: { x: FactoryCtx }) {
 // ── My projects ────────────────────────────────────────────────────────────
 function ProjectsView({ x }: { x: FactoryCtx }) {
   const { fa, n } = useApp();
-  const { f, api, setActive, lang } = x;
+  const { f, api, setActive, lang, active } = x;
   const [page, setPage] = useState(0);
+  // Deleting asks first, naming the project; a running production must be cancelled before.
+  const [toDelete, setToDelete] = useState<Project | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const remove = async () => {
+    if (!toDelete) return;
+    setDeleting(true);
+    try {
+      await api(`/api/video-factory/projects/${toDelete.id}`, {}, "DELETE");
+      setProjects((list) => (list ?? []).filter((p) => p.id !== toDelete.id));
+      if (active === toDelete.id) setActive("");
+      toast.success(fa ? "پروژه حذف شد." : "Project deleted.");
+      setToDelete(null);
+    } catch (e) {
+      const code = (e as Error).message;
+      toast.error(code === "PROJECT_BUSY" ? (fa ? "این پروژه در حال تولید است. اول تولید را لغو کنید، بعد حذف کنید." : "This project is in production. Cancel it first, then delete.") : x.err(code));
+    } finally { setDeleting(false); }
+  };
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -175,6 +192,15 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
         <Link className="btn primary" href="/video-factory?tab=production&new=1" onClick={() => setActive("")}>{f("New project")}</Link>
       </div>
       {error && <ErrorBanner text={x.err(error)} />}
+      {toDelete && (
+        <Modal title={fa ? "حذف پروژه" : "Delete project"} onClose={() => !deleting && setToDelete(null)}>
+          <p>{fa ? `«${toDelete.title}» حذف شود؟ ویدیو، تصاویر و صداهای این پروژه پاک می‌شوند و برنمی‌گردند.` : `Delete “${toDelete.title}”? Its video, images and voices are removed and can't be restored.`}</p>
+          <div className="domain-actions">
+            <Button variant="primary" disabled={deleting} onClick={() => void remove()}><Icon name="Trash2" size={16} />{fa ? "بله، حذف شود" : "Yes, delete"}</Button>
+            <Button disabled={deleting} onClick={() => setToDelete(null)}>{fa ? "انصراف" : "Cancel"}</Button>
+          </div>
+        </Modal>
+      )}
       {projects === null ? <div className="skeleton" /> : projects.length ? (
         <div className="tool-grid">
           {projects.map((p) => {
@@ -189,6 +215,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
                 <div className="domain-actions">
                   <Link className="btn" href="/video-factory?tab=production" onClick={() => setActive(p.id)}>{fa ? "باز کردن پروژه" : "Open project"}</Link>
                   <Button onClick={() => download("video-project-" + p.id + ".json", JSON.stringify({ title: p.title, brief: p.brief, configuration: config, manifest: manifestOf(p) }, null, 2), "application/json")}>{fa ? "خروجی" : "Export"}</Button>
+                  <Button label={fa ? `حذف ${p.title}` : `Delete ${p.title}`} onClick={() => setToDelete(p)}><Icon name="Trash2" size={16} />{fa ? "حذف" : "Delete"}</Button>
                 </div>
               </article>
             );
