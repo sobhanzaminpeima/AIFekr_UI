@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useApp } from "./providers";
 import { Button, Empty, Icon, Modal } from "./ui";
+import { DynamicProviders, LlmUsageCredits } from "./live-admin-llm-providers";
 
 /**
  * Admin AI and billing pages on aifekr.com:
@@ -14,6 +15,7 @@ import { Button, Empty, Icon, Modal } from "./ui";
  *   routing table, on/off, custom providers and media providers. A connection test is
  *   a real (small, paid) call to the provider, so the page says so and asks first.
  *   API keys are write-only: the server only reports whether one is set.
+ *   Dynamic providers (Coarena) and Usage & Credits live in live-admin-llm-providers.tsx.
  */
 type Tx = [string, string, string, string];
 function useT() {
@@ -331,8 +333,10 @@ export function LiveLlm() {
         })}
       </section>
 
+      <DynamicProviders />
       <CustomProviders />
       <MediaProviders />
+      <LlmUsageCredits />
 
       {ask && (
         <Modal title={ask.all ? tx(["تست همهٔ مدل‌ها", "Test all models", "Alle Modelle testen", "Tüm modelleri test et"]) : tx(["تست اتصال", "Test connection", "Verbindung testen", "Bağlantıyı test et"]) + " · " + ask.p?.name} onClose={() => setAsk(null)}>
