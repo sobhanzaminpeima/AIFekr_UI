@@ -56,6 +56,8 @@ const ACTIONS: Record<string, string> = { script_storyboard: "Script & storyboar
 const EXTRA_ACTIONS: Record<string, [string, string]> = {
   gemini_scene_animation: ["متحرک‌سازی صحنه‌ها", "Scene animation"],
   completed_film_package: ["بستهٔ فیلم کامل", "Finished film package"],
+  rerender_package: ["رندر دوباره (تصاویر و صداهای بدون تغییر دوباره ساخته نمی‌شوند)", "Re-render (unchanged images and voices are reused)"],
+  music_addon: ["موسیقی پس‌زمینه (دقیقه)", "Background music (minutes)"],
   creator_bundle_video: ["ویدیوی بستهٔ سازنده", "Creator bundle video"],
 };
 
