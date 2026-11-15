@@ -356,10 +356,10 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
         {step === 0 ? (creating ? <NewProject x={x} onCreated={(id) => { setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(4); }} /> : <ProjectBrief x={x} />)
           : step === 1 ? <ScriptStep x={x} manifest={manifest} />
           : step === 2 ? (view === "edit" ? <EditStudio x={x} /> : <StoryboardStep x={x} manifest={manifest} />)
-          : step === 3 ? <SoundStep x={x} />
-          : step === 4 ? <CostStep x={x} onStarted={() => setStep(5)} />
+          : step === 3 ? <SoundStep x={x} onSaved={() => setStep(4)} />
+          : step === 4 ? <CostStep x={x} onStarted={() => setStep(5)} onSound={() => setStep(3)} />
           : step === 5 ? <ProductionStep x={x} />
-          : <ReviewStep x={x} />}
+          : <ReviewStep x={x} onSound={() => setStep(3)} />}
       </section>
       {project && !creating && job && !["production", "assets"].includes(view) && step !== 5 && ACTIVE.includes(job.status) && (
         <div className="inline-banner"><Icon name="Loader2" className="spin" /><p>{f(STAGE[job.stage] || job.stage)} · {f(STATUS[job.status])}</p><Button onClick={() => setStep(5)}>{labels[5]}</Button></div>
@@ -602,7 +602,7 @@ function StoryboardStep({ x, manifest }: { x: FactoryCtx; manifest: Manifest | n
 }
 
 /** Narration & music: the project's audio settings, saved free of charge before a run. */
-function SoundStep({ x }: { x: FactoryCtx }) {
+function SoundStep({ x, onSaved }: { x: FactoryCtx; onSaved: () => void }) {
   const { fa } = useApp();
   const { f, project, job, api, run, busy, refresh } = x;
   const catalog = useCatalog(x);
@@ -631,7 +631,7 @@ function SoundStep({ x }: { x: FactoryCtx }) {
         <label>{f("Music direction")}<input disabled={!config.music} maxLength={2000} value={config.musicPrompt} onChange={(e) => change({ musicPrompt: e.target.value })} /></label>
       </fieldset>
       {config.mediaMode !== "MULTIMEDIA" && <p className="fine-print">{f("Output type")}: {f("Silent storyboard film")}</p>}
-      <Button variant="primary" disabled={busy || locked || silentOnly} onClick={() => run(async () => { await api(`/api/video-factory/projects/${project!.id}`, { action: "configuration", expectedVersion: project!.version, configuration: config }); await refresh(project!.id); toast.success(f("Save settings · no charge")); })}>
+      <Button variant="primary" disabled={busy || locked || silentOnly} onClick={() => run(async () => { await api(`/api/video-factory/projects/${project!.id}`, { action: "configuration", expectedVersion: project!.version, configuration: config }); await refresh(project!.id); toast.success(f("Save settings · no charge")); onSaved(); })}>
         {f("Save settings · no charge")}
       </Button>
     </>
@@ -639,8 +639,8 @@ function SoundStep({ x }: { x: FactoryCtx }) {
 }
 
 /** Cost approval: the classic estimate, then approve & start with the estimate as the ceiling. */
-function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
-  const { fa, t, n, tl } = useApp();
+function CostStep({ x, onStarted, onSound }: { x: FactoryCtx; onStarted: () => void; onSound: () => void }) {
+  const { fa, t, n, tl, locale } = useApp();
   const { f, project, job, api, run, busy, refresh, shell } = x;
   const credits = useLiveCredits(shell?.user.credits ?? 0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
@@ -672,12 +672,21 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
     await estimateNow();
   };
   const canStart = !job || FINAL.includes(job.status);
+  const configuration = configOf(project!);
+  const narration = configuration.mediaMode === "MULTIMEDIA" && configuration.narration;
   // The price is fetched as soon as this step opens, so starting is one click plus the confirmation.
   useEffect(() => { if (canStart && project) void run(estimateNow); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.id]);
   return (
     <>
       <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."} <Hint text={f("Actual product usage is recorded; unused authorization returns to the original wallet. Uncertain provider calls are not automatically repeated.")} /></h1>
+      {canStart && <div className="notice-banner">
+        <Icon name="AudioLines" size={16} />
+        <span>{narration
+          ? ({fa:"صدای گوینده فعال است.",en:"Narration is on.",de:"Der Sprecher ist aktiviert.",tr:"Seslendirme açık."})[locale]
+          : ({fa:"این خروجی صدای گوینده نخواهد داشت.",en:"This export will have no narration.",de:"Dieser Export enthält keinen Sprecher.",tr:"Bu çıktı seslendirme içermeyecek."})[locale]}</span>
+        {configuration.mediaMode === "MULTIMEDIA" && <Button disabled={busy} onClick={onSound}>{({fa:"تنظیم صدای گوینده",en:"Narration settings",de:"Sprechereinstellungen",tr:"Seslendirme ayarları"})[locale]}</Button>}
+      </div>}
       {!canStart && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f(STATUS[job!.status] || job!.status)} · {f(STAGE[job!.stage] || job!.stage)}</span></div>}
       {estimate && (
         <dl className="cost-summary">
@@ -757,12 +766,13 @@ function ProductionStep({ x }: { x: FactoryCtx }) {
 }
 
 /** Review: the delivered film and its private downloads. */
-function ReviewStep({ x }: { x: FactoryCtx }) {
-  const { fa } = useApp();
+function ReviewStep({ x, onSound }: { x: FactoryCtx; onSound: () => void }) {
+  const { fa, locale } = useApp();
   const { f, project, job, api, run, busy } = x;
   const [link, setLink] = useState("");
   const video = job?.artifacts?.find((a) => a.kind === "video");
   if (job?.status !== "DELIVERED") return <><h1>{fa ? "یک داستان تازه، با امضای تو." : "A fresh story, with your signature."}</h1><p>{f("Deliverables appear after rendering and duration validation.")}</p></>;
+  const renderedWithoutNarration = job.steps && !job.steps.some(step => step.key.startsWith("tts-") && step.status === "COMPLETED");
   return (
     <>
       {video && (
@@ -773,6 +783,11 @@ function ReviewStep({ x }: { x: FactoryCtx }) {
         </div>
       )}
       <h1>{fa ? "یک داستان تازه، با امضای تو." : "A fresh story, with your signature."}</h1>
+      {renderedWithoutNarration && <div className="notice-banner">
+        <Icon name="AudioLines" size={16} />
+        <span>{({fa:"این نسخه بدون صدای گوینده ساخته شده است.",en:"This version was rendered without narration.",de:"Diese Version wurde ohne Sprecher gerendert.",tr:"Bu sürüm seslendirme olmadan oluşturuldu."})[locale]}</span>
+        {configOf(project!).mediaMode === "MULTIMEDIA" && <Button disabled={busy} onClick={onSound}>{({fa:"افزودن صدای گوینده",en:"Add narration",de:"Sprecher hinzufügen",tr:"Seslendirme ekle"})[locale]}</Button>}
+      </div>}
       <h3>{f("Private deliverables")}</h3>
       <div className="tool-grid">
         {job.artifacts?.map((a) => (
