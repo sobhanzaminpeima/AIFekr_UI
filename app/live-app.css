@@ -652,3 +652,13 @@ video.full-img{width:100%;max-height:70vh;border-radius:12px;background:#000}
 .vf-quick .factory-advanced fieldset>label{display:grid;gap:6px;margin-bottom:12px}
 @media (max-width:640px){.vf-quick-submit .btn{width:100%;justify-content:center}}
 .vf-edit-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 4px}.vf-edit-tools small{color:var(--text-secondary)}
+
+/* Publishing calendar (roadmap E8). */
+.ig-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.ig-day { min-height: 78px; border: 1px solid var(--border); border-radius: 10px; padding: 4px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ig-day.outside { opacity: .45; }
+.ig-chip { font-size: 10px; text-align: start; border-radius: 6px; padding: 2px 4px; background: var(--surface-2); border: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
+.ig-chip.pending { border-inline-start: 3px solid var(--primary, #ea580c); cursor: grab; }
+.ig-chip.published { border-inline-start: 3px solid #16a34a; }
+.ig-chip.failed { border-inline-start: 3px solid #ef4444; }
+@media (max-width: 640px) { .ig-day { min-height: 54px; } .ig-chip { font-size: 9px; } }
