@@ -50,7 +50,7 @@ const FAILURES: Record<string, string> = {
   UPLOAD_SCANNER_NOT_CONFIGURED: "The upload security scanner is not configured.",
 };
 const STATUS: Record<string, string> = { QUEUED: "Queued", RUNNING: "Running", PAUSED: "Paused", PAUSING: "Pausing", CANCELLING: "Cancelling", AWAITING_APPROVAL: "Storyboard approval required", DELIVERED: "Ready to download", FAILED: "Failed", CANCELLED: "Cancelled" };
-const STAGE: Record<string, string> = { PLANNING: "Grounded idea lab", SCRIPT_REVIEW: "Script review", STORYBOARD_REVIEW: "Storyboard review", ASSET_GENERATION: "Media generation", SCRIPTING: "Script & storyboard", SHOT_RENDERING: "Shot rendering", ASSEMBLY: "Assembly & quality checks" };
+const STAGE: Record<string, string> = { PLANNING: "Grounded idea lab", SCRIPT_REVIEW: "Script review", STORYBOARD_REVIEW: "Storyboard review", SAMPLE_REVIEW: "Sample images review", ASSET_GENERATION: "Media generation", SCRIPTING: "Script & storyboard", SHOT_RENDERING: "Shot rendering", ASSEMBLY: "Assembly & quality checks" };
 const ACTIONS: Record<string, string> = { script_storyboard: "Script & storyboard · 2", silent_animatic_render: "Render & assembly", idea_lab: "Grounded idea lab", images: "Images", video_seconds: "Generated clip seconds", voice_shots: "Shot narration", music_minutes: "Instrumental music minutes" };
 
 /** Estimate lines the classic wording never named; they showed as raw keys like "gemini_scene_animation". */
@@ -62,12 +62,18 @@ const EXTRA_ACTIONS: Record<string, [string, string]> = {
   creator_bundle_video: ["ویدیوی بستهٔ سازنده", "Creator bundle video"],
 };
 
+/** Wording added after the classic copy was frozen (the server copy wins when it has the key). */
+const LOCAL_COPY: Record<string, Record<string, string>> = {
+  fa: { "Sample images review": "بازبینی تصاویر نمونه" },
+  de: { "Sample images review": "Prüfung der Beispielbilder" },
+  tr: { "Sample images review": "Örnek görsel incelemesi" },
+};
 /** Projects, the active project (kept per browser, like the design's draft) and the classic wording. */
 export function useFactory() {
   const shell = useShell();
   const lang = shell?.lang ?? "fa";
   const copy = shell?.factory ?? null;
-  const f = useCallback((en: string, values?: Record<string, string | number>) => fill(copy?.[en] ?? en, values ?? {}), [copy]);
+  const f = useCallback((en: string, values?: Record<string, string | number>) => fill(copy?.[en] ?? LOCAL_COPY[lang]?.[en] ?? en, values ?? {}), [copy, lang]);
   const err = (code: string) => (FAILURES[code] ? f(FAILURES[code]) : `${f("Operation failed")} (${code})`);
   const [active, setActive, ready] = useLocalState<string>("aifekr-factory-active", "");
   const [project, setProject] = useState<Project | null>(null);
@@ -294,7 +300,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   const delivered = job?.status === "DELIVERED";
   // The step the project is actually at; a tab opens its own step instead.
   const natural = !project ? 0 : !job || FINAL.includes(job.status) && job.status !== "DELIVERED" ? 4
-    : job.status === "AWAITING_APPROVAL" ? (job.stage === "SCRIPT_REVIEW" ? 1 : 2) : delivered ? 6 : 5;
+    : job.status === "AWAITING_APPROVAL" ? (job.stage === "SCRIPT_REVIEW" ? 1 : job.stage === "SAMPLE_REVIEW" ? 5 : 2) : delivered ? 6 : 5;
   const [step, setStep] = useState<number>(creating ? 0 : VIEW_STEP[view] ?? natural);
   useEffect(() => { if (!creating && project) setStep(VIEW_STEP[view] ?? natural); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.id, view]);
@@ -317,6 +323,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
           </button>
         ))}
       </div>}
+      {project && !creating && job?.status === "AWAITING_APPROVAL" && job.stage === "SAMPLE_REVIEW" && <SampleReview x={x} />}
       <section className="panel factory-step">
         {step === 0 ? (creating ? <NewProject x={x} onCreated={(id) => { setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(4); }} /> : <ProjectBrief x={x} />)
           : step === 1 ? <ScriptStep x={x} manifest={manifest} />
@@ -502,8 +509,34 @@ function ScriptStep({ x, manifest: initial }: { x: FactoryCtx; manifest: Manifes
 
 function ApproveButton({ x }: { x: FactoryCtx }) {
   const { f, job, busy, run } = x;
-  const label = job!.stage === "SCRIPT_REVIEW" ? f("Approve script & review storyboard") : job!.stage === "STORYBOARD_REVIEW" ? f("Approve storyboard & produce within reserved budget") : f("Approve storyboard & render within reserved budget");
+  const { tl } = useApp();
+  const label = job!.stage === "SAMPLE_REVIEW" ? tl("تأیید و ساخت بقیهٔ تصاویر", "Approve & make the remaining images") : job!.stage === "SCRIPT_REVIEW" ? f("Approve script & review storyboard") : job!.stage === "STORYBOARD_REVIEW" ? f("Approve storyboard & produce within reserved budget") : f("Approve storyboard & render within reserved budget");
   return <Button variant="primary" disabled={busy} onClick={() => run(() => control(x, "approve"))}>{label}</Button>;
+}
+/** Review modes stop after three sample images (first, middle, last scene) so the look is approved before the rest is paid for. */
+function SampleReview({ x }: { x: FactoryCtx }) {
+  const { tl } = useApp();
+  const { project, api, busy, run } = x;
+  const [images, setImages] = useState<{ id: string; url: string; code: string }[]>([]);
+  useEffect(() => {
+    let live = true;
+    api<{ shots: { id: string; code: string; image: { url: string } | null }[] }>(`/api/video-factory/projects/${project!.id}/media`)
+      .then((d) => { if (live) setImages((d.shots || []).filter((s) => s.image).map((s) => ({ id: s.id, url: s.image!.url, code: s.code }))); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [api, project]);
+  return (
+    <section className="panel vf-samples" aria-labelledby="vf-samples-title">
+      <h2 id="vf-samples-title"><Icon name="Image" size={18} /> {tl("سه تصویر نمونه آماده است", "Three sample images are ready")} <Hint text={tl("اگر سبک درست است تأیید کن تا بقیهٔ تصاویر ساخته شوند. اگر نه، لغو کن؛ اعتبار استفاده‌نشده برمی‌گردد و می‌توانی سبک یا شخصیت را عوض کنی.", "If the look is right, approve to make the rest. If not, cancel: unused credits come back and you can change the style or character.")} /></h2>
+      <div className="vf-samples-grid">
+        {images.slice(0, 3).map((img) => <figure key={img.id}><img src={img.url} alt={img.code} loading="lazy" /><figcaption dir="ltr">{img.code}</figcaption></figure>)}
+      </div>
+      <div className="domain-actions">
+        <ApproveButton x={x} />
+        <Button disabled={busy} onClick={() => run(() => control(x, "cancel"))}><Icon name="X" size={16} />{tl("لغو و تغییر سبک", "Cancel & change style")}</Button>
+      </div>
+    </section>
+  );
 }
 async function control(x: FactoryCtx, action: string) {
   await x.api(`/api/video-factory/projects/${x.project!.id}`, { action });
@@ -534,7 +567,7 @@ function StoryboardStep({ x, manifest }: { x: FactoryCtx; manifest: Manifest | n
       ) : <p>{f("No shots have been planned yet.")}</p>}
       <div className="domain-actions">
         <Link className="btn" href="/video-factory?tab=edit">{f("Edit shots")}</Link>
-        {job?.status === "AWAITING_APPROVAL" && job.stage !== "SCRIPT_REVIEW" && <ApproveButton x={x} />}
+        {job?.status === "AWAITING_APPROVAL" && !["SCRIPT_REVIEW", "SAMPLE_REVIEW"].includes(job.stage) && <ApproveButton x={x} />}
       </div>
     </>
   );
