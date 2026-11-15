@@ -70,6 +70,7 @@ import { LiveAdminAffiliate } from "./live-admin-affiliate";
 import { LiveAdminReferrals } from "./live-admin-referrals";
 import { LiveInviteTool, LiveModuleAccess, LiveSocialConnections } from "./live-admin-access";
 import { LiveInvoice, LiveUsage, LiveLlm } from "./live-admin-ai";
+import { LiveAdminObservability } from "./live-admin-observability";
 import { LiveAcademy, LiveStudentAdmin } from "./live-admin-learning";
 import { LiveCourses, LiveCoursePreview } from "./live-admin-courses";
 import { LiveFitnessAdmin, LiveFitnessUsers, LiveFitnessMarketplace } from "./live-admin-fitness";
@@ -172,6 +173,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/social-connections" ? <div className="admin-live-page"><LiveSocialConnections /></div>
         : path === "/admin/customer-growth" ? <div className="admin-live-page"><LiveGrowthCenter /></div>
         : path === "/admin/sms" ? <div className="admin-live-page"><LiveAdminSms /></div>
+        : path === "/admin/observability" ? <div className="admin-live-page"><LiveAdminObservability /></div>
         : path === "/admin/crm" ? <div className="admin-live-page"><LiveAdminCrm /></div>
         : path === "/admin/seo-intelligence" ? <div className="admin-live-page"><LiveSeoIntelligenceAdmin /></div>
         : path === "/admin/play" ? <div className="admin-live-page"><LiveAdminPlay /></div>
