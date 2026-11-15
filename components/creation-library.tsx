@@ -12,6 +12,7 @@ const KIND: Record<string, Q> = {
   voice: ["صدا", "Voice", "Stimme", "Ses"],
   seo: ["سئو", "SEO", "SEO", "SEO"],
   website: ["وب‌سایت", "Website", "Website", "Web sitesi"],
+  film: ["فیلم ویدیوساز", "Video Factory film", "Videofabrik-Film", "Video fabrikası filmi"],
 };
 const UI: Record<string, Q> = {
   title: ["آخرین ساخته‌ها در همهٔ ماژول‌ها", "Latest creations across modules", "Neueste Werke aller Module", "Tüm modüllerdeki son üretimler"],
