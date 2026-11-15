@@ -20,6 +20,7 @@ import { useLiveCredits } from "./live-shell-widgets";
 import { Button, download, Empty, Icon, Modal, SectionTitle } from "./ui";
 import { AdvancedStudio, CharactersStudio, EditStudio, IdeasStudio, LibraryStudio, PublishingStudio } from "./live-factory-studios";
 import { MediaStudio } from "./live-factory-media";
+import { ProductionLine } from "./live-factory-progress";
 import { ChannelStudio } from "./live-factory-youtube";
 import { BuyCreditsInline } from "./buy-credits-inline";
 
@@ -742,30 +743,15 @@ function ProductionStep({ x }: { x: FactoryCtx }) {
   return (
     <>
       <h1>{fa ? "داستانت در حال شکل گرفتن است." : "Your story is coming together."}</h1>
-      <dl className="cost-summary">
-        <div className="cost-row"><dt>{f("Status")}</dt><dd>{f(STATUS[job.status] || job.status)}</dd></div>
-        <div className="cost-row"><dt>{f("Stage")}</dt><dd>{f(STAGE[job.stage] || job.stage)}</dd></div>
-        <div className="cost-row"><dt>{f("Used / reserved credits")}</dt><dd>{n(job.spentCredits)} / {n(job.credits)}</dd></div>
-      </dl>
       {job.errorCode && <ErrorBanner text={err(job.errorCode)} />}
+      <ProductionLine job={job} project={x.project!} />
+      <p className="vf-line-credits">{f("Used / reserved credits")}: {n(job.spentCredits)} / {n(job.credits)}</p>
       <div className="domain-actions">
         {job.status === "AWAITING_APPROVAL" && <ApproveButton x={x} />}
         {["QUEUED", "RUNNING"].includes(job.status) && <Button disabled={busy} onClick={() => run(() => control(x, "pause"))}>{f("Pause")}</Button>}
         {job.status === "PAUSED" && <Button disabled={busy} onClick={() => run(() => control(x, "resume"))}>{f("Resume")}</Button>}
         {["QUEUED", "RUNNING", "PAUSED", "AWAITING_APPROVAL"].includes(job.status) && <Button disabled={busy} onClick={() => run(() => control(x, "cancel"))}>{f("Cancel & release unused credits")}</Button>}
       </div>
-      {!!job.steps?.length && (
-        <div className="production-board">
-          {job.steps.map((step) => (
-            <div className="inline-banner" key={step.key}>
-              <span className={`icon-chip ${step.status === "SUCCEEDED" || step.status === "DONE" ? "lime" : "orange"}`}><Icon name={step.status === "SUCCEEDED" || step.status === "DONE" ? "Check" : "Film"} /></span>
-              <h3>{step.key}</h3>
-              <span className="badge">{step.status}</span>
-              <small>{step.model || step.provider || f("Local render")}</small>
-            </div>
-          ))}
-        </div>
-      )}
     </>
   );
 }

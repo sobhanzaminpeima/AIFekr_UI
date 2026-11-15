@@ -161,8 +161,10 @@ import {
   Tv,
   Scissors,
   CircleHelp,
+  Music,
 } from "lucide-react";
 const Icons = {
+  Music,
   Tv,
   Scissors,
   CircleHelp,
