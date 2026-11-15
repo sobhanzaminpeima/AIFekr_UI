@@ -7,6 +7,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
+import { CharacterReference, needRights, VisualStyleStudio } from "./live-factory-youtube";
+import { TimelineEditor } from "./live-factory-timeline";
 import { useApp } from "./providers";
 import { Button, Empty, Icon } from "./ui";
 import { ErrorBanner, type FactoryCtx } from "./live-factory";
@@ -93,6 +95,9 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
   const [styleBible, setStyleBible] = useState(configOf(project!).styleBible);
   useEffect(() => { setManifest(manifestOf(project!)); setStyleBible(configOf(project!).styleBible); }, [project]);
   return (
+    <>
+    <VisualStyleStudio x={x} />
+      <CharacterReference x={x} />
     <section className="panel">
       <h2>{f("Character & continuity bible")}</h2>
       {manifest ? (
@@ -115,6 +120,7 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
         </>
       ) : <p>{f("Generate the script and shots first.")}</p>}
     </section>
+    </>
   );
 }
 
@@ -123,18 +129,53 @@ export function EditStudio({ x }: { x: FactoryCtx }) {
   const { fa, n } = useApp();
   const { f, project, run, busy } = x;
   const config = configOf(project!);
-  const [manifest, setManifest] = useState<Manifest | null>(manifestOf(project!));
+  const [manifest, setRaw] = useState<Manifest | null>(manifestOf(project!));
+  // Undo/redo for unsaved edits (Ctrl+Z / Ctrl+Shift+Z outside text fields); saving still creates a server version.
+  const [past, setPast] = useState<Manifest[]>([]);
+  const [future, setFuture] = useState<Manifest[]>([]);
+  const setManifest = (next: Manifest) => { if (manifest) setPast((p) => [...p.slice(-49), manifest]); setFuture([]); setRaw(next); };
+  const undo = () => { const prev = past[past.length - 1]; if (!prev || !manifest) return; setPast(past.slice(0, -1)); setFuture([manifest, ...future]); setRaw(prev); };
+  const redo = () => { const next = future[0]; if (!next || !manifest) return; setFuture(future.slice(1)); setPast([...past, manifest]); setRaw(next); };
   const { assets } = useAssets(x);
-  useEffect(() => setManifest(manifestOf(project!)), [project]);
+  useEffect(() => { setRaw(manifestOf(project!)); setPast([]); setFuture([]); }, [project]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "z" || (typeof target?.closest === "function" && target.closest("input, textarea, select, [contenteditable]"))) return;
+      e.preventDefault();
+      if (e.shiftKey) redo(); else undo();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
   if (!manifest) return <><h1>{fa ? "صحنه‌به‌صحنه، داستان را ببین." : "See the story, scene by scene."}</h1><p>{f("Generate the script and shots first.")}</p></>;
   const allShots = manifest.chapters.flatMap((c) => c.shots).length;
   const setShots = (ci: number, shots: Shot[]) => setManifest({ ...manifest, chapters: manifest.chapters.map((c, i) => (i === ci ? { ...c, shots } : c)) });
   const update = (ci: number, si: number, patch: Partial<Shot>) => setShots(ci, manifest.chapters[ci].shots.map((s, j) => (j === si ? { ...s, ...patch } : s)));
+  const lang = config.language;
+  /** Adds a title card (no image cost) at the very start or end; it renders as an on-screen title. */
+  const addCard = (where: "start" | "end") => {
+    const ci = where === "start" ? 0 : manifest.chapters.length - 1;
+    if (manifest.chapters[ci].shots.length >= config.shotsPerChapter) { toast.error(fa ? "این فصل به سقف تعداد نما رسیده؛ اول یک نما را حذف یا جابه‌جا کنید." : "This chapter is at its shot limit; remove or move a shot first."); return; }
+    const outro = lang === "fa" ? "ممنون که تماشا کردید — کانال را دنبال کنید" : lang === "de" ? "Danke fürs Zuschauen – abonniere den Kanal" : lang === "tr" ? "İzlediğiniz için teşekkürler — kanala abone olun" : "Thanks for watching — subscribe for more";
+    const card: Shot = { id: `${where === "start" ? "intro" : "outro"}-${Date.now().toString(36)}`, title: where === "start" ? project!.title.slice(0, 180) : outro, narration: "", visualPrompt: "", motion: "TITLE", durationSeconds: 3, notes: "", revision: 0 };
+    const shots = manifest.chapters[ci].shots;
+    setShots(ci, where === "start" ? [card, ...shots] : [...shots, card]);
+  };
   const move = (ci: number, si: number, delta: number) => { const copy = [...manifest.chapters[ci].shots]; [copy[si], copy[si + delta]] = [copy[si + delta], copy[si]]; setShots(ci, copy); };
   return (
     <>
       <h1>{f("Edit shot timing & order")}</h1>
+      <div className="vf-edit-tools">
+        <Button label={fa ? "واگرد" : "Undo"} disabled={!past.length} onClick={undo}><Icon name="Undo2" size={16} />{fa ? "واگرد" : "Undo"}</Button>
+        <Button label={fa ? "ازنو" : "Redo"} disabled={!future.length} onClick={redo}><Icon name="Redo2" size={16} />{fa ? "ازنو" : "Redo"}</Button>
+        <Button onClick={() => addCard("start")}><Icon name="PanelTop" size={16} />{fa ? "کارت شروع (عنوان ویدیو)" : "Intro title card"}</Button>
+        <Button onClick={() => addCard("end")}><Icon name="PanelBottom" size={16} />{fa ? "کارت پایان (دنبال کردن کانال)" : "Outro card"}</Button>
+        {(past.length > 0) && <small>{fa ? "تغییرات ذخیره نشده‌اند" : "Unsaved changes"}</small>}
+      </div>
       <p>{f("Times are relative weights within the film duration. Unchanged shots are reused on the next production; review the estimate before starting.")}</p>
+      <TimelineEditor x={x} manifest={manifest} setManifest={setManifest} durationSeconds={config.durationSeconds}
+        onLength={async (seconds) => { const p = project!; await x.api(`/api/video-factory/projects/${p.id}`, { action: "edit", expectedVersion: p.version, manifest, configuration: { ...configOf(p), durationSeconds: seconds } }); await x.refresh(p.id); toast.success(f("Save timeline · no charge")); }} />
       {manifest.chapters.map((chapter, ci) => (
         <section className="factory-chapter" key={ci}>
           <label>{f("Chapter title")}<input maxLength={180} value={chapter.title} onChange={(e) => setManifest({ ...manifest, chapters: manifest.chapters.map((c, i) => (i === ci ? { ...c, title: e.target.value } : c)) })} /></label>
@@ -198,9 +239,9 @@ export function LibraryStudio({ x }: { x: FactoryCtx }) {
       <section className="panel production-library-upload">
         <span className="icon-chip orange"><Icon name="Upload" size={36} /></span>
         <h2>{f("Private asset library")}</h2>
-        <label className="check-label"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{f("I hold usage rights and consent from people represented in the file.")}</label>
+        <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{f("I hold usage rights and consent from people represented in the file.")}</label>
         <label>{f("Upload image, video or audio")}
-          <input disabled={busy || !rights} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,audio/mpeg,audio/wav" onChange={(e) => {
+          <input disabled={busy} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,audio/mpeg,audio/wav" onChange={(e) => {
             const file = e.target.files?.[0];
             e.target.value = "";
             if (file) void run(async () => {

@@ -152,8 +152,20 @@ import {
   ThumbsDown,
   Volume2,
   VolumeX,
+  Palette,
+  PersonStanding,
+  Undo2,
+  Redo2,
+  PanelTop,
+  PanelBottom,
 } from "lucide-react";
 const Icons = {
+  Undo2,
+  Redo2,
+  PanelTop,
+  PanelBottom,
+  Palette,
+  PersonStanding,
   Coins,
   UserSquare2,
   FileText,
@@ -564,6 +576,8 @@ export function RouteName(path: string, fa: boolean, tl: (fa: string, en: string
     return tl("اتصال‌های اینستاگرام", "Instagram connections");
   if (pathname === "/admin/customer-growth")
     return tl("رشد و پیگیری مشتریان", "Customer growth & follow-up");
+  if (pathname === "/admin/seo-intelligence")
+    return tl("SEO Intelligence · اتصال و تعرفه", "SEO Intelligence · provider & pricing");
   if (pathname.startsWith("/admin/customer-growth/"))
     return tl("رشد مشتریان · پروفایل مشتری", "Customer growth · profile");
   const tool = tools.find((t) => "/" + t.slug === path);

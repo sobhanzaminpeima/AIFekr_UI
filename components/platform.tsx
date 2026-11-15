@@ -74,8 +74,12 @@ import { LiveAcademy, LiveStudentAdmin } from "./live-admin-learning";
 import { LiveCourses, LiveCoursePreview } from "./live-admin-courses";
 import { LiveFitnessAdmin, LiveFitnessUsers, LiveFitnessMarketplace } from "./live-admin-fitness";
 import { LiveVoiceStudioAdmin, LiveVoiceAgentAdmin } from "./live-admin-voice";
+import { LiveVideoFactoryAdmin } from "./live-admin-video-factory";
 import { LiveGrowthCenter, LiveGrowthCustomer } from "./live-admin-growth-center";
 import { LiveAdminSms } from "./live-admin-sms";
+import { LiveAdminCrm } from "./live-admin-crm";
+import { LiveSeoIntelligenceAdmin } from "./live-admin-seo-intel";
+import { LiveAdminPlay } from "./live-admin-play";
 import { LiveExplore } from "./live-explore";
 import { Live1980s } from "./live-1980s";
 import { LiveLeadForm, LiveProperty, LiveSharedResult } from "./live-links";
@@ -156,6 +160,7 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/ai-courses" ? <div className="admin-live-page"><LiveCourses /></div>
         : path === "/admin/fitness" ? <div className="admin-live-page"><LiveFitnessAdmin /></div>
         : path === "/admin/voice-studio" ? <div className="admin-live-page"><LiveVoiceStudioAdmin /></div>
+        : path === "/admin/video-factory" ? <div className="admin-live-page"><LiveVideoFactoryAdmin /></div>
         : path === "/admin/voice-agent" ? <div className="admin-live-page"><LiveVoiceAgentAdmin /></div>
         : path === "/admin/fitness/users" ? <div className="admin-live-page"><LiveFitnessUsers /></div>
         : path === "/admin/fitness/marketplace" ? <div className="admin-live-page"><LiveFitnessMarketplace /></div>
@@ -167,6 +172,9 @@ function LivePlatform({ path }: { path: string }) {
         : path === "/admin/social-connections" ? <div className="admin-live-page"><LiveSocialConnections /></div>
         : path === "/admin/customer-growth" ? <div className="admin-live-page"><LiveGrowthCenter /></div>
         : path === "/admin/sms" ? <div className="admin-live-page"><LiveAdminSms /></div>
+        : path === "/admin/crm" ? <div className="admin-live-page"><LiveAdminCrm /></div>
+        : path === "/admin/seo-intelligence" ? <div className="admin-live-page"><LiveSeoIntelligenceAdmin /></div>
+        : path === "/admin/play" ? <div className="admin-live-page"><LiveAdminPlay /></div>
         : /^\/admin\/customer-growth\/[^/]+$/.test(path) ? <div className="admin-live-page"><LiveGrowthCustomer key={path} id={decodeURIComponent(path.split("/")[3])} /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
