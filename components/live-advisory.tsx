@@ -70,6 +70,9 @@ export function LiveAdvisory({
           feature={doctor ? "business-doctor" : "meeting"}
           url={doctor ? "/api/business-doctor" : "/api/meeting/start"}
           fields={fields}
+          example={doctor
+            ? { question: fa ? "یک کافه‌رستوران ۴۰ نفره در شیراز داریم؛ فروش آخر هفته خوب است ولی وسط هفته خالی است. چطور فروش روزهای عادی را بالا ببریم؟" : "We run a 40-seat café in Berlin; weekends are full but weekdays are empty. How do we grow weekday sales?" }
+            : { topic: fa ? "راه‌اندازی خط محصول جدید قهوهٔ بسته‌بندی و قیمت‌گذاری آن" : "Launching a packaged coffee line and pricing it", ceo: true, marketing: true, finance: true }}
           map={(body) => {
             if (doctor) return body;
             const agents = Object.keys(agentNames).filter(

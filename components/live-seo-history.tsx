@@ -110,10 +110,37 @@ export function SeoHistory({ tool }: { tool?: string }) {
             text={String(open.output)}
             filename={`seo-${String(open.tool)}-${String(open.id)}.md`}
           />
+          {["content", "meta"].includes(String(open.tool)) && <SendToWordpress id={String(open.id)} fa={fa} />}
           <AIText text={String(open.output)} />
           <Button onClick={() => setOpen(null)}>{fa ? "بستن" : "Close"}</Button>
         </div>
       )}
     </section>
+  );
+}
+
+const WP_ERRORS: Record<string, [string, string]> = {
+  WORDPRESS_NOT_CONNECTED: ["وردپرس وصل نیست؛ اول آن را در «اتصال وردپرس» وصل کنید.", "WordPress is not connected; connect it under “WordPress connection” first."],
+  WORDPRESS_FAILED: ["وردپرس پیش‌نویس را نپذیرفت.", "WordPress did not accept the draft."],
+  NOT_A_POST: ["این نتیجه مقاله نیست.", "This result is not an article."],
+};
+/** E14: a saved article goes to WordPress as a draft; publishing stays the owner's step there. */
+function SendToWordpress({ id, fa }: { id: string; fa: boolean }) {
+  const [state, setState] = useState<{ ok: boolean; text: string; href?: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  async function send() {
+    setBusy(true); setState(null);
+    try {
+      const res = await fetch(`/api/seo/generations/${encodeURIComponent(id)}/wordpress`, { method: "POST", credentials: "include" });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) { setState({ ok: false, text: (WP_ERRORS[d.code] ?? [String(d.error ?? res.status), String(d.error ?? res.status)])[fa ? 0 : 1] }); return; }
+      setState({ ok: true, text: fa ? "پیش‌نویس در وردپرس ساخته شد." : "Draft created in WordPress.", href: d.post?.editUrl ?? undefined });
+    } finally { setBusy(false); }
+  }
+  return (
+    <p>
+      <Button disabled={busy} onClick={() => void send()}>{fa ? "ارسال به وردپرس (پیش‌نویس)" : "Send to WordPress (draft)"}</Button>{" "}
+      {state && <span role={state.ok ? "status" : "alert"}>{state.text}{state.href && <> <a className="text-link" href={state.href} target="_blank" rel="noopener noreferrer">{fa ? "باز کردن در وردپرس" : "Open in WordPress"}</a></>}</span>}
+    </p>
   );
 }

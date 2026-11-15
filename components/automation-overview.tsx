@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useApp } from "./providers";
+import { Button } from "./ui";
+import { AutomationBuilder, toggleRequest } from "./automation-builder";
 
 type Automation = { id: string; kind: string; name: string; trigger: { type: string; keywords: string[] }; condition: Record<string, unknown> | null; action: { type: string }; active: boolean; runs: number | null; manageAt: string };
 type Q = [string, string, string, string];
@@ -30,12 +32,14 @@ const ACTION: Record<string, Q> = {
 };
 const UI: Record<string, Q> = {
   title: ["همهٔ اتوماسیون‌ها", "All automations", "Alle Automationen", "Tüm otomasyonlar"],
-  intro: ["اتوماسیون‌های اینستاگرام و CRM در یک فهرست؛ ویرایش هر کدام در بخش خودش است.", "Instagram and CRM automations in one list; each is edited in its own section.", "Instagram- und CRM-Automationen in einer Liste; bearbeitet wird jede in ihrem Bereich.", "Instagram ve CRM otomasyonları tek listede; her biri kendi bölümünde düzenlenir."],
+  intro: ["اتوماسیون‌های اینستاگرام و CRM در یک فهرست؛ توقف و ادامه همین‌جاست و ویرایش جزئیات در بخش خودش.", "Instagram and CRM automations in one list; each is edited in its own section.", "Instagram- und CRM-Automationen in einer Liste; bearbeitet wird jede in ihrem Bereich.", "Instagram ve CRM otomasyonları tek listede; her biri kendi bölümünde düzenlenir."],
   empty: ["هنوز اتوماسیونی ساخته نشده است.", "No automations yet.", "Noch keine Automationen.", "Henüz otomasyon yok."],
   on: ["فعال", "On", "An", "Açık"],
   off: ["متوقف", "Paused", "Pausiert", "Duraklatıldı"],
   runs: ["اجرا", "runs", "Ausführungen", "çalışma"],
-  manage: ["مدیریت", "Manage", "Verwalten", "Yönet"],
+  manage: ["ویرایش", "Edit", "Bearbeiten", "Düzenle"],
+  pause: ["توقف", "Pause", "Pausieren", "Duraklat"],
+  resume: ["ادامه", "Resume", "Fortsetzen", "Sürdür"],
   failed: ["فهرست خوانده نشد.", "Could not load the list.", "Liste nicht ladbar.", "Liste yüklenemedi."],
 };
 
@@ -46,15 +50,28 @@ export function AutomationOverview() {
   const tx = (q: Q | undefined, fallback: string) => q?.[i] ?? fallback;
   const [list, setList] = useState<Automation[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const [version, setVersion] = useState(0);
+  const [error, setError] = useState("");
   useEffect(() => {
     fetch("/api/automations", { credentials: "include", cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d: { automations: Automation[] }) => setList(d.automations))
       .catch(() => setFailed(true));
-  }, []);
+  }, [version]);
+  async function toggle(a: Automation) {
+    const req = toggleRequest(a.kind, a.id, !a.active);
+    if (!req) return;
+    setError("");
+    const res = await fetch(req.url, { method: req.method, credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(req.body) });
+    if (!res.ok) { const d = await res.json().catch(() => ({})); setError(typeof d.error === "string" ? d.error : String(res.status)); return; }
+    setVersion((v) => v + 1);
+  }
   return (
+    <>
+    <AutomationBuilder onCreated={() => setVersion((v) => v + 1)} />
     <section className="panel">
       <h3>{tx(UI.title, "")}</h3>
+      {error && <p role="alert">{error}</p>}
       <p className="muted">{tx(UI.intro, "")}</p>
       {failed && <p role="alert">{tx(UI.failed, "")}</p>}
       {list && !list.length && <p className="crm-empty">{tx(UI.empty, "")}</p>}
@@ -70,9 +87,13 @@ export function AutomationOverview() {
             </p>
             <p className="muted">{a.active ? tx(UI.on, "") : tx(UI.off, "")}{a.runs != null && <> · {n(a.runs)} {tx(UI.runs, "")}</>}</p>
           </div>
-          <a className="btn" href={a.manageAt}>{tx(UI.manage, "")}</a>
+          <div className="domain-actions">
+            <Button onClick={() => void toggle(a)}>{a.active ? tx(UI.pause, "") : tx(UI.resume, "")}</Button>
+            <a className="btn" href={a.manageAt}>{tx(UI.manage, "")}</a>
+          </div>
         </div>
       ))}
     </section>
+    </>
   );
 }

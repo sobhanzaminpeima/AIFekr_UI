@@ -17,6 +17,7 @@ import { socialLabel } from "@/lib/social-copy";
 import { LineChart } from "./seo-charts";
 import { ConnectionHealth } from "./connection-health";
 import { AutomationOverview } from "./automation-overview";
+import { SocialCalendar } from "./social-calendar";
 
 type Row = Record<string, unknown>;
 type Field = {
@@ -434,6 +435,7 @@ function SocialView({ view }: { view: string }) {
         <Publishing />
         {view === "connections" && <ConnectionHealth />}
         {view === "connections" && <Webhooks />}
+        {view === "calendar" && <SocialCalendar />}
         {view === "calendar" && <CalendarDraft />}
       </>
     );
