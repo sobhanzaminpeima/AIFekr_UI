@@ -11,6 +11,7 @@ import { useLiveCredits } from "./live-shell-widgets";
 import { FirstStep } from "./first-step";
 import { PaymentRetryNotice } from "./payment-retry-notice";
 import type { HomeTool } from "@/lib/live-app";
+import { FirstRunChecklist } from "./first-run-checklist";
 
 /** The account's own dashboard data on aifekr.com (main site /api/app/dashboard). */
 type LiveDashboard = {
@@ -286,6 +287,7 @@ export function Dashboard() {
           </div>
         </>
       )}
+      {live && <FirstRunChecklist />}
       <div className="dashboard-bento">
         <section className="panel continue-card">
           <SectionTitle
