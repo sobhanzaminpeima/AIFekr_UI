@@ -5,6 +5,7 @@ import { LiveMediaLibrary, LiveStudio } from "./live-create";
 import { LiveCharacters } from "./live-characters";
 import { LiveVoice } from "./live-voice";
 import { LiveFactory } from "./live-factory";
+import { FactoryShell } from "./factory-shell";
 import { LiveCrm } from "./live-crm";
 import { LiveAccounting } from "./live-accounting";
 import { LiveSocial } from "./live-social";
@@ -455,6 +456,8 @@ export function ModuleWorkspace({
       ?.scrollIntoView({ block: "nearest", inline: "center" });
   }, [view.id]);
   // On aifekr.com the CRM is the account's real CRM.
+  // The Video Factory uses its own compact editor frame (icon toolbar, no banner or related-sections block).
+  if (live && module.id === "factory") return <FactoryShell module={module} view={view}><LiveFactory view={view.id} /></FactoryShell>;
   if (live && module.id === "crm") return <LiveCrm module={module} view={view} />;
   if (live && module.id === "accounting") return <LiveAccounting module={module} view={view} />;
   if (live && module.id === "social") return <LiveSocial module={module} view={view} />;

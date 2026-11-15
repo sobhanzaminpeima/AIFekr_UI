@@ -4,6 +4,7 @@
 // ProjectStudios and AdvancedStudio): sources and script intake, the
 // character bible, shot timing, the private asset library, YouTube publishing
 // and the audio & quality settings.
+import { Hint } from "./factory-shell";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { configOf, manifestOf, timeline, type Configuration, type Manifest, type Shot } from "@/lib/factory";
@@ -49,8 +50,7 @@ export function IdeasStudio({ x }: { x: FactoryCtx }) {
     <div className="production-ideas">
       <div className="panel">
         <span className="eyebrow">AIFekr / STORY SEED</span>
-        <h2>{f("Idea lab & sources")}</h2>
-        <p>{f("Import sources before starting. Optional AI ideation runs inside the approved production budget.")}</p>
+        <h2>{f("Idea lab & sources")} <Hint text={f("Import sources before starting. Optional AI ideation runs inside the approved production budget.")} /></h2>
         <h3>{f("Existing script or text file")}</h3>
         <label className="file-drop"><Icon name="Upload" />{f("TXT file")}
           <input type="file" accept=".txt,text/plain" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void run(async () => { if (file.size > 100000) throw new Error("SCRIPT_TOO_LARGE"); setScript((await file.text()).slice(0, 30000)); }); }} />
@@ -115,8 +115,8 @@ export function CharactersStudio({ x }: { x: FactoryCtx }) {
           <div className="domain-actions">
             <Button disabled={busy || manifest.characters.length >= 30} onClick={() => setManifest({ ...manifest, characters: [...manifest.characters, { name: "", description: "" }] })}><Icon name="Plus" size={16} />{f("Add character")}</Button>
             <Button variant="primary" disabled={busy} onClick={() => run(async () => { await saveManifest(x, manifest, styleBible); toast.success(f("Save bible · no charge")); })}>{f("Save bible · no charge")}</Button>
+            <Hint text={f("This bible guides textual and visual consistency. Voice cloning and verified identity likeness are not provided by this form.")} />
           </div>
-          <p className="fine-print">{f("This bible guides textual and visual consistency. Voice cloning and verified identity likeness are not provided by this form.")}</p>
         </>
       ) : <p>{f("Generate the script and shots first.")}</p>}
     </section>
@@ -165,7 +165,7 @@ export function EditStudio({ x }: { x: FactoryCtx }) {
   const move = (ci: number, si: number, delta: number) => { const copy = [...manifest.chapters[ci].shots]; [copy[si], copy[si + delta]] = [copy[si + delta], copy[si]]; setShots(ci, copy); };
   return (
     <>
-      <h1>{f("Edit shot timing & order")}</h1>
+      <h1>{f("Edit shot timing & order")} <Hint text={f("Times are relative weights within the film duration. Unchanged shots are reused on the next production; review the estimate before starting.")} /></h1>
       <div className="vf-edit-tools">
         <Button label={fa ? "واگرد" : "Undo"} disabled={!past.length} onClick={undo}><Icon name="Undo2" size={16} />{fa ? "واگرد" : "Undo"}</Button>
         <Button label={fa ? "ازنو" : "Redo"} disabled={!future.length} onClick={redo}><Icon name="Redo2" size={16} />{fa ? "ازنو" : "Redo"}</Button>
@@ -173,7 +173,6 @@ export function EditStudio({ x }: { x: FactoryCtx }) {
         <Button onClick={() => addCard("end")}><Icon name="PanelBottom" size={16} />{fa ? "کارت پایان (دنبال کردن کانال)" : "Outro card"}</Button>
         {(past.length > 0) && <small>{fa ? "تغییرات ذخیره نشده‌اند" : "Unsaved changes"}</small>}
       </div>
-      <p>{f("Times are relative weights within the film duration. Unchanged shots are reused on the next production; review the estimate before starting.")}</p>
       <TimelineEditor x={x} manifest={manifest} setManifest={setManifest} durationSeconds={config.durationSeconds}
         onLength={async (seconds) => { const p = project!; await x.api(`/api/video-factory/projects/${p.id}`, { action: "edit", expectedVersion: p.version, manifest, configuration: { ...configOf(p), durationSeconds: seconds } }); await x.refresh(p.id); toast.success(f("Save timeline · no charge")); }} />
       {manifest.chapters.map((chapter, ci) => (
@@ -298,8 +297,7 @@ export function PublishingStudio({ x }: { x: FactoryCtx }) {
   return (
     <div className="production-publishing">
       <form className="panel" onSubmit={(e) => { e.preventDefault(); void run(async () => { await api(`/api/video-factory/projects/${project!.id}/publishing`, { action: "metadata", value: metadata }); await x.refresh(project!.id); toast.success(f("Save metadata · does not publish")); }); }}>
-        <h2>{f("Publishing workspace")}</h2>
-        <p>{f("Publishing requires a connected YouTube account, administrator enablement and your explicit authorization.")}</p>
+        <h2>{f("Publishing workspace")} <Hint text={f("Publishing requires a connected YouTube account, administrator enablement and your explicit authorization.")} /></h2>
         {error && <ErrorBanner text={x.err(error)} />}
         {channel?.connected ? <Button disabled={busy} onClick={() => run(async () => { await api(`/api/video-factory/projects/${project!.id}/publishing`, { action: "disconnect" }); await load(); })}>{f("Disconnect YouTube")}</Button>
           : channel?.configured ? <a className="btn" href="/api/video-factory/youtube/connect"><Icon name="Youtube" size={16} />{f("Connect YouTube securely")}</a>
@@ -368,11 +366,9 @@ export function AdvancedStudio({ x }: { x: FactoryCtx }) {
         toast.success(f("Save settings · no charge"));
       });
     }}>
-      <h2>{f("Audio & semantic review studio")}</h2>
-      <p>{f("Saving settings is free. Voice generation and analysis run only after estimate and budget approval.")}</p>
+      <h2>{f("Audio & semantic review studio")} <Hint text={f("Select your own voice sample you have rights to use. Revocation blocks future use; it does not erase past outputs from an external service.")} /> <Hint text={f("Saving settings is free. Voice generation and analysis run only after estimate and budget approval.")} /></h2>
       <fieldset className="factory-fieldset">
         <legend>{f("Consented personal voice")}</legend>
-        <p className="fine-print">{f("Select your own voice sample you have rights to use. Revocation blocks future use; it does not erase past outputs from an external service.")}</p>
         <div className="domain-fields">
           <label>{f("Voice name")}<input maxLength={100} value={name} onChange={(e) => setName(e.target.value)} /></label>
           <label>{f("Scanned audio sample")}<select value={sample} onChange={(e) => setSample(e.target.value)}>{choices}</select></label>
@@ -416,8 +412,7 @@ export function AdvancedStudio({ x }: { x: FactoryCtx }) {
         <Button disabled={config.audioTracks.length >= 20} onClick={() => change({ audioTracks: [...config.audioTracks, { assetId: "", kind: "SFX", startSeconds: 0, offsetSeconds: 0, durationSeconds: 1, gainDb: -12, fadeSeconds: 0.2 }] })}><Icon name="Plus" size={16} />{f("Add layer")}</Button>
         <Button type="submit" variant="primary" disabled={busy}>{f("Save settings · no charge")}</Button>
       </div>
-      <h3>{f("Quality reports & targeted repairs")}</h3>
-      <p className="fine-print">{f("Sampled review cannot guarantee identity, truth or lip sync. Serious findings block delivery and provide repair guidance for editing and a new estimate.")}</p>
+      <h3>{f("Quality reports & targeted repairs")} <Hint text={f("Sampled review cannot guarantee identity, truth or lip sync. Serious findings block delivery and provide repair guidance for editing and a new estimate.")} /></h3>
       {reports.length ? reports.map((r) => (
         <details key={r.id}><summary>{r.kind} · {r.status} · {r.shotId}</summary><pre className="factory-json">{(() => { try { return JSON.stringify(JSON.parse(r.findings), null, 2); } catch { return r.findings; } })()}</pre></details>
       )) : <p className="muted">{f("No quality reports yet.")}</p>}

@@ -6,6 +6,7 @@
 // storyboard, the timeline and the private deliverables. Wording comes from
 // /api/app/shell (shell.factory); the project studios are in
 // live-factory-studios.tsx.
+import { Hint } from "./factory-shell";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -163,8 +164,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
       <div className="production-project-summary">
         <span className="icon-chip orange"><Icon name="Film" size={34} /></span>
         <div>
-          <h2>{fa ? "پروژه‌های روایت و ویدیو" : "Story & video projects"}</h2>
-          <p>{f("Write your idea or script; AI turns it into a chaptered video with visuals and narration. You see the cost before it starts, and failed production is refunded automatically.")}</p>
+          <h2>{fa ? "پروژه‌های روایت و ویدیو" : "Story & video projects"} <Hint text={f("Write your idea or script; AI turns it into a chaptered video with visuals and narration. You see the cost before it starts, and failed production is refunded automatically.")} /></h2>
         </div>
         <Link className="btn primary" href="/video-factory?tab=production&new=1" onClick={() => setActive("")}>{f("New project")}</Link>
       </div>
@@ -191,8 +191,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
       ) : (
         <section className="panel">
           <Empty />
-          <h3>{f("Your first story starts here")}</h3>
-          <p>{f("Choose a video package, add your idea or script, and create videos up to 8 minutes. Failed production credits are automatically refunded.")}</p>
+          <h3>{f("Your first story starts here")} <Hint text={f("Choose a video package, add your idea or script, and create videos up to 8 minutes. Failed production credits are automatically refunded.")} /></h3>
         </section>
       )}
       <div className="domain-actions">
@@ -256,8 +255,7 @@ function PackagesView({ x }: { x: FactoryCtx }) {
     <div className="plans-page">
       <div className="center-heading">
         <span className="eyebrow orange-text">{x.f("Video Factory")}</span>
-        <h1>{x.f("From idea to video")}</h1>
-        <p>{x.f("See the credit amount before starting. Approval reserves credits from your package balance; technical production failure refunds them.")}</p>
+        <h1>{x.f("From idea to video")} <Hint text={x.f("See the credit amount before starting. Approval reserves credits from your package balance; technical production failure refunds them.")} /></h1>
       </div>
       {catalog === null ? <div className="skeleton" /> : rows.length ? (
         <div className="pricing-grid">
@@ -306,9 +304,12 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   if (!creating && !project) return x.loadError ? <ErrorBanner text={x.err(x.loadError)} /> : <div className="skeleton" />;
   return (
     <div>
-      <SectionTitle title={t("factory")} subtitle={project && !creating ? project.title : fa ? "از یک ایده، تا یک داستان یکپارچه." : "From a little idea to a complete story."}>
-        {project && !creating && <Link className="btn" href="/video-factory?tab=production&new=1">{f("New project")}</Link>}
-      </SectionTitle>
+      {project && !creating && (
+        <div className="vf-project-bar">
+          <strong title={project.title}>{project.title}</strong>
+          <Link className="btn" href="/video-factory?tab=production&new=1" title={f("New project")}><Icon name="Plus" size={16} />{f("New project")}</Link>
+        </div>
+      )}
       {!creating && <div className="stepper">
         {labels.map((s, i) => (
           <button key={s} className={step === i ? "current" : i < step ? "completed" : ""} disabled={busy || !reachable(i)} onClick={() => setStep(i)}>
@@ -363,9 +364,7 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
         await x.refresh(project.id);
       });
     }}>
-      <span className="eyebrow orange-text">{tx(["ساخت ویدیوی یوتیوب", "Make a YouTube video", "YouTube-Video erstellen", "YouTube videosu oluştur"])}</span>
-      <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])}</h1>
-      <p className="vf-quick-lead">{tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])}</p>
+      <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])} <Hint text={tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])} /></h1>
 
       <label className="vf-quick-topic">{tx(["موضوع یا متن ویدیو", "Topic or script", "Thema oder Skript", "Konu veya senaryo"])}
         <textarea required minLength={10} maxLength={30000} rows={4} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder={tx(["مثلاً: داستان ساخت راه‌آهن سراسری ایران، برای مخاطب عام", "e.g. The story of the first transcontinental railway, for a general audience", "z. B. Die Geschichte der ersten transkontinentalen Eisenbahn", "örn. İlk kıtalararası demiryolunun hikâyesi"])} />
@@ -452,7 +451,6 @@ function ProjectBrief({ x }: { x: FactoryCtx }) {
   const config = configOf(project!);
   return (
     <>
-      <span className="eyebrow orange-text">01 / {fa ? "اولین جرقه" : "THE FIRST SPARK"}</span>
       <h1>{project!.title}</h1>
       <p className="factory-brief">{project!.brief}</p>
       <dl className="cost-summary">
@@ -479,8 +477,7 @@ function ScriptStep({ x, manifest: initial }: { x: FactoryCtx; manifest: Manifes
     setManifest({ ...manifest, chapters: manifest.chapters.map((c, i) => (i !== ci ? c : { ...c, shots: c.shots.map((s, j) => (j !== si ? s : { ...s, [key]: value })) })) });
   return (
     <>
-      <h1>{fa ? "به داستانت شکل بده." : "Give your story a little shape."}</h1>
-      <p>{f("Edit during script/storyboard review. Once production starts, wait for completion or cancel before editing. Every save creates a new version.")}</p>
+      <h1>{fa ? "به داستانت شکل بده." : "Give your story a little shape."} <Hint text={f("Edit during script/storyboard review. Once production starts, wait for completion or cancel before editing. Every save creates a new version.")} /></h1>
       {manifest.chapters.map((chapter, ci) => (
         <section key={ci} className="factory-chapter">
           <h3>{n(ci + 1)}. {chapter.title}</h3>
@@ -522,7 +519,6 @@ function StoryboardStep({ x, manifest }: { x: FactoryCtx; manifest: Manifest | n
   return (
     <>
       <h1>{fa ? "صحنه‌به‌صحنه، داستان را ببین." : "See the story, scene by scene."}</h1>
-      <p><Icon name="Play" size={16} /> {f("Deterministic timeline · 24 fps")}</p>
       {plan ? (
         <div className="storyboard-grid">
           {plan.shots.map((shot, i) => (
@@ -620,8 +616,7 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
   }, [project?.id]);
   return (
     <>
-      <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."}</h1>
-      <p>{f("Actual product usage is recorded; unused authorization returns to the original wallet. Uncertain provider calls are not automatically repeated.")}</p>
+      <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."} <Hint text={f("Actual product usage is recorded; unused authorization returns to the original wallet. Uncertain provider calls are not automatically repeated.")} /></h1>
       {!canStart && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f(STATUS[job!.status] || job!.status)} · {f(STAGE[job!.stage] || job!.stage)}</span></div>}
       {estimate && (
         <dl className="cost-summary">
@@ -747,7 +742,7 @@ function ReviewStep({ x }: { x: FactoryCtx }) {
         ))}
       </div>
       {link && <p><a href={link} rel="noreferrer">{f("Private download link · valid for 10 minutes")}</a></p>}
-      <div className="inline-banner"><Icon name="LockKeyhole" /><p>{f("Use the Publishing tab to prepare metadata and authorize publication.")}</p><Link className="btn" href="/video-factory?tab=publishing">{f("Publishing")}</Link></div>
+      <div className="domain-actions"><Link className="btn primary" href="/video-factory?tab=publishing"><Icon name="Send" size={16} />{f("Publishing")}</Link></div>
     </>
   );
 }

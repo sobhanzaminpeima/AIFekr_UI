@@ -6,6 +6,7 @@
  *   every generated image, so a stickman or mascot looks the same in all shots.
  * - ThumbnailPicker: any project image becomes the video thumbnail.
  */
+import { Hint } from "./factory-shell";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useApp } from "./providers";
@@ -74,13 +75,12 @@ export function ChannelStudio({ x }: { x: FactoryCtx }) {
   };
   return (
     <section className="panel factory-channel">
-      <h2>{tx(["کانال یوتیوب من", "My YouTube channel", "Mein YouTube-Kanal", "YouTube kanalım"])}</h2>
-      <p className="muted">{tx([
+      <h2>{tx(["کانال یوتیوب من", "My YouTube channel", "Mein YouTube-Kanal", "YouTube kanalım"])} <Hint text={tx([
         "این اطلاعات یک بار وارد می‌شود و هنگام نوشتن متن ویدیوها به‌عنوان زمینه استفاده می‌شود تا لحن و مخاطب با کانال شما یکی باشد. به حساب گوگل شما دسترسی نمی‌گیرد.",
         "Enter this once. It is used as context when scripts are written, so tone and audience match your channel. It does not access your Google account.",
         "Einmal eingeben. Es dient beim Schreiben der Skripte als Kontext. Kein Zugriff auf Ihr Google-Konto.",
         "Bir kez girin. Senaryolar yazılırken bağlam olarak kullanılır. Google hesabınıza erişmez.",
-      ])}</p>
+      ])} /></h2>
       <div className="domain-fields">
         <label>{tx(["نام کاربری کانال", "Channel handle", "Kanal-Handle", "Kanal kullanıcı adı"])}<input dir="ltr" maxLength={100} placeholder="@mychannel" value={profile.handle} onChange={set("handle")} /></label>
         <label>{tx(["نام کانال", "Channel name", "Kanalname", "Kanal adı"])}<input maxLength={120} value={profile.name} onChange={set("name")} /></label>
@@ -133,13 +133,12 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
   });
   return (
     <section className="panel factory-character-ref">
-      <h2>{tx(["کاراکتر ثابت ویدیو", "Fixed character", "Feste Figur", "Sabit karakter"])}</h2>
-      <p className="muted">{tx([
+      <h2>{tx(["کاراکتر ثابت ویدیو", "Fixed character", "Feste Figur", "Sabit karakter"])} <Hint text={tx([
         "یک تصویر از کاراکتر (مثلاً یک استیکمن) بسازید یا بارگذاری کنید. همین تصویر همراه پرامپت هر شات فرستاده می‌شود تا کاراکتر در همهٔ تصاویر یکسان بماند.",
         "Generate or upload one image of your character (for example a stickman). It is sent with every shot's prompt so the character looks the same in all images.",
         "Erstellen oder laden Sie ein Bild Ihrer Figur. Es wird mit jedem Shot-Prompt gesendet.",
         "Karakterinizin bir görselini oluşturun veya yükleyin. Her shot prompt'uyla gönderilir.",
-      ])}</p>
+      ])} /></h2>
       {locked && <p className="notice-banner" role="status">{tx(["تا پایان تولید فعلی قابل تغییر نیست.", "Locked while a production runs.", "Während einer Produktion gesperrt.", "Üretim sürerken kilitli."])}</p>}
       <div className="factory-character-ref-row">
         <div className="factory-character-ref-preview">
@@ -154,8 +153,8 @@ export function CharacterReference({ x }: { x: FactoryCtx }) {
               <Icon name="Sparkles" size={16} />{tx(["ساخت کاراکتر", "Generate character", "Figur erstellen", "Karakter oluştur"])}
             </Button>
             {current && <Button disabled={busy || locked} onClick={() => void choose("")}>{tx(["برداشتن", "Remove", "Entfernen", "Kaldır"])}</Button>}
+            <Hint text={tx(["ساخت کاراکتر به اندازهٔ یک تصویر استاندارد از اعتبار شما کم می‌کند.", "Generating uses the price of one standard image from your credits.", "Kostet den Preis eines Standardbildes.", "Bir standart görsel ücreti kadar kredi kullanır."])} />
           </div>
-          <p className="fine-print">{tx(["ساخت کاراکتر به اندازهٔ یک تصویر استاندارد از اعتبار شما کم می‌کند.", "Generating uses the price of one standard image from your credits.", "Kostet den Preis eines Standardbildes.", "Bir standart görsel ücreti kadar kredi kullanır."])}</p>
           <label className="check-label rights-check"><input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />{tx(["حق استفاده از تصویری که بارگذاری می‌کنم را دارم.", "I hold the rights to the image I upload.", "Ich habe die Rechte am Bild.", "Görselin haklarına sahibim."])}</label>
           <label className={"btn" + (locked ? " disabled" : "")} onClick={(e) => { if (!rights) { e.preventDefault(); needRights(); } }}>
             <Icon name="Upload" size={16} />{tx(["بارگذاری تصویر کاراکتر", "Upload character image", "Figurbild hochladen", "Karakter görseli yükle"])}
@@ -195,12 +194,11 @@ export function ThumbnailPicker({ x, shotImages }: { x: FactoryCtx; shotImages: 
   return (
     <section className="panel">
       <div className="row-between">
-        <h2>{tx(["تامبنیل ویدیو", "Video thumbnail", "Video-Thumbnail", "Video küçük resmi"])}</h2>
+        <h2>{tx(["تامبنیل ویدیو", "Video thumbnail", "Video-Thumbnail", "Video küçük resmi"])} <Hint text={current
+        ? tx(["تصویر علامت‌خورده تامبنیل ویدیوست. برای تغییر، تصویر دیگری را انتخاب کنید.", "The marked image is the thumbnail. Pick another to change it.", "Das markierte Bild ist das Thumbnail.", "İşaretli görsel küçük resimdir."])
+        : tx(["هنوز انتخاب نشده؛ اولین صحنه تامبنیل می‌شود. یکی از تصاویر زیر را انتخاب کنید.", "Not chosen yet; the first scene is used. Pick one of the images below.", "Noch nicht gewählt; die erste Szene wird verwendet.", "Seçilmedi; ilk sahne kullanılır."])} /></h2>
         {current && <a className="btn" href={assetUrl(current)} download="thumbnail.png">{tx(["دانلود تامبنیل", "Download thumbnail", "Thumbnail laden", "Küçük resmi indir"])}</a>}
       </div>
-      <p className="muted">{current
-        ? tx(["تصویر علامت‌خورده تامبنیل ویدیوست. برای تغییر، تصویر دیگری را انتخاب کنید.", "The marked image is the thumbnail. Pick another to change it.", "Das markierte Bild ist das Thumbnail.", "İşaretli görsel küçük resimdir."])
-        : tx(["هنوز انتخاب نشده؛ اولین صحنه تامبنیل می‌شود. یکی از تصاویر زیر را انتخاب کنید.", "Not chosen yet; the first scene is used. Pick one of the images below.", "Noch nicht gewählt; die erste Szene wird verwendet.", "Seçilmedi; ilk sahne kullanılır."])}</p>
       {shotImages.length ? (
         <div className="factory-pick-grid">
           {shotImages.map((s) => (
@@ -255,8 +253,7 @@ export function VisualStyleStudio({ x }: { x: FactoryCtx }) {
   const full = Object.fromEntries(BIBLE.map((b) => [b.key, (bible[b.key] || "").slice(0, b.max)]));
   return (
     <section className="panel factory-visual-style">
-      <h2><Icon name="Palette" size={18} /> {tx(["سبک تصویری ویدیو", "Video visual style", "Visueller Stil des Videos", "Videonun görsel stili"])}</h2>
-      <p>{tx(["این سبک به همهٔ پرامپت‌های تصویر اضافه می‌شود. داخل تصویرها متن ساخته نمی‌شود؛ عنوان و زیرنویس را ویرایشگر روی تصویر می‌گذارد.", "This style is added to every image prompt. No text is drawn inside images; the editor places titles and captions.", "Dieser Stil wird jedem Bild-Prompt hinzugefügt. In Bildern wird kein Text erzeugt; Titel setzt der Editor.", "Bu stil her görsel istemine eklenir. Görsellerin içine yazı çizilmez; başlıkları editör ekler."])}</p>
+      <h2><Icon name="Palette" size={18} /> {tx(["سبک تصویری ویدیو", "Video visual style", "Visueller Stil des Videos", "Videonun görsel stili"])} <Hint text={tx(["این سبک به همهٔ پرامپت‌های تصویر اضافه می‌شود. داخل تصویرها متن ساخته نمی‌شود؛ عنوان و زیرنویس را ویرایشگر روی تصویر می‌گذارد.", "This style is added to every image prompt. No text is drawn inside images; the editor places titles and captions.", "Dieser Stil wird jedem Bild-Prompt hinzugefügt. In Bildern wird kein Text erzeugt; Titel setzt der Editor.", "Bu stil her görsel istemine eklenir. Görsellerin içine yazı çizilmez; başlıkları editör ekler."])} /></h2>
       <div className="style-cards" role="radiogroup">
         {STYLES.map((s) => (
           <button key={s.id} type="button" role="radio" aria-checked={style === s.id} className={`style-card${style === s.id ? " selected" : ""}`} disabled={busy || locked}
@@ -306,8 +303,7 @@ export function LogoPicker({ x }: { x: FactoryCtx }) {
   const saved = tx(["ذخیره شد؛ از رندر بعدی روی ویدیو می‌آید.", "Saved; it appears from the next render.", "Gespeichert; ab dem nächsten Rendern sichtbar.", "Kaydedildi; bir sonraki renderda görünür."]);
   return (
     <section className="panel factory-logo">
-      <h2><Icon name="BadgeCheck" size={18} /> {tx(["لوگوی کانال روی ویدیو", "Channel logo on the video", "Kanal-Logo im Video", "Videoda kanal logosu"])}</h2>
-      <p className="muted">{tx(["لوگو کوچک و نیمه‌شفاف در گوشهٔ همهٔ صحنه‌ها قرار می‌گیرد. PNG با پس‌زمینهٔ شفاف بهترین نتیجه را می‌دهد.", "The logo sits small and semi-transparent in a corner of every scene. A PNG with a transparent background works best.", "Das Logo erscheint klein und halbtransparent in einer Ecke jeder Szene. Am besten ein PNG mit transparentem Hintergrund.", "Logo her sahnenin bir köşesinde küçük ve yarı saydam durur. Şeffaf arka planlı PNG en iyisidir."])}</p>
+      <h2><Icon name="BadgeCheck" size={18} /> {tx(["لوگوی کانال روی ویدیو", "Channel logo on the video", "Kanal-Logo im Video", "Videoda kanal logosu"])} <Hint text={tx(["لوگو کوچک و نیمه‌شفاف در گوشهٔ همهٔ صحنه‌ها قرار می‌گیرد. PNG با پس‌زمینهٔ شفاف بهترین نتیجه را می‌دهد.", "The logo sits small and semi-transparent in a corner of every scene. A PNG with a transparent background works best.", "Das Logo erscheint klein und halbtransparent in einer Ecke jeder Szene. Am besten ein PNG mit transparentem Hintergrund.", "Logo her sahnenin bir köşesinde küçük ve yarı saydam durur. Şeffaf arka planlı PNG en iyisidir."])} /></h2>
       <div className="factory-logo-row">
         {current ? <img className="factory-logo-preview" src={assetUrl(current)} alt="" /> : <span className="factory-logo-empty"><Icon name="Image" size={22} /></span>}
         <div className="factory-logo-actions">
