@@ -6,6 +6,7 @@
 // storyboard, the timeline and the private deliverables. Wording comes from
 // /api/app/shell (shell.factory); the project studios are in
 // live-factory-studios.tsx.
+import { Hint } from "./factory-shell";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -49,7 +50,7 @@ const FAILURES: Record<string, string> = {
   UPLOAD_SCANNER_NOT_CONFIGURED: "The upload security scanner is not configured.",
 };
 const STATUS: Record<string, string> = { QUEUED: "Queued", RUNNING: "Running", PAUSED: "Paused", PAUSING: "Pausing", CANCELLING: "Cancelling", AWAITING_APPROVAL: "Storyboard approval required", DELIVERED: "Ready to download", FAILED: "Failed", CANCELLED: "Cancelled" };
-const STAGE: Record<string, string> = { PLANNING: "Grounded idea lab", SCRIPT_REVIEW: "Script review", STORYBOARD_REVIEW: "Storyboard review", ASSET_GENERATION: "Media generation", SCRIPTING: "Script & storyboard", SHOT_RENDERING: "Shot rendering", ASSEMBLY: "Assembly & quality checks" };
+const STAGE: Record<string, string> = { PLANNING: "Grounded idea lab", SCRIPT_REVIEW: "Script review", STORYBOARD_REVIEW: "Storyboard review", SAMPLE_REVIEW: "Sample images review", ASSET_GENERATION: "Media generation", SCRIPTING: "Script & storyboard", SHOT_RENDERING: "Shot rendering", ASSEMBLY: "Assembly & quality checks" };
 const ACTIONS: Record<string, string> = { script_storyboard: "Script & storyboard · 2", silent_animatic_render: "Render & assembly", idea_lab: "Grounded idea lab", images: "Images", video_seconds: "Generated clip seconds", voice_shots: "Shot narration", music_minutes: "Instrumental music minutes" };
 
 /** Estimate lines the classic wording never named; they showed as raw keys like "gemini_scene_animation". */
@@ -61,12 +62,18 @@ const EXTRA_ACTIONS: Record<string, [string, string]> = {
   creator_bundle_video: ["ویدیوی بستهٔ سازنده", "Creator bundle video"],
 };
 
+/** Wording added after the classic copy was frozen (the server copy wins when it has the key). */
+const LOCAL_COPY: Record<string, Record<string, string>> = {
+  fa: { "Sample images review": "بازبینی تصاویر نمونه" },
+  de: { "Sample images review": "Prüfung der Beispielbilder" },
+  tr: { "Sample images review": "Örnek görsel incelemesi" },
+};
 /** Projects, the active project (kept per browser, like the design's draft) and the classic wording. */
 export function useFactory() {
   const shell = useShell();
   const lang = shell?.lang ?? "fa";
   const copy = shell?.factory ?? null;
-  const f = useCallback((en: string, values?: Record<string, string | number>) => fill(copy?.[en] ?? en, values ?? {}), [copy]);
+  const f = useCallback((en: string, values?: Record<string, string | number>) => fill(copy?.[en] ?? LOCAL_COPY[lang]?.[en] ?? en, values ?? {}), [copy, lang]);
   const err = (code: string) => (FAILURES[code] ? f(FAILURES[code]) : `${f("Operation failed")} (${code})`);
   const [active, setActive, ready] = useLocalState<string>("aifekr-factory-active", "");
   const [project, setProject] = useState<Project | null>(null);
@@ -163,8 +170,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
       <div className="production-project-summary">
         <span className="icon-chip orange"><Icon name="Film" size={34} /></span>
         <div>
-          <h2>{fa ? "پروژه‌های روایت و ویدیو" : "Story & video projects"}</h2>
-          <p>{f("Write your idea or script; AI turns it into a chaptered video with visuals and narration. You see the cost before it starts, and failed production is refunded automatically.")}</p>
+          <h2>{fa ? "پروژه‌های روایت و ویدیو" : "Story & video projects"} <Hint text={f("Write your idea or script; AI turns it into a chaptered video with visuals and narration. You see the cost before it starts, and failed production is refunded automatically.")} /></h2>
         </div>
         <Link className="btn primary" href="/video-factory?tab=production&new=1" onClick={() => setActive("")}>{f("New project")}</Link>
       </div>
@@ -191,8 +197,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
       ) : (
         <section className="panel">
           <Empty />
-          <h3>{f("Your first story starts here")}</h3>
-          <p>{f("Choose a video package, add your idea or script, and create videos up to 8 minutes. Failed production credits are automatically refunded.")}</p>
+          <h3>{f("Your first story starts here")} <Hint text={f("Choose a video package, add your idea or script, and create videos up to 8 minutes. Failed production credits are automatically refunded.")} /></h3>
         </section>
       )}
       <div className="domain-actions">
@@ -256,8 +261,7 @@ function PackagesView({ x }: { x: FactoryCtx }) {
     <div className="plans-page">
       <div className="center-heading">
         <span className="eyebrow orange-text">{x.f("Video Factory")}</span>
-        <h1>{x.f("From idea to video")}</h1>
-        <p>{x.f("See the credit amount before starting. Approval reserves credits from your package balance; technical production failure refunds them.")}</p>
+        <h1>{x.f("From idea to video")} <Hint text={x.f("See the credit amount before starting. Approval reserves credits from your package balance; technical production failure refunds them.")} /></h1>
       </div>
       {catalog === null ? <div className="skeleton" /> : rows.length ? (
         <div className="pricing-grid">
@@ -296,7 +300,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   const delivered = job?.status === "DELIVERED";
   // The step the project is actually at; a tab opens its own step instead.
   const natural = !project ? 0 : !job || FINAL.includes(job.status) && job.status !== "DELIVERED" ? 4
-    : job.status === "AWAITING_APPROVAL" ? (job.stage === "SCRIPT_REVIEW" ? 1 : 2) : delivered ? 6 : 5;
+    : job.status === "AWAITING_APPROVAL" ? (job.stage === "SCRIPT_REVIEW" ? 1 : job.stage === "SAMPLE_REVIEW" ? 5 : 2) : delivered ? 6 : 5;
   const [step, setStep] = useState<number>(creating ? 0 : VIEW_STEP[view] ?? natural);
   useEffect(() => { if (!creating && project) setStep(VIEW_STEP[view] ?? natural); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.id, view]);
@@ -306,9 +310,12 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
   if (!creating && !project) return x.loadError ? <ErrorBanner text={x.err(x.loadError)} /> : <div className="skeleton" />;
   return (
     <div>
-      <SectionTitle title={t("factory")} subtitle={project && !creating ? project.title : fa ? "از یک ایده، تا یک داستان یکپارچه." : "From a little idea to a complete story."}>
-        {project && !creating && <Link className="btn" href="/video-factory?tab=production&new=1">{f("New project")}</Link>}
-      </SectionTitle>
+      {project && !creating && (
+        <div className="vf-project-bar">
+          <strong title={project.title}>{project.title}</strong>
+          <Link className="btn" href="/video-factory?tab=production&new=1" title={f("New project")}><Icon name="Plus" size={16} />{f("New project")}</Link>
+        </div>
+      )}
       {!creating && <div className="stepper">
         {labels.map((s, i) => (
           <button key={s} className={step === i ? "current" : i < step ? "completed" : ""} disabled={busy || !reachable(i)} onClick={() => setStep(i)}>
@@ -316,6 +323,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
           </button>
         ))}
       </div>}
+      {project && !creating && job?.status === "AWAITING_APPROVAL" && job.stage === "SAMPLE_REVIEW" && <SampleReview x={x} />}
       <section className="panel factory-step">
         {step === 0 ? (creating ? <NewProject x={x} onCreated={(id) => { setActive(id); history.replaceState(null, "", "/video-factory?tab=production"); setStep(4); }} /> : <ProjectBrief x={x} />)
           : step === 1 ? <ScriptStep x={x} manifest={manifest} />
@@ -363,9 +371,7 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string) =
         await x.refresh(project.id);
       });
     }}>
-      <span className="eyebrow orange-text">{tx(["ساخت ویدیوی یوتیوب", "Make a YouTube video", "YouTube-Video erstellen", "YouTube videosu oluştur"])}</span>
-      <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])}</h1>
-      <p className="vf-quick-lead">{tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])}</p>
+      <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])} <Hint text={tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])} /></h1>
 
       <label className="vf-quick-topic">{tx(["موضوع یا متن ویدیو", "Topic or script", "Thema oder Skript", "Konu veya senaryo"])}
         <textarea required minLength={10} maxLength={30000} rows={4} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder={tx(["مثلاً: داستان ساخت راه‌آهن سراسری ایران، برای مخاطب عام", "e.g. The story of the first transcontinental railway, for a general audience", "z. B. Die Geschichte der ersten transkontinentalen Eisenbahn", "örn. İlk kıtalararası demiryolunun hikâyesi"])} />
@@ -452,7 +458,6 @@ function ProjectBrief({ x }: { x: FactoryCtx }) {
   const config = configOf(project!);
   return (
     <>
-      <span className="eyebrow orange-text">01 / {fa ? "اولین جرقه" : "THE FIRST SPARK"}</span>
       <h1>{project!.title}</h1>
       <p className="factory-brief">{project!.brief}</p>
       <dl className="cost-summary">
@@ -479,8 +484,7 @@ function ScriptStep({ x, manifest: initial }: { x: FactoryCtx; manifest: Manifes
     setManifest({ ...manifest, chapters: manifest.chapters.map((c, i) => (i !== ci ? c : { ...c, shots: c.shots.map((s, j) => (j !== si ? s : { ...s, [key]: value })) })) });
   return (
     <>
-      <h1>{fa ? "به داستانت شکل بده." : "Give your story a little shape."}</h1>
-      <p>{f("Edit during script/storyboard review. Once production starts, wait for completion or cancel before editing. Every save creates a new version.")}</p>
+      <h1>{fa ? "به داستانت شکل بده." : "Give your story a little shape."} <Hint text={f("Edit during script/storyboard review. Once production starts, wait for completion or cancel before editing. Every save creates a new version.")} /></h1>
       {manifest.chapters.map((chapter, ci) => (
         <section key={ci} className="factory-chapter">
           <h3>{n(ci + 1)}. {chapter.title}</h3>
@@ -505,8 +509,34 @@ function ScriptStep({ x, manifest: initial }: { x: FactoryCtx; manifest: Manifes
 
 function ApproveButton({ x }: { x: FactoryCtx }) {
   const { f, job, busy, run } = x;
-  const label = job!.stage === "SCRIPT_REVIEW" ? f("Approve script & review storyboard") : job!.stage === "STORYBOARD_REVIEW" ? f("Approve storyboard & produce within reserved budget") : f("Approve storyboard & render within reserved budget");
+  const { tl } = useApp();
+  const label = job!.stage === "SAMPLE_REVIEW" ? tl("تأیید و ساخت بقیهٔ تصاویر", "Approve & make the remaining images") : job!.stage === "SCRIPT_REVIEW" ? f("Approve script & review storyboard") : job!.stage === "STORYBOARD_REVIEW" ? f("Approve storyboard & produce within reserved budget") : f("Approve storyboard & render within reserved budget");
   return <Button variant="primary" disabled={busy} onClick={() => run(() => control(x, "approve"))}>{label}</Button>;
+}
+/** Review modes stop after three sample images (first, middle, last scene) so the look is approved before the rest is paid for. */
+function SampleReview({ x }: { x: FactoryCtx }) {
+  const { tl } = useApp();
+  const { project, api, busy, run } = x;
+  const [images, setImages] = useState<{ id: string; url: string; code: string }[]>([]);
+  useEffect(() => {
+    let live = true;
+    api<{ shots: { id: string; code: string; image: { url: string } | null }[] }>(`/api/video-factory/projects/${project!.id}/media`)
+      .then((d) => { if (live) setImages((d.shots || []).filter((s) => s.image).map((s) => ({ id: s.id, url: s.image!.url, code: s.code }))); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [api, project]);
+  return (
+    <section className="panel vf-samples" aria-labelledby="vf-samples-title">
+      <h2 id="vf-samples-title"><Icon name="Image" size={18} /> {tl("سه تصویر نمونه آماده است", "Three sample images are ready")} <Hint text={tl("اگر سبک درست است تأیید کن تا بقیهٔ تصاویر ساخته شوند. اگر نه، لغو کن؛ اعتبار استفاده‌نشده برمی‌گردد و می‌توانی سبک یا شخصیت را عوض کنی.", "If the look is right, approve to make the rest. If not, cancel: unused credits come back and you can change the style or character.")} /></h2>
+      <div className="vf-samples-grid">
+        {images.slice(0, 3).map((img) => <figure key={img.id}><img src={img.url} alt={img.code} loading="lazy" /><figcaption dir="ltr">{img.code}</figcaption></figure>)}
+      </div>
+      <div className="domain-actions">
+        <ApproveButton x={x} />
+        <Button disabled={busy} onClick={() => run(() => control(x, "cancel"))}><Icon name="X" size={16} />{tl("لغو و تغییر سبک", "Cancel & change style")}</Button>
+      </div>
+    </section>
+  );
 }
 async function control(x: FactoryCtx, action: string) {
   await x.api(`/api/video-factory/projects/${x.project!.id}`, { action });
@@ -522,7 +552,6 @@ function StoryboardStep({ x, manifest }: { x: FactoryCtx; manifest: Manifest | n
   return (
     <>
       <h1>{fa ? "صحنه‌به‌صحنه، داستان را ببین." : "See the story, scene by scene."}</h1>
-      <p><Icon name="Play" size={16} /> {f("Deterministic timeline · 24 fps")}</p>
       {plan ? (
         <div className="storyboard-grid">
           {plan.shots.map((shot, i) => (
@@ -538,7 +567,7 @@ function StoryboardStep({ x, manifest }: { x: FactoryCtx; manifest: Manifest | n
       ) : <p>{f("No shots have been planned yet.")}</p>}
       <div className="domain-actions">
         <Link className="btn" href="/video-factory?tab=edit">{f("Edit shots")}</Link>
-        {job?.status === "AWAITING_APPROVAL" && job.stage !== "SCRIPT_REVIEW" && <ApproveButton x={x} />}
+        {job?.status === "AWAITING_APPROVAL" && !["SCRIPT_REVIEW", "SAMPLE_REVIEW"].includes(job.stage) && <ApproveButton x={x} />}
       </div>
     </>
   );
@@ -620,8 +649,7 @@ function CostStep({ x, onStarted }: { x: FactoryCtx; onStarted: () => void }) {
   }, [project?.id]);
   return (
     <>
-      <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."}</h1>
-      <p>{f("Actual product usage is recorded; unused authorization returns to the original wallet. Uncertain provider calls are not automatically repeated.")}</p>
+      <h1>{fa ? "هزینه، روشن و قابل پیش‌بینی." : "A clear cost. No surprises."} <Hint text={f("Actual product usage is recorded; unused authorization returns to the original wallet. Uncertain provider calls are not automatically repeated.")} /></h1>
       {!canStart && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f(STATUS[job!.status] || job!.status)} · {f(STAGE[job!.stage] || job!.stage)}</span></div>}
       {estimate && (
         <dl className="cost-summary">
@@ -747,7 +775,7 @@ function ReviewStep({ x }: { x: FactoryCtx }) {
         ))}
       </div>
       {link && <p><a href={link} rel="noreferrer">{f("Private download link · valid for 10 minutes")}</a></p>}
-      <div className="inline-banner"><Icon name="LockKeyhole" /><p>{f("Use the Publishing tab to prepare metadata and authorize publication.")}</p><Link className="btn" href="/video-factory?tab=publishing">{f("Publishing")}</Link></div>
+      <div className="domain-actions"><Link className="btn primary" href="/video-factory?tab=publishing"><Icon name="Send" size={16} />{f("Publishing")}</Link></div>
     </>
   );
 }

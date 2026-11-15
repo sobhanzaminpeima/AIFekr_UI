@@ -158,8 +158,14 @@ import {
   Redo2,
   PanelTop,
   PanelBottom,
+  Tv,
+  Scissors,
+  CircleHelp,
 } from "lucide-react";
 const Icons = {
+  Tv,
+  Scissors,
+  CircleHelp,
   Undo2,
   Redo2,
   PanelTop,

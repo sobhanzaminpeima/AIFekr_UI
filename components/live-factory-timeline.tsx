@@ -6,6 +6,7 @@
 // and one-click sync of every shot to the length of its narration.
 // Everything here edits the manifest only; saving is free and the server
 // renders the film on the next production (priced in its estimate).
+import { Hint } from "./factory-shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { timeline, type Manifest, type Shot } from "@/lib/factory";
 import { useApp } from "./providers";
@@ -131,11 +132,10 @@ export function TimelineEditor({ x, manifest, setManifest, durationSeconds, onLe
   return (
     <section className="vf-timeline" aria-label={L("تایم‌لاین ویدیو", "Video timeline", "Video-Zeitleiste", "Video zaman çizelgesi")}>
       <div className="vf-tl-head">
-        <h2>{L("تایم‌لاین و پیش‌نمایش", "Timeline & preview", "Zeitleiste & Vorschau", "Zaman çizelgesi ve önizleme")}</h2>
-        <p>{L("ترتیب را با کشیدن عوض کن، زمان هر نما را تنظیم کن و قبل از رندر پیش‌نمایش را ببین. ذخیره رایگان است.",
+        <h2>{L("تایم‌لاین و پیش‌نمایش", "Timeline & preview", "Zeitleiste & Vorschau", "Zaman çizelgesi ve önizleme")} <Hint text={L("ترتیب را با کشیدن عوض کن، زمان هر نما را تنظیم کن و قبل از رندر پیش‌نمایش را ببین. ذخیره رایگان است.",
           "Drag to reorder, set each shot's time and preview before rendering. Saving is free.",
           "Ziehen zum Umordnen, Dauer je Einstellung festlegen und vor dem Rendern ansehen. Speichern ist kostenlos.",
-          "Sıralamak için sürükleyin, her sahnenin süresini ayarlayın ve render öncesi önizleyin. Kaydetmek ücretsizdir.")}</p>
+          "Sıralamak için sürükleyin, her sahnenin süresini ayarlayın ve render öncesi önizleyin. Kaydetmek ücretsizdir.")} /></h2>
       </div>
 
       <div className="vf-tl-body">
