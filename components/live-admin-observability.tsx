@@ -30,6 +30,10 @@ const T: Record<string, Q> = {
   rates: ["نرخ‌های ارز تأییدشده", "Approved exchange rates", "Freigegebene Wechselkurse", "Onaylı döviz kurları"],
   validUntil: ["معتبر تا", "valid until", "gültig bis", "geçerlilik"],
   missing: ["ثبت نشده", "not recorded", "nicht erfasst", "kayıtlı değil"],
+  trials: ["آزمایش‌های رایگان", "Free trials", "Kostenlose Tests", "Ücretsiz denemeler"],
+  offered: ["ارائه می‌شود", "Offered", "Angeboten", "Sunuluyor"],
+  notOffered: ["ارائه نمی‌شود (تصمیم قیمت‌گذاری مالک)", "Not offered (owner's pricing decision)", "Nicht angeboten (Preisentscheidung des Inhabers)", "Sunulmuyor (sahibin fiyat kararı)"],
+  configure: ["تنظیم", "Configure", "Einstellen", "Ayarla"],
   failed: ["گزارش خوانده نشد.", "Could not load the report.", "Bericht nicht ladbar.", "Rapor yüklenemedi."],
   ok: ["سالم", "OK", "In Ordnung", "Sorunsuz"],
   attention: ["نیاز به توجه", "Needs attention", "Prüfen", "Dikkat gerekli"],
@@ -44,6 +48,10 @@ export function LiveAdminObservability() {
   const tx = (k: string) => T[k][i];
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
+  const [trials, setTrials] = useState<{ module: string; offered: boolean; uses: number; limit: string | null; configureAt: string | null }[] | null>(null);
+  useEffect(() => {
+    fetch("/api/admin/trials", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => setTrials(d?.trials ?? null)).catch(() => {});
+  }, []);
   const load = useCallback(() => {
     setFailed(false);
     fetch("/api/admin/observability", { credentials: "include", cache: "no-store" })
@@ -85,6 +93,17 @@ export function LiveAdminObservability() {
             <span>{tx("rates")}</span>
             {data.rates.map((r) => <p key={r.target}><bdi dir="ltr">{r.target}</bdi> {badge(r.verdict)} <span className="muted">{r.validUntil ? `${tx("validUntil")} ${when(r.validUntil)}` : tx("missing")}</span></p>)}
           </div>
+        </div>
+      )}
+      {trials && (
+        <div className="panel">
+          <h3>{tx("trials")}</h3>
+          {trials.map((t) => (
+            <div className="domain-card row-between" key={t.module}>
+              <span><bdi dir="ltr">{t.module}</bdi> · {t.offered ? `${tx("offered")}: ${n(t.uses)}${t.limit ? " × " + t.limit : ""}` : tx("notOffered")}</span>
+              {t.configureAt && <a className="btn" href={t.configureAt}>{tx("configure")}</a>}
+            </div>
+          ))}
         </div>
       )}
       {data && <p className="fine-print">{when(data.checkedAt)}</p>}
