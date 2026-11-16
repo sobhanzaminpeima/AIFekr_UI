@@ -64,7 +64,18 @@ export function ChannelStudio({ x }: { x: FactoryCtx }) {
   const tx = useTx();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [busy, setBusy] = useState(false);
-  useEffect(() => { x.api<{ profile: Profile }>("/api/video-factory/channel-profile").then((d) => setProfile(d.profile)).catch((e) => toast.error(x.err((e as Error).message))); }, [x]);
+  const { api, err } = x;
+  const [loadError, setLoadError] = useState("");
+  const [reload, setReload] = useState(0);
+  useEffect(() => {
+    let active = true;
+    setLoadError("");
+    api<{ profile: Profile }>("/api/video-factory/channel-profile")
+      .then(d => { if (active) setProfile(d.profile); })
+      .catch(e => { if (active) setLoadError(err((e as Error).message)); });
+    return () => { active = false; };
+  }, [api, err, reload]);
+  if (loadError) return <section className="panel"><p role="alert">{loadError}</p><Button onClick={() => setReload(value => value + 1)}>{tx(["تلاش دوباره", "Retry", "Erneut versuchen", "Tekrar dene"])}</Button></section>;
   if (!profile) return <div className="skeleton" />;
   const set = (k: keyof Profile) => (e: { target: { value: string } }) => setProfile({ ...profile, [k]: e.target.value });
   const save = async () => {

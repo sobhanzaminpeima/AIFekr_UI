@@ -75,7 +75,7 @@ export function useFactory() {
   const lang = shell?.lang ?? "fa";
   const copy = shell?.factory ?? null;
   const f = useCallback((en: string, values?: Record<string, string | number>) => fill(copy?.[en] ?? LOCAL_COPY[lang]?.[en] ?? en, values ?? {}), [copy, lang]);
-  const err = (code: string) => (FAILURES[code] ? f(FAILURES[code]) : `${f("Operation failed")} (${code})`);
+  const err = useCallback((code: string) => (FAILURES[code] ? f(FAILURES[code]) : `${f("Operation failed")} (${code})`), [f]);
   const [active, setActive, ready] = useLocalState<string>("aifekr-factory-active", "");
   const [project, setProject] = useState<Project | null>(null);
   const [loadError, setLoadError] = useState("");
@@ -90,6 +90,7 @@ export function useFactory() {
     try {
       const { project } = await api<{ project: Project }>(`/api/video-factory/projects/${id}`);
       setProject(project);
+      setLoadError("");
       return project;
     } catch (e) {
       // A project that is gone (deleted elsewhere) is simply no longer the active one.
@@ -376,7 +377,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
           : step === 2 ? (view === "edit" ? <EditStudio x={x} /> : <StoryboardStep x={x} manifest={manifest} />)
           : step === 3 ? <SoundStep x={x} onSaved={() => setStep(4)} />
           : step === 4 ? <CostStep x={x} onStarted={() => setStep(5)} onSound={() => setStep(3)} />
-          : step === 5 ? <ProductionStep x={x} onReview={() => setStep(6)} />
+          : step === 5 ? <ProductionStep x={x} onReview={() => setStep(6)} onContinue={() => setStep(4)} />
           : step === 7 ? <><CharacterReference x={x} /><Button variant="primary" onClick={() => setStep(4)}>{f("Cost approval")}</Button></>
           : <ReviewStep x={x} onSound={() => setStep(3)} />}
       </section>
@@ -783,7 +784,7 @@ function CostStep({ x, onStarted, onSound }: { x: FactoryCtx; onStarted: () => v
 }
 
 /** Production: the job's status, stage, credits and controls. */
-function ProductionStep({ x, onReview }: { x: FactoryCtx; onReview: () => void }) {
+function ProductionStep({ x, onReview, onContinue }: { x: FactoryCtx; onReview: () => void; onContinue: () => void }) {
   const { fa, n, locale } = useApp();
   const { f, job, busy, run, err } = x;
   if (!job) return <p>{f("Draft")}</p>;
@@ -791,7 +792,8 @@ function ProductionStep({ x, onReview }: { x: FactoryCtx; onReview: () => void }
   return (
     <>
       <h1>{video ? ({fa:"ویدیو آمادهٔ دانلود است",en:"Your video is ready to download",de:"Dein Video steht zum Download bereit",tr:"Videonuz indirmeye hazır"})[locale] : fa ? "داستانت در حال شکل گرفتن است." : "Your story is coming together."}</h1>
-      {job.errorCode && <ErrorBanner text={err(job.errorCode)} />}
+      {job.errorCode && <ErrorBanner text={job.errorCode === "SAVED_MEDIA_MISSING" ? (fa ? "فایل یکی از خروجی‌های ذخیره‌شده در دسترس نیست. فایل‌های پروژه را بررسی کنید." : "A saved output file is unavailable. Review the project media.") : err(job.errorCode)} />}
+      {["FAILED", "CANCELLED"].includes(job.status) && <div className="notice-banner"><span>{fa ? "خروجی‌های سالم ذخیره شده‌اند. هزینهٔ ادامه را پیش از شروع بررسی کنید." : "Saved outputs are retained. Review the continuation cost before starting."}</span><Button disabled={busy} onClick={onContinue}>{fa ? "بررسی و ادامهٔ تولید" : "Review and continue"}</Button></div>}
       <ProductionLine job={job} project={x.project!} />
       {video && <div className="domain-actions">
         <a className="btn primary" href={`/api/video-factory/artifacts/${video.id}`}><Icon name="Download" size={16} />{({fa:"دانلود ویدیو",en:"Download video",de:"Video herunterladen",tr:"Videoyu indir"})[locale]}</a>

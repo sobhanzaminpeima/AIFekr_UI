@@ -29,7 +29,8 @@ export function ProductionLine({ job, project }: { job: Job; project: Project })
   const totalChapters = Math.max(1, Math.ceil((configuration.durationSeconds || 60) / 300));
   const media = (prefix: string, kind: string): Pick<Row, "state" | "done" | "total"> => {
     const total = count(kind), done = Math.min(total, finished(prefix));
-    return { total, done, state: phase > 2 || (total > 0 && done >= total) ? "done" : phase === 2 ? "active" : "pending" };
+    const currentKind = tasks[job.cursor]?.kind;
+    return { total, done, state: phase > 2 || (total > 0 && done >= total) ? "done" : phase === 2 && currentKind === kind ? "active" : "pending" };
   };
   const rows: Row[] = [
     { id: "write", icon: "FileText", t: ["نوشتن متن و صحنه‌ها", "Writing script & scenes", "Skript & Szenen schreiben", "Senaryo ve sahneleri yazma"], state: phase > 0 ? "done" : "active", done: phase > 0 ? totalChapters : Math.min(job.cursor, totalChapters), total: totalChapters },
@@ -40,6 +41,7 @@ export function ProductionLine({ job, project }: { job: Job; project: Project })
   if (images.total || phase < 2) rows.push({ id: "images", icon: "Image", t: ["ساخت تصویر صحنه‌ها", "Making scene images", "Szenenbilder erstellen", "Sahne görselleri"], ...images });
   if (job.stage === "SAMPLE_REVIEW" && job.status === "AWAITING_APPROVAL")
     rows.push({ id: "samples", icon: "Eye", t: ["منتظر تأیید سه تصویر نمونه", "Waiting for you to approve 3 sample images", "Wartet auf Freigabe der 3 Beispielbilder", "3 örnek görselin onayı bekleniyor"], state: "waiting" });
+  if (count("VIDEO")) rows.push({ id: "videos", icon: "Video", t: ["ساخت ویدیوی صحنه‌ها", "Making scene videos", "Szenenvideos erstellen", "Sahne videoları"], ...media("video-", "VIDEO") });
   if (configuration.narration) rows.push({ id: "voice", icon: "AudioLines", t: ["صدای گوینده", "Narration", "Sprecher", "Seslendirme"], ...media("tts-", "TTS") });
   if (configuration.music) rows.push({ id: "music", icon: "Music", t: ["موسیقی پس‌زمینه", "Background music", "Hintergrundmusik", "Arka plan müziği"], ...media("music-", "MUSIC") });
   if (configuration.narration) rows.push({ id: "sync", icon: "SlidersHorizontal", t: ["هم‌زمانی صدا، تصویر و زیرنویس", "Syncing voice, images & captions", "Stimme, Bild & Untertitel synchronisieren", "Ses, görsel ve altyazı eşitleme"], state: phase > 2 ? "done" : "pending" });
@@ -50,7 +52,7 @@ export function ProductionLine({ job, project }: { job: Job; project: Project })
   // A failed or cancelled job marks the stage it stopped in.
   if (failed || cancelled) { const at = rows.find((r) => r.state === "active" || r.state === "waiting"); if (at) at.state = "failed"; }
   if (job.status === "PAUSED") { const at = rows.find((r) => r.state === "active"); if (at) at.state = "waiting"; }
-  const weight = (r: Row) => (r.state === "done" ? 1 : r.state === "active" && r.total ? (r.done ?? 0) / r.total : 0);
+  const weight = (r: Row) => (r.state === "done" ? 1 : r.total ? (r.done ?? 0) / r.total : 0);
   const progress = Math.round((rows.reduce((t, r) => t + weight(r), 0) / rows.length) * 100);
   const label: Record<State, Tx> = {
     done: ["انجام شد", "Done", "Fertig", "Tamam"], active: ["در حال انجام", "In progress", "Läuft", "Sürüyor"],
@@ -58,7 +60,7 @@ export function ProductionLine({ job, project }: { job: Job; project: Project })
   };
   return (
     <section className="vf-line" aria-label={tx(["مراحل تولید", "Production steps", "Produktionsschritte", "Üretim adımları"])}>
-      <div className="vf-line-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+      <div className="vf-line-bar" role="progressbar" aria-label={tx(["پیشرفت تولید", "Production progress", "Produktionsfortschritt", "Üretim ilerlemesi"])} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
         <i style={{ width: `${progress}%` }} />
         <span>{n(progress)}٪</span>
       </div>
