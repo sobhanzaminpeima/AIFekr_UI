@@ -40,18 +40,22 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
   const [open, setOpen] = useState<Shot | null>(null);
   const one = useRef<HTMLInputElement>(null);
   const target = useRef<string>("");
+  const { api, err } = x;
+  const loadSequence = useRef(0);
 
   const load = useCallback(async () => {
+    const sequence = ++loadSequence.current;
     setError("");
-    try { setMedia(await x.api<Media>(base)); } catch (e) { setError(x.err((e as Error).message)); }
-  }, [base, x]);
-  useEffect(() => { void load(); }, [load]);
+    try { const result = await api<Media>(base); if (sequence === loadSequence.current) setMedia(result); }
+    catch (e) { if (sequence === loadSequence.current) setError(err((e as Error).message)); }
+  }, [base, api, err]);
+  useEffect(() => { setMedia(null); void load(); return () => { ++loadSequence.current; }; }, [load]);
   // While a production job runs, images arrive one by one: keep the grid current.
   useEffect(() => {
     if (!x.job || !["QUEUED", "RUNNING"].includes(String(x.job.status))) return;
     const t = setInterval(() => { void load(); }, 5000);
     return () => clearInterval(t);
-  }, [x.job, load]);
+  }, [x.job?.status, load]);
 
   const upload = async (file: File) => {
     const form = new FormData();
@@ -86,7 +90,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
     toast.success(`${items.length} ${tx(["تصویر روی شات‌ها قرار گرفت", "images placed on their shots", "Bilder den Shots zugeordnet", "görsel shot'lara yerleştirildi"])}${skipped.length ? ` · ${skipped.length} ${tx(["فایل بدون شمارهٔ شات کنار گذاشته شد", "files without a shot number skipped", "Dateien ohne Shot-Nummer übersprungen", "shot numarası olmayan dosya atlandı"])}` : ""}`);
   });
 
-  if (error) return <div className="notice-banner" role="alert"><Icon name="AlertCircle" size={16} /><span>{error}</span></div>;
+  if (error && !media) return <div className="notice-banner" role="alert"><Icon name="AlertCircle" size={16} /><span>{error}</span><Button onClick={() => void load()}>{tx(["تلاش دوباره", "Retry", "Erneut versuchen", "Tekrar dene"])}</Button></div>;
   if (!media) return <div className="skeleton" />;
   if (!media.ready) return (
     <section className="panel">
@@ -97,6 +101,7 @@ export function MediaStudio({ x }: { x: FactoryCtx }) {
   const done = media.shots.filter((s) => s.image).length, total = media.shots.length;
   return (
     <div className="factory-media">
+      {error && <div className="notice-banner" role="alert"><span>{error}</span><Button onClick={() => void load()}>{tx(["تلاش دوباره", "Retry", "Erneut versuchen", "Tekrar dene"])}</Button></div>}
       <section className="panel">
         <div className="row-between">
           <div>
