@@ -229,7 +229,7 @@ function BoardView() {
       </div>
       {pipelines.length === 1 && pipeline && <h2 className="crm-pipeline-name">{localizedName(pipeline, lang)}</h2>}
       {!deals ? <Loading /> : (
-        <div className="crm-pipeline" style={{ gridTemplateColumns: `repeat(${stages.length}, minmax(205px, 1fr))` }} tabIndex={0} role="region" aria-label={c.tabs.board}>
+        <div className="crm-pipeline" style={{ gridTemplateColumns: `repeat(${stages.length}, minmax(158px, 1fr))` }} tabIndex={0} role="region" aria-label={c.tabs.board}>
           {stages.map((stage) => {
             const list = filtered.filter((d) => d.stageId === stage.id);
             const total = list.reduce((sum, d) => sum + d.value, 0);

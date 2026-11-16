@@ -1,6 +1,6 @@
 "use client";
 import Link from "@/components/site-link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useId } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { Button, Icon, SectionTitle, SparkChart, ToolCard } from "./ui";
@@ -62,14 +62,24 @@ function useLiveDashboard(enabled: boolean, student: boolean) {
 
 /** The usage line from real daily credit use, drawn in the design's own chart frame. */
 export function UsageChart({ days }: { days: number[] }) {
+  const { tl } = useApp();
+  const gradient = useId();
+  if (!days.length) return <p className="muted">{tl("هنوز داده‌ای برای نمودار وجود ندارد.", "No usage data to chart yet.")}</p>;
   const max = Math.max(1, ...days);
-  const points = days.map((v, i) => `${(i * 300) / (days.length - 1)} ${64 - (v / max) * 58}`);
+  const points = days.map((value, i) => ({ x: 6 + (i * 288) / Math.max(1, days.length - 1), y: 93 - (value / max) * 79 }));
+  const line = points.map(({ x, y }) => `${x} ${y}`).join(" L");
+  const last = points[points.length - 1];
   return (
-    <svg className="spark-chart" viewBox="0 0 300 70" role="img" aria-label="Usage trend">
-      <path d={"M" + points.join(" L")} fill="none" stroke="var(--brand-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="spark-chart" viewBox="0 0 300 102" role="img" aria-label={tl("روند مصرف اعتبار", "Credit usage trend")}>
+      <defs><linearGradient id={gradient} x2="0" y2="1"><stop stopColor="#ff8a32" stopOpacity=".36" /><stop offset="1" stopColor="#ff8a32" stopOpacity="0" /></linearGradient></defs>
+      {[18, 43, 68, 93].map(y => <path key={y} d={`M6 ${y} H294`} stroke="currentColor" opacity=".12" />)}
+      <path d={`M${line} V93 H6 Z`} fill={`url(#${gradient})`} />
+      <path d={"M" + line} fill="none" stroke="#ff8a32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={last.x} cy={last.y} r="3.5" fill="#fff" stroke="#ff8a32" strokeWidth="2" />
     </svg>
   );
 }
+
 export function Dashboard() {
   const app = useApp();
   const { fa, t, n, locale, tl } = app;

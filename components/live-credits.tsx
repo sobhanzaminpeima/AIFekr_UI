@@ -24,7 +24,7 @@ const json = (url: string) => fetch(url, { credentials: "include", cache: "no-st
  * both histories. Wording: the classic page's (main site lib/billing/creditsCopy.ts).
  */
 export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
-  const { locale, n } = useApp();
+  const { locale, n, tl } = useApp();
   const { strings: s, labels: l, tools } = useShell()!.credits!;
   const [rates,setRates]=useState<{usdToToman:number;usdToTry:number}|null>(null);
   const [confirm,setConfirm]=useState<Tier|null>(null);
@@ -77,7 +77,7 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
 
   return (
     <>
-      <SectionTitle title={s["Credit Wallet"]} subtitle={s["Your credits are used across all AiFekr content-generation tools."]} />
+      <header className="reference-credit-heading"><Icon name="Wallet" size={34}/><SectionTitle title={tl("کیف پول و اعتبار", "Wallet and credits")} subtitle={s["Your credits are used across all AiFekr content-generation tools."]} /></header>
       <div className="wallet-hero panel">
         <div className="reference-wallet-balance"><Icon name="Wallet" size={32} />
         <p>
@@ -87,10 +87,18 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
         <h1>
           {n(profile?.displayCredits ?? profile?.credits ?? 0)} <small>{s["credits"]}</small>
         </h1>
-        <div className="domain-actions"><a className="btn primary" href="#credit-packages">{s["Buy Credits"]}<Icon name="Plus" size={16}/></a><a className="btn" href="/wallet"><Icon name="Wallet" size={16}/>{s["Credit Wallet"]}</a></div>
+        <div className="domain-actions"><a className="btn primary" href="#credit-packages">{s["Buy Credits"]}<Icon name="Plus" size={16}/></a><a className="btn" href="/wallet"><Icon name="Wallet" size={16}/>{tl("کیف پول نقدی", "Cash wallet")}</a><a className="btn" href="#credit-report"><Icon name="BarChart3" size={16}/>{tl("مشاهده گزارش", "View report")}</a></div>
         </div>
-        {days && <div className="reference-wallet-trend"><strong>{s["Usage — last 30 days"]}</strong><UsageChart days={days} /></div>}
+        {days && <div className="reference-wallet-trend"><strong>{tl("روند مصرف اعتبار", "Credit usage trend")}</strong><UsageChart days={days} /></div>}
       </div>
+      {!fitness && (
+        <div className="reference-wallet-stats">
+          <section className="panel"><span className="icon-chip green"><Icon name="TrendingUp" /></span><div><p>{s["Usage — last 30 days"]}</p><strong>{n(breakdown.reduce((total, row) => total + row.creditsSpent, 0))} {s["credits"]}</strong></div></section>
+          <section className="panel"><span className="icon-chip orange"><Icon name="Layers" /></span><div><p>{tl("بسته فعال", "Active plan")}</p><strong>{profile?.plan ? (l.PLAN_LABEL[profile.plan] ?? profile.plan) : "—"}</strong>{profile?.planExpiry && <small>{tl("اعتبار تا", "Valid until")} {date(profile.planExpiry)}</small>}</div></section>
+        </div>
+      )}
+      {!fitness && <CreditLedger />}
+      <div id="credit-report" />
       {wallets && (
         <div className="credit-packs">
           {([["aiCredits", "MessagesSquare", "AI Credits"], ["mediaCredits", "Image", "Media Credits"], ["voiceMinutes", "Mic", "Voice Minutes"]] as const).map(([key, icon, label]) => (
@@ -150,7 +158,6 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
           </div>
         ))}
       </section>
-      {!fitness && <CreditLedger />}
       <section className="panel">
         <h2>{s["Credit usage"]}</h2>
         {usage === null ? <p className="muted">…</p> : !usage.length ? <p className="muted">{s["No credits used yet."]}</p> : usage.map((e) => (

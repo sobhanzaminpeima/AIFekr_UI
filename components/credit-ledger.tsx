@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { useApp } from "./providers";
-import { Button } from "./ui";
+import { Button, Icon } from "./ui";
 
 type Entry = { id: string; type: string; delta: number; balanceAfter: number | null; module: string | null; wallet: "personal" | "team"; createdAt: string };
 
@@ -27,7 +27,7 @@ const IDX = { fa: 0, en: 1, de: 2, tr: 3 } as const;
 
 /** The user's own credit ledger (E2): any balance change can be matched to one line here. */
 export function CreditLedger() {
-  const { locale, n } = useApp();
+  const { locale, n, tl } = useApp();
   const lang = (["fa", "en", "de", "tr"].includes(locale) ? locale : "en") as keyof typeof T;
   const t = T[lang];
   const [entries, setEntries] = useState<Entry[] | null>(null);
@@ -52,24 +52,26 @@ export function CreditLedger() {
   useEffect(() => { void load(null); }, [load]);
   const when = (v: string) => new Intl.DateTimeFormat(lang === "fa" ? "fa-IR-u-ca-persian" : lang, { dateStyle: "medium", timeStyle: "short" }).format(new Date(v));
   return (
-    <section className="panel">
-      <h2>{t.title}</h2>
-      <p className="muted">{t.intro}</p>
+    <section className="panel reference-ledger">
+      <h2><Icon name="Clock" size={20} /> {tl("تراکنش‌های اخیر", "Recent transactions")}</h2>
       {failed && <p role="alert">{t.failed}</p>}
-      {entries === null ? <p className="muted">…</p> : !entries.length ? <p className="muted">{t.empty}</p> : entries.map((e) => (
-        <div className="domain-card row-between" key={e.id}>
-          <div>
-            <strong>{(TYPES[e.type] ?? [e.type, e.type, e.type, e.type])[IDX[lang]]}</strong>
-            {e.module && <span className="muted"> · <bdi dir="ltr">{e.module}</bdi></span>}
-            {e.wallet === "team" && <span className="badge">{t.team}</span>}
-            <p>{when(e.createdAt)} · {t.receipt} <bdi dir="ltr">{e.id.slice(-8)}</bdi></p>
-          </div>
-          <div style={{ textAlign: "end" }}>
-            <strong className={e.delta < 0 ? "red-text" : "green"}>{e.delta > 0 ? "+" : "−"}{n(Math.abs(e.delta))}</strong>
-            {e.balanceAfter != null && <p className="muted">{t.after}: {n(e.balanceAfter)}</p>}
-          </div>
+      {failed && entries === null && <Button disabled={busy} onClick={() => void load(null)}>{tl("تلاش دوباره", "Retry")}</Button>}
+      {entries === null ? (!failed && <p role="status" className="muted">…</p>) : !entries.length ? <p className="muted">{t.empty}</p> : (
+        <div className="reference-ledger-scroll">
+          <table>
+            <caption className="sr-only">{t.intro}</caption>
+            <thead><tr><th scope="col">{tl("تاریخ و زمان", "Date and time")}</th><th scope="col">{tl("نوع تراکنش", "Transaction type")}</th><th scope="col">{tl("تغییر اعتبار", "Credit change")}</th><th scope="col">{t.after}</th></tr></thead>
+            <tbody>{entries.map((e) => (
+              <tr key={e.id}>
+                <td><time dateTime={e.createdAt}>{when(e.createdAt)}</time><small>{t.receipt} <bdi dir="ltr">{e.id.slice(-8)}</bdi></small></td>
+                <td><strong>{(TYPES[e.type] ?? [e.type, e.type, e.type, e.type])[IDX[lang]]}</strong>{e.module && <small><bdi dir="ltr">{e.module}</bdi></small>}{e.wallet === "team" && <small>{t.team}</small>}</td>
+                <td><strong className={e.delta < 0 ? "red-text" : "green"}><bdi dir="ltr">{e.delta > 0 ? "+" : e.delta < 0 ? "−" : ""}{n(Math.abs(e.delta))}</bdi></strong></td>
+                <td>{e.balanceAfter == null ? "—" : n(e.balanceAfter)}</td>
+              </tr>
+            ))}</tbody>
+          </table>
         </div>
-      ))}
+      )}
       {next && <Button disabled={busy} onClick={() => void load(next)}>{t.more}</Button>}
     </section>
   );
