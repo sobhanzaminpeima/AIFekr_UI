@@ -35,6 +35,7 @@ const FAILURES: Record<string, string> = {
   BUNDLE_FEATURE_LIMIT: "This package supports up to eight image scenes and narration per one-minute video. Turn off additional effects.",
   AUDIO_TEMPORARILY_UNAVAILABLE: "Image and video generation is active; narration and music are temporarily unavailable. Turn off audio options.",
   VIDEO_PACKAGE_REQUIRED_OR_EXHAUSTED: "Purchase a video package or renew your quota.",
+  VIDEO_MAXIMUM_10_MINUTES: "Each video is limited to 10 minutes.",
   VIDEO_MAXIMUM_8_MINUTES: "Each video is limited to 8 minutes.",
   FACTORY_DISABLED: "The administrator has not enabled Video Factory.",
   PRICING_NOT_CONFIGURED: "Production rates have not been configured.",
@@ -402,7 +403,7 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, c
   const [config, setConfig] = useState<Configuration>({ ...(NEW_CONFIGURATION as unknown as Configuration), durationSeconds: 180, narration: true, imageEveryShot: true, language: lang as Configuration["language"] });
   const [style, setStyle] = useState("STICKMAN");
   const change = (patch: Partial<Configuration>) => setConfig((c) => ({ ...c, ...patch }));
-  const lengths = config.ratio === "9:16" ? [30, 60] : [60, 180, 300, 480];
+  const lengths = config.ratio === "9:16" ? [30, 60] : [60, 180, 300, 480, 600];
   // Shown before the exact server estimate: the live price is 500 credits per minute.
   const approx = Math.ceil(config.durationSeconds / 60 * 500);
   const autoTitle = (title.trim() || brief.trim().split(/\n|[.!؟?]/)[0] || "").slice(0, 120);
