@@ -42,6 +42,11 @@ export function FactoryShell({ module, view, children }: { module: ModuleSpec; v
   const inPro = pro.some((p) => p.id === view.id);
   return (
     <div className={`factory-shell accent-${module.accent}`} data-module={module.id}>
+      <header className="reference-intro reference-factory-intro">
+        <div className="reference-wordmark" dir="ltr"><span aria-hidden="true">✦</span> AIFekr</div>
+        <h1><Icon name={module.icon} size={26}/> {tl(module.title[0],module.title[1])}</h1>
+        <p>{tl("از ایده تا ویدیوی حرفه‌ای، ساخت و تدوین در یک جا.","Create, edit and manage your video in one place.")}</p>
+      </header>
       <header className="factory-bar">
         <span className="factory-bar-title"><Icon name={module.icon} size={20} />{tl(module.title[0], module.title[1])}</span>
         <nav className="factory-tools" aria-label={tl(module.title[0], module.title[1])}>

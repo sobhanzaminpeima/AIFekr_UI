@@ -79,7 +79,7 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
     <>
       <SectionTitle title={s["Credit Wallet"]} subtitle={s["Your credits are used across all AiFekr content-generation tools."]} />
       <div className="wallet-hero panel">
-        <Icon name="Sparkles" size={37} />
+        <div className="reference-wallet-balance"><Icon name="Wallet" size={32} />
         <p>
           {s["Available credits today"]}
           {profile?.plan && <> · <strong>{l.PLAN_LABEL[profile.plan] ?? profile.plan}</strong></>}
@@ -87,7 +87,9 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
         <h1>
           {n(profile?.displayCredits ?? profile?.credits ?? 0)} <small>{s["credits"]}</small>
         </h1>
-        {days && <UsageChart days={days} />}
+        <div className="domain-actions"><a className="btn primary" href="#credit-packages">{s["Buy Credits"]}<Icon name="Plus" size={16}/></a><a className="btn" href="/wallet"><Icon name="Wallet" size={16}/>{s["Credit Wallet"]}</a></div>
+        </div>
+        {days && <div className="reference-wallet-trend"><strong>{s["Usage — last 30 days"]}</strong><UsageChart days={days} /></div>}
       </div>
       {wallets && (
         <div className="credit-packs">
@@ -111,7 +113,7 @@ export function LiveCredits({ fitness = false }: { fitness?: boolean }) {
           ))}
         </section>
       )}
-      <SectionTitle title={s["Buy Credits"]} />
+      <div id="credit-packages"><SectionTitle title={s["Buy Credits"]} /></div>
       {!tiers.length ? (
         <p className="muted">{s["No purchase tiers are available right now."]}</p>
       ) : (

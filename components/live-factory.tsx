@@ -178,20 +178,32 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
     } finally { setDeleting(false); }
   };
   const [projects, setProjects] = useState<Project[] | null>(null);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
   useEffect(() => {
     setProjects(null);
     api<{ projects: Project[] }>(`/api/video-factory/projects?page=${page}`).then((d) => setProjects(d.projects)).catch((e: Error) => { setError(e.message); setProjects([]); });
   }, [api, page]);
+  const rows = projects ?? [];
+  const filters = [
+    {id:"all",label:fa?"همهٔ پروژه‌ها":"All projects",icon:"Layers",count:rows.length},
+    {id:"active",label:fa?"در حال پردازش":"In production",icon:"LoaderCircle",count:rows.filter(p=>ACTIVE.includes(p.jobs[0]?.status)).length},
+    {id:"delivered",label:fa?"آمادهٔ دانلود":"Ready to download",icon:"Download",count:rows.filter(p=>p.jobs[0]?.status==="DELIVERED").length},
+  ];
+  const visible = rows.filter(p=>(p.title+" "+p.brief).toLocaleLowerCase(lang).includes(query.trim().toLocaleLowerCase(lang)) &&
+    (filter==="all"||(filter==="active"?ACTIVE.includes(p.jobs[0]?.status):p.jobs[0]?.status==="DELIVERED")));
   return (
     <>
       <div className="production-project-summary">
         <span className="icon-chip orange"><Icon name="Film" size={34} /></span>
         <div>
-          <h2>{fa ? "پروژه‌های روایت و ویدیو" : "Story & video projects"} <Hint text={f("Write your idea or script; AI turns it into a chaptered video with visuals and narration. You see the cost before it starts, and failed production is refunded automatically.")} /></h2>
+          <h2>{fa ? "پروژه‌ها" : "Projects"}</h2>
         </div>
         <Link className="btn primary" href="/video-factory?tab=production&new=1" onClick={() => setActive("")}>{f("New project")}</Link>
       </div>
+      <div className="domain-toolbar reference-project-search"><Icon name="Search" size={18}/><input aria-label={fa?"جستجوی پروژه‌های این صفحه":"Search projects on this page"} placeholder={fa?"جستجو در پروژه‌ها…":"Search projects…"} value={query} onChange={e=>setQuery(e.target.value)}/></div>
+      <div className="reference-project-filters">{filters.map(item=><button className={`panel ${filter===item.id?"selected":""}`} key={item.id} aria-pressed={filter===item.id} onClick={()=>setFilter(item.id)}><Icon name={item.icon} size={20}/><span>{item.label}<small>{projects ? n(item.count) : "—"}</small></span></button>)}</div>
       {error && <ErrorBanner text={x.err(error)} />}
       {toDelete && (
         <Modal title={fa ? "حذف پروژه" : "Delete project"} onClose={() => !deleting && setToDelete(null)}>
@@ -202,19 +214,19 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
           </div>
         </Modal>
       )}
-      {projects === null ? <div className="skeleton" /> : projects.length ? (
-        <div className="tool-grid">
-          {projects.map((p) => {
+      {projects === null ? <div className="skeleton" /> : visible.length ? (
+        <div className="tool-grid production-project-grid">
+          {visible.map((p) => {
             const config = configOf(p), job = p.jobs[0];
             return (
               <article className="panel production-project-card" key={p.id}>
-                <div className="production-project-art"><Icon name="Film" size={44} /><span>{config.ratio}</span></div>
+                <div className="production-project-art"><Icon name="Film" size={32} /><span>{config.ratio} · {n(config.durationSeconds)} {fa?"ثانیه":"s"}</span></div>
                 <h3>{p.title}</h3>
                 <p>{p.brief.slice(0, 100)}</p>
                 <span className="badge">{job ? f(STATUS[job.status] || job.status) : f("Draft")}</span>
                 {p.updatedAt && <small>{new Date(p.updatedAt).toLocaleString(lang)}</small>}
                 <div className="domain-actions">
-                  <Link className="btn" href="/video-factory?tab=production" onClick={() => setActive(p.id)}>{fa ? "باز کردن پروژه" : "Open project"}</Link>
+                  <Link className="btn" href="/video-factory?tab=production" onClick={() => setActive(p.id)}><Icon name="FolderOpen" size={16}/>{fa ? "باز کردن پروژه" : "Open project"}</Link>
                   <Button onClick={() => download("video-project-" + p.id + ".json", JSON.stringify({ title: p.title, brief: p.brief, configuration: config, manifest: manifestOf(p) }, null, 2), "application/json")}>{fa ? "خروجی" : "Export"}</Button>
                   <Button label={fa ? `حذف ${p.title}` : `Delete ${p.title}`} onClick={() => setToDelete(p)}><Icon name="Trash2" size={16} />{fa ? "حذف" : "Delete"}</Button>
                 </div>
@@ -225,7 +237,7 @@ function ProjectsView({ x }: { x: FactoryCtx }) {
       ) : (
         <section className="panel">
           <Empty />
-          <h3>{f("Your first story starts here")} <Hint text={f("Choose a video package, add your idea or script, and create videos up to 8 minutes. Failed production credits are automatically refunded.")} /></h3>
+          <h3>{query||filter!=="all" ? fa?"پروژه‌ای مطابق این فیلتر پیدا نشد.":"No matching project on this page." : f("Your first story starts here")}</h3>
         </section>
       )}
       <div className="domain-actions">
@@ -350,7 +362,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
           <Link className="btn" href="/video-factory?tab=production&new=1" title={f("New project")} onClick={() => setActive("")}><Icon name="Plus" size={16} />{f("New project")}</Link>
         </div>
       )}
-      {!creating && <div className="stepper">
+      {<div className="stepper">
         {labels.map((s, i) => (
           <button key={s} className={step === i ? "current" : i < step ? "completed" : ""} disabled={busy || !reachable(i)} onClick={() => setStep(i)}>
             <span>{n(i + 1)}</span>{s}
@@ -409,6 +421,17 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, c
     }}>
       <h1>{tx(["موضوع را بنویس؛ بقیه‌اش خودکار است.", "Write the topic; the rest is automatic.", "Schreib das Thema – der Rest läuft automatisch.", "Konuyu yazın; gerisi otomatik."])} <Hint text={tx(["متن، تصویر همهٔ صحنه‌ها، صدای گوینده، هم‌زمانی صدا با تصویر، زیرنویس و رندر نهایی خودکار ساخته می‌شوند. بعد از ساخت، هر چیزی را خواستی ویرایش کن.", "Script, an image for every scene, narration, voice-to-image timing, captions and the final render are made automatically. Edit anything afterwards.", "Skript, Bilder für jede Szene, Sprecher, Timing, Untertitel und Rendering entstehen automatisch. Danach kannst du alles bearbeiten.", "Senaryo, her sahne için görsel, seslendirme, zamanlama, altyazı ve render otomatik yapılır. Sonra her şeyi düzenleyebilirsiniz."])} /></h1>
 
+      <div className="reference-vf-controls">
+        <aside className="panel reference-vf-aside">
+          <div className="reference-vf-art" aria-hidden="true"><Icon name="Clapperboard" size={74}/></div>
+          <h2>{tx(["با کارخانه ویدیو چه می‌سازی؟","What can you make?","Was kannst du erstellen?","Ne oluşturabilirsin?"])}</h2>
+          <ul>
+            <li><Icon name="Check" size={17}/>{tx(["تبدیل ایده به فیلم‌نامه و نما","Turn an idea into a script and shots","Ideen in Skripte und Szenen verwandeln","Fikri senaryoya ve sahnelere dönüştür"])}</li>
+            <li><Icon name="Check" size={17}/>{tx(["انتخاب تصویر، روایت و موسیقی","Choose visuals, narration and music","Bilder, Sprache und Musik auswählen","Görsel, seslendirme ve müzik seç"])}</li>
+            <li><Icon name="Check" size={17}/>{tx(["خروجی برای یوتیوب و شبکه‌های اجتماعی","Export for YouTube and social media","Export für YouTube und soziale Medien","YouTube ve sosyal medya için dışa aktar"])}</li>
+          </ul>
+        </aside>
+        <div className="reference-vf-fields">
       <label className="vf-quick-topic">{tx(["موضوع یا متن ویدیو", "Topic or script", "Thema oder Skript", "Konu veya senaryo"])}
         <textarea required minLength={10} maxLength={30000} rows={4} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder={tx(["مثلاً: داستان ساخت راه‌آهن سراسری ایران، برای مخاطب عام", "e.g. The story of the first transcontinental railway, for a general audience", "z. B. Die Geschichte der ersten transkontinentalen Eisenbahn", "örn. İlk kıtalararası demiryolunun hikâyesi"])} />
       </label>
@@ -447,6 +470,8 @@ function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, c
         </fieldset>
       )}
       {silentOnly && <div className="notice-banner"><Icon name="Info" size={16} /><span>{f("Script, image and silent video generation are available. Narration and music will follow when their connections are ready.")}</span></div>}
+        </div>
+      </div>
 
       <div className="vf-quick-submit">
         <span>{tx([`حدود ${n(approx)} کردیت · عدد دقیق را قبل از شروع می‌بینی`, `About ${approx} credits · you see the exact number before starting`, `Etwa ${approx} Credits · den genauen Betrag siehst du vor dem Start`, `Yaklaşık ${approx} kredi · kesin tutarı başlamadan önce görürsünüz`])}</span>

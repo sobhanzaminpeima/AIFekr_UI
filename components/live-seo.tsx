@@ -66,11 +66,11 @@ export function LiveSeo({
     selected = list.find((s) => s.id === id) ?? list[0];
   return (
     <LiveModuleFrame module={module} view={view}>
-      <section className="panel">
+      <section className="panel reference-seo-site">
         <LiveLoad {...sites} />
         {sites.data && (
           <>
-            <label>
+            <label className="reference-seo-select">
               {fa ? "وب‌سایت" : "Website"}
               <select
                 value={String(selected?.id ?? "")}
@@ -84,6 +84,8 @@ export function LiveSeo({
                 ))}
               </select>
             </label>
+            <details open={list.length===0}>
+              <summary>{fa ? "افزودن سایت" : "Add website"}</summary>
             <LiveForm
               title={fa ? "افزودن سایت" : "Add website"}
               url={API + "sites"}
@@ -100,6 +102,7 @@ export function LiveSeo({
               {fa ? "سقف سایت‌های پلن: " : "Plan website limit: "}
               {String(sites.data.limit ?? "—")}
             </p>
+            </details>
           </>
         )}
       </section>

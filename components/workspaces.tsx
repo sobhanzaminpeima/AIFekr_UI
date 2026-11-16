@@ -17,12 +17,44 @@ import { Chat } from "./chat";
 import { toast } from "sonner";
 import { AdminSpecial, isSpecialAdmin } from "./admin-special";
 import { modules, moduleViewHref } from "@/lib/upstream/registry";
+import { useShell } from "./live-shell-context";
+
+const creativeCards = [
+  ["/image/generate","Image","orange","image","استودیو تصویر","Image studio","ایده‌ات را به تصویر تبدیل کن.","Create an image from your idea."],
+  ["/voice-studio","AudioLines","purple","audio","استودیو صدا","Voice studio","تبدیل متن به گفتار و مدیریت صدا.","Turn scripts into speech."],
+  ["/video-factory?tab=production&new=1","Layers","blue","mixed","روایت ترکیبی","Multimedia story","تصویر و صدا را در یک پروژه ترکیب کن.","Combine visuals and audio in one project."],
+  ["/play","Gamepad2","pink","mixed","زمین بازی AI","AI playground","بازی‌ها و تجربه‌های تعاملی آی‌فکر.","Explore interactive AIFekr experiences."],
+  ["/video-factory","Clapperboard","blue","video","کارخانه ویدیو","Video Factory","ساخت ویدیو از متن، تصویر یا ایده.","Create a video from a script, image or idea."],
+  ["/music/generate","Music2","pink","audio","موسیقی‌ساز","Music studio","موسیقی مناسب پروژه‌ات را بساز.","Create music for your project."],
+  ["/chat","Pencil","purple","text","استودیو نوشتن","Writing studio","پیش‌نویس متن، سناریو و کپشن.","Draft copy, scripts and captions."],
+  ["/chat","Lightbulb","green","text","ایده‌ساز","Idea generator","برای محتوا و پروژه‌ها ایده بگیر.","Brainstorm ideas for content and projects."],
+] as const;
+
+function ReferenceCreate(){
+  const {tl}=useApp();
+  const [query,setQuery]=useState("");
+  const [category,setCategory]=useState("all");
+  const categories=[["all","LayoutGrid","همه ابزارها","All tools"],["image","Image","تصویر","Image"],["video","Clapperboard","ویدیو","Video"],["audio","AudioLines","صدا و موسیقی","Audio & music"],["text","Lightbulb","ایده و متن","Ideas & text"],["mixed","Layers","ابزارهای ترکیبی","Multimedia"]];
+  return <div className="reference-create">
+    <header className="reference-intro"><h1><em aria-hidden="true">✦</em> {tl("استودیو خلاقیت","Creative studio")}</h1><p>{tl("ساخت تصویر، ویدیو، صدا و ایده در یک فضای یکپارچه","Create images, video, audio and ideas in one workspace")}</p></header>
+    <form className="reference-composer reference-create-composer panel" onSubmit={e=>{e.preventDefault();if(query.trim())window.location.assign("/chat?prompt="+encodeURIComponent(query.trim()));}}>
+      <Icon name="Sparkles" size={25}/><input value={query} onChange={e=>setQuery(e.target.value)} aria-label={tl("ایدهٔ خلاقانه","Creative idea")} placeholder={tl("ایده‌ات را بگو تا در ساخت محتوا کمک کنیم…","Describe what you want to make…")}/><Button type="submit" variant="primary" disabled={!query.trim()}>{tl("ساخت سریع","Quick create")}</Button>
+    </form>
+    <div className="reference-create-filters chips">{categories.map(([id,icon,fa,en])=><button key={id} aria-pressed={category===id} className={category===id?"selected":""} onClick={()=>setCategory(id)}><Icon name={icon} size={17}/>{tl(fa,en)}</button>)}</div>
+    <div className="tool-grid reference-create-grid">
+      {creativeCards.filter(card=>category==="all"||card[3]===category).map(([href,icon,color,id,far,en,bodyFa,bodyEn])=><article className={`panel reference-create-card ${id==="image"?"featured":""}`} key={id+icon}><span className={`icon-chip ${color}`}><Icon name={icon}/></span><h2>{tl(far,en)}</h2><p>{tl(bodyFa,bodyEn)}</p><Link className={`btn full ${id==="image"?"primary":""}`} href={href==="/chat"&&icon==="Lightbulb"?"/chat?prompt="+encodeURIComponent(tl("برای پروژه‌ام ایده بده","Help me brainstorm ideas for my project")):href}>{tl("شروع کنید","Start")}<Icon name="ArrowLeft" size={17} className="directional"/></Link></article>)}
+    </div>
+    <div className="inline-banner"><Icon name="Image"/><div><h2>{tl("گالری آثار خلاقانه","Creative gallery")}</h2><p>{tl("ساخته‌های خود را در یک جا ببینید.","See your creations in one place.")}</p></div><Link className="btn" href="/gallery">{tl("مشاهده گالری","View gallery")}</Link></div>
+  </div>;
+}
 export function Hub({
   group,
 }: {
   group: "create" | "business" | "learn" | "fit";
 }) {
   const { fa, t, n } = useApp();
+  const live = useShell();
+  if (live && group === "create") return <ReferenceCreate />;
   return (
     <div>
       <div className={`module-hero ${group}`}>

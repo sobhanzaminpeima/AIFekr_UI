@@ -103,6 +103,12 @@ export function Shell({
   useEffect(()=>{const open=()=>setDirectory(true);window.addEventListener("aifekr:directory",open);return()=>window.removeEventListener("aifekr:directory",open);},[]);
   const router = useRouter();
   const admin = path.startsWith("/admin");
+  const referenceWorkspace = !!live && !admin && /^\/(home|live|create|crm|seo|video-factory|credits|wallet|settings)(\/|$)/.test(path);
+  const sidebarItems = nav.map(([href,key,icon])=>({href,label:t(key),icon}));
+  if(referenceWorkspace) sidebarItems.splice(4,0,
+    {href:"/video-factory",label:tl("کارخانه ویدیو","Video Factory"),icon:"Clapperboard"},
+    {href:"/crm",label:"CRM",icon:"BriefcaseBusiness"},
+  );
   useEffect(() => {
     let last = "";
     const handler = (e: KeyboardEvent) => {
@@ -140,11 +146,12 @@ export function Shell({
   }, [mobile]);
   return (
     <div
-      className={`app-shell ${admin ? "admin-shell" : ""} ${live && (path === "/chat" || path.startsWith("/chat/")) ? "chat-route" : ""} ${collapsed || ["/crm", "/accounting", "/sales", "/business/crm", "/business/accounting", "/business/real-estate"].some((root) => path === root || path.startsWith(root + "/")) ? "collapsed" : ""}`}
+      className={`app-shell ${referenceWorkspace ? "reference-workspace" : ""} ${admin ? "admin-shell" : ""} ${live && (path === "/chat" || path.startsWith("/chat/")) ? "chat-route" : ""} ${collapsed || (!referenceWorkspace && ["/crm", "/accounting", "/sales", "/business/crm", "/business/accounting", "/business/real-estate"].some((root) => path === root || path.startsWith(root + "/"))) ? "collapsed" : ""}`}
+      data-workspace={referenceWorkspace ? path.split("/")[1] : undefined}
     >
       <aside id="workspace-sidebar" className={`sidebar ${mobile ? "mobile-open" : ""}`} onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMobile(false); }}>
         <div className="sidebar-top">
-          <Brand compact={collapsed} />
+          {referenceWorkspace ? <Link className="brand reference-wordmark" href="/home" aria-label="AIFekr"><span aria-hidden="true">✦</span>{!collapsed && <b>AIFekr</b>}</Link> : <Brand compact={collapsed} />}
           <button
             className="icon-btn collapse-btn"
             aria-label={t("close")}
@@ -174,8 +181,8 @@ export function Shell({
             </button>
           </>
         )}
-        <div className="side-label">{admin ? t("admin") : t("workspace")}</div>
-        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{nav.filter(([href]) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(([href,key,icon])=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={t(key)}><Icon name={icon}/><span>{t(key)}</span>{href==="/chat"&&<span className="small-tag">AI</span>}{href==="/live"&&<span className="new-tag">{newTag}</span>}</Link>)}</nav>}
+        <div className="side-label">{admin ? t("admin") : referenceWorkspace ? tl("دسترسی سریع", "Quick access") : t("workspace")}</div>
+        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{sidebarItems.filter(({href}) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(({href,label,icon})=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={label}><Icon name={icon}/><span>{label}</span>{!referenceWorkspace&&href==="/chat"&&<span className="small-tag">AI</span>}{!referenceWorkspace&&href==="/live"&&<span className="new-tag">{newTag}</span>}</Link>)}</nav>}
         {!admin && live?.proTools && live.proTools.length > 0 && (
           <>
             <div className="side-label">{tl("ابزارهای حرفه‌ای", "Pro tools")}</div>
@@ -313,7 +320,7 @@ export function Shell({
             </span>
           </div>
           <div className="top-actions">
-            <button className="btn module-switcher" onClick={()=>setDirectory(true)} aria-label={tl('انتخاب ماژول', 'Choose workspace')}><Icon name="LayoutGrid" size={18}/><span>{tl('ماژول‌ها', 'Workspaces')}</span></button>
+            <button className="btn module-switcher" onClick={()=>setDirectory(true)} aria-label={tl('انتخاب ماژول', 'Choose workspace')}><Icon name={referenceWorkspace ? "Layers" : "LayoutGrid"} size={18}/><span>{referenceWorkspace ? tl("فضای کاری من","My workspace") : tl('ماژول‌ها', 'Workspaces')}</span></button>
             {!live && <span className="live-status">
               <i />
               {t("mock")}

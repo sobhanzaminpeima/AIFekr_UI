@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useApp } from "./providers";
 import { Preferences } from "./shell";
-import { SectionTitle, Button, Icon } from "./ui";
+import { Button, Icon } from "./ui";
 import Link from "./site-link";
 import {
   LiveForm,
@@ -26,8 +26,12 @@ export function LiveSettings() {
   };
   return (
     <div className="account-center settings-center">
-      <SectionTitle title={fa ? "حساب و پروفایل من" : "My account & profile"} subtitle={fa?"اطلاعات، امنیت و فضای شخصی‌تان را از اینجا مدیریت کنید.":"Manage your personal details, security and workspace preferences."} />
-      <div className="settings-account-banner panel"><span className="avatar">{String(user?.name||"A").slice(0,1)}</span><div><strong>{String(user?.name|| (fa?"حساب شما":"Your account"))}</strong><p>{String(user?.email||"")}</p></div><Link className="btn" href="/plans">{fa?"مدیریت پکیج":"Manage package"}<Icon name="ArrowUpLeft" size={16}/></Link></div>
+      <header className="reference-intro">
+        <div className="reference-wordmark" dir="ltr"><span aria-hidden="true">✦</span> AIFekr</div>
+        <h1>{fa ? "حساب و پروفایل من" : "My account & profile"}</h1>
+        <p>{fa ? "مدیریت اطلاعات شخصی، امنیت حساب، ظاهر و حساب‌های متصل" : "Manage personal details, account security, appearance and connections"}</p>
+      </header>
+      <div className="settings-account-banner panel"><span className="avatar">{String(user?.name||"A").slice(0,1)}</span><div><strong>{String(user?.name|| (fa?"حساب شما":"Your account"))}</strong><p>{String(user?.email||"")}</p></div><Link className="btn" href="/plans"><Icon name="Crown" size={17}/>{user?.plan ? String(user.plan) : fa?"مدیریت پکیج":"Manage package"}</Link></div>
       <nav
         className="module-tabs settings-tabs"
         aria-label={fa ? "تنظیمات حساب" : "Account settings"}
@@ -37,16 +41,17 @@ export function LiveSettings() {
           ["security", "امنیت", "Security"],
           ["appearance", "زبان و ظاهر", "Language & appearance"],
           ["connections", "حساب‌های متصل", "Connections"],
-        ].map(([id, a, b]) => (
+        ].map(([id, a, b],i) => (
           <button
             key={id}
+            aria-pressed={tab === id}
             className={tab === id ? "selected" : ""}
             onClick={() => {
               setTab(id);
               setSaved(false);
             }}
           >
-            {fa ? a : b}
+            <Icon name={["UserRound","Shield","Palette","Link"][i]} size={18}/>{fa ? a : b}
           </button>
         ))}
       </nav>
@@ -60,7 +65,7 @@ export function LiveSettings() {
       )}
       {user && tab === "profile" && (
         <div className="settings-layout">
-          <section className="panel">
+          <section className="panel reference-profile-identity">
             <h2>{fa ? "عکس حساب" : "Account photo"}</h2>
             {typeof user.avatar === "string" && user.avatar && (
               <img
@@ -69,6 +74,7 @@ export function LiveSettings() {
                 alt={fa ? "عکس پروفایل" : "Profile photo"}
               />
             )}
+            {!user.avatar && <span className="avatar account-avatar-preview" aria-hidden="true">{String(user.name||"A").slice(0,1)}</span>}
             <LiveUpload
               url="/api/user/avatar"
               title={fa ? "ذخیره عکس" : "Save photo"}
@@ -86,7 +92,7 @@ export function LiveSettings() {
               {String(user.plan ?? "")} · {user.planExpiry ? new Date(String(user.planExpiry)).toLocaleDateString(locale) : "—"}
             </p>
           </section>
-          <section className="panel">
+          <section className="panel reference-profile-form">
             <LiveForm
               key={
                 String(user.name) + String(user.country) + String(user.currency)

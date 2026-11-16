@@ -219,6 +219,13 @@ export function TimelineEditor({ x, manifest, setManifest, durationSeconds, onLe
           );
         })}
       </div>
+      <details className="reference-shot-list" open>
+        <summary>{L("مدیریت نماها", "Manage shots", "Einstellungen verwalten", "Sahneleri yönet")} ({n(flat.length)})</summary>
+        {flat.map((shot,i)=><button type="button" aria-pressed={current?.id===shot.id} key={shot.id} onClick={()=>setSelected(shot.id)}>
+          {media[shot.id]?.image?.url && <img src={media[shot.id]!.image!.url} alt="" loading="lazy"/>}
+          <strong>{n(i+1)}. {shot.title}</strong><span dir="auto">{shot.narration}</span><time>{clock(shot.durationFrames/24)}</time>
+        </button>)}
+      </details>
       <p className="vf-legend">
         <span><i className="ok" />{L("صدا در زمان نما جا می‌شود", "Voice fits the shot", "Stimme passt", "Ses sahneye sığıyor")}</span>
         <span><i className="fast" />{L("صدا بلندتر است و سریع‌تر پخش می‌شود", "Voice is longer and will be sped up", "Stimme ist länger und wird beschleunigt", "Ses daha uzun, hızlandırılacak")}</span>

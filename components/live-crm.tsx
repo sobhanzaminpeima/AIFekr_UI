@@ -202,17 +202,19 @@ function BoardView() {
     );
   const open = (deals ?? []).filter((d) => d.status === "open");
   const won = (deals ?? []).filter((d) => d.status === "won");
+  const lost = (deals ?? []).filter((d) => d.status === "lost");
   const filtered = (deals ?? []).filter((d) => (d.title + " " + (d.contact?.name ?? "")).toLowerCase().includes(query.trim().toLowerCase()));
   const dealOpen = deals?.find((d) => d.id === dealId) ?? null;
   return (
     <>
-      <div className="stats-grid">
+      <div className="stats-grid reference-crm-stats">
         {[
-          [fa ? "ارزش کل قیف" : "Pipeline value", compactAmount(open.reduce((sum, d) => sum + d.value, 0), lang)],
-          [fa ? "فروش قطعی" : "Won revenue", compactAmount(won.reduce((sum, d) => sum + d.value, 0), lang)],
-          [c.analytics.totalDeals, n(deals?.length ?? 0)],
-        ].map(([label, value]) => (
-          <div className="panel stat" key={label}><span>{label}</span><strong>{value}</strong></div>
+          [fa ? "ارزش کل مسیر فروش" : "Pipeline value", compactAmount(open.reduce((sum, d) => sum + d.value, 0), lang), "Coins", "orange"],
+          [fa ? "معاملات فعال" : "Active deals", n(open.length), "Layers", "blue"],
+          [fa ? "معاملات برنده" : "Won deals", n(won.length), "CircleCheck", "green"],
+          [fa ? "معاملات از دست‌رفته" : "Lost deals", n(lost.length), "CircleX", "orange"],
+        ].map(([label, value, icon, color]) => (
+          <div className="panel stat" key={label}><span className={`icon-chip ${color}`}><Icon name={icon} size={19}/></span><span>{label}</span><strong>{deals ? value : "—"}</strong></div>
         ))}
       </div>
       <div className="domain-toolbar">

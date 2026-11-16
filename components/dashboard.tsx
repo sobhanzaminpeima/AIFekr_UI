@@ -124,6 +124,50 @@ export function Dashboard() {
           ...tools.filter((v) => v.group === workspace),
           ...tools.filter((v) => v.group !== workspace),
         ];
+  if (Boolean(live)) {
+    const shortcuts = [
+      ["/chat", "MessageCircle", "orange", "گفتگو", "Chat", "پرسش، ایده‌پردازی و حل مسئله", "Ask, brainstorm and solve"],
+      ["/live", "AudioLines", "purple", "AIFekr Live", "AIFekr Live", "گفتگوی صوتی با هوش مصنوعی", "Talk to AI"],
+      ["/create", "Sparkles", "pink", "استودیو خلاقیت", "Creative studio", "تولید تصویر، ویدیو و موسیقی", "Create images, video and music"],
+      ["/crm", "BriefcaseBusiness", "purple", "CRM", "CRM", "مدیریت مشتریان و فروش", "Manage customers and sales"],
+      ["/seo", "Search", "blue", "سئو سایت", "Site SEO", "تحلیل و بهینه‌سازی وب‌سایت", "Analyze and optimize your site"],
+      ["/video-factory", "Clapperboard", "orange", "کارخانه ویدیو", "Video Factory", "ساخت و تدوین ویدیو با AI", "Make and edit AI video"],
+    ];
+    const workflows = [
+      ["/social", "Pencil", "orange", "تولید محتوای شبکه‌های اجتماعی", "Social content", "ایده، متن و تصویر آماده انتشار", "Ideas, copy and images"],
+      ["/video-factory?tab=production&new=1", "Video", "purple", "ساخت ویدیو کوتاه", "Create a short video", "از ایده تا ویدیو", "From idea to video"],
+      ["/seo", "TrendingUp", "blue", "بهینه‌سازی سئو محتوا", "Optimize content SEO", "تحلیل کلیدواژه و بهبود متن", "Keyword and content analysis"],
+      ["/crm", "Users", "green", "مدیریت و پیگیری مشتریان", "Manage customer follow-ups", "مدیریت فرصت‌های فروش", "Manage sales opportunities"],
+    ];
+    return <div className="reference-home">
+      <PaymentRetryNotice />
+      <section className="reference-intro">
+        <div className="reference-wordmark" dir="ltr"><span aria-hidden="true">✦</span> AIFekr</div>
+        <p>{tl("دستیار هوشمند تولید، رشد و مدیریت محتوا","Your AI assistant for content, growth and creation")}</p>
+        <h1><em>{tl("سلام،","Hello,")}</em> {tl("امروز روی چه چیزی کار می‌کنیم؟","what are we working on today?")}</h1>
+        <form className="reference-composer panel" onSubmit={(event) => { event.preventDefault(); if(prompt.trim()) routePrompt(prompt.trim()); }}>
+          <textarea value={prompt} rows={2} aria-label={t("prompt")} placeholder={t("placeholder")} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){event.preventDefault();event.currentTarget.form?.requestSubmit();}}} />
+          <div className="reference-composer-actions"><Link href="/chat" className="btn"><Icon name="Sparkles" size={16}/>{tl("دستیار هوشمند","AI assistant")}</Link><button className="btn primary" disabled={!prompt.trim()} aria-label={t("send")}><Icon name="Send" size={20}/></button></div>
+        </form>
+      </section>
+      <nav className="reference-shortcuts" aria-label={tl("دسترسی سریع","Quick access")}>
+        {shortcuts.map(([href,icon,color,faTitle,enTitle,faBody,enBody])=><Link href={href} className="panel reference-shortcut" key={href}><span className={`icon-chip ${color}`}><Icon name={icon}/></span><strong>{tl(faTitle,enTitle)}</strong><small>{tl(faBody,enBody)}</small></Link>)}
+      </nav>
+      <section className="reference-section panel">
+        <div className="row-between"><div><h2><Icon name="Zap" size={20}/>{tl("جریان‌های پیشنهادی","Suggested workflows")}</h2><p>{tl("مسیرهای آماده برای انجام سریع‌تر کارها","Start with a workflow")}</p></div><Link className="btn" href="/create">{t("viewAll")}<Icon name="ArrowLeft" size={15}/></Link></div>
+        <div className="reference-workflows">{workflows.map(([href,icon,color,faTitle,enTitle,faBody,enBody])=><Link key={href} className="panel" href={href}><span className={`icon-chip ${color}`}><Icon name={icon}/></span><strong>{tl(faTitle,enTitle)}</strong><small>{tl(faBody,enBody)}</small></Link>)}</div>
+      </section>
+      <section className="reference-section panel">
+        <div className="row-between"><h2><Icon name="Clock" size={20}/>{tl("فعالیت‌های اخیر","Recent activity")}</h2><Link href="/chat" className="text-link">{t("viewAll")} <Icon name="ArrowLeft" size={14}/></Link></div>
+        {continueItems.length ? continueItems.map(item=>{
+          const href=item.kind==="chat"?`/chat/${item.c.id}`:item.kind==="module"?item.m.href:MEDIA_PAGE[item.p.type];
+          const title=item.kind==="chat"?item.c.title||t("newChat"):item.kind==="module"?item.m.name:item.p.prompt;
+          return <Link className="reference-activity" href={href} key={item.kind+href+item.at}><Icon name={item.kind==="chat"?"MessageCircle":item.kind==="media"?"Clapperboard":"Layers"} size={17}/><span dir="auto">{title}</span><time dateTime={item.at}>{ago(item.at)}</time></Link>;
+        }):<p className="muted">{t("emptyBody")}</p>}
+      </section>
+      <FirstStep isNew={isNew} credits={credits} />
+    </div>;
+  }
   return (
     <div className="dashboard">
       <div className="greeting-row">

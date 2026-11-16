@@ -3,6 +3,7 @@ import Script from "next/script";
 import { headers } from "next/headers";
 import "./globals.css";
 import "./live-app.css";
+import "./workspace-reference.css";
 import { Providers } from "@/components/providers";
 import type { Locale } from "@/lib/i18n";
 export const metadata: Metadata = {

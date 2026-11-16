@@ -343,7 +343,7 @@ export function LiveTalk() {
     <section className="live-talk" data-state={liveMode ? (realtime.phase === "live" ? "speaking" : realtime.phase === "connecting" ? "thinking" : "idle") : state}>
       <header className="live-talk-head">
         <div>
-          <h1>{say("title")}</h1>
+          <h1><span className="reference-live-mark" aria-hidden="true">✦</span> {say("title")}</h1>
           <p>{say("intro")}</p>
         </div>
         <div className="live-talk-meta">
@@ -371,7 +371,7 @@ export function LiveTalk() {
       )}
 
       <div className="live-talk-stage">
-        <div className="live-orb" style={{ ["--level" as string]: String(level) }} aria-hidden="true" />
+        <div className="live-orb" style={{ ["--level" as string]: String(level) }} aria-hidden="true"><Icon name="AudioLines" size={72}/></div>
         <p className="live-talk-status" role="status" aria-live="polite">{status}</p>
         {notice && <p className="live-talk-notice" role="alert">{notice.text} {notice.buy && <Link href="/credits">{say("buy")}</Link>}</p>}
       </div>
