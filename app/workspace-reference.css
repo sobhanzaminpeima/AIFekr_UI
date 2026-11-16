@@ -12,7 +12,26 @@
 }
 
 .reference-workspace .main-area { min-width: 0; }
-.reference-workspace .topbar { min-height: 61px; border-block-end: 1px solid var(--reference-edge); }
+.workspace-header-stack { display: contents; }
+.reference-workspace .workspace-header-stack {
+  display: block;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 30;
+  flex: none;
+}
+.reference-workspace .topbar { position:relative; min-height: 61px; border-block-end: 1px solid var(--reference-edge); }
+.workspace-notices:empty { display:none; }
+.workspace-notices {
+  display:grid;
+  gap:8px;
+  padding:8px clamp(14px,3.2vw,67px);
+  background:var(--bg);
+}
+.workspace-notices .notice-banner { margin:0; min-height:40px; line-height:1.65; }
+.workspace-notices .notice-banner span { min-width:0; overflow-wrap:anywhere; }
+.workspace-notices .notice-banner a { flex-shrink:0; }
+.reference-workspace :is(#credit-report,#credit-packages) { scroll-margin-top:110px; }
 .reference-workspace .sidebar { border-inline-end-color: var(--reference-edge); }
 .reference-workspace .sidebar-top { padding-block: 17px 13px; }
 .reference-workspace .sidebar .brand b { font-size: 1.65rem; font-weight: 780; }
