@@ -11,7 +11,7 @@ import { FeatureAnnouncement } from "./feature-announcement";
 import { AdminNavigation } from "./admin-navigation";
 import {ModuleDirectory} from './module-directory';
 import { useShell } from "./live-shell-context";
-import { LiveFrame, WorkspaceNotices, NotificationBell, useLiveCredits, useLiveProjects } from "./live-shell-widgets";
+import { LiveFrame, NotificationBell, useLiveCredits, useLiveProjects } from "./live-shell-widgets";
 const nav: [string, TranslationKey, string][] = [
   ["/home", "home", "LayoutDashboard"],
   ["/chat", "chat", "MessagesSquare"],
@@ -300,7 +300,6 @@ export function Shell({
         />
       )}
       <div className="main-area">
-        <div className="workspace-header-stack">
         <header className="topbar">
           <div className="breadcrumb">
             <button
@@ -348,10 +347,8 @@ export function Shell({
             </Link>
           </div>
         </header>
-        {referenceWorkspace && <WorkspaceNotices path={path} />}
-        </div>
         <main className="page-content" id="main">
-          {live ? <LiveFrame path={path} showNotices={!referenceWorkspace}>{children}</LiveFrame> : children}
+          {live ? <LiveFrame path={path}>{children}</LiveFrame> : children}
         </main>
         {directory&&<Modal title={tl('انتخاب فضای کاری', 'Choose a workspace')} onClose={()=>setDirectory(false)}><ModuleDirectory compact onNavigate={()=>{setDirectory(false);setMobile(false);}}/></Modal>}
         <footer className="app-footer">

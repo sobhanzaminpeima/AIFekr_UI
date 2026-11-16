@@ -466,16 +466,12 @@ function PendingPayments({ path }: { path: string }) {
   );
 }
 
-export function WorkspaceNotices({ path }: { path: string }) {
-  return <div className="workspace-notices"><TrialBanner /><PendingPayments path={path} /></div>;
-}
-
 /**
  * The page inside the design's frame: the classic layout's notices, its
  * subscription gate (past expiry only renewal pages stay usable) and its
  * floating helpers.
  */
-export function LiveFrame({ path, children, showNotices = true }: { path: string; children: React.ReactNode; showNotices?: boolean }) {
+export function LiveFrame({ path, children }: { path: string; children: React.ReactNode }) {
   const { banners, copy, user } = useShell()!;
   const [expired, setExpired] = useState(banners.expired);
   useEffect(() => {
@@ -491,7 +487,8 @@ export function LiveFrame({ path, children, showNotices = true }: { path: string
   return (
     <>
       <SessionWatchdog />
-      {showNotices && <><TrialBanner /><PendingPayments path={path} /></>}
+      <TrialBanner />
+      <PendingPayments path={path} />
       {expired ? (
         <>
           <div role="alert" className="panel expired-gate">
