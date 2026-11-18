@@ -432,7 +432,7 @@ export function LiveRegister() {
         {copy.googleRegister}
       </a>
       <p className="auth-switch">
-        {copy.haveAccount} <a href="/login">{copy.loginLink}</a>
+        {copy.haveAccount} <a href={safeRedirect(params.get("redirect")) ? `/login?redirect=${encodeURIComponent(params.get("redirect")!)}` : "/login"}>{copy.loginLink}</a>
       </p>
     </AuthFrame>
   );

@@ -365,7 +365,7 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
           <Link className="btn" href="/video-factory?tab=production&new=1" title={f("New project")} onClick={() => setActive("")}><Icon name="Plus" size={16} />{f("New project")}</Link>
         </div>
       )}
-      {<div className="stepper">
+      {!creating && <div className="stepper">
         {labels.map((s, i) => (
           <button key={s} className={step === i ? "current" : i < step ? "completed" : ""} disabled={busy || !reachable(i)} onClick={() => setStep(i)}>
             <span>{n(i + 1)}</span>{s}

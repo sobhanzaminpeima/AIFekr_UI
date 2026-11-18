@@ -5,7 +5,7 @@ import Link from "./site-link";
 
 const endpoint = "/api/video-factory/economy";
 type Order = {
-  id: string; topic: string; channel: string; status: "PENDING" | "DELIVERED";
+  id: string; topic: string; channel: string; status: "PENDING" | "APPROVED" | "DELIVERED";
   credits: number; createdAt: string; deliveredAt: string | null; title: string | null;
   description: string | null; tags: string[]; videoUrl: string | null; thumbnailUrl: string | null;
 };
@@ -35,35 +35,48 @@ function useEconomyData() {
 }
 
 export function EconomyCreation({ children }: { children: ReactNode }) {
-  const { fa } = useApp();
-  const [economy, setEconomy] = useState(false);
+  const { fa, n } = useApp();
+  const [mode, setMode] = useState<"main" | "economy" | null>(null);
+  const catalog = useEconomyData();
+  const quote = catalog.data?.quote;
   return <>
-    <fieldset className="vf-quick-row">
-      <legend>{fa ? "روش ساخت ویدیو" : "Video production"}</legend>
-      {[false, true].map(value => <button type="button" key={String(value)} aria-pressed={economy === value}
-        className={"vf-chip" + (economy === value ? " selected" : "")} onClick={() => setEconomy(value)}>
-        {value ? (fa ? "بسته اقتصادی" : "Economy package") : (fa ? "ساخت خودکار" : "Automatic production")}
-      </button>)}
-    </fieldset>
-    <div hidden={economy}>{children}</div>
-    {economy && <EconomyForm />}
+    {!mode ? <section className="vf-quick">
+      <h1>{fa ? "بسته ساخت ویدیو را انتخاب کنید" : "Choose your video package"}</h1>
+      <div className="economy-package-options">
+        <button type="button" className="panel" onClick={() => setMode("main")}>
+          <strong>{fa ? "بسته اصلی" : "Main package"}</strong>
+          <span>{fa ? "همین حالا شروع کنید و مراحل تولید را خودتان مدیریت کنید." : "Start now and manage each production step."}</span>
+          <span>{fa ? "قیمت بر اساس تنظیمات ویدیو، پیش از شروع تولید اعلام می‌شود." : "Review the price for your settings before production starts."}</span>
+        </button>
+        <button type="button" className="panel" onClick={() => setMode("economy")}>
+          <strong>{fa ? "بسته اقتصادی" : "Economy package"}</strong>
+          <span>{fa ? "موضوع و کانال را بفرستید. ویدیو و بسته انتشار را طی ۱ تا ۲ روز دریافت کنید." : "Send your topic and channel. Receive the video and publishing kit in 1–2 days."}</span>
+          {quote && <span>{n(quote.credits)} {fa ? "اعتبار" : "credits"} · {n(quote.discountPercent)}% {fa ? "تخفیف" : "discount"}</span>}
+        </button>
+      </div>
+    </section> : <>
+      <button type="button" className="btn" onClick={() => setMode(null)}>{fa ? "بازگشت به انتخاب بسته" : "Back to packages"}</button>
+      {mode === "main" ? children : <EconomyForm catalog={catalog} />}
+    </>}
   </>;
 }
 
-function EconomyForm() {
+function EconomyForm({ catalog }: { catalog: ReturnType<typeof useEconomyData> }) {
   const { fa, n } = useApp();
-  const { data, failed, reload } = useEconomyData();
+  const { data, failed, reload } = catalog;
   const [topic, setTopic] = useState("");
   const [channel, setChannel] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [ordered, setOrdered] = useState(false);
+  const [review, setReview] = useState(false);
   const attempt = useRef({ signature: "", key: "" });
   const submitting = useRef(false);
   const quote = data?.quote;
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!quote || submitting.current) return;
+    if (!review) { setReview(true); return; }
     submitting.current = true;
     setBusy(true);
     setError("");
@@ -75,6 +88,7 @@ function EconomyForm() {
         body: JSON.stringify({ ...payload, idempotencyKey: attempt.current.key }) });
       if (!response.ok) {
         if (response.status === 409) {
+          setReview(false);
           reload();
           throw Error(fa ? "اطلاعات سفارش تغییر کرد. قیمت را دوباره بررسی کنید." : "Order details changed. Review the refreshed price.");
         }
@@ -91,7 +105,7 @@ function EconomyForm() {
   if (ordered) return <section className="panel" role="status">
     <h2>{fa ? "سفارش شما ثبت شد" : "Order received"}</h2>
     <p>{fa ? "بسته شما طی ۱ تا ۲ روز در پروفایلتان آماده می‌شود." : "Your package will be ready in your profile in 1–2 days."}</p>
-    <Link href="/settings#economy-orders">{fa ? "مشاهده سفارش‌ها در پروفایل" : "View orders in my profile"}</Link>
+    <Link href="/settings?tab=economy">{fa ? "مشاهده سفارش‌ها در پروفایل" : "View orders in my profile"}</Link>
   </section>;
   return <form className="vf-quick panel" onSubmit={submit}>
     <h2>{fa ? "بسته اقتصادی ویدیو" : "Economy video package"}</h2>
@@ -100,13 +114,18 @@ function EconomyForm() {
     {quote && <p><strong>{n(quote.credits)} {fa ? "اعتبار" : "credits"}</strong> · {n(quote.durationSeconds)} {fa ? "ثانیه" : "seconds"} · {n(quote.discountPercent)}% {fa ? "تخفیف نسبت به قیمت عادی" : "off the standard price"} ({n(quote.standardCredits)})</p>}
     {failed ? <button type="button" onClick={reload}>{fa ? "تلاش دوباره برای دریافت قیمت" : "Retry loading price"}</button> :
       !quote && <p role="status">{data ? (fa ? "این بسته فعلاً در دسترس نیست." : "This package is currently unavailable.") : (fa ? "دریافت قیمت…" : "Loading price…")}</p>}
-    <label className="vf-quick-topic">{fa ? "موضوع ویدیو" : "Video topic"}
+    {review ? <section aria-live="polite">
+      <h3>{fa ? "تأیید سفارش" : "Review your order"}</h3>
+      <p dir="auto">{topic}</p><p><bdi>{channel}</bdi></p>
+      {quote && <p>{fa ? `با تأیید سفارش، ${n(quote.credits)} اعتبار از حسابتان کسر می‌شود.` : `Confirming this order will deduct ${n(quote.credits)} credits from your account.`}</p>}
+      <button type="button" disabled={busy} onClick={() => setReview(false)}>{fa ? "ویرایش سفارش" : "Edit order"}</button>
+    </section> : <><label className="vf-quick-topic">{fa ? "موضوع ویدیو" : "Video topic"}
       <textarea required rows={3} maxLength={2000} value={topic} onChange={e => setTopic(e.target.value)} /></label>
     <label className="vf-quick-topic">{fa ? "کانال یوتیوب" : "YouTube channel"}
-      <input required maxLength={500} dir="ltr" placeholder="https://www.youtube.com/@channel" value={channel} onChange={e => setChannel(e.target.value)} /></label>
+      <input required maxLength={500} dir="ltr" placeholder="https://www.youtube.com/@channel" value={channel} onChange={e => setChannel(e.target.value)} /></label></>}
     {error && <p role="alert">{error}</p>}
     <button className="btn primary" disabled={!quote || busy || !topic.trim() || !channel.trim()}>
-      {busy ? (fa ? "در حال ثبت…" : "Submitting…") : (fa ? "ثبت سفارش" : "Place order")}
+      {busy ? (fa ? "در حال ثبت…" : "Submitting…") : review ? (fa ? "تأیید و پرداخت با اعتبار" : "Confirm and pay with credits") : (fa ? "بررسی سفارش" : "Review order")}
     </button>
   </form>;
 }
@@ -122,10 +141,15 @@ export function EconomyHistory() {
     {data?.orders.map(order => <article key={order.id}>
       <h3 dir="auto">{order.topic}</h3>
       <p><bdi>{order.channel}</bdi> · {new Date(order.createdAt).toLocaleDateString(locale)} · {n(order.credits)} {fa ? "اعتبار" : "credits"}</p>
-      {order.status === "PENDING" ? <p>{fa ? "در حال آماده‌سازی · تحویل طی ۱ تا ۲ روز از ثبت سفارش" : "In preparation · delivery within 1–2 days of ordering"}</p> : <>
+      {order.status === "PENDING" ? <p>{fa ? "در انتظار تأیید" : "Pending approval"}</p> : order.status === "APPROVED" ? <p>{fa ? "تأیید شده و در حال آماده‌سازی" : "Approved and in production"}</p> : <>
         <p>{fa ? "آماده انتشار" : "Ready to publish"} {order.deliveredAt && new Date(order.deliveredAt).toLocaleDateString(locale)}</p>
+        {order.videoUrl && <video className="economy-video" controls preload="metadata" src={order.videoUrl + "?preview=1"} poster={order.thumbnailUrl ? order.thumbnailUrl + "?preview=1" : undefined} aria-label={order.title || order.topic} />}
+        {order.thumbnailUrl && <img className="economy-thumbnail" src={order.thumbnailUrl + "?preview=1"} alt={fa ? "تصویر بندانگشتی ویدیو" : "Video thumbnail"} loading="lazy" />}
         {order.videoUrl && <a className="btn" href={order.videoUrl} download>{fa ? "دریافت ویدیو" : "Download video"}</a>}
         {order.thumbnailUrl && <a className="btn" href={order.thumbnailUrl} download>{fa ? "دریافت تصویر بندانگشتی" : "Download thumbnail"}</a>}
+        <a className="btn" download="publishing-details.json" href={"data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ title: order.title, description: order.description, tags: order.tags }, null, 2))}>
+          {fa ? "دریافت اطلاعات انتشار" : "Download publishing details"}
+        </a>
         <dl><dt>{fa ? "عنوان" : "Title"}</dt><dd dir="auto">{order.title}</dd>
           <dt>{fa ? "توضیحات" : "Description"}</dt><dd dir="auto" style={{ whiteSpace: "pre-wrap" }}>{order.description}</dd>
           <dt>{fa ? "برچسب‌ها" : "Tags"}</dt><dd dir="auto">{order.tags.join(fa ? "، " : ", ")}</dd></dl>

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useApp } from "./providers";
 import { Preferences } from "./shell";
 import { Button, Icon } from "./ui";
@@ -18,8 +19,9 @@ import { EconomyHistory } from "./live-factory-economy";
 export function LiveSettings() {
   const { fa, locale } = useApp();
   const state = useLiveData("/api/user/profile");
-  const [tab, setTab] = useState("profile"),
-    [saved, setSaved] = useState(false);
+  const params = useSearchParams();
+  const tab = params.get("tab") || "profile";
+  const [saved, setSaved] = useState(false);
   const user = state.data?.user as LiveRow | undefined;
   const done = () => {
     setSaved(true);
@@ -42,22 +44,25 @@ export function LiveSettings() {
           ["security", "امنیت", "Security"],
           ["appearance", "زبان و ظاهر", "Language & appearance"],
           ["connections", "حساب‌های متصل", "Connections"],
+          ["economy", "سفارش‌های ویدیو", "Video orders"],
         ].map(([id, a, b],i) => (
           <button
             key={id}
             aria-pressed={tab === id}
             className={tab === id ? "selected" : ""}
             onClick={() => {
-              setTab(id);
+              const url = new URL(window.location.href);
+              url.searchParams.set("tab", id);
+              window.history.pushState(null, "", url);
               setSaved(false);
             }}
           >
-            <Icon name={["UserRound","Shield","Palette","Link"][i]} size={18}/>{fa ? a : b}
+            <Icon name={["UserRound","Shield","Palette","Link","Clapperboard"][i]} size={18}/>{fa ? a : b}
           </button>
         ))}
       </nav>
       <LiveLoad {...state} />
-      {user && tab === "profile" && <EconomyHistory />}
+      {user && tab === "economy" && <EconomyHistory />}
       {saved && (
         <p role="status" className="inline-banner">
           {fa
