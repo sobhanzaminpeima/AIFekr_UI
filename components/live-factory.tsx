@@ -392,14 +392,14 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
 
 /** Step 1 for a new project: the classic form (title, idea, quick and advanced settings). */
 function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void }) {
-  return <EconomyCreation><AutomaticProject x={x} onCreated={onCreated} /></EconomyCreation>;
+  const catalog = useCatalog(x);
+  return <EconomyCreation packages={catalog?.packages}><AutomaticProject x={x} onCreated={onCreated} catalog={catalog} /></EconomyCreation>;
 }
 
-function AutomaticProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void }) {
+function AutomaticProject({ x, onCreated, catalog }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void; catalog: Catalog | null }) {
   const { locale, n } = useApp();
   const { f, api, run, busy, lang } = x;
   const tx = (c: [string, string, string, string]) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];
-  const catalog = useCatalog(x);
   const silentOnly = catalog?.capabilities?.silentOnly ?? false;
   const musicAvailable = !!catalog?.capabilities?.musicAvailable;
   const [title, setTitle] = useState("");

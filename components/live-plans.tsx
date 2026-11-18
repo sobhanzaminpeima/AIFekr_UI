@@ -7,6 +7,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "./providers";
 import { Button, Icon, Modal } from "./ui";
+import { useSearchParams } from "next/navigation";
+import { videoPurchasePath, videoSku, videoWorkspacePath, VIDEO_SKUS } from "@/lib/video-purchase";
 
 type Offer = { period: string; minor: number; currency: string; credits: number; days: number; compareAtMinor?: number };
 type Pkg = { duration?: number; planCode: string; name: string; nameEn?: string | null; category: string; features?: string | null; featuresEn?: string | null; isFeatured?: boolean; offers?: Record<string, Offer>; purchaseAvailable?: boolean };
@@ -31,6 +33,8 @@ const termKey = (o: Offer, duration = 0) => { const days = Math.max(o.days, o.pe
 
 export function LivePlans() {
   const { fa, locale, n, tl } = useApp();
+  const search = useSearchParams();
+  const selectedVideo = videoSku(search.get("plan"));
   const [packages, setPackages] = useState<Pkg[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [group, setGroup] = useState("");
@@ -43,10 +47,10 @@ export function LivePlans() {
   const [payCurrency, setPayCurrency] = useState<string | null>(null);
   useEffect(() => {
     fetch("/api/payment/options", { credentials: "include", cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-      if (!d) return;
+      if (!d) { setRoutes({ options: [], preferred: null }); return; }
       setRoutes(d);
       setPayCurrency(d.preferred);
-    }).catch(() => {});
+    }).catch(() => setRoutes({ options: [], preferred: null }));
   }, []);
   const ROUTE_LABEL: Record<string, [string, string]> = { IRT: ["تومان · زرین‌پال", "Toman · Zarinpal"], TRY: ["لیر ترکیه · حوالهٔ بانکی", "Turkish lira · bank transfer"], EUR: ["یورو · حوالهٔ بانکی", "Euro · bank transfer"], USD: ["دلار · حوالهٔ بانکی", "US dollar · bank transfer"] };
   const noRoute = !!routes && routes.options.length === 0;
@@ -70,6 +74,25 @@ export function LivePlans() {
   const rows = (packages ?? []).filter((p) => p.category === group);
   const periods = [...new Set(rows.flatMap((p) => Object.keys(p.offers ?? {})))];
   const activePeriod = periods.includes(period) ? period : periods[0] ?? "monthly";
+  const selectedPackage = packages?.find(p => p.planCode === selectedVideo);
+  const videoPeriod = Object.keys(selectedPackage?.offers || {})[0];
+  const hasZarinpal = routes?.options.some(o => o.currency === "IRT" && o.gateway === "zarinpal");
+  const [quoteRevision, setQuoteRevision] = useState(0);
+  useEffect(() => {
+    setQuote(null);
+    if (!selectedVideo || !videoPeriod || !hasZarinpal || selectedPackage?.purchaseAvailable === false) return;
+    const controller = new AbortController();
+    setError("");
+    fetch("/api/billing/quote", { method: "POST", credentials: "include", signal: controller.signal,
+      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: selectedVideo, period: videoPeriod, currency: "IRT" }) })
+      .then(async response => {
+        if (!response.ok) throw Error();
+        const { quote: current } = await response.json();
+        if (current?.planCode !== selectedVideo || current.currency !== "IRT" || !current.id || !(current.amountMinor > 0)) throw Error();
+        if (!controller.signal.aborted) setQuote(current);
+      }).catch(() => { if (!controller.signal.aborted) setError(fa ? "قیمت در دسترس نیست. دوباره تلاش کنید." : "Could not load the price. Please try again."); });
+    return () => controller.abort();
+  }, [selectedVideo, videoPeriod, hasZarinpal, selectedPackage?.purchaseAvailable, quoteRevision, fa]);
 
   // Server error codes (UPPER_SNAKE) as a sentence; server sentences pass through.
   function readable(code: string) {
@@ -79,6 +102,8 @@ export function LivePlans() {
     return code;
   }
   async function choose(p: Pkg) {
+    const sku = videoSku(p.planCode);
+    if (sku) { location.assign(videoPurchasePath(sku)); return; }
     setBusy(p.planCode); setError("");
     try {
       const currency = payCurrency ?? (fa ? "IRT" : locale === "tr" ? "TRY" : "USD");
@@ -94,7 +119,8 @@ export function LivePlans() {
     if (!quote) return;
     setBusy("pay"); setError("");
     try {
-      const r = await fetch("/api/payment/create", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: quote.planCode, period: quote.period, currency: quote.currency === "IRT" ? "IRR" : quote.currency, quoteId: quote.id, selectStudentAccount: group === "STUDENT", returnPath: new URLSearchParams(location.search).get("returnTo") || undefined }) });
+      const purchasedVideo = videoSku(quote.planCode);
+      const r = await fetch("/api/payment/create", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: quote.planCode, period: quote.period, currency: quote.currency === "IRT" ? "IRR" : quote.currency, quoteId: quote.id, selectStudentAccount: group === "STUDENT", returnPath: purchasedVideo ? videoWorkspacePath(purchasedVideo) : new URLSearchParams(location.search).get("returnTo") || undefined }) });
       const b = await r.json().catch(() => ({}));
       if (b.error === "FITNESS_ONBOARDING_REQUIRED") { location.href = "/fitness?tab=profile"; return; }
       if (!r.ok || !b.paymentUrl) throw Error(b.error ? readable(String(b.error)) : tx("شروع پرداخت ممکن نشد", "Could not start the payment"));
@@ -103,6 +129,20 @@ export function LivePlans() {
   }
 
   if (failed) return <section className="plans-page"><p role="alert">{tx("پکیج‌ها بارگذاری نشد. صفحه را دوباره باز کنید.", "Packages could not be loaded. Please reload.")}</p></section>;
+  if (selectedVideo) {
+    const unavailable = packages && (!selectedPackage || selectedPackage.purchaseAvailable === false || !videoPeriod);
+    return <section className="plans-page"><article className="panel plan-card">
+      <h1>{selectedPackage ? tl(selectedPackage.name, selectedPackage.nameEn || selectedPackage.name) : selectedVideo === VIDEO_SKUS.main ? tx("بسته اصلی ویدیو", "Main video package") : tx("بسته اقتصادی ویدیو", "Economy video package")}</h1>
+      {unavailable ? <p role="status">{tx("این بسته فعلاً قابل خرید نیست.", "This package is currently unavailable.")}</p>
+        : routes && !hasZarinpal ? <p role="status">{tx("پرداخت زرین‌پال برای این حساب در دسترس نیست.", "Zarinpal is unavailable for this account.")}</p>
+        : quote?.planCode === selectedVideo ? <>
+          <strong className="plan-price">{money(quote.amountMinor, quote.currency)}</strong>
+          <p>{tx("پس از پرداخت به کارخانه ویدیو بازمی‌گردید.", "After payment, you’ll return to Video Factory.")}</p>
+          <Button variant="primary" disabled={busy === "pay"} onClick={() => void pay()}>{busy === "pay" ? "…" : tx("پرداخت با زرین‌پال", "Pay with Zarinpal")}</Button>
+        </> : !error && <p role="status">{tx("در حال دریافت قیمت…", "Loading price…")}</p>}
+      {error && <><p role="alert">{error}</p><Button onClick={() => setQuoteRevision(i => i + 1)}>{tx("دریافت دوباره قیمت", "Refresh price")}</Button></>}
+    </article></section>;
+  }
   return (
     <section className="plans-page">
       <div className="center-heading">

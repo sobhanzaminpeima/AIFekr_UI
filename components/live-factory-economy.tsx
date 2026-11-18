@@ -2,6 +2,9 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useApp } from "./providers";
 import Link from "./site-link";
+import { useSearchParams } from "next/navigation";
+import { VIDEO_SKUS, videoPurchasePath } from "@/lib/video-purchase";
+import type { VideoPackage } from "./live-factory";
 
 const endpoint = "/api/video-factory/economy";
 type Order = {
@@ -34,25 +37,43 @@ function useEconomyData() {
   return { data, failed, reload: () => setRevision(i => i + 1) };
 }
 
-export function EconomyCreation({ children }: { children: ReactNode }) {
-  const { fa, n } = useApp();
-  const [mode, setMode] = useState<"main" | "economy" | null>(null);
+export function EconomyCreation({ children, packages }: { children: ReactNode; packages?: VideoPackage[] }) {
+  const { fa, n, locale } = useApp();
+  const params = useSearchParams();
+  const requested = params.get("package");
+  const mode = requested === "main" || requested === "economy" ? requested : null;
+  function setMode(next: "main" | "economy" | null) {
+    const url = new URL(window.location.href);
+    if (next) url.searchParams.set("package", next); else url.searchParams.delete("package");
+    window.history.pushState(null, "", url);
+  }
+  function buy(mode: keyof typeof VIDEO_SKUS) {
+    const sku = VIDEO_SKUS[mode];
+    const offer = packages?.find(pkg => pkg.planCode === sku)?.offer;
+    if (!offer) return null;
+    const price = offer.currency === "IRT" ? `${n(offer.minor)} ${fa ? "تومان" : "toman"}` : new Intl.NumberFormat(locale, { style: "currency", currency: offer.currency }).format(offer.minor / 100);
+    return <Link className="btn primary" href={videoPurchasePath(sku)}>{fa ? "خرید بسته" : "Buy package"} · {price}</Link>;
+  }
   const catalog = useEconomyData();
   const quote = catalog.data?.quote;
   return <>
     {!mode ? <section className="vf-quick">
       <h1>{fa ? "بسته ساخت ویدیو را انتخاب کنید" : "Choose your video package"}</h1>
       <div className="economy-package-options">
-        <button type="button" className="panel" onClick={() => setMode("main")}>
+        <article className="panel">
           <strong>{fa ? "بسته اصلی" : "Main package"}</strong>
           <span>{fa ? "همین حالا شروع کنید و مراحل تولید را خودتان مدیریت کنید." : "Start now and manage each production step."}</span>
           <span>{fa ? "قیمت بر اساس تنظیمات ویدیو، پیش از شروع تولید اعلام می‌شود." : "Review the price for your settings before production starts."}</span>
-        </button>
-        <button type="button" className="panel" onClick={() => setMode("economy")}>
+          {buy("main")}
+          <button className="btn" type="button" onClick={() => setMode("main")}>{fa ? "شروع ساخت با اعتبار حساب" : "Create with account credits"}</button>
+        </article>
+        <article className="panel">
           <strong>{fa ? "بسته اقتصادی" : "Economy package"}</strong>
           <span>{fa ? "موضوع و کانال را بفرستید. ویدیو و بسته انتشار را طی ۱ تا ۲ روز دریافت کنید." : "Send your topic and channel. Receive the video and publishing kit in 1–2 days."}</span>
           {quote && <span>{n(quote.credits)} {fa ? "اعتبار" : "credits"} · {n(quote.discountPercent)}% {fa ? "تخفیف" : "discount"}</span>}
-        </button>
+          {buy("economy")}
+          <button className="btn" type="button" onClick={() => setMode("economy")}>{fa ? "سفارش با اعتبار حساب" : "Order with account credits"}</button>
+        </article>
       </div>
     </section> : <>
       <button type="button" className="btn" onClick={() => setMode(null)}>{fa ? "بازگشت به انتخاب بسته" : "Back to packages"}</button>
