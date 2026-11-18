@@ -23,6 +23,7 @@ import { MediaStudio } from "./live-factory-media";
 import { ProductionLine } from "./live-factory-progress";
 import { ChannelStudio, CharacterReference } from "./live-factory-youtube";
 import { BuyCreditsInline } from "./buy-credits-inline";
+import { EconomyCreation } from "./live-factory-economy";
 
 export type Template = { id: string; name: string; configuration: { brief: string; configuration: Configuration } };
 /** A purchasable video package; `offer` is its price in the visitor's currency, resolved by the main site like the landing (absent = not offered). */
@@ -391,6 +392,10 @@ function Wizard({ x, view }: { x: FactoryCtx; view: string }) {
 
 /** Step 1 for a new project: the classic form (title, idea, quick and advanced settings). */
 function NewProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void }) {
+  return <EconomyCreation><AutomaticProject x={x} onCreated={onCreated} /></EconomyCreation>;
+}
+
+function AutomaticProject({ x, onCreated }: { x: FactoryCtx; onCreated: (id: string, character: boolean) => void }) {
   const { locale, n } = useApp();
   const { f, api, run, busy, lang } = x;
   const tx = (c: [string, string, string, string]) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];

@@ -12,6 +12,7 @@ import {
   type LiveRow,
 } from "./live-module-kit";
 import { LiveUpload } from "./live-upload";
+import { EconomyHistory } from "./live-factory-economy";
 
 /** Account fields are loaded from the authenticated API, never prototype data. */
 export function LiveSettings() {
@@ -56,6 +57,7 @@ export function LiveSettings() {
         ))}
       </nav>
       <LiveLoad {...state} />
+      {user && tab === "profile" && <EconomyHistory />}
       {saved && (
         <p role="status" className="inline-banner">
           {fa
