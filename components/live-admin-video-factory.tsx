@@ -68,10 +68,11 @@ type Ask = { title: string; body: React.ReactNode; action: string; danger?: bool
 type EconomyOrder = {
   id: string; userId: string; topic: string; channel: string; status: string;
   credits: number; createdAt: string; title: string | null; description: string | null; tags: string[];
+  deliveryNotificationQueuedAt: string | null;
 };
 const economyApi = "/api/admin/video-factory/economy";
 
-function EconomyOrders() {
+export function EconomyOrders({ showPricing = true }: { showPricing?: boolean }) {
   const { tx, n, tag, i } = useT();
   const [orders, setOrders] = useState<EconomyOrder[]>([]);
   const [discount, setDiscount] = useState("");
@@ -89,6 +90,14 @@ function EconomyOrders() {
     finally { setBusy(false); }
   }
   useEffect(() => { void run(refresh); }, [refresh]);
+  function updateOrder(updated: EconomyOrder) {
+    setOrders(previous => previous.map(item => item.id === updated.id ? updated : item));
+  }
+  async function requestAction(orderId: string, action: "APPROVE" | "NOTIFY_DELIVERY") {
+    const result = await api<{ order: EconomyOrder }>(economyApi, { orderId, action }, "PATCH");
+    updateOrder(result.order);
+    toast.success(tx(["ایمیل کاربر در صف ارسال قرار گرفت", "Customer email queued", "Kunden-E-Mail in Warteschlange", "Müşteri e-postası sıraya alındı"]));
+  }
   async function deliver(order: EconomyOrder, form: HTMLFormElement) {
     const body = new FormData(form);
     const video = body.get("video") as File;
@@ -105,14 +114,14 @@ function EconomyOrders() {
     const response = await fetch(economyApi, { method: "POST", credentials: "include", body });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw Error(result.code || result.error || "HTTP_" + response.status);
-    setOrders(previous => previous.map(item => item.id === order.id ? result.order : item));
+    updateOrder(result.order);
     toast.success(tx(["سفارش تحویل شد", "Order delivered", "Auftrag ausgeliefert", "Sipariş teslim edildi"]));
   }
   return <section className="panel">
     <h2>{tx(["سفارش‌های اقتصادی", "Economy orders", "Economy-Aufträge", "Ekonomik siparişler"])}</h2>
     <button type="button" disabled={busy} onClick={() => void run(refresh)}>{tx(["تازه‌سازی", "Refresh", "Aktualisieren", "Yenile"])}</button>
     {error && <p role="alert">{error}</p>}
-    {discount !== "" && <form className="domain-fields" onSubmit={event => {
+    {showPricing && discount !== "" && <form className="domain-fields" onSubmit={event => {
       event.preventDefault();
       const value = Number(new FormData(event.currentTarget).get("discount"));
       void run(async () => {
@@ -128,7 +137,8 @@ function EconomyOrders() {
     {orders.map(order => <article key={order.id} className="panel">
       <h3 dir="auto">{order.topic}</h3>
       <p><Link href={"/admin/users/" + encodeURIComponent(order.userId)}>{order.userId}</Link> · <bdi>{order.channel}</bdi> · {new Date(order.createdAt).toLocaleString(tag)} · {n(order.credits)} {tx(["اعتبار", "credits", "Credits", "kredi"])}</p>
-      {order.status === "PENDING" ? <details><summary>{tx(["آماده‌سازی و تحویل", "Prepare delivery", "Auslieferung vorbereiten", "Teslimatı hazırla"])}</summary>
+      {order.status === "PENDING" ? <button disabled={busy} onClick={() => void run(() => requestAction(order.id, "APPROVE"))}>{tx(["تأیید درخواست و ارسال ایمیل به کاربر", "Approve request and email customer", "Anfrage genehmigen und Kunden informieren", "İsteği onayla ve müşteriye e-posta gönder"])}</button>
+      : order.status === "APPROVED" ? <details><summary>{tx(["تأیید شده · آماده‌سازی و تحویل", "Approved · Prepare delivery", "Genehmigt · Auslieferung vorbereiten", "Onaylandı · Teslimatı hazırla"])}</summary>
         <form className="domain-fields" onSubmit={event => {
           event.preventDefault();
           const form = event.currentTarget;
@@ -142,6 +152,9 @@ function EconomyOrders() {
           <button disabled={busy}>{tx(["تحویل به کاربر", "Deliver to customer", "An Kunden ausliefern", "Müşteriye teslim et"])}</button>
         </form>
       </details> : <details><summary>{lbl(STATUS, order.status, i)}</summary><h4>{order.title}</h4><p>{order.description}</p><p>{order.tags.join(", ")}</p></details>}
+      {order.status === "DELIVERED" && (order.deliveryNotificationQueuedAt
+        ? <p>{tx(["ایمیل تحویل در صف ارسال قرار گرفت", "Delivery email queued", "Lieferbenachrichtigung eingereiht", "Teslimat e-postası sıraya alındı"])} · {new Date(order.deliveryNotificationQueuedAt).toLocaleString(tag)}</p>
+        : <button disabled={busy} onClick={() => void run(() => requestAction(order.id, "NOTIFY_DELIVERY"))}>{tx(["اطلاع‌رسانی تحویل به کاربر", "Notify customer of delivery", "Kunden über Lieferung informieren", "Müşteriye teslimatı bildir"])}</button>)}
     </article>)}
   </section>;
 }

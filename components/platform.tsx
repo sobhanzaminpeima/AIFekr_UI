@@ -75,7 +75,7 @@ import { LiveAcademy, LiveStudentAdmin } from "./live-admin-learning";
 import { LiveCourses, LiveCoursePreview } from "./live-admin-courses";
 import { LiveFitnessAdmin, LiveFitnessUsers, LiveFitnessMarketplace } from "./live-admin-fitness";
 import { LiveVoiceStudioAdmin, LiveVoiceAgentAdmin } from "./live-admin-voice";
-import { LiveVideoFactoryAdmin } from "./live-admin-video-factory";
+import { EconomyOrders, LiveVideoFactoryAdmin } from "./live-admin-video-factory";
 import { LiveGrowthCenter, LiveGrowthCustomer } from "./live-admin-growth-center";
 import { LiveAdminSms } from "./live-admin-sms";
 import { LiveAdminCrm } from "./live-admin-crm";
@@ -180,6 +180,7 @@ function LivePlatform({ path }: { path: string }) {
         : /^\/admin\/customer-growth\/[^/]+$/.test(path) ? <div className="admin-live-page"><LiveGrowthCustomer key={path} id={decodeURIComponent(path.split("/")[3])} /></div>
         : path === "/admin/invites/manage" ? <div className="admin-live-page"><LiveInviteRegister /></div>
         : path === "/admin/financial/customers" || path === "/admin/subscriptions" ? <div className="admin-live-page"><AdminFinance key={path} section={path === "/admin/subscriptions" ? "subscriptions" : "customers"} /></div>
+        : path === "/admin/users/requests" ? <div className="admin-live-page"><EconomyOrders showPricing={false} /></div>
         : path === "/admin/users" ? <AdminUsers />
         : /^\/admin\/users\/[^/]+$/.test(path) ? <LiveAdminUserDetail key={path} id={decodeURIComponent(path.split("/")[3])} />
         : path === "/tools/try-free-ai" ? <LiveTryFree />
@@ -266,6 +267,7 @@ function PlatformContent({ path }: { path: string }) {
       </>
     );
   else if (path === "/owner/login") content = <Auth />;
+  else if (path === "/admin/users/requests") content = <EconomyOrders showPricing={false} />;
   else if (path === "/admin/users") content = <AdminUsers />;
   else if (/^\/admin\/users\/[^/]+$/.test(path))
     content = (

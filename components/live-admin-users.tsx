@@ -64,6 +64,7 @@ export function LiveAdminUsers() {
         <div>
           <span className="eyebrow">AIFekr / PEOPLE</span>
           <h1>{tx(["کاربران و حساب‌ها", "Users & accounts", "Benutzer & Konten", "Kullanıcılar ve hesaplar"])}</h1>
+          <Link className="btn" href="/admin/users/requests">{tx(["درخواست‌های کاربران", "User requests", "Benutzeranfragen", "Kullanıcı istekleri"])}</Link>
           <p>{tx(["مشخصات، اشتراک و دسترسی هر کاربر را از پروندهٔ همان حساب مدیریت کن.", "Manage each user’s details, subscription and access from their own account profile.", "Verwalte Daten, Abo und Zugriff jedes Benutzers in seinem Kontoprofil.", "Her kullanıcının bilgilerini, aboneliğini ve erişimini kendi profilinden yönet."])}</p>
         </div>
         <div className="admin-user-directory-actions">

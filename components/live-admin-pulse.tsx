@@ -6,7 +6,7 @@ import { useShell } from "./live-shell-context";
 import { Icon } from "./ui";
 
 /** Today's real figures on the admin control center (main site /api/admin/stats). */
-type Stats = { totalUsers: number; todayUsers: number; activeSubscriptions: number; todayRevenue: number; revenueChange: string; todayRequests: number; requestsChange: string };
+type Stats = { totalUsers: number; todayUsers: number; activeSubscriptions: number; todayRevenue: number; revenueChange: string; todayRequests: number; requestsChange: string; pendingEconomyOrders: number };
 type Activity = { id: string; type: string; model: string | null; credits: number; createdAt: string; user: { id: string; name: string | null; email: string | null } | null };
 type Data = { stats: Stats; planDistribution: { plan: string; count: number }[]; revenueByDay: Record<string, number>; recentActivity: Activity[] };
 type Tx = [string, string, string, string];
@@ -32,6 +32,7 @@ export function LiveAdminPulse() {
     <section className="admin-pulse" aria-busy={!data}>
       <div className="stats-grid">
         {([
+          [tx(["درخواست‌های ویدیویی در انتظار تأیید", "Video requests awaiting approval", "Videoanfragen zur Genehmigung", "Onay bekleyen video istekleri"]), s?.pendingEconomyOrders, null, "/admin/users/requests"],
           [tx(["کل کاربران", "Total users", "Benutzer gesamt", "Toplam kullanıcı"]), s?.totalUsers, s ? <small>+{n(s.todayUsers)} {tx(["امروز", "today", "heute", "bugün"])}</small> : null, "/admin/users"],
           [tx(["اشتراک فعال", "Active subscriptions", "Aktive Abos", "Aktif abonelik"]), s?.activeSubscriptions, null, "/admin/subscriptions"],
           [tx(["درآمد امروز (تومان)", "Revenue today (Toman)", "Umsatz heute (Toman)", "Bugünkü gelir (Tümen)"]), s?.todayRevenue, change(s?.revenueChange), "/admin/financial"],
