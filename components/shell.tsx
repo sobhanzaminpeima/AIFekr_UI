@@ -105,10 +105,15 @@ export function Shell({
   const admin = path.startsWith("/admin");
   const referenceWorkspace = !!live && !admin && /^\/(home|live|create|crm|seo|video-factory|credits|wallet|settings)(\/|$)/.test(path);
   const sidebarItems = nav.map(([href,key,icon])=>({href,label:t(key),icon}));
-  if(referenceWorkspace) sidebarItems.splice(4,0,
+  if(live && !admin) sidebarItems.splice(4,0,
     {href:"/video-factory",label:tl("کارخانه ویدیو","Video Factory"),icon:"Clapperboard"},
-    {href:"/crm",label:"CRM",icon:"BriefcaseBusiness"},
   );
+  const navGroups = [
+    { label: tl("فضای کار", "Workspace"), paths: ["/home", "/chat", "/live"] },
+    { label: tl("تولید محتوا", "Content creation"), paths: ["/create", "/video-factory"] },
+    { label: tl("کسب‌وکار", "Business"), paths: ["/business", "/seo"] },
+    { label: tl("یادگیری و سلامت", "Learning & health"), paths: ["/learn", "/fit/dashboard"] },
+  ];
   useEffect(() => {
     let last = "";
     const handler = (e: KeyboardEvent) => {
@@ -181,11 +186,19 @@ export function Shell({
             </button>
           </>
         )}
-        <div className="side-label">{admin ? t("admin") : referenceWorkspace ? tl("دسترسی سریع", "Quick access") : t("workspace")}</div>
-        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : <nav className="main-nav">{sidebarItems.filter(({href}) => !live || href !== "/fit/dashboard" || live.user.showFitness).map(({href,label,icon})=><Link href={live ? liveNavHref(href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : href} key={href} className={path===href||(href!=="/home"&&path.startsWith(href+"/"))?"active":""} title={label}><Icon name={icon}/><span>{label}</span>{!referenceWorkspace&&href==="/chat"&&<span className="small-tag">AI</span>}{!referenceWorkspace&&href==="/live"&&<span className="new-tag">{newTag}</span>}</Link>)}</nav>}
+        {admin ? <AdminNavigation path={path} onExpand={()=>setCollapsed(false)}/> : navGroups.map(group => (
+          <nav className="main-nav" aria-label={group.label} key={group.paths[0]}>
+            <div className="side-label" aria-hidden="true">{group.label}</div>
+            {sidebarItems.filter(item => group.paths.includes(item.href) && (!live || item.href !== "/fit/dashboard" || live.user.showFitness)).map(item => {
+              const href = live ? liveNavHref(item.href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : item.href;
+              const active = path === href || path.startsWith(href + "/");
+              return <Link href={href} key={href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} aria-label={item.label} title={item.label}><Icon name={item.icon}/><span>{item.label}</span></Link>;
+            })}
+          </nav>
+        ))}
         {!admin && live?.proTools && live.proTools.length > 0 && (
-          <>
-            <div className="side-label">{tl("ابزارهای حرفه‌ای", "Pro tools")}</div>
+          <details key={path} open={collapsed || live.proTools.some(tool => path === tool.href || path.startsWith(tool.href + "/"))}>
+            <summary className="side-label">{tl("ابزارهای حرفه‌ای", "Pro tools")}</summary>
             <nav className="main-nav pro-nav" aria-label={tl("ابزارهای حرفه‌ای", "Pro tools")}>
               {[...live.proTools].sort((a, b) => Number(b.recommended) - Number(a.recommended)).map((tool) => (
                 <Link
@@ -203,7 +216,7 @@ export function Shell({
                 </Link>
               ))}
             </nav>
-          </>
+          </details>
         )}
         {!admin && (
           <>
