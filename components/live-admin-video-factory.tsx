@@ -65,6 +65,87 @@ function diff(a: unknown, b: unknown, path = ""): string[] {
 
 type Ask = { title: string; body: React.ReactNode; action: string; danger?: boolean; run: () => Promise<void> };
 
+type EconomyOrder = {
+  id: string; userId: string; topic: string; channel: string; status: string;
+  credits: number; createdAt: string; title: string | null; description: string | null; tags: string[];
+};
+const economyApi = "/api/admin/video-factory/economy";
+
+function EconomyOrders() {
+  const { tx, n, tag, i } = useT();
+  const [orders, setOrders] = useState<EconomyOrder[]>([]);
+  const [discount, setDiscount] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const refresh = useCallback(async () => {
+    const result = await api<{ orders: EconomyOrder[]; discountPercent: number }>(economyApi);
+    setOrders(result.orders);
+    setDiscount(String(result.discountPercent));
+  }, []);
+  async function run(work: () => Promise<void>) {
+    setBusy(true);
+    setError("");
+    try { await work(); } catch (e) { setError(e instanceof Error ? e.message : "FAILED"); }
+    finally { setBusy(false); }
+  }
+  useEffect(() => { void run(refresh); }, [refresh]);
+  async function deliver(order: EconomyOrder, form: HTMLFormElement) {
+    const body = new FormData(form);
+    const video = body.get("video") as File;
+    const thumbnail = body.get("thumbnail") as File;
+    if (video.size > 150 * 1024 ** 2 || thumbnail.size > 8 * 1024 ** 2) {
+      throw Error(tx(["حد حجم فایل را بررسی کنید.", "Check the file size limits.", "Bitte Dateigrößen prüfen.", "Dosya boyutlarını kontrol edin."]));
+    }
+    const tags = String(body.get("tags")).split(/[,،\n]/).map(value => value.trim()).filter(Boolean);
+    if (tags.length > 50 || tags.some(value => value.length > 100)) {
+      throw Error(tx(["حداکثر ۵۰ برچسب با طول حداکثر ۱۰۰ نویسه وارد کنید.", "Use up to 50 tags of up to 100 characters each.", "Bis zu 50 Tags mit jeweils höchstens 100 Zeichen eingeben.", "Her biri en fazla 100 karakter olan en çok 50 etiket girin."]));
+    }
+    body.set("tags", JSON.stringify(tags));
+    body.set("orderId", order.id);
+    const response = await fetch(economyApi, { method: "POST", credentials: "include", body });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw Error(result.code || result.error || "HTTP_" + response.status);
+    setOrders(previous => previous.map(item => item.id === order.id ? result.order : item));
+    toast.success(tx(["سفارش تحویل شد", "Order delivered", "Auftrag ausgeliefert", "Sipariş teslim edildi"]));
+  }
+  return <section className="panel">
+    <h2>{tx(["سفارش‌های اقتصادی", "Economy orders", "Economy-Aufträge", "Ekonomik siparişler"])}</h2>
+    <button type="button" disabled={busy} onClick={() => void run(refresh)}>{tx(["تازه‌سازی", "Refresh", "Aktualisieren", "Yenile"])}</button>
+    {error && <p role="alert">{error}</p>}
+    {discount !== "" && <form className="domain-fields" onSubmit={event => {
+      event.preventDefault();
+      const value = Number(new FormData(event.currentTarget).get("discount"));
+      void run(async () => {
+        await api(economyApi, { discountPercent: value }, "PATCH");
+        setDiscount(String(value));
+        toast.success(tx(["تخفیف ذخیره شد", "Discount saved", "Rabatt gespeichert", "İndirim kaydedildi"]));
+      });
+    }}>
+      <label>{tx(["درصد تخفیف سفارش‌های جدید", "Discount for new orders (%)", "Rabatt für neue Aufträge (%)", "Yeni sipariş indirimi (%)"])}<input key={discount} name="discount" type="number" min={1} max={99} required defaultValue={discount} /></label>
+      <button disabled={busy}>{tx(["ذخیره تخفیف", "Save discount", "Rabatt speichern", "İndirimi kaydet"])}</button>
+    </form>}
+    {discount && !orders.length && <Empty />}
+    {orders.map(order => <article key={order.id} className="panel">
+      <h3 dir="auto">{order.topic}</h3>
+      <p><Link href={"/admin/users/" + encodeURIComponent(order.userId)}>{order.userId}</Link> · <bdi>{order.channel}</bdi> · {new Date(order.createdAt).toLocaleString(tag)} · {n(order.credits)} {tx(["اعتبار", "credits", "Credits", "kredi"])}</p>
+      {order.status === "PENDING" ? <details><summary>{tx(["آماده‌سازی و تحویل", "Prepare delivery", "Auslieferung vorbereiten", "Teslimatı hazırla"])}</summary>
+        <form className="domain-fields" onSubmit={event => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          void run(() => deliver(order, form));
+        }}>
+          <label>{tx(["ویدیوی نهایی", "Final video", "Fertiges Video", "Son video"])} (MP4 ≤150 MiB)<input required type="file" accept="video/mp4,.mp4" name="video" /></label>
+          <label>{tx(["تصویر بندانگشتی", "Thumbnail", "Vorschaubild", "Küçük resim"])} (PNG/JPEG/WebP ≤8 MiB)<input required type="file" accept="image/png,image/jpeg,image/webp" name="thumbnail" /></label>
+          <label>{tx(["عنوان انتشار", "Publication title", "Veröffentlichungstitel", "Yayın başlığı"])}<input required maxLength={100} name="title" /></label>
+          <label>{tx(["توضیحات انتشار", "Publication description", "Beschreibung", "Yayın açıklaması"])}<textarea required maxLength={5000} name="description" /></label>
+          <label>{tx(["برچسب‌ها (جداشده با ویرگول)", "Tags (comma-separated)", "Tags (kommagetrennt)", "Etiketler (virgülle ayırın)"])}<textarea name="tags" /></label>
+          <button disabled={busy}>{tx(["تحویل به کاربر", "Deliver to customer", "An Kunden ausliefern", "Müşteriye teslim et"])}</button>
+        </form>
+      </details> : <details><summary>{lbl(STATUS, order.status, i)}</summary><h4>{order.title}</h4><p>{order.description}</p><p>{order.tags.join(", ")}</p></details>}
+    </article>)}
+  </section>;
+}
+
 export function LiveVideoFactoryAdmin() {
   const { n, i, tx } = useT();
   const [page, setPage] = useState(0);
@@ -94,7 +175,7 @@ export function LiveVideoFactoryAdmin() {
     setAsk({ title: tx(["لغو تولید", "Cancel production", "Produktion abbrechen", "Üretimi iptal et"]) + " · " + j.project?.title, danger: true, action: tx(["بله، لغو کن", "Yes, cancel", "Ja, abbrechen", "Evet, iptal et"]), body: <p>{tx(["تولید متوقف می‌شود و اعتبار مصرف‌نشده طبق قواعد سرور به پرداخت‌کننده برمی‌گردد.", "Production stops and unused credits go back to the payer under the server's rules.", "Die Produktion stoppt; ungenutzte Credits gehen nach Serverregeln zurück.", "Üretim durur; kullanılmayan krediler sunucu kurallarına göre iade edilir."])}</p>, run: go });
   }
   if (!overview || !policy) return <section className="panel" aria-busy="true" />;
-  const TABS: [string, Tx][] = [["settings", ["دسترسی و تعرفه‌ها", "Access & pricing", "Zugang & Preise", "Erişim ve fiyatlar"]], ["jobs", ["کارهای تولید", "Production jobs", "Produktionsjobs", "Üretim işleri"]], ["price", ["نرخ‌نامه و هزینه", "Price book & cost", "Preisbuch & Kosten", "Fiyat defteri ve maliyet"]], ["ops", ["مرکز عملیات", "Operations center", "Betriebszentrale", "Operasyon merkezi"]]];
+  const TABS: [string, Tx][] = [["settings", ["دسترسی و تعرفه‌ها", "Access & pricing", "Zugang & Preise", "Erişim ve fiyatlar"]], ["economy", ["سفارش‌های اقتصادی", "Economy orders", "Economy-Aufträge", "Ekonomik siparişler"]], ["jobs", ["کارهای تولید", "Production jobs", "Produktionsjobs", "Üretim işleri"]], ["price", ["نرخ‌نامه و هزینه", "Price book & cost", "Preisbuch & Kosten", "Fiyat defteri ve maliyet"]], ["ops", ["مرکز عملیات", "Operations center", "Betriebszentrale", "Operasyon merkezi"]]];
   return (
     <>
       <div className="admin-finance-heading">
@@ -112,6 +193,7 @@ export function LiveVideoFactoryAdmin() {
       <nav className="module-tabs">{TABS.map(([k, l]) => <a key={k} href={"#" + k} className={tab === k ? "selected" : ""} aria-current={tab === k ? "page" : undefined} onClick={(e) => { e.preventDefault(); setTab(k); }}>{tx(l)}</a>)}</nav>
       {!!changes.length && <div className="admin-note vf-unsaved"><span>{tx([`${n(changes.length)} تغییر ذخیره‌نشده در تنظیمات`, `${n(changes.length)} unsaved settings changes`, `${n(changes.length)} ungespeicherte Änderungen`, `${n(changes.length)} kaydedilmemiş değişiklik`])}</span><div className="domain-actions"><Button variant="primary" disabled={busy} onClick={savePolicy}><Icon name="Save" size={15} />{tx(["بررسی و ذخیره", "Review & save", "Prüfen & speichern", "İncele ve kaydet"])}</Button><Button disabled={busy} onClick={() => setPolicy(saved)}>{tx(["لغو تغییرات", "Discard", "Verwerfen", "Vazgeç"])}</Button></div></div>}
 
+      {tab === "economy" && <EconomyOrders />}
       {tab === "settings" && <section className="panel">
         <h3>{tx(["دسترسی، مدل و تعرفه‌ها", "Access, approved model & pricing", "Zugang, Modell & Preise", "Erişim, model ve fiyatlar"])}</h3>
         <p className="fine-print">{tx(["این نرخ‌ها اعتبار محصول‌اند. هزینهٔ واقعی ارائه‌دهنده در تب «نرخ‌نامه و هزینه» است.", "These are product credit rates. Actual provider cost is under Price book & cost.", "Das sind Produkt-Creditpreise. Echte Anbieterkosten unter Preisbuch & Kosten.", "Bunlar ürün kredi fiyatlarıdır. Gerçek maliyet Fiyat defteri sekmesinde."])}</p>
