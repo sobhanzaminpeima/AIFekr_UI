@@ -13,6 +13,11 @@
 <article class="offer" data-plan="VF_AUTO_10"><h2>خودتان در کارخانه بسازید</h2><p>بستهٔ ساخت یک ویدیوی حداکثر ۱۰ دقیقه‌ای. موضوع را وارد کنید، فیلمنامه و صحنه‌ها را مرور کنید و پس از تولید تصویر و گویندگی، خروجی را دانلود کنید.</p><div class="price" aria-live="polite">در حال دریافت قیمت…</div><a class="cta" aria-disabled="true">شروع ساخت خودکار</a></article>
 </section><p class="note">برای خرید، وارد حساب شوید یا ثبت‌نام کنید؛ مبلغ نهایی را پیش از انتقال به زرین‌پال می‌بینید. قبلاً خرید کرده‌اید؟ <a href="/video-factory">ورود به کارخانه ویدیو</a></p></main>
 <script>
+const landingParams = new URLSearchParams(location.search);
+if (landingParams.has('utm_campaign') || landingParams.has('utm_source') || (document.referrer && new URL(document.referrer).origin !== location.origin)) {
+  fetch('/api/growth/touch', {method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,
+    body:JSON.stringify({url:location.pathname+location.search,referrer:document.referrer || null})}).catch(()=>{});
+}
 async function loadOffers(){
   let offers=[];
   try{const response=await fetch('/api/packages',{cache:'no-store'});if(response.ok)offers=(await response.json()).packages||[];}catch{}
