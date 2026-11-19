@@ -995,6 +995,18 @@ kbd {
   padding: 0;
   justify-content: center;
 }
+.collapsed .main-nav > a[data-nav-new] { position: relative; }
+.collapsed .main-nav > a[data-nav-new]::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange, #ff6b00);
+  pointer-events: none;
+}
 .collapsed .sidebar .new-chat > span,
 .collapsed .sidebar .search-btn > span,
 .collapsed .sidebar .search-btn > kbd,

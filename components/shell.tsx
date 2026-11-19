@@ -192,7 +192,12 @@ export function Shell({
             {sidebarItems.filter(item => group.paths.includes(item.href) && (!live || item.href !== "/fit/dashboard" || live.user.showFitness)).map(item => {
               const href = live ? liveNavHref(item.href, live.access.hasBusinessAccess, live.user.studentWorkspaceEnabled) : item.href;
               const active = path === href || path.startsWith(href + "/");
-              return <Link href={href} key={href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} aria-label={item.label} title={item.label}><Icon name={item.icon}/><span>{item.label}</span></Link>;
+              const isNew = href === "/video-factory" || href === "/live";
+              const label = isNew ? `${item.label} · ${newTag}` : item.label;
+              return <Link href={href} key={href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} aria-label={label} title={label} data-nav-new={isNew || undefined}>
+                <Icon name={item.icon}/><span>{item.label}</span>
+                {isNew && <span className="new-tag" aria-hidden="true">{newTag}</span>}
+              </Link>;
             })}
           </nav>
         ))}
