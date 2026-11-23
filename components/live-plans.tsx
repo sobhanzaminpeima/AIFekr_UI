@@ -183,7 +183,9 @@ export function LivePlans() {
                   <h2>{tl(p.name, p.nameEn || p.name)}</h2>
                   {o.compareAtMinor != null && o.compareAtMinor > o.minor && <del>{money(o.compareAtMinor, o.currency)}</del>}
                   <strong className="plan-price">{money(o.minor, o.currency)}</strong>
-                  <small className="muted">{tl(...(PERIOD[termKey(o, p.duration)] ?? [o.period, o.period]))} · {n(o.credits)} {tx("اعتبار", "credits")}</small>
+                  <small className="muted">{p.planCode === "GAMING_SHORTS_3"
+                    ? tx("سه شورت از یک فایل؛ مهلت ثبت سفارش ", "Three Shorts from one file; submit within ") + n(o.days) + tx(" روز پس از خرید", " days of purchase")
+                    : <>{tl(...(PERIOD[termKey(o, p.duration)] ?? [o.period, o.period]))} · {n(o.credits)} {tx("اعتبار", "credits")}</>}</small>
                   <ul className="check-list">{list.map((f) => <li key={f}><Icon name="Check" size={16} />{f}</li>)}</ul>
                   <Button variant="primary" className="full" disabled={!!busy || noRoute || p.purchaseAvailable === false} onClick={() => void choose(p)}>
                     {busy === p.planCode ? <Icon name="LoaderCircle" size={16} className="spin" /> : null}{tx("انتخاب و فعال‌سازی", "Choose and activate")}

@@ -62,11 +62,11 @@ export function EconomyCreation({ children, packages }: { children: ReactNode; p
     {!mode ? <section className="vf-quick">
       <h1>{fa ? "بسته ساخت ویدیو را انتخاب کنید" : "Choose your video package"}</h1>
       <div className="economy-package-options">
-        <article className="panel">
+        {packages?.some(pkg => pkg.planCode === "GAMING_SHORTS_3") && <article className="panel">
           <strong>{fa ? "گیم‌پلی به شورت" : "Gameplay to Shorts"}</strong>
           <span>{fa ? "سه شورت عمودی از یک فایل، با بازبینی تیم. نسخهٔ آزمایشی." : "Three vertical Shorts from one file, reviewed by the team. Pilot."}</span>
           <Link className="btn" href="/video-factory?service=gaming">{fa ? "مشاهدهٔ شرایط و سفارش‌ها" : "View details and orders"}</Link>
-        </article>
+        </article>}
         <article className="panel">
           <strong>{fa ? "بسته اصلی" : "Main package"}</strong>
           <span>{fa ? "همین حالا شروع کنید و مراحل تولید را خودتان مدیریت کنید." : "Start now and manage each production step."}</span>
