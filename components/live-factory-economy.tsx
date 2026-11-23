@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useApp } from "./providers";
 import Link from "./site-link";
+import { GamingShorts } from "./live-gaming-shorts";
 import { useSearchParams } from "next/navigation";
 import { VIDEO_SKUS, videoPurchasePath } from "@/lib/video-purchase";
 import type { VideoPackage } from "./live-factory";
@@ -56,10 +57,16 @@ export function EconomyCreation({ children, packages }: { children: ReactNode; p
   }
   const catalog = useEconomyData();
   const quote = catalog.data?.quote;
+  if (params.get("service") === "gaming") return <><Link className="btn" href="/video-factory">{fa ? "بازگشت به کارخانه" : "Back to factory"}</Link><GamingShorts /></>;
   return <>
     {!mode ? <section className="vf-quick">
       <h1>{fa ? "بسته ساخت ویدیو را انتخاب کنید" : "Choose your video package"}</h1>
       <div className="economy-package-options">
+        <article className="panel">
+          <strong>{fa ? "گیم‌پلی به شورت" : "Gameplay to Shorts"}</strong>
+          <span>{fa ? "سه شورت عمودی از یک فایل، با بازبینی تیم. نسخهٔ آزمایشی." : "Three vertical Shorts from one file, reviewed by the team. Pilot."}</span>
+          <Link className="btn" href="/video-factory?service=gaming">{fa ? "مشاهدهٔ شرایط و سفارش‌ها" : "View details and orders"}</Link>
+        </article>
         <article className="panel">
           <strong>{fa ? "بسته اصلی" : "Main package"}</strong>
           <span>{fa ? "همین حالا شروع کنید و مراحل تولید را خودتان مدیریت کنید." : "Start now and manage each production step."}</span>

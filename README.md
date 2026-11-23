@@ -26,6 +26,8 @@ For an isolated browser test run, set `PLAYWRIGHT_PORT` to an unused port before
 
 ## Customer and admin routes
 
+The Gaming Shorts pilot is available in source at `/video-factory?service=gaming`, with a separate queue under `/admin/users/requests` and a draft landing at `/campaigns/gaming-shorts/index.html`. It supports resumable source uploads and private delivery of three clips, covers, subtitles and publishing metadata. The offer stays closed while its price and public sample await approval.
+
 | Route | Purpose |
 | --- | --- |
 | [YouTube campaign](https://aifekr.com/youtube) | Compare the automatic and team-produced ten-minute packages. Prices come from the live catalog. |
