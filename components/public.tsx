@@ -1,5 +1,6 @@
 "use client";
 import { LandingVideoFactory } from "./landing-video-factory";
+import { GamingShortsBanner } from "./gaming-shorts-banner";
 import Link, { useHref, useSite } from "@/components/site-link";
 import { WebAppInstallCallout } from "./webapp-install";
 import { LiveCreditCalculator } from "./live-public";
@@ -33,6 +34,7 @@ export function Landing() {
   const go = (target: string) => (live ? location.assign(href(target)) : router.push(target));
   return (
     <>
+      <GamingShortsBanner landing />
       <section className="landing-hero">
         <div className="landing-glow" />
         <Link href="/guides/getting-started" className="launch-badge">

@@ -12,6 +12,7 @@ import { AdminNavigation } from "./admin-navigation";
 import {ModuleDirectory} from './module-directory';
 import { useShell } from "./live-shell-context";
 import { LiveFrame, NotificationBell, useLiveCredits, useLiveProjects } from "./live-shell-widgets";
+import { uniqueSidebarTools } from "@/lib/sidebar-navigation";
 const nav: [string, TranslationKey, string][] = [
   ["/home", "home", "LayoutDashboard"],
   ["/chat", "chat", "MessagesSquare"],
@@ -104,7 +105,7 @@ export function Shell({
   const router = useRouter();
   const admin = path.startsWith("/admin");
   const referenceWorkspace = !!live && !admin && /^\/(home|live|create|crm|seo|video-factory|credits|wallet|settings)(\/|$)/.test(path);
-  const sidebarItems = nav.map(([href,key,icon])=>({href,label:t(key),icon}));
+  const sidebarItems = nav.map(([href,key,icon])=>({href,label:live && key === "business" ? tl("CRM و مشتریان", "CRM & customers") : t(key),icon}));
   if(live && !admin) sidebarItems.splice(4,0,
     {href:"/video-factory",label:tl("کارخانه ویدیو","Video Factory"),icon:"Clapperboard"},
   );
@@ -114,6 +115,8 @@ export function Shell({
     { label: tl("کسب‌وکار", "Business"), paths: ["/business", "/seo"] },
     { label: tl("یادگیری و سلامت", "Learning & health"), paths: ["/learn", "/fit/dashboard"] },
   ];
+  const primaryDestinations = sidebarItems.filter(item => !live || item.href !== "/fit/dashboard" || live.user.showFitness).map(item => item.href);
+  const proTools = uniqueSidebarTools(live?.proTools ?? [], primaryDestinations, live?.user.studentWorkspaceEnabled);
   useEffect(() => {
     let last = "";
     const handler = (e: KeyboardEvent) => {
@@ -201,11 +204,11 @@ export function Shell({
             })}
           </nav>
         ))}
-        {!admin && live?.proTools && live.proTools.length > 0 && (
-          <details key={path} open={collapsed || live.proTools.some(tool => path === tool.href || path.startsWith(tool.href + "/"))}>
+        {!admin && proTools.length > 0 && (
+          <details key={path} open={collapsed || proTools.some(tool => path === tool.href || path.startsWith(tool.href + "/"))}>
             <summary className="side-label">{tl("ابزارهای حرفه‌ای", "Pro tools")}</summary>
             <nav className="main-nav pro-nav" aria-label={tl("ابزارهای حرفه‌ای", "Pro tools")}>
-              {[...live.proTools].sort((a, b) => Number(b.recommended) - Number(a.recommended)).map((tool) => (
+              {[...proTools].sort((a, b) => Number(b.recommended) - Number(a.recommended)).map((tool) => (
                 <Link
                   key={tool.key}
                   href={tool.unlocked ? tool.href : "/plans"}

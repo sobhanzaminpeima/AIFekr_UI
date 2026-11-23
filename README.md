@@ -38,3 +38,5 @@ The Gaming Shorts pilot is available in source at `/video-factory?service=gaming
 | `/admin/customer-growth#campaigns` | View the YouTube, Live and Voice Studio campaigns and their attribution. |
 
 The workspace sidebar groups links by task, including content creation, business, and learning and health. Live and Video Factory carry a localized “New” badge, rendered as a dot when the sidebar is collapsed.
+
+Gaming Shorts is discoverable from a responsive banner at the start of the public landing page and the Video Factory package picker even while its offer remains hidden. The banner explicitly identifies the closed pilot and links to `/video-factory?service=gaming`; it does not enable sales or promise views. The supplied GTA VI reference artwork is a replaceable asset at `public/campaigns/gaming-shorts/gta-vi-reference.png`. Sidebar tools are deduplicated against primary destinations and route aliases, so Video Factory and other existing destinations do not reappear in Pro tools.
