@@ -105,3 +105,22 @@
 .sl-plan{position:relative;display:grid;gap:10px;justify-items:start;padding:22px}.sl-plan h3{margin:0;font-size:16px}.sl-plan strong{font-size:28px;font-weight:800}.sl-plan small{color:var(--text-muted);font-size:12px}.sl-plan .btn{width:100%;margin-top:6px}
 .sl-plan.featured{border-color:#f97316;box-shadow:0 0 0 1px #f9731659,0 16px 34px -18px #f97316}.sl-plan .ac-flag{top:-10px}
 @media(max-width:600px){.sl-intro ul{grid-template-columns:1fr}}
+/* Student and academy forms (2026-11-25): aligned two-column grid, full-width text areas, sticky submit */
+:is([data-module=student],[data-module=learn]) .modal{width:min(640px,calc(100vw - 24px));max-height:min(88dvh,820px);padding:0;border-radius:24px;border:1px solid #f9731659;background:linear-gradient(170deg,color-mix(in srgb,var(--surface-1) 92%,#f97316 8%),var(--surface-1) 45%);box-shadow:0 30px 80px -30px #000,0 0 0 1px #f973161f;overflow:hidden;display:flex;flex-direction:column}
+:is([data-module=student],[data-module=learn]) .modal[open]{display:flex}
+:is([data-module=student],[data-module=learn]) .modal::backdrop{background:rgba(8,8,10,.72);backdrop-filter:blur(4px)}
+:is([data-module=student],[data-module=learn]) .modal>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid var(--border);flex:none}
+:is([data-module=student],[data-module=learn]) .modal>header h2{display:flex;align-items:center;gap:10px;margin:0;font-size:19px;font-weight:800}
+:is([data-module=student],[data-module=learn]) .modal>header h2::before{content:"";width:10px;height:22px;border-radius:4px;background:linear-gradient(#fb923c,#ea580c)}
+:is([data-module=student],[data-module=learn]) .modal>.modal-end{display:none}
+:is([data-module=student],[data-module=learn]) .modal .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px;align-items:start;padding:22px 24px 0;margin:0;overflow-y:auto;flex:1;min-height:0;scrollbar-width:thin}
+:is([data-module=student],[data-module=learn]) .modal .form-grid>label{display:grid;gap:8px;align-content:start;font-size:13px;font-weight:600;color:var(--text-secondary);min-width:0}
+:is([data-module=student],[data-module=learn]) .modal .form-grid>label:has(textarea),:is([data-module=student],[data-module=learn]) .modal .form-grid>:is(p,.plan-notice,.text-link,[role=alert]){grid-column:1/-1}
+:is([data-module=student],[data-module=learn]) .modal .form-grid :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){width:100%;min-height:48px;padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:color-mix(in srgb,var(--surface-1) 70%,#000 30%);color:var(--text-primary);font:inherit;font-size:14px;font-weight:400;transition:border-color .15s,box-shadow .15s}
+:is([data-module=student],[data-module=learn]) .modal .form-grid textarea{min-height:120px;resize:vertical;line-height:1.9}
+:is([data-module=student],[data-module=learn]) .modal .form-grid :is(input,select,textarea):focus{outline:none;border-color:#f97316;box-shadow:0 0 0 3px #f9731633}
+:is([data-module=student],[data-module=learn]) .modal .form-grid [role=alert]{margin:0;padding:10px 14px;border-radius:12px;background:#ef44441a;color:#f87171;font-size:13px}
+:is([data-module=student],[data-module=learn]) .modal .form-grid .plan-notice{margin:0;padding:12px 14px;border-radius:12px;border:1px solid #f9731640;background:#f973160f;font-size:12px;line-height:1.9}
+:is([data-module=student],[data-module=learn]) .modal .form-grid>button[type=submit]{grid-column:1/-1;position:sticky;bottom:0;margin:6px -24px 0;width:calc(100% + 48px);min-height:56px;border-radius:0;font-size:15px;font-weight:800;background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;border:0;box-shadow:0 -12px 24px -12px var(--surface-1)}
+:is([data-module=student],[data-module=learn]) .modal .form-grid>button[type=submit]:disabled{opacity:.6}
+@media(max-width:600px){:is([data-module=student],[data-module=learn]) .modal{width:100vw;max-width:100vw;max-height:92dvh;margin:auto 0 0;border-radius:24px 24px 0 0}:is([data-module=student],[data-module=learn]) .modal .form-grid{grid-template-columns:1fr;padding:18px 16px 0}:is([data-module=student],[data-module=learn]) .modal .form-grid>button[type=submit]{margin:6px -16px 0;width:calc(100% + 32px);padding-bottom:env(safe-area-inset-bottom)}:is([data-module=student],[data-module=learn]) .modal .form-grid :is(input,select,textarea){font-size:16px}}
