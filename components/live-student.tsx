@@ -663,6 +663,7 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
   const { fa, tl } = useApp(),
     r = useLiveData(API + "workspace"),
     thesis = useLiveData(mode === "thesis" ? API + "thesis-assist" : null),
+    sources = useLiveData(mode === "thesis" || mode === "assignment" ? null : API + "materials?courseId=" + enc(course)),
     [result, setResult] = useState<LiveRow | null>(null),
     [quiz, setQuiz] = useState(""),
     [attemptToken, setAttemptToken] = useState("");
@@ -695,6 +696,18 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
           </>
         )}
       </p>
+      {!isThesis && !assignment && sources.data && (() => {
+        const list = liveRows(sources.data.materials);
+        return list.length ? (
+          <div className="sai-sources">
+            <b><Icon name="FileText" size={16} />{tl(`از ${list.length} منبع این درس استفاده می‌شود`, `Uses this subject's ${list.length} sources`)}</b>
+            <ul>{list.slice(0, 12).map((m) => <li key={String(m.id)}>{m.source === "audio_transcript" ? "🎙 " : "📄 "}{String(m.title)}</li>)}</ul>
+            {list.length > 12 && <small>{tl("۱۲ منبع جدیدتر استفاده می‌شوند.", "The 12 newest sources are used.")}</small>}
+          </div>
+        ) : (
+          <p className="sa-error">{tl("هنوز جزوه یا ویسی برای این درس نیست. اول از «جزوه و منابع» اضافه کن.", "This subject has no notes or audio yet. Add some under Sources first.")} <Link href="/student?view=upload">{tl("افزودن منبع", "Add a source")}</Link></p>
+        );
+      })()}
       {typeof estimate === "number" && (
         <LiveForm
           title={tl("تأیید و اجرای دستیار", "Confirm & run assistant")}
@@ -730,18 +743,22 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
                   )[value] ?? value,
               })),
             },
-            field(
-              "prompt",
-              "پرسش یا متن شما",
-              "Your question or text",
-              "textarea",
-            ),
+            isThesis || assignment
+              ? field("prompt", "پرسش یا متن شما", "Your question or text", "textarea")
+              : field("prompt", "پرسش، یا موضوعی که روی آن تمرکز شود (برای فلش‌کارت و آزمون اختیاری)", "Question, or a topic to focus on (optional for flashcards and quizzes)", "textarea", true),
             ...(!isThesis && !assignment
               ? [field("count", "تعداد (۳ تا ۱۵)", "Count (3–15)", "number")]
               : []),
           ]}
           initial={{ count: 5 }}
-          map={(b) => ({ ...b, courseId: course })}
+          map={(b) => ({
+            ...b,
+            courseId: course,
+            // Flashcards and quizzes can run on the whole subject: the server always reads its sources.
+            ...(!isThesis && !assignment && !String(b.prompt ?? "").trim() && b.action !== "ask"
+              ? { prompt: b.action === "quiz" ? tl("آزمون از کل جزوه‌ها و منابع این درس", "Quiz on all of this subject's sources") : tl("فلش‌کارت از کل جزوه‌ها و منابع این درس", "Flashcards from all of this subject's sources") }
+              : {}),
+          })}
           onDone={(d) => {
             const q = d.quiz as LiveRow | undefined;
             if (q?.id && q.attemptToken) {
