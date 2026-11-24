@@ -34,7 +34,7 @@ const termKey = (o: Offer, duration = 0) => { const days = Math.max(o.days, o.pe
 export function LivePlans() {
   const { fa, locale, n, tl } = useApp();
   const search = useSearchParams();
-  const selectedVideo = videoSku(search.get("plan"));
+  const selectedVideo = search.get("plan") === "GAMING_SHORTS_3" ? "GAMING_SHORTS_3" : videoSku(search.get("plan"));
   const [packages, setPackages] = useState<Pkg[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [group, setGroup] = useState("");
