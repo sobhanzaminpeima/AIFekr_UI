@@ -9,9 +9,10 @@ type Order = {
   id: string; userId: string; sourceName: string; sourceFingerprint: string; sourceBytes: number; uploadedBytes: number; channel: string; language: string;
   status: string; delivery: string; createdAt: string;
   notifiedAt: string | null;
+  pendingPaymentId?: string | null;
   requests?: { action: string; metadata: string | null; createdAt: string }[];
 };
-type Catalog = { orders: Order[]; salesEnabled: boolean; uploadAllowed: boolean; maxBytes: number; maxSeconds: number; chunkBytes: number; planCode: string };
+type Catalog = { orders: Order[]; unusedPurchases?: number; salesEnabled: boolean; uploadAllowed: boolean; maxBytes: number; maxSeconds: number; chunkBytes: number; planCode: string };
 async function request(url: string, init?: RequestInit) {
   const response = await fetch(url, { ...init, credentials: "include" });
   const data = await response.json().catch(() => ({}));
@@ -145,7 +146,7 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
     {!admin && <>
       <p>{fa ? "پس از خرید، ۳۰ روز برای ثبت سفارش فرصت دارید. یک نوبت اصلاح در چارچوب سفارش، تا هفت روز پس از تحویل. پیش از شروع تدوین می‌توانید درخواست لغو بدهید؛ وضعیت پرداخت پس از بررسی مدیر مشخص می‌شود." : "Submit within 30 days of purchase. Request one in-scope revision within seven days of delivery. Before editing begins, you may request cancellation; the administrator reviews payment resolution."}</p>
       <p role="status">{price && catalog?.salesEnabled ? price : fa ? "پذیرش سفارش هنوز باز نشده است. قیمت و شرایط نهایی پیش از پرداخت نمایش داده می‌شود." : "Order intake is not open yet. Final pricing and terms will be shown before payment."}</p>
-      {price && catalog?.salesEnabled && <Link className="btn primary" href="/plans?plan=GAMING_SHORTS_3&returnTo=%2Fvideo-factory">{fa ? "خرید بسته با زرین‌پال" : "Buy the package"}</Link>}
+      <ol><li>{fa ? "آپلود و بررسی فایل، بدون پرداخت" : "Upload and check your file, without payment"}</li><li>{fa ? "بررسی مبلغ و شرایط، سپس پرداخت زرین‌پال" : "Review the price and terms, then pay with Zarinpal"}</li><li>{fa ? "ثبت خودکار سفارش پس از پرداخت موفق؛ تدوین با بازبینی تیم" : "Automatic order submission after payment; team-reviewed editing"}</li></ol>
       <label>{fa ? "کانال شما" : "Your channel"}<input value={channel} onChange={e => setChannel(e.target.value)} disabled={busy} maxLength={500} /></label>
       <label>{fa ? "فایل اصلی MP4" : "Original MP4"}<input type="file" accept="video/mp4,.mp4" disabled={busy} onChange={e => setFile(e.target.files?.[0] || null)} /></label>
       <label><input type="checkbox" checked={rights} disabled={busy} onChange={e => setRights(e.target.checked)} />{fa ? "این ویدیو متعلق به من است یا اجازهٔ تدوین و انتشار آن را دارم." : "I own this video or have permission to edit and publish it."}</label>
@@ -177,7 +178,12 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
         {!admin && ["DRAFT", "UPLOADED"].includes(order.status) && <button className="btn" disabled={busy} onClick={() => {
           if (confirm(fa ? "پیش‌نویس و فایل آن حذف شود؟" : "Delete this draft and its source?")) void act(async () => { await request(endpoint + "/" + order.id, { method: "DELETE" }); });
         }}>{fa ? "حذف پیش‌نویس" : "Delete draft"}</button>}
-        {!admin && order.status === "UPLOADED" && <button className="btn primary" disabled={busy} onClick={() => {
+        {!admin && order.status === "UPLOADED" && order.pendingPaymentId && <Link className="btn primary" href="/payments">{fa ? "ادامه یا لغو پرداخت این سفارش" : "Continue or cancel this order's payment"}</Link>}
+        {!admin && order.status === "UPLOADED" && !order.pendingPaymentId && catalog?.salesEnabled && !catalog?.unusedPurchases && <>
+          <p>{fa ? "فایل از بررسی فنی عبور کرد. مبلغ و شرایط را پیش از پرداخت بررسی کنید؛ تدوین پس از پرداخت و تأیید تیم شروع می‌شود." : "Your file passed technical checks. Review the price and terms before paying. Editing starts after payment and team approval."}</p>
+          <Link className="btn primary" href={"/plans?plan=GAMING_SHORTS_3&gamingOrderId=" + order.id}>{fa ? "بررسی سفارش و پرداخت با زرین‌پال" : "Review order and pay with Zarinpal"}</Link>
+        </>}
+        {!admin && order.status === "UPLOADED" && !!catalog?.unusedPurchases && <button className="btn primary" disabled={busy} onClick={() => {
           if (confirm(fa ? "ثبت سفارش با مصرف یک بستهٔ خریداری‌شده؟" : "Submit using one purchased package?")) void act(async () => { await request(endpoint + "/" + order.id, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "SUBMIT" }) }); });
         }}>{fa ? "ثبت با بستهٔ خریداری‌شده" : "Submit using purchased package"}</button>}
         {!admin && order.status === "PENDING" && <button className="btn" disabled={busy} onClick={() => customerRequest(order.id, "REQUEST_CANCEL")}>{fa ? "درخواست لغو پیش از تدوین" : "Request cancellation before editing"}</button>}

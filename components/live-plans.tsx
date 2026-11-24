@@ -35,6 +35,7 @@ export function LivePlans() {
   const { fa, locale, n, tl } = useApp();
   const search = useSearchParams();
   const selectedVideo = search.get("plan") === "GAMING_SHORTS_3" ? "GAMING_SHORTS_3" : videoSku(search.get("plan"));
+  const gamingOrderId = search.get("gamingOrderId");
   const [packages, setPackages] = useState<Pkg[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [group, setGroup] = useState("");
@@ -80,11 +81,11 @@ export function LivePlans() {
   const [quoteRevision, setQuoteRevision] = useState(0);
   useEffect(() => {
     setQuote(null);
-    if (!selectedVideo || !videoPeriod || !hasZarinpal || selectedPackage?.purchaseAvailable === false) return;
+    if (!selectedVideo || !videoPeriod || !hasZarinpal || selectedPackage?.purchaseAvailable === false || selectedVideo === "GAMING_SHORTS_3" && !gamingOrderId) return;
     const controller = new AbortController();
     setError("");
     fetch("/api/billing/quote", { method: "POST", credentials: "include", signal: controller.signal,
-      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: selectedVideo, period: videoPeriod, currency: "IRT" }) })
+      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: selectedVideo, period: videoPeriod, currency: "IRT", ...(selectedVideo === "GAMING_SHORTS_3" ? { gamingOrderId } : {}) }) })
       .then(async response => {
         if (!response.ok) throw Error();
         const { quote: current } = await response.json();
@@ -92,10 +93,12 @@ export function LivePlans() {
         if (!controller.signal.aborted) setQuote(current);
       }).catch(() => { if (!controller.signal.aborted) setError(fa ? "قیمت در دسترس نیست. دوباره تلاش کنید." : "Could not load the price. Please try again."); });
     return () => controller.abort();
-  }, [selectedVideo, videoPeriod, hasZarinpal, selectedPackage?.purchaseAvailable, quoteRevision, fa]);
+  }, [selectedVideo, videoPeriod, hasZarinpal, selectedPackage?.purchaseAvailable, quoteRevision, fa, gamingOrderId]);
 
   // Server error codes (UPPER_SNAKE) as a sentence; server sentences pass through.
   function readable(code: string) {
+    if (code === "GAMING_UPLOAD_REQUIRED") return tx("ابتدا فایل گیم‌پلی خودتان را آپلود و بررسی کنید؛ پرداخت فقط برای همان فایل ساخته می‌شود.", "Upload and check your own gameplay first. Checkout is linked to that file.");
+    if (code === "GAMING_EXISTING_CHECKOUT") return tx("یک پرداخت ناتمام دارید؛ از بخش پرداخت‌ها آن را ادامه یا لغو کنید.", "You have an unfinished checkout. Continue or cancel it in Payments.");
     if (code === "GAMING_CAPACITY_FULL" || code === "STORAGE_FULL") return tx("ظرفیت دریافت سفارش فعلاً تکمیل است؛ پرداختی شروع نشد. کمی بعد دوباره بررسی کنید.", "Order capacity is full. No payment was started. Please check again later.");
     if (code === "GAMING_UNUSED_PACKAGE") return tx("یک بستهٔ استفاده‌نشده دارید؛ ابتدا سفارش خود را در گیمینگ شورت ثبت کنید.", "You already have an unused package. Submit your Gaming Shorts order first.");
     if (code.startsWith("APPROVED_RATE_REQUIRED")) return tx("قیمت این پکیج به‌روز می‌شود؛ کمی بعد دوباره امتحان کنید.", "This package's price is being updated; please try again shortly.");
@@ -104,6 +107,7 @@ export function LivePlans() {
     return code;
   }
   async function choose(p: Pkg) {
+    if (p.planCode === "GAMING_SHORTS_3") { location.href = "/video-factory?service=gaming"; return; }
     const sku = videoSku(p.planCode);
     if (sku) { location.assign(videoPurchasePath(sku)); return; }
     setBusy(p.planCode); setError("");
@@ -132,6 +136,7 @@ export function LivePlans() {
 
   if (failed) return <section className="plans-page"><p role="alert">{tx("پکیج‌ها بارگذاری نشد. صفحه را دوباره باز کنید.", "Packages could not be loaded. Please reload.")}</p></section>;
   if (selectedVideo) {
+    if (selectedVideo === "GAMING_SHORTS_3" && !gamingOrderId) return <section className="panel"><h1>{tx("اول فایل گیم‌پلی را بررسی کنیم", "Let's check your gameplay first")}</h1><p>{tx("آپلود و بررسی اولیه رایگان است. پس از تأیید فنی فایل، مبلغ و شرایط را می‌بینید و پرداخت می‌کنید.", "Upload and technical checks are free. Review the price and pay after your file passes.")}</p><a className="btn primary" href="/video-factory?service=gaming">{tx("آپلود و بررسی فایل", "Upload and check your file")}</a></section>;
     const unavailable = packages && (!selectedPackage || selectedPackage.purchaseAvailable === false || !videoPeriod);
     return <section className="plans-page"><article className="panel plan-card">
       <h1>{selectedPackage ? tl(selectedPackage.name, selectedPackage.nameEn || selectedPackage.name) : selectedVideo === VIDEO_SKUS.main ? tx("بسته اصلی ویدیو", "Main video package") : tx("بسته اقتصادی ویدیو", "Economy video package")}</h1>
