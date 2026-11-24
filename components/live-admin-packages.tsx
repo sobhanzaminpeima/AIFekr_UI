@@ -158,8 +158,8 @@ export function LiveAdminPackages() {
             </div>
             <h3>{tx(["قیمت کل دوره", "Whole-term prices", "Gesamtpreise", "Dönem toplam fiyatları"])} · {form.baseCurrency}</h3>
             <div className="domain-fields">
-              {TERMS.map((k) => (
-                <label key={k}>{labels[k] || k}
+              {TERMS.filter(k => form.planCode !== "GAMING_SHORTS_3" || k === "monthly").map((k) => (
+                <label key={k}>{form.planCode === "GAMING_SHORTS_3" ? tx(["قیمت یک بستهٔ سه شورت", "One three-Short package", "Ein Paket mit drei Shorts", "Üç Shorts paketi"]) : labels[k] || k}
                   <input type="number" min="0" dir="ltr" step={form.baseCurrency === "IRT" ? 1 : 0.01} value={form.termPrices[k] === undefined ? "" : form.termPrices[k] / unit(form.baseCurrency)} onChange={(e) => { const prices = { ...form.termPrices }; if (e.target.value === "") delete prices[k]; else prices[k] = Math.round(Number(e.target.value) * unit(form.baseCurrency)); change("termPrices", prices); }} />
                 </label>
               ))}
@@ -190,7 +190,12 @@ export function LiveAdminPackages() {
               {field("features", "Features (Persian)")}
               {field("featuresEn", "Features (international)")}
             </div>
-            {form.category === "VIDEO_FACTORY" && (
+            {form.planCode === "GAMING_SHORTS_3" && <section className="panel">
+              <h3>{tx(["شرایط خدمت گیمینگ شورت", "Gaming Shorts service", "Gaming-Shorts-Service", "Gaming Shorts hizmeti"])}</h3>
+              <p>{tx(["۳ شورت ۳۰ تا ۶۰ ثانیه‌ای؛ یک فایل تا ۳۰ دقیقه و ۵۰۰ مگابایت؛ حداقل 720p. این بسته، اعتبار تولید خودکار ویدیوی بلند نیست.", "3 Shorts of 30–60 seconds; one source up to 30 minutes and 500 MB, minimum 720p. This is separate from automatic long-video credits.", "3 Shorts mit 30–60 Sekunden; eine Datei bis 30 Minuten und 500 MB, mindestens 720p.", "30–60 saniyelik 3 Shorts; en fazla 30 dakika ve 500 MB, en az 720p."])}</p>
+              <Link className="btn" href="/admin/users/requests?type=gaming">{tx(["مدیریت سفارش‌ها و تحویل", "Manage orders and delivery", "Aufträge und Lieferung", "Siparişler ve teslimat"])}</Link>
+            </section>}
+            {form.category === "VIDEO_FACTORY" && form.planCode !== "GAMING_SHORTS_3" && (
               <div className="domain-fields">
                 {([["videoCount", tx(["تعداد ویدیو", "Video count", "Videoanzahl", "Video sayısı"])], ["videoSeconds", tx(["کل ثانیه تولید", "Total production seconds", "Produktionssekunden", "Toplam üretim saniyesi"])], ["videoMaxSeconds", tx(["حداکثر هر ویدیو / ثانیه (۴۸۰)", "Maximum seconds per video (480)", "Maximale Sekunden je Video (480)", "Video başına azami saniye (480)"])]] as [string, string][]).map(([key, label]) => (
                   <label key={key}>{label}<input type="number" min="1" dir="ltr" max={key === "videoMaxSeconds" ? 480 : 480000} value={form.entitlements.limits?.[key] || ""} onChange={(e) => change("entitlements", { ...form.entitlements, limits: { ...form.entitlements.limits, [key]: +e.target.value } })} /></label>

@@ -2,9 +2,12 @@
 import Link from "./site-link";
 import { useApp } from "./providers";
 import { Icon } from "./ui";
+import { useEffect, useState } from "react";
 
 export function GamingShortsBanner({ landing = false, compact = false }: { landing?: boolean; compact?: boolean }) {
   const { fa } = useApp();
+  const [available, setAvailable] = useState(false);
+  useEffect(() => { const controller = new AbortController();fetch("/api/packages", { signal: controller.signal }).then(r => r.ok ? r.json() : null).then(data => setAvailable(!!data?.packages?.some((p: { planCode: string; purchaseAvailable: boolean }) => p.planCode === "GAMING_SHORTS_3" && p.purchaseAvailable))).catch(() => {});return () => controller.abort(); }, []);
   return <section className={`gaming-feature-banner ${landing ? "gaming-feature-hero" : ""} ${compact ? "gaming-feature-compact" : ""}`} aria-label={fa ? "معرفی گیم‌پلی به شورت" : "Introducing Gaming Shorts"}>
     <div className="gaming-feature-copy">
       <div className="gaming-feature-kicker"><span><Icon name="Gamepad2" size={16} /> AIFekr Gaming Shorts</span><span className="gaming-pilot-tag">{fa ? "جدید" : "New"}</span></div>
@@ -15,7 +18,7 @@ export function GamingShortsBanner({ landing = false, compact = false }: { landi
         <li><Icon name="MessageSquare" size={15} />{fa ? "زیرنویس و کاور" : "Captions & covers"}</li>
         <li><Icon name="ShieldCheck" size={15} />{fa ? "بازبینی تیم" : "Team review"}</li>
       </ul>
-      <div className="gaming-feature-actions"><Link className="btn primary" href="/video-factory?service=gaming">{fa ? "آشنایی با گیم‌پلی به شورت" : "Explore Gaming Shorts"}<Icon name={fa ? "ArrowLeft" : "ArrowRight"} size={17} /></Link><small>{fa ? "پیش‌نمایش خدمت؛ فروش عمومی هنوز باز نشده است." : "Service preview. Public sales are not open yet."}</small></div>
+      <div className="gaming-feature-actions"><Link className="btn primary" href="/video-factory?service=gaming">{available ? (fa ? "ثبت سفارش گیمینگ شورت" : "Order Gaming Shorts") : (fa ? "آشنایی با گیم‌پلی به شورت" : "Explore Gaming Shorts")}<Icon name={fa ? "ArrowLeft" : "ArrowRight"} size={17} /></Link><small>{available ? (fa ? "سه شورت با بازبینی تیم؛ قیمت و شرایط را پیش از پرداخت ببینید." : "Three team-reviewed Shorts. Review pricing and terms before payment.") : (fa ? "ثبت سفارش هنوز باز نشده است." : "Order intake is not open yet.")}</small></div>
     </div>
     <div className="gaming-feature-art">
       <img src="/campaigns/gaming-shorts/gta-vi-reference.png" alt={fa ? "تصویر مرجع GTA VI با فضای شهری و رنگ‌های صورتی و بنفش" : "GTA VI reference artwork in pink and purple city colors"} width={597} height={335} loading={landing ? "eager" : "lazy"} fetchPriority={landing ? "high" : "auto"} />
