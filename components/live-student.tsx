@@ -775,29 +775,40 @@ function StudyAi({ course, mode }: { course: string; mode: string }) {
         />
       )}
       {result && (
-        <div>
-          <p role="status">
-            {tl("کردیت مصرف‌شده: ", "Credits used: ")}
-            {String(result.creditsUsed ?? "—")}
-          </p>
-          <AIText text={String(result.answer ?? result.content ?? "")} />
-          {result.created != null && (
-            <p>
-              {tl("فلش‌کارت‌های ذخیره‌شده: ", "Saved flashcards: ")}
-              {String(result.created)}
-            </p>
-          )}
-          {result.quiz != null && (
-            <Button
-              onClick={() => {
-                setQuiz(String((result.quiz as LiveRow).id));
-                setAttemptToken(
-                  String((result.quiz as LiveRow).attemptToken ?? ""),
-                );
-              }}
-            >
-              {tl("باز کردن آزمون", "Open quiz")}
-            </Button>
+        <div className="sai-result" role="status">
+          {result.created != null ? (
+            <div className="sai-done">
+              <span className="sai-done-icon"><Icon name="Layers" size={22} /></span>
+              <div>
+                <b>{tl(`${String(result.created)} فلش‌کارت ساخته شد`, `${String(result.created)} flashcards created`)}</b>
+                <small>{tl("کردیت مصرف‌شده: ", "Credits used: ")}{String(result.creditsUsed ?? "—")}</small>
+              </div>
+              <Link className="btn primary" href="/student?view=review">{tl("شروع مرور فلش‌کارت‌ها", "Review the flashcards")}</Link>
+            </div>
+          ) : result.quiz != null ? (
+            <div className="sai-done">
+              <span className="sai-done-icon"><Icon name="CircleCheck" size={22} /></span>
+              <div>
+                <b>{tl("آزمون ساخته شد", "Quiz created")}</b>
+                <small>{tl("کردیت مصرف‌شده: ", "Credits used: ")}{String(result.creditsUsed ?? "—")}</small>
+              </div>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setQuiz(String((result.quiz as LiveRow).id));
+                  setAttemptToken(String((result.quiz as LiveRow).attemptToken ?? ""));
+                  setTimeout(() => document.querySelector(".sq")?.scrollIntoView({ behavior: "smooth" }), 50);
+                }}
+              >
+                {tl("شروع آزمون", "Start the quiz")}
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="sai-credits">{tl("کردیت مصرف‌شده: ", "Credits used: ")}{String(result.creditsUsed ?? "—")}</p>
+              <AIText text={String(result.answer ?? result.content ?? "")} />
+              {result.savedNoteId != null && <Link className="text-link" href="/student?view=notes">{tl("این پاسخ در یادداشت‌ها ذخیره شد ←", "Saved to your notes ←")}</Link>}
+            </>
           )}
         </div>
       )}
