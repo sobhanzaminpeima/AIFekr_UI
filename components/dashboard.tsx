@@ -152,6 +152,7 @@ export function Dashboard() {
     ];
     return <div className="reference-home">
       <PaymentRetryNotice />
+      <GamingShortsBanner compact />
       <section className="reference-intro">
         <div className="reference-wordmark" dir="ltr"><span aria-hidden="true">✦</span> AIFekr</div>
         <p>{tl("دستیار هوشمند تولید، رشد و مدیریت محتوا","Your AI assistant for content, growth and creation")}</p>
@@ -202,7 +203,6 @@ export function Dashboard() {
         </Link>
       </div>
       {live && <PaymentRetryNotice />}
-      {live && <GamingShortsBanner compact />}
       <FirstStep isNew={isNew} credits={credits} />
       {invite && personal && (
         <div className="plan-notice" role="status">
