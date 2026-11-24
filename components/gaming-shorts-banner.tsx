@@ -3,11 +3,11 @@ import Link from "./site-link";
 import { useApp } from "./providers";
 import { Icon } from "./ui";
 
-export function GamingShortsBanner({ landing = false }: { landing?: boolean }) {
+export function GamingShortsBanner({ landing = false, compact = false }: { landing?: boolean; compact?: boolean }) {
   const { fa } = useApp();
-  return <section className={`gaming-feature-banner ${landing ? "gaming-feature-hero" : ""}`} aria-label={fa ? "معرفی گیم‌پلی به شورت" : "Introducing Gaming Shorts"}>
+  return <section className={`gaming-feature-banner ${landing ? "gaming-feature-hero" : ""} ${compact ? "gaming-feature-compact" : ""}`} aria-label={fa ? "معرفی گیم‌پلی به شورت" : "Introducing Gaming Shorts"}>
     <div className="gaming-feature-copy">
-      <div className="gaming-feature-kicker"><span><Icon name="Gamepad2" size={16} /> AIFekr Gaming Shorts</span><span className="gaming-pilot-tag">{fa ? "جدید · آزمایشی" : "New · pilot"}</span></div>
+      <div className="gaming-feature-kicker"><span><Icon name="Gamepad2" size={16} /> AIFekr Gaming Shorts</span><span className="gaming-pilot-tag">{fa ? "جدید" : "New"}</span></div>
       <h2>{fa ? <>گیم‌پلی خودت،<br /><em>سه شورت آمادهٔ انتشار.</em></> : <>Your gameplay.<br /><em>Three publish-ready Shorts.</em></>}</h2>
       <p>{fa ? "با حال‌وهوای GTA VI شروع کن. گیم‌پلی خودت را بده؛ تدوین عمودی، زیرنویس، کاور و اطلاعات انتشار را با بازبینی تیم تحویل بگیر." : "Start with GTA VI inspiration. Turn your own gameplay into vertical edits, captions, covers and publishing details, reviewed by our team."}</p>
       <ul className="gaming-feature-benefits">

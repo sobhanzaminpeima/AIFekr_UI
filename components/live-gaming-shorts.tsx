@@ -9,6 +9,7 @@ type Order = {
   id: string; userId: string; sourceName: string; sourceFingerprint: string; sourceBytes: number; uploadedBytes: number; channel: string; language: string;
   status: string; delivery: string; createdAt: string;
   notifiedAt: string | null;
+  requests?: { action: string; metadata: string | null; createdAt: string }[];
 };
 type Catalog = { orders: Order[]; salesEnabled: boolean; uploadAllowed: boolean; maxBytes: number; maxSeconds: number; chunkBytes: number; planCode: string };
 async function request(url: string, init?: RequestInit) {
@@ -30,6 +31,8 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
   const [uploadPhase, setUploadPhase] = useState<"CHECKING" | "UPLOADING" | "VERIFYING" | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);
   const [price, setPrice] = useState<string | null>(null);
+  const [actionForm, setActionForm] = useState<{ id: string; action: string } | null>(null);
+  const [actionText, setActionText] = useState("");
   const active = useRef(false);
   const attempt = useRef({ signature: "", key: "" });
   const load = useCallback(async () => {
@@ -56,6 +59,9 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
       UPLOAD_BUSY: ["آپلود دیگری در جریان است. کمی بعد دوباره ادامه دهید.", "Another upload is active. Resume shortly."],
       UPLOAD_QUOTA_EXCEEDED: ["دو پیش‌نویس فعال دارید؛ یکی را حذف کنید.", "Remove an unused draft before starting another upload."],
       STORAGE_FULL: ["فضای آپلود موقتاً پر است؛ با پشتیبانی تماس بگیرید.", "Upload storage is temporarily full. Contact support."],
+      GAMING_CAPACITY_FULL: ["ظرفیت سفارش‌ها فعلاً تکمیل است؛ پرداخت جدید پذیرفته نمی‌شود.", "Order capacity is full. New purchases are paused."],
+      REVISION_ALREADY_USED: ["یک نوبت اصلاح این سفارش استفاده شده است.", "This order's included revision has been used."],
+      REVISION_WINDOW_CLOSED: ["مهلت هفت‌روزهٔ درخواست اصلاح تمام شده است؛ با پشتیبانی تماس بگیرید.", "The seven-day revision window has ended. Contact support."],
       RATE_LIMITED: ["آپلود موقتاً متوقف شد. یک دقیقه دیگر وضعیت را تازه کنید و از بخش ثبت‌شده ادامه دهید.", "Pause for one minute, refresh status, then resume from the saved offset."],
       FILE_CHANGED: ["فایل با انتخاب قبلی مطابقت ندارد؛ فایل اصلی را انتخاب کنید.", "Select the same original file to resume."],
     };
@@ -127,15 +133,18 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
     await request("/api/admin/video-factory/gaming", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action }) });
   };
   const state: Record<string, string> = fa
-    ? { DRAFT: "آپلود ناتمام", UPLOADED: "فایل آماده؛ منتظر ثبت سفارش", PENDING: "در انتظار تأیید تیم", APPROVED: "در حال تدوین", DELIVERED: "آمادهٔ دریافت" }
-    : { DRAFT: "Upload incomplete", UPLOADED: "Ready to submit", PENDING: "Awaiting team approval", APPROVED: "Editing", DELIVERED: "Ready" };
+    ? { DRAFT: "آپلود ناتمام", UPLOADED: "فایل آماده؛ منتظر ثبت سفارش", PENDING: "در انتظار تأیید تیم", APPROVED: "در حال تدوین", DELIVERED: "آمادهٔ دریافت", REVISION_REQUESTED: "درخواست اصلاح ثبت شد", CANCEL_REQUESTED: "لغو در انتظار بررسی و تعیین تکلیف پرداخت", CANCELLED: "پس از بررسی مدیر لغو شد" }
+    : { DRAFT: "Upload incomplete", UPLOADED: "Ready to submit", PENDING: "Awaiting team approval", APPROVED: "Editing", DELIVERED: "Ready", REVISION_REQUESTED: "Revision requested", CANCEL_REQUESTED: "Cancellation and payment review pending", CANCELLED: "Cancelled after administrator review" };
+  function customerRequest(id: string, action: string) {
+    setActionForm({ id, action });setActionText("");
+  }
   return <section className="panel vf-quick" id="gaming-shorts">
     <h2>{fa ? "تبدیل گیم‌پلی به سه شورت" : "Turn gameplay into three Shorts"}</h2>
-    <p>{fa ? "یک فایل MP4 با کیفیت 720p یا بالاتر، حداکثر ۳۰ دقیقه و ۲ گیگابایت؛ سه شورت عمودی با بازبینی تیم، کاور، زیرنویس قابل ویرایش و اطلاعات انتشار. تحویل ۱ تا ۲ روز کاری پس از تأیید سفارش و کیفیت فایل." :
-      "One MP4 at 720p or higher, up to 30 minutes and 2 GB. Three team-reviewed vertical Shorts, covers, editable captions and publishing details. Delivery in 1–2 business days after order and source-quality approval."}</p>
+    <p>{fa ? "یک فایل MP4 با کیفیت 720p یا بالاتر، حداکثر ۳۰ دقیقه و ۵۰۰ مگابایت؛ سه شورت عمودی با بازبینی تیم، کاور، زیرنویس قابل ویرایش و اطلاعات انتشار. تحویل ۱ تا ۲ روز کاری پس از تأیید سفارش و کیفیت فایل." :
+      "One MP4 at 720p or higher, up to 30 minutes and 500 MB. Three team-reviewed vertical Shorts, covers, editable captions and publishing details. Delivery in 1–2 business days after order and source-quality approval."}</p>
     {!admin && <>
-      <p>{fa ? "پس از خرید، ۳۰ روز برای ثبت سفارش فرصت دارید. یک نوبت اصلاح در بسته در نظر گرفته شده است." : "Submit within 30 days of purchase. The package includes one revision."}</p>
-      <p role="status">{price && catalog?.salesEnabled ? price : fa ? "نسخهٔ آزمایشی؛ قیمت و نمونهٔ عمومی در حال بررسی است. فروش هنوز باز نشده." : "Pilot: public samples and pricing are under review. Sales are not open yet."}</p>
+      <p>{fa ? "پس از خرید، ۳۰ روز برای ثبت سفارش فرصت دارید. یک نوبت اصلاح در چارچوب سفارش، تا هفت روز پس از تحویل. پیش از شروع تدوین می‌توانید درخواست لغو بدهید؛ وضعیت پرداخت پس از بررسی مدیر مشخص می‌شود." : "Submit within 30 days of purchase. Request one in-scope revision within seven days of delivery. Before editing begins, you may request cancellation; the administrator reviews payment resolution."}</p>
+      <p role="status">{price && catalog?.salesEnabled ? price : fa ? "پذیرش سفارش هنوز باز نشده است. قیمت و شرایط نهایی پیش از پرداخت نمایش داده می‌شود." : "Order intake is not open yet. Final pricing and terms will be shown before payment."}</p>
       {price && catalog?.salesEnabled && <Link className="btn primary" href="/plans?plan=GAMING_SHORTS_3&returnTo=%2Fvideo-factory">{fa ? "خرید بسته با زرین‌پال" : "Buy the package"}</Link>}
       <label>{fa ? "کانال شما" : "Your channel"}<input value={channel} onChange={e => setChannel(e.target.value)} disabled={busy} maxLength={500} /></label>
       <label>{fa ? "فایل اصلی MP4" : "Original MP4"}<input type="file" accept="video/mp4,.mp4" disabled={busy} onChange={e => setFile(e.target.files?.[0] || null)} /></label>
@@ -148,6 +157,16 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
       {busy && uploadPhase === "UPLOADING" && <progress aria-label={fa ? "پیشرفت آپلود" : "Upload progress"} max={100} value={progress} />}
     </>}
     {error && <p role="alert">{error}</p>}
+    {actionForm && <form className="panel" onSubmit={e => { e.preventDefault();void act(async () => {
+      await request(admin ? "/api/admin/video-factory/gaming" : endpoint + "/" + actionForm.id, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(admin ? { ...actionForm, note: actionText.trim() } : { action: actionForm.action, message: actionText.trim() }) });
+      setActionForm(null);setActionText("");
+    }); }}>
+      <h3>{admin ? (fa ? "ثبت نتیجهٔ بررسی" : "Record review outcome") : (fa ? "جزئیات درخواست" : "Request details")}</h3>
+      {actionForm.action === "RESOLVE_CANCEL" && <p>{fa ? "فقط پس از توافق با مشتری و تعیین تکلیف واقعی وجه، نتیجه و مرجع پیگیری را ثبت کنید. این دکمه وجهی منتقل نمی‌کند." : "Record the agreement and payment-resolution reference only after resolving it with the customer. This button does not transfer money."}</p>}
+      <label>{fa ? "توضیحات (حداقل ۱۰ حرف)" : "Details (at least 10 characters)"}<textarea required minLength={10} maxLength={2000} rows={4} value={actionText} onChange={e => setActionText(e.target.value)} /></label>
+      <button className="btn primary" disabled={busy || actionText.trim().length < 10}>{fa ? "ثبت و اطلاع‌رسانی" : "Submit and notify"}</button>
+      <button className="btn" type="button" disabled={busy} onClick={() => setActionForm(null)}>{fa ? "انصراف" : "Back"}</button>
+    </form>}
     <button className="btn" disabled={busy} onClick={() => void act(load)}>{fa ? "تازه‌سازی وضعیت" : "Refresh status"}</button>
     {orders.map(order => {
       const base = endpoint + "/" + order.id + "/";
@@ -161,9 +180,16 @@ export function GamingShorts({ admin = false }: { admin?: boolean }) {
         {!admin && order.status === "UPLOADED" && <button className="btn primary" disabled={busy} onClick={() => {
           if (confirm(fa ? "ثبت سفارش با مصرف یک بستهٔ خریداری‌شده؟" : "Submit using one purchased package?")) void act(async () => { await request(endpoint + "/" + order.id, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "SUBMIT" }) }); });
         }}>{fa ? "ثبت با بستهٔ خریداری‌شده" : "Submit using purchased package"}</button>}
+        {!admin && order.status === "PENDING" && <button className="btn" disabled={busy} onClick={() => customerRequest(order.id, "REQUEST_CANCEL")}>{fa ? "درخواست لغو پیش از تدوین" : "Request cancellation before editing"}</button>}
+        {!admin && order.status === "DELIVERED" && <button className="btn" disabled={busy} onClick={() => customerRequest(order.id, "REQUEST_REVISION")}>{fa ? "درخواست یک نوبت اصلاح" : "Request the included revision"}</button>}
         {admin && <>
           <p>{order.userId || ""}</p>
           <p dir="auto" style={{ overflowWrap: "anywhere" }}>{order.channel} · {order.language}</p>
+          {order.requests?.map((item, index) => <p key={index} dir="auto">{JSON.parse(item.metadata || "{}").message}</p>)}
+          {order.status === "CANCEL_REQUESTED" && <><p>{fa ? "تدوین متوقف است. درخواست و وضعیت وجه را با کاربر تعیین تکلیف کنید؛ بازگشت وجه خودکار نیست." : "Editing is paused. Resolve the request and payment with the customer. Refunds are not automatic."}</p>
+            <button className="btn" disabled={busy} onClick={() => customerRequest(order.id, "RESOLVE_CANCEL")}>{fa ? "ثبت نتیجه و بستن سفارش" : "Record resolution and close"}</button>
+            <button className="btn" disabled={busy} onClick={() => customerRequest(order.id, "RESUME")}>{fa ? "ادامه با توافق مشتری" : "Resume with customer agreement"}</button></>}
+          {order.status === "REVISION_REQUESTED" && <button className="btn" disabled={busy} onClick={() => void act(() => adminAction(order.id, "APPROVE"))}>{fa ? "شروع اصلاح" : "Start revision"}</button>}
           <a className="btn" href={"/api/admin/video-factory/gaming/" + order.id + "/source"}>{fa ? "دانلود منبع" : "Download source"}</a>
           {order.status === "PENDING" && <button className="btn" disabled={busy} onClick={() => void act(() => adminAction(order.id, "APPROVE"))}>{fa ? "تأیید و ایمیل" : "Approve and email"}</button>}
           {order.status === "APPROVED" && <label>{fa ? "آپلود ZIP سه شورت و فایل‌های انتشار (حداکثر ۱۵۰ MB)" : "Upload delivery ZIP, max 150 MB"}

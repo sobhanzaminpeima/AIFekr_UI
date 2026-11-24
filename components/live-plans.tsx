@@ -96,6 +96,8 @@ export function LivePlans() {
 
   // Server error codes (UPPER_SNAKE) as a sentence; server sentences pass through.
   function readable(code: string) {
+    if (code === "GAMING_CAPACITY_FULL" || code === "STORAGE_FULL") return tx("ظرفیت دریافت سفارش فعلاً تکمیل است؛ پرداختی شروع نشد. کمی بعد دوباره بررسی کنید.", "Order capacity is full. No payment was started. Please check again later.");
+    if (code === "GAMING_UNUSED_PACKAGE") return tx("یک بستهٔ استفاده‌نشده دارید؛ ابتدا سفارش خود را در گیمینگ شورت ثبت کنید.", "You already have an unused package. Submit your Gaming Shorts order first.");
     if (code.startsWith("APPROVED_RATE_REQUIRED")) return tx("قیمت این پکیج به‌روز می‌شود؛ کمی بعد دوباره امتحان کنید.", "This package's price is being updated; please try again shortly.");
     if (code === "UNSUPPORTED_PERIOD") return tx("این دوره برای این پکیج موجود نیست؛ دورهٔ دیگری انتخاب کنید.", "This period isn't offered for this package; please pick another.");
     if (!code || /^[A-Z0-9_]+$/.test(code)) return tx("فعال‌سازی این پکیج الان ممکن نشد؛ کمی بعد دوباره امتحان کنید یا با پشتیبانی تماس بگیرید.", "This package couldn't be activated right now; please try again shortly or contact support.");

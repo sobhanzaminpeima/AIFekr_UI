@@ -7126,6 +7126,10 @@ button.panel.stat.selected{border-color:#f97316}
 .sidebar .user-menu small span{unicode-bidi:isolate}
 
 /* Gaming Shorts discovery stays visible independently of package sales. */
+.gaming-feature-banner.gaming-feature-compact{padding:20px;gap:20px;grid-template-columns:minmax(0,1fr) 240px}
+.gaming-feature-compact h2{font-size:24px;line-height:1.6;margin:8px 0}
+.gaming-feature-compact h2 br{display:none}
+.gaming-feature-compact p,.gaming-feature-compact .gaming-feature-benefits,.gaming-feature-compact .gaming-feature-disclaimer,.gaming-feature-compact .gaming-feature-art-label{display:none}
 .gaming-feature-banner{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:26px;padding:28px;margin:0 0 24px;border:1px solid #a765b280;border-radius:24px;overflow:hidden;background:radial-gradient(ellipse at 85% 0%,#4b214480,transparent 60%),linear-gradient(125deg,#141323,#17121c 65%,#232337);color:#faf7ff;box-shadow:0 16px 44px #0002}
 .gaming-feature-banner .gaming-feature-copy{min-width:0;align-self:center;position:relative;z-index:1}
 .gaming-feature-kicker{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:650;color:#e7c8f2}
@@ -7148,6 +7152,8 @@ button.panel.stat.selected{border-color:#f97316}
 .public-shell .gaming-feature-hero{width:calc(100% - 48px)}
 .gaming-feature-hero h2{font-size:clamp(30px,3.2vw,46px)}
 @media(max-width:760px){
+ .gaming-feature-banner.gaming-feature-compact{grid-template-columns:minmax(0,1fr);padding:18px}
+ .gaming-feature-compact .gaming-feature-art{display:none}
  .gaming-feature-banner{grid-template-columns:minmax(0,1fr);gap:18px;padding:21px 18px;border-radius:20px}
  .gaming-feature-banner h2{font-size:27px;margin:10px 0;line-height:1.65}
  .gaming-feature-banner p{font-size:12px;line-height:1.95}

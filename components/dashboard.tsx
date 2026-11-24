@@ -12,6 +12,7 @@ import { FirstStep } from "./first-step";
 import { PaymentRetryNotice } from "./payment-retry-notice";
 import type { HomeTool } from "@/lib/live-app";
 import { FirstRunChecklist } from "./first-run-checklist";
+import { GamingShortsBanner } from "./gaming-shorts-banner";
 
 /** The account's own dashboard data on aifekr.com (main site /api/app/dashboard). */
 type LiveDashboard = {
@@ -201,6 +202,7 @@ export function Dashboard() {
         </Link>
       </div>
       {live && <PaymentRetryNotice />}
+      {live && <GamingShortsBanner compact />}
       <FirstStep isNew={isNew} credits={credits} />
       {invite && personal && (
         <div className="plan-notice" role="status">
