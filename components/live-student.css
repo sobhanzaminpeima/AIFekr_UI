@@ -137,3 +137,11 @@
 .sd-first-course>div{flex:1;min-width:0}.sd-first-course b{font-size:16px}.sd-first-course p{margin:4px 0 0;font-size:12px;color:var(--text-secondary)}
 .sd-first-course>.btn,.sd-courses>.btn:first-of-type{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;border-color:transparent;font-weight:700}
 @media(max-width:600px){.sd-first-course{flex-wrap:wrap}.sd-first-course>.btn{width:100%}}
+/* Lecture audio upload */
+.sa{display:grid;gap:12px;border-color:#a855f766}.sa-head{display:flex;gap:14px;align-items:flex-start}.sa-head .sd-course-icon{color:#c084fc;background:#a855f726}
+.sa h3{margin:0 0 4px;font-size:16px}.sa p{margin:0;font-size:12px;line-height:1.9;color:var(--text-secondary)}
+.sa-drop{display:flex;align-items:center;gap:10px;padding:16px;border-radius:14px;border:1px dashed #a855f780;cursor:pointer;font-size:13px}.sa-drop input{position:absolute;opacity:0;width:1px;height:1px}.sa-drop:focus-within{border-color:#f97316;box-shadow:0 0 0 3px #f9731633}.sa-drop svg{color:#c084fc}
+.sa-title{display:grid;gap:6px;font-size:12px;color:var(--text-secondary)}.sa-title input{min-height:44px;border-radius:12px}
+.sa-error{margin:0;padding:10px 14px;border-radius:12px;background:#ef44441a;color:#f87171;font-size:13px}.sa-ok{margin:0;padding:10px 14px;border-radius:12px;background:#22c55e1a;color:#4ade80;font-size:13px}
+.ss-type.audio{background:#9333ea}
+.ss-folders .ss-new-folder{border-style:dashed;border-color:#f9731680;color:#fb923c}.ss-folders .ss-new-folder b{color:#fb923c}

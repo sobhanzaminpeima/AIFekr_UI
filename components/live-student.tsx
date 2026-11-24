@@ -11,6 +11,7 @@ import { AcademicProfile } from "./live-academy";
 import { LiveUpload } from "./live-upload";
 import { StudentDashboard } from "./live-student-dashboard";
 import { StudentLocked } from "./live-student-locked";
+import { LectureAudioUpload } from "./live-student-audio";
 import { useShell } from "./live-shell-context";
 import {
   LiveModuleFrame,
@@ -242,8 +243,9 @@ export function LiveStudent({
     </LiveModuleFrame>
   );
 }
-const SOURCE_TYPES = ["all", "pdf", "docx", "pptx", "text"] as const;
+const SOURCE_TYPES = ["all", "pdf", "docx", "pptx", "audio", "text"] as const;
 const sourceType = (m: LiveRow) => {
+  if (m.source === "audio_transcript") return "audio";
   const ext = /\.(pdf|docx|pptx)$/i.exec(String(m.title))?.[1]?.toLowerCase() || /^(pdf|docx|pptx)$/i.exec(String(m.source ?? ""))?.[1]?.toLowerCase();
   return ext || "text";
 };
@@ -256,7 +258,21 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
     [folder, setFolder] = useState<string | null>(null),
     [moveError, setMoveError] = useState("");
   const all = liveRows(r.data?.materials);
-  const folders = Array.from(new Set(all.map((m) => (m.folder ? String(m.folder) : "")).filter(Boolean))).sort();
+  // Folders are names on sources; a new empty folder is remembered locally until a file is put in it.
+  const folderKey = "aifekr-folders-" + course;
+  const [extraFolders, setExtraFolders] = useState<string[]>([]);
+  useEffect(() => { try { setExtraFolders(JSON.parse(localStorage.getItem(folderKey) || "[]")); } catch { setExtraFolders([]); } }, [folderKey]);
+  const folders = Array.from(new Set([...all.map((m) => (m.folder ? String(m.folder) : "")), ...extraFolders].filter(Boolean))).sort();
+  function newFolder() {
+    const name = window.prompt(tl("نام پوشهٔ جدید", "New folder name"))?.trim().replace(/\s+/g, " ") || "";
+    if (!name) return;
+    if (name.length > 60 || /[<>]/.test(name)) { setMoveError(tl("نام پوشه حداکثر ۶۰ نویسه و بدون < > باشد.", "Folder names are up to 60 characters, without < or >.")); return; }
+    const next = Array.from(new Set([...extraFolders, name]));
+    setExtraFolders(next);
+    try { localStorage.setItem(folderKey, JSON.stringify(next)); } catch {}
+    setFolder(name);
+  }
+  const uploadFolder = folder || "";
   const rows = all.filter((m) => (filter === "all" || sourceType(m) === filter) && (folder === null || String(m.folder ?? "") === folder) && (!query || String(m.title).toLowerCase().includes(query.toLowerCase())));
   const usage = r.data?.usage as { bytes?: number; files?: number } | undefined;
   async function move(id: string, to: string) {
@@ -270,7 +286,7 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
     try { await liveRequest(API + "materials", "PATCH", { id, folder: target }); r.reload(); }
     catch (e) { setMoveError(e instanceof Error ? e.message : tl("جابه‌جایی انجام نشد.", "Could not move the file.")); }
   }
-  const label = (t: string) => t === "all" ? tl("همه فایل‌ها", "All files") : t === "text" ? tl("متنی", "Text") : t.toUpperCase();
+  const label = (t: string) => t === "all" ? tl("همه فایل‌ها", "All files") : t === "text" ? tl("متنی", "Text") : t === "audio" ? tl("صوتی", "Audio") : t.toUpperCase();
   return (
     <div className="ss">
       <section className="panel ss-drop">
@@ -282,23 +298,25 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
           fields={[
             { ...choice, choices: choice.choices?.filter((c) => c.value === course) },
             field("title", "عنوان", "Title", "text", true),
-            field("folder", "پوشه", "Folder", "text", true),
+            { ...field("folder", "پوشه", "Folder", "text", true), choices: [...(uploadFolder ? [{ value: uploadFolder, label: uploadFolder }] : []), { value: "", label: tl("بدون پوشه", "No folder") }, ...folders.filter((f) => f !== uploadFolder).map((f) => ({ value: f, label: f }))] },
           ]}
           onDone={r.reload}
         />
         <LiveForm
           title={tl("افزودن منبع متنی", "Add text source")}
           url={API + "materials"}
-          fields={[field("title", "عنوان", "Title"), field("folder", "پوشه", "Folder", "text", true), field("content", "متن منبع", "Source text", "textarea")]}
+          fields={[field("title", "عنوان", "Title"), { ...field("folder", "پوشه", "Folder", "text", true), choices: [...(uploadFolder ? [{ value: uploadFolder, label: uploadFolder }] : []), { value: "", label: tl("بدون پوشه", "No folder") }, ...folders.filter((f) => f !== uploadFolder).map((f) => ({ value: f, label: f }))] }, field("content", "متن منبع", "Source text", "textarea")]}
           map={(b) => ({ ...b, courseId: course })}
           onDone={r.reload}
         />
       </section>
+      <LectureAudioUpload course={course} folder={uploadFolder} onDone={r.reload} />
       <div className="ss-top">
         <div className="ss-folders" role="group" aria-label={tl("پوشه‌ها", "Folders")}>
           <button type="button" aria-pressed={folder === null} onClick={() => setFolder(null)}><Icon name="FolderOpen" size={26} /><b>{tl("همه", "All")}</b><small>{all.length}</small></button>
           {folders.map((f) => <button type="button" key={f} aria-pressed={folder === f} onClick={() => setFolder(f)}><Icon name="FolderOpen" size={26} /><b>{f}</b><small>{all.filter((m) => m.folder === f).length}</small></button>)}
           <button type="button" aria-pressed={folder === ""} onClick={() => setFolder("")}><Icon name="FileText" size={26} /><b>{tl("بدون پوشه", "Unfiled")}</b><small>{all.filter((m) => !m.folder).length}</small></button>
+          <button type="button" className="ss-new-folder" onClick={newFolder}><Icon name="Plus" size={26} /><b>{tl("پوشهٔ جدید", "New folder")}</b></button>
         </div>
         {usage && (
           <div className="panel ss-usage">
@@ -321,7 +339,7 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
           const type = sourceType(m), id = String(m.id);
           return (
             <article className="panel ss-file" key={id}>
-              <span className={"ss-type " + type}>{type === "text" ? "TXT" : type.toUpperCase()}</span>
+              <span className={"ss-type " + type}>{type === "text" ? "TXT" : type === "audio" ? tl("صوت", "AUDIO") : type.toUpperCase()}</span>
               <h4>{String(m.title)}</h4>
               <small>{new Date(String(m.createdAt)).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })}</small>
               <div className="ss-actions">
