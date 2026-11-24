@@ -9,6 +9,8 @@ import { Button, Icon } from "./ui";
 import { AcademicProfile } from "./live-academy";
 import { LiveUpload } from "./live-upload";
 import { StudentDashboard } from "./live-student-dashboard";
+import { StudentLocked } from "./live-student-locked";
+import { useShell } from "./live-shell-context";
 import {
   LiveModuleFrame,
   LiveLoad,
@@ -68,6 +70,14 @@ export function LiveStudent({
     ...field("courseId", "درس", "Subject"),
     choices: items.map((x) => ({ value: String(x.id), label: String(x.name) })),
   };
+  const shell = useShell();
+  if (shell && !shell.user.studentWorkspaceEnabled) {
+    return (
+      <LiveModuleFrame module={module} view={view}>
+        <StudentLocked pending={shell.user.pendingPaymentCount} />
+      </LiveModuleFrame>
+    );
+  }
   return (
     <LiveModuleFrame module={module} view={view}>
       <LiveLoad {...courses} />

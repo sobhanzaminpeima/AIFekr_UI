@@ -97,3 +97,11 @@
 .ac-info dl{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;margin:14px 0;font-size:12px}.ac-info dt{color:var(--text-muted)}.ac-info dd{margin:0;text-align:end}
 @media(max-width:1000px){.ac-top,.ac-course-body{grid-template-columns:1fr}.ac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.ac-grid{grid-template-columns:1fr}.ac-hero>img,.ac-course-hero>img{max-width:100%;opacity:.35}.ac-catalog input{min-width:0;width:100%}}
+/* Locked state: no active student package */
+.sl{display:grid;gap:16px}.sl-pending{display:flex;align-items:center;gap:10px;padding:14px 18px;color:inherit;text-decoration:none;border-color:#f9731680}.sl-pending span{flex:1;font-size:13px}
+.sl-intro h2{margin:0 0 8px;font-size:22px}.sl-intro p{margin:0 0 14px;color:var(--text-secondary);font-size:13px;line-height:2}
+.sl-intro ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sl-intro li{display:flex;align-items:center;gap:8px;font-size:13px}.sl-intro li svg{color:#fb923c;flex:none}
+.sl-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.sl-plan{position:relative;display:grid;gap:10px;justify-items:start;padding:22px}.sl-plan h3{margin:0;font-size:16px}.sl-plan strong{font-size:28px;font-weight:800}.sl-plan small{color:var(--text-muted);font-size:12px}.sl-plan .btn{width:100%;margin-top:6px}
+.sl-plan.featured{border-color:#f97316;box-shadow:0 0 0 1px #f9731659,0 16px 34px -18px #f97316}.sl-plan .ac-flag{top:-10px}
+@media(max-width:600px){.sl-intro ul{grid-template-columns:1fr}}
