@@ -86,19 +86,33 @@ export function LiveStudent({
       {view.id === "overview" && <StudentDashboard />}
       {courses.data && view.id !== "overview" && (
         <>
-          <label className="sd-course-select">
-            {tl("درس فعال", "Current subject")}
-            <select value={course} onChange={(e) => setCourse(e.target.value)}>
-              <option value="">{tl("انتخاب درس", "Choose subject")}</option>
-              {items.map((c) => (
-                <option key={String(c.id)} value={String(c.id)}>
-                  {String(c.name)}
-                </option>
-              ))}
-            </select>
-          </label>
-          {["courses", "path"].includes(view.id) && (
-            <section className="panel">
+          {items.length > 0 ? (
+            <label className="sd-course-select">
+              <span className="sd-course-icon" aria-hidden="true"><Icon name="BookOpen" size={20} /></span>
+              <span className="sd-course-text">
+                <small>{tl("درس فعال", "Current subject")}</small>
+                <select value={course} onChange={(e) => setCourse(e.target.value)} aria-label={tl("انتخاب درس فعال", "Choose current subject")}>
+                  {items.map((c) => (
+                    <option key={String(c.id)} value={String(c.id)}>
+                      {String(c.name)}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <Icon name="ChevronDown" size={18} />
+            </label>
+          ) : (
+            <div className="panel sd-first-course">
+              <span className="sd-course-icon" aria-hidden="true"><Icon name="BookOpen" size={22} /></span>
+              <div>
+                <b>{tl("اولین درست را بساز", "Create your first subject")}</b>
+                <p>{tl("همهٔ جزوه‌ها، فلش‌کارت‌ها و آزمون‌ها به یک درس وصل می‌شوند.", "Notes, flashcards and quizzes all belong to a subject.")}</p>
+              </div>
+              <LiveForm title={tl("افزودن درس", "Add subject")} url={API + "courses"} fields={courseFields} onDone={courses.reload} />
+            </div>
+          )}
+          {["courses", "path"].includes(view.id) && items.length > 0 && (
+            <section className="panel sd-courses">
               <h2>{tl("درس‌های من", "My subjects")}</h2>
               <LiveForm
                 title={tl("افزودن درس", "Add subject")}
