@@ -3,7 +3,9 @@ import { useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import type { ModuleSpec, ViewSpec } from "@/lib/upstream/registry";
 import { useShell } from "./live-shell-context";
-import { Button } from "./ui";
+import { Button, Icon } from "./ui";
+import Link from "./site-link";
+import "./live-student.css";
 import {
   field,
   LiveForm,
@@ -71,79 +73,13 @@ export function LiveAcademy({
       ) : view.id === "certificates" ? (
         <AcademicProfile certificates />
       ) : (
-        <section className="panel">
-          <form
-            className="home-composer"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const d = new FormData(e.currentTarget);
-              setQuery(
-                "?search=" +
-                  enc(String(d.get("search") ?? "")) +
-                  "&filter=" +
-                  enc(String(d.get("filter") ?? "")),
-              );
-            }}
-          >
-            <input
-              name="search"
-              placeholder={fa ? "جستجوی دوره" : "Search courses"}
-              aria-label={fa ? "جستجوی دوره" : "Search courses"}
-            />
-            <select name="filter">
-              <option value="">{fa ? "همه دوره‌ها" : "All courses"}</option>
-              <option value="recommended">
-                {fa ? "پیشنهادشده" : "Recommended"}
-              </option>
-              <option value="progress">
-                {fa ? "در حال مطالعه" : "In progress"}
-              </option>
-              <option value="completed">
-                {fa ? "تکمیل‌شده" : "Completed"}
-              </option>
-            </select>
-            <Button type="submit">{fa ? "جستجو" : "Search"}</Button>
-          </form>
-          <LiveLoad {...r} />
-          {r.data && (
-            <LiveTable
-              items={liveRows(r.data.courses).map((c) => ({
-                ...c,
-                progressPercent: liveRows(c.progress)[0]?.progressPercent,
-              }))}
-              columns={[
-                field("title", "عنوان دوره", "Course"),
-                field("difficulty", "سطح", "Difficulty"),
-                field("language", "زبان", "Language"),
-                field("durationMinutes", "مدت (دقیقه)", "Duration (minutes)"),
-                field("progressPercent", "پیشرفت ٪", "Progress %"),
-              ]}
-              actions={(c) => (
-                <Button
-                  onClick={() => {
-                    setPath(undefined);
-                    setCourse(String(c.id));
-                  }}
-                >
-                  {fa
-                    ? "درس‌ها و ادامه مطالعه"
-                    : "Lessons and continue learning"}
-                </Button>
-              )}
-            />
-          )}
-          {!!r.data?.nextCursor && (
-            <Button
-              onClick={() => {
-                const params = new URLSearchParams(query);
-                params.set("cursor", String(r.data!.nextCursor));
-                setQuery("?" + params.toString());
-              }}
-            >
-              {fa ? "صفحه بعد" : "Next page"}
-            </Button>
-          )}
-        </section>
+        <Catalog
+          data={r.data}
+          query={query}
+          setQuery={setQuery}
+          loading={<LiveLoad {...r} />}
+          onOpen={(id) => { setPath(undefined); setCourse(id); }}
+        />
       )}
       {course && (
         <Course
@@ -170,69 +106,205 @@ function Course({
   const [lesson, setLesson] = useState(final ? "final" : "");
   const course = r.data?.course as LiveRow | undefined,
     content = course?.content as LiveRow | undefined;
+  const progress = r.data?.progress as LiveRow | null | undefined;
+  const pct = Number(progress?.progressPercent ?? 0);
+  const done = new Set<string>(parseIds(progress?.completed));
+  const chapters = liveRows(content?.chapters);
+  const lessonIds = chapters.flatMap((c, ci) => liveRows(c.lessons).map((l, li) => String(l.id ?? `${ci}:${li}`)));
+  const next = lessonIds.find((l) => !done.has(l)) ?? lessonIds[0];
+  const [openChapter, setOpenChapter] = useState(0);
+  const t = (a: string, b: string) => (fa ? a : b);
   return (
-    <section className="panel">
+    <section className="ac-course">
       <LiveLoad {...r} />
       {course && (
         <>
-          <h2>{String(course.title)}</h2>
-          <ReactMarkdown>
-            {String(content?.overview ?? course.description ?? "")}
-          </ReactMarkdown>
-          <p>
-            {fa ? "پیشرفت تأییدشده: " : "Verified progress: "}
-            {String((r.data?.progress as LiveRow | null)?.progressPercent ?? 0)}
-            ٪
-          </p>
-          {!r.data?.progress && (
-            <LiveForm
-              title={
-                fa ? "شروع مطالعه و ثبت‌نام دوره" : "Start learning and enroll"
-              }
-              url={API + "courses/" + enc(id) + "/enroll"}
-              map={() => (pathId ? { pathId } : {})}
-              onDone={r.reload}
-              caution={
-                fa
-                  ? "ثبت‌نام، نسخه فعلی دوره و شرایط تکمیل آن را برای شما ثبت می‌کند."
-                  : "Enrollment locks the current course version and completion requirements for your learning record."
-              }
-            />
-          )}
-          <div className="module-tabs">
-            {liveRows(content?.chapters).map((c, ci) => (
-              <div key={ci}>
-                <strong>{String(c.title)}</strong>
-                {liveRows(c.lessons).map((l, li) => (
-                  <Button
-                    key={String(l.id ?? li)}
-                    onClick={() => setLesson(String(l.id ?? `${ci}:${li}`))}
-                  >
-                    {String(l.title)}
-                  </Button>
-                ))}
+          <header className="ac-course-hero panel">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={course.coverUrl ? String(course.coverUrl) : "/art/student-hero.webp"} alt="" aria-hidden="true" />
+            <div>
+              <span className="sd-badge">{t("دوره آموزشی", "Course")}</span>
+              <h2>{String(course.title)}</h2>
+              <div className="ac-chips">
+                {course.difficulty ? <span><Icon name="BarChart3" size={14} />{String(course.difficulty)}</span> : null}
+                {course.durationMinutes ? <span><Icon name="Clock" size={14} />{String(course.durationMinutes)} {t("دقیقه", "min")}</span> : null}
+                <span><Icon name="BookOpen" size={14} />{lessonIds.length} {t("درس", "lessons")}</span>
               </div>
-            ))}
-            <Button onClick={() => setLesson("final")}>
-              {fa ? "پروژه و آزمون پایانی" : "Final project and assessment"}
-            </Button>
+            </div>
+          </header>
+          <div className="ac-course-body">
+            <div className="ac-main">
+              <div className="panel">
+                <ReactMarkdown>{String(content?.overview ?? course.description ?? "")}</ReactMarkdown>
+              </div>
+              {chapters.map((c, ci) => {
+                const ids = liveRows(c.lessons).map((l, li) => String(l.id ?? `${ci}:${li}`));
+                const chapterDone = ids.length > 0 && ids.every((x) => done.has(x));
+                return (
+                  <section className={"panel ac-chapter" + (openChapter === ci ? " open" : "")} key={ci}>
+                    <button type="button" className="ac-chapter-head" aria-expanded={openChapter === ci} onClick={() => setOpenChapter(openChapter === ci ? -1 : ci)}>
+                      <span className={"ac-step" + (chapterDone ? " done" : "")}>{chapterDone ? <Icon name="Check" size={14} /> : ci + 1}</span>
+                      <b>{String(c.title)}</b>
+                      <small>{ids.length} {t("درس", "lessons")}</small>
+                      <Icon name="ChevronDown" size={16} />
+                    </button>
+                    {openChapter === ci && (
+                      <ol className="ac-lessons">
+                        {liveRows(c.lessons).map((l, li) => {
+                          const lid = String(l.id ?? `${ci}:${li}`);
+                          return (
+                            <li key={lid} className={(done.has(lid) ? "done " : "") + (lesson === lid ? "current" : "")}>
+                              <button type="button" onClick={() => setLesson(lid)}>
+                                <span className="ac-dot">{done.has(lid) ? <Icon name="Check" size={12} /> : <Icon name="Play" size={12} />}</span>
+                                <span>{String(l.title)}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    )}
+                  </section>
+                );
+              })}
+              <Button onClick={() => setLesson("final")}>{t("پروژه و آزمون پایانی", "Final project and assessment")}</Button>
+              {lesson && <Lesson key={id + lesson} courseId={id} lessonId={lesson} onProgress={r.reload} />}
+            </div>
+            <aside className="ac-side">
+              <div className="panel ac-progress">
+                <h3>{t("پیشرفت دوره", "Course progress")}</h3>
+                <div className="sf-ring" style={{ ["--p" as string]: pct }}><strong>{pct}%</strong></div>
+                <p>{done.size} / {lessonIds.length} {t("درس تکمیل شده", "lessons completed")}</p>
+                {progress ? (
+                  next && <Button variant="primary" onClick={() => setLesson(next)}>{t("ادامه یادگیری", "Continue learning")}</Button>
+                ) : (
+                  <LiveForm
+                    title={t("شروع مطالعه و ثبت‌نام دوره", "Start learning and enroll")}
+                    url={API + "courses/" + enc(id) + "/enroll"}
+                    map={() => (pathId ? { pathId } : {})}
+                    onDone={r.reload}
+                    caution={t("ثبت‌نام، نسخه فعلی دوره و شرایط تکمیل آن را برای شما ثبت می‌کند.", "Enrollment locks the current course version and completion requirements for your learning record.")}
+                  />
+                )}
+              </div>
+              <div className="panel ac-info">
+                <h3>{t("اطلاعات دوره", "Course info")}</h3>
+                <dl>
+                  <dt>{t("تعداد درس‌ها", "Lessons")}</dt><dd>{lessonIds.length}</dd>
+                  {course.durationMinutes ? <><dt>{t("مدت کل", "Duration")}</dt><dd>{String(course.durationMinutes)} {t("دقیقه", "min")}</dd></> : null}
+                  {course.language ? <><dt>{t("زبان", "Language")}</dt><dd>{String(course.language)}</dd></> : null}
+                  <dt>{t("گواهی تکمیل", "Completion certificate")}</dt><dd>{t("پس از قبولی در آزمون پایانی", "After passing the final assessment")}</dd>
+                </dl>
+                {r.data?.certificate ? (
+                  <a className="btn" href={API + "courses/" + enc(id) + "/certificate"} download>{t("دانلود گواهی", "Download certificate")}</a>
+                ) : null}
+              </div>
+            </aside>
           </div>
-          {r.data?.certificate && (
-            <a href={API + "courses/" + enc(id) + "/certificate"} download>
-              {fa ? "دانلود گواهی تأییدشده" : "Download earned certificate"}
-            </a>
-          )}
-          {lesson && (
-            <Lesson
-              key={id + lesson}
-              courseId={id}
-              lessonId={lesson}
-              onProgress={r.reload}
-            />
-          )}
         </>
       )}
     </section>
+  );
+}
+function parseIds(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String);
+  try { const v = JSON.parse(String(value ?? "[]")); return Array.isArray(v) ? v.map(String) : []; } catch { return []; }
+}
+function Catalog({ data, query, setQuery, loading, onOpen }: { data: Record<string, unknown> | null | undefined; query: string; setQuery: (q: string) => void; loading: React.ReactNode; onOpen: (id: string) => void }) {
+  const fa = useShell()!.lang === "fa";
+  const t = (a: string, b: string) => (fa ? a : b);
+  const courses = liveRows(data?.courses);
+  const mine = courses.map((c) => liveRows(c.progress)[0]).filter(Boolean);
+  const inProgress = mine.filter((p) => p.state === "IN_PROGRESS").length;
+  const completed = mine.filter((p) => p.state === "COMPLETED").length;
+  const certs = mine.filter((p) => p.certificateId).length;
+  const current = courses.find((c) => liveRows(c.progress)[0]?.state === "IN_PROGRESS");
+  const params = new URLSearchParams(query.startsWith("?") ? query.slice(1) : query);
+  const filter = params.get("filter") || "";
+  const go = (f: string, search = params.get("search") || "") => setQuery("?search=" + enc(search) + "&filter=" + enc(f));
+  const pct = (c: LiveRow) => Number(liveRows(c.progress)[0]?.progressPercent ?? 0);
+  const filters: [string, string][] = [["", t("همه دوره‌ها", "All")], ["recommended", t("پیشنهادشده", "Recommended")], ["progress", t("در حال مطالعه", "In progress")], ["completed", t("تکمیل‌شده", "Completed")], ["new", t("جدیدترین", "Newest")], ["popular", t("محبوب‌ترین", "Popular")]];
+  return (
+    <div className="ac">
+      <section className="panel ac-hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/art/student-hero.webp" alt="" aria-hidden="true" />
+        <div>
+          <span className="sd-badge">{t("آکادمی ای آی فکر", "AIFekr Academy")}</span>
+          <h2>{t("آموزش مهارت‌های آینده با هوش مصنوعی", "Learn future skills with AI")}</h2>
+          <p>{t("دوره‌های کاربردی، مسیرهای یادگیری و گواهی تکمیل برای دانشجویان و حرفه‌ای‌ها.", "Practical courses, learning paths and completion certificates.")}</p>
+          <div className="ac-hero-actions">
+            <a className="btn primary" href="#ac-catalog">{t("کاتالوگ دوره‌ها", "Course catalog")}</a>
+            <Link className="btn" href="/learn?view=paths">{t("مسیرهای یادگیری", "Learning paths")}</Link>
+          </div>
+        </div>
+      </section>
+      <div className="ac-top">
+        {current ? (
+          <section className="panel ac-continue">
+            <h3>{t("ادامه یادگیری", "Continue learning")}</h3>
+            <div className="ac-continue-row">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={current.coverUrl ? String(current.coverUrl) : "/art/student-hero.webp"} alt="" />
+              <div>
+                <b>{String(current.title)}</b>
+                <div className="sq-progress"><i style={{ width: pct(current) + "%" }} /></div>
+                <small>{pct(current)}%</small>
+              </div>
+              <Button variant="primary" onClick={() => onOpen(String(current.id))}>{t("ادامه", "Continue")}</Button>
+            </div>
+          </section>
+        ) : null}
+        <section className="panel ac-mine">
+          <h3>{t("پیشرفت یادگیری من", "My learning")}</h3>
+          <ul>
+            <li><Icon name="Play" size={16} />{inProgress} {t("دوره در حال یادگیری", "in progress")}</li>
+            <li><Icon name="CircleCheck" size={16} />{completed} {t("دوره تکمیل‌شده", "completed")}</li>
+            <li><Icon name="Trophy" size={16} />{certs} {t("گواهی دریافت‌شده", "certificates")}</li>
+          </ul>
+        </section>
+      </div>
+      <section id="ac-catalog" className="ac-catalog">
+        <header>
+          <h3>{t("دوره‌های آکادمی", "Academy courses")}</h3>
+          <form role="search" onSubmit={(e) => { e.preventDefault(); go(filter, String(new FormData(e.currentTarget).get("search") ?? "")); }}>
+            <input name="search" defaultValue={params.get("search") || ""} placeholder={t("جستجوی دوره…", "Search courses…")} aria-label={t("جستجوی دوره", "Search courses")} />
+          </form>
+        </header>
+        <div className="ss-chips" role="group" aria-label={t("فیلتر دوره‌ها", "Course filter")}>
+          {filters.map(([v, l]) => (
+            <button type="button" key={v} aria-pressed={filter === v} onClick={() => go(v)}>{l}</button>
+          ))}
+        </div>
+        {loading}
+        <div className="ac-grid">
+          {courses.map((c) => {
+            const p = liveRows(c.progress)[0];
+            return (
+              <article className="panel ac-card" key={String(c.id)}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.coverUrl ? String(c.coverUrl) : "/art/student-hero.webp"} alt="" />
+                {c.recommended && !p ? <span className="ac-flag">{t("پیشنهاد برای تو", "For you")}</span> : null}
+                <h4>{String(c.title)}</h4>
+                <p>{String(c.description ?? "").slice(0, 110)}</p>
+                <div className="ac-chips">
+                  {c.durationMinutes ? <span><Icon name="Clock" size={13} />{String(c.durationMinutes)} {t("دقیقه", "min")}</span> : null}
+                  {c.moduleCount ? <span><Icon name="BookOpen" size={13} />{String(c.moduleCount)} {t("بخش", "modules")}</span> : null}
+                  {c.difficulty ? <span>{String(c.difficulty)}</span> : null}
+                </div>
+                {p ? <div className="sq-progress"><i style={{ width: pct(c) + "%" }} /></div> : null}
+                <Button variant={p ? "primary" : ""} onClick={() => onOpen(String(c.id))}>
+                  {p?.state === "COMPLETED" ? t("مرور دوره", "Review") : p ? t("ادامه یادگیری", "Continue") : t("شروع دوره", "Start course")}
+                </Button>
+              </article>
+            );
+          })}
+        </div>
+        {data && !courses.length ? <p className="sd-empty">{t("دوره‌ای پیدا نشد.", "No courses found.")}</p> : null}
+        {data?.nextCursor ? (
+          <Button onClick={() => { const next = new URLSearchParams(params); next.set("cursor", String(data.nextCursor)); setQuery("?" + next.toString()); }}>{t("صفحه بعد", "Next page")}</Button>
+        ) : null}
+      </section>
+    </div>
   );
 }
 function Lesson({
