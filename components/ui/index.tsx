@@ -5,6 +5,8 @@ import { growthEvent } from "@/components/growth-tracker";
 import { useEffect, useRef, useId, createContext, useContext } from "react";
 import {
   Activity,
+  Flame,
+  Bookmark,
   BarChart3,
   IdCard,
   PenLine,
@@ -168,6 +170,8 @@ import {
   Music,
 } from "lucide-react";
 const Icons = {
+  Flame,
+  Bookmark,
   BarChart3,
   IdCard,
   PenLine,

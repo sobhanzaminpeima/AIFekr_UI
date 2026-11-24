@@ -5,7 +5,7 @@ import { FlashcardDeck, type Flashcard } from "./flashcard-deck";
 import { useEffect, useState } from "react";
 import { useApp } from "./providers";
 import Link from "./site-link";
-import { Button } from "./ui";
+import { Button, Icon } from "./ui";
 import { AcademicProfile } from "./live-academy";
 import { LiveUpload } from "./live-upload";
 import { StudentDashboard } from "./live-student-dashboard";
@@ -217,8 +217,24 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
     r = useLiveData(API + "materials?courseId=" + enc(course)),
     [filter, setFilter] = useState<(typeof SOURCE_TYPES)[number]>("all"),
     [query, setQuery] = useState(""),
-    [open, setOpen] = useState<string | null>(null);
-  const rows = liveRows(r.data?.materials).filter((m) => (filter === "all" || sourceType(m) === filter) && (!query || String(m.title).toLowerCase().includes(query.toLowerCase())));
+    [open, setOpen] = useState<string | null>(null),
+    [folder, setFolder] = useState<string | null>(null),
+    [moveError, setMoveError] = useState("");
+  const all = liveRows(r.data?.materials);
+  const folders = Array.from(new Set(all.map((m) => (m.folder ? String(m.folder) : "")).filter(Boolean))).sort();
+  const rows = all.filter((m) => (filter === "all" || sourceType(m) === filter) && (folder === null || String(m.folder ?? "") === folder) && (!query || String(m.title).toLowerCase().includes(query.toLowerCase())));
+  const usage = r.data?.usage as { bytes?: number; files?: number } | undefined;
+  async function move(id: string, to: string) {
+    setMoveError("");
+    let target: string | null = to;
+    if (to === "__new") {
+      target = window.prompt(tl("نام پوشهٔ جدید", "New folder name"))?.trim() || "";
+      if (!target) return;
+    }
+    if (to === "") target = null;
+    try { await liveRequest(API + "materials", "PATCH", { id, folder: target }); r.reload(); }
+    catch (e) { setMoveError(e instanceof Error ? e.message : tl("جابه‌جایی انجام نشد.", "Could not move the file.")); }
+  }
   const label = (t: string) => t === "all" ? tl("همه فایل‌ها", "All files") : t === "text" ? tl("متنی", "Text") : t.toUpperCase();
   return (
     <div className="ss">
@@ -231,17 +247,33 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
           fields={[
             { ...choice, choices: choice.choices?.filter((c) => c.value === course) },
             field("title", "عنوان", "Title", "text", true),
+            field("folder", "پوشه", "Folder", "text", true),
           ]}
           onDone={r.reload}
         />
         <LiveForm
           title={tl("افزودن منبع متنی", "Add text source")}
           url={API + "materials"}
-          fields={[field("title", "عنوان", "Title"), field("content", "متن منبع", "Source text", "textarea")]}
+          fields={[field("title", "عنوان", "Title"), field("folder", "پوشه", "Folder", "text", true), field("content", "متن منبع", "Source text", "textarea")]}
           map={(b) => ({ ...b, courseId: course })}
           onDone={r.reload}
         />
       </section>
+      <div className="ss-top">
+        <div className="ss-folders" role="group" aria-label={tl("پوشه‌ها", "Folders")}>
+          <button type="button" aria-pressed={folder === null} onClick={() => setFolder(null)}><Icon name="FolderOpen" size={26} /><b>{tl("همه", "All")}</b><small>{all.length}</small></button>
+          {folders.map((f) => <button type="button" key={f} aria-pressed={folder === f} onClick={() => setFolder(f)}><Icon name="FolderOpen" size={26} /><b>{f}</b><small>{all.filter((m) => m.folder === f).length}</small></button>)}
+          <button type="button" aria-pressed={folder === ""} onClick={() => setFolder("")}><Icon name="FileText" size={26} /><b>{tl("بدون پوشه", "Unfiled")}</b><small>{all.filter((m) => !m.folder).length}</small></button>
+        </div>
+        {usage && (
+          <div className="panel ss-usage">
+            <small>{tl("حجم متن ذخیره‌شده", "Stored text")}</small>
+            <b>{(Number(usage.bytes ?? 0) / 1048576).toFixed(2)} MB</b>
+            <small>{usage.files} {tl("فایل در همهٔ درس‌ها", "files across subjects")}</small>
+          </div>
+        )}
+      </div>
+      {moveError && <p role="alert">{moveError}</p>}
       <div className="ss-toolbar">
         <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tl("جستجو در جزوه‌ها…", "Search sources…")} aria-label={tl("جستجو در جزوه‌ها", "Search sources")} />
         <div className="ss-chips" role="group" aria-label={tl("نوع فایل", "File type")}>
@@ -262,6 +294,14 @@ function Sources({ course, choice }: { course: string; choice: LiveField }) {
                 <Link className="btn" href="/student?view=chat">{tl("پرسش از فایل", "Ask the file")}</Link>
                 <button type="button" className="btn" aria-expanded={open === id} onClick={() => setOpen(open === id ? null : id)}>{open === id ? tl("بستن", "Close") : tl("نمایش متن", "View text")}</button>
               </div>
+              <label className="ss-move">
+                <span>{tl("پوشه", "Folder")}</span>
+                <select value={String(m.folder ?? "")} onChange={(e) => void move(id, e.target.value)}>
+                  <option value="">{tl("بدون پوشه", "Unfiled")}</option>
+                  {folders.map((f) => <option key={f} value={f}>{f}</option>)}
+                  <option value="__new">{tl("+ پوشهٔ جدید…", "+ New folder…")}</option>
+                </select>
+              </label>
               {open === id && <p className="ss-text">{String(m.content)}</p>}
             </article>
           );
@@ -742,6 +782,7 @@ function StudentQuiz({
     r = useLiveData(API + "quizzes/" + enc(id)),
     [answers, setAnswers] = useState<Record<number, number>>({}),
     [current, setCurrent] = useState(0),
+    [flagged, setFlagged] = useState<Record<number, boolean>>({}),
     [started] = useState(() => Date.now()),
     [now, setNow] = useState(() => Date.now()),
     [result, setResult] = useState<LiveRow | null>(null);
@@ -790,6 +831,8 @@ function StudentQuiz({
                 </fieldset>
               )}
               <div className="sq-nav">
+                <Button onClick={() => setFlagged((f) => ({ ...f, [current]: !f[current] }))} className={flagged[current] ? "sq-flagged" : ""}>{flagged[current] ? tl("حذف نشانه", "Unmark") : tl("نشانه‌گذاری", "Mark for review")}</Button>
+                {answers[current] !== undefined && <Button onClick={() => setAnswers((a) => { const next = { ...a }; delete next[current]; return next; })}>{tl("حذف پاسخ", "Clear answer")}</Button>}
                 <Button onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}>{tl("سؤال قبل", "Previous")}</Button>
                 {current < questions.length - 1 ? (
                   <Button variant="primary" onClick={() => setCurrent((c) => c + 1)}>{tl("سؤال بعد", "Next")}</Button>
@@ -816,7 +859,7 @@ function StudentQuiz({
               <div className="panel">
                 <small>{tl("پیشرفت آزمون", "Progress")}</small>
                 <div className="sq-progress"><i style={{ width: `${questions.length ? (answered / questions.length) * 100 : 0}%` }} /></div>
-                <p>{n(answered)} / {n(questions.length)} {tl("پاسخ داده شده", "answered")}</p>
+                <p>{n(answered)} / {n(questions.length)} {tl("پاسخ داده شده", "answered")} · {n(Object.values(flagged).filter(Boolean).length)} {tl("نشانه‌گذاری شده", "marked")}</p>
               </div>
               <div className="panel">
                 <small>{tl("سؤالات آزمون", "Questions")}</small>
@@ -827,7 +870,7 @@ function StudentQuiz({
                       key={i}
                       onClick={() => setCurrent(i)}
                       aria-current={i === current ? "step" : undefined}
-                      className={answers[i] !== undefined ? "done" : ""}
+                      className={(answers[i] !== undefined ? "done" : "") + (flagged[i] ? " flagged" : "")}
                     >
                       {n(i + 1)}
                     </button>

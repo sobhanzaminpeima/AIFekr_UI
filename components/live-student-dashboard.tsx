@@ -1,8 +1,8 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
-import Link from "./site-link";
+import Link, { useSite } from "./site-link";
 import { Icon } from "./ui";
 import { useLiveData, liveRows, type LiveRow } from "./live-module-kit";
 
@@ -22,6 +22,7 @@ export function StudentDashboard() {
   const courses = useLiveData(API + "courses");
   const exams = useLiveData(API + "exams");
   const report = useLiveData(API + "study-sessions?days=7&timeZone=" + encodeURIComponent(tz));
+  const insights = useLiveData(API + "insights?timeZone=" + encodeURIComponent(tz));
   const [question, setQuestion] = useState("");
 
   const user = (profile.data?.user ?? profile.data) as { name?: string | null; firstName?: string | null } | null | undefined;
@@ -47,6 +48,7 @@ export function StudentDashboard() {
     ["FileText", tl("جزوه و منبع", "Sources"), count("materials"), "blue"],
     ["CircleCheck", tl("آزمون ساخته‌شده", "Quizzes made"), count("quizzes"), "green"],
     ["Clock", tl("دقیقه مطالعه این هفته", "Study minutes this week"), weekMinutes, "orange"],
+    ["Flame", tl("روز مطالعه متوالی", "Day study streak"), Number(insights.data?.streak ?? 0), "red"],
   ];
   const quick: [string, string, string][] = [
     ["/student?view=upload", "Upload", tl("آپلود جزوه", "Upload notes")],
@@ -128,6 +130,12 @@ export function StudentDashboard() {
         </section>
       </div>
 
+      <div className="sd-grid three">
+        <StudentIdCard />
+        <Badges data={insights.data?.badges as { id: string; earned: boolean }[] | undefined} />
+        <Activity data={insights.data?.activity as { kind: string; title: string; at: string }[] | undefined} />
+      </div>
+
       <form className="panel sd-ask" onSubmit={(e) => { e.preventDefault(); router.push("/student?view=chat" + (question.trim() ? "&q=" + encodeURIComponent(question.trim()) : "")); }}>
         <span className="sd-ai">AI</span>
         <div>
@@ -140,5 +148,109 @@ export function StudentDashboard() {
         </div>
       </form>
     </div>
+  );
+}
+
+const BADGE_COPY: Record<string, [string, string, string, string, string]> = {
+  first_course: ["BookOpen", "اولین درس", "First subject", "یک درس ساختی", "Created a subject"],
+  five_sources: ["FileText", "کتابخانه‌دار", "Librarian", "۵ جزوه آپلود کردی", "Uploaded 5 sources"],
+  first_quiz: ["CircleCheck", "اولین آزمون", "First quiz", "یک آزمون دادی", "Finished a quiz"],
+  quiz_ace: ["Trophy", "نمرهٔ عالی", "Quiz ace", "۹۰٪ یا بیشتر در آزمون", "Scored 90%+"],
+  card_reviewer: ["Layers", "مرورگر", "Reviewer", "۲۰ فلش‌کارت مرور شد", "Reviewed 20 cards"],
+  streak_3: ["Flame", "۳ روز پیاپی", "3-day streak", "۳ روز پشت‌سرهم مطالعه", "Studied 3 days in a row"],
+  streak_7: ["Flame", "۷ روز پیاپی", "7-day streak", "یک هفته مطالعهٔ مداوم", "Studied 7 days in a row"],
+  group_member: ["Users", "مطالعهٔ گروهی", "Study buddy", "عضو گروه مطالعه شدی", "Joined a study group"],
+};
+
+function Badges({ data }: { data?: { id: string; earned: boolean }[] }) {
+  const { tl, fa, n } = useApp();
+  const earned = data?.filter((b) => b.earned).length ?? 0;
+  return (
+    <section className="panel sd-card">
+      <header><h3><Icon name="Trophy" size={18} />{tl("دستاوردها و نشان‌ها", "Achievements")}</h3><small>{n(earned)} / {n(data?.length ?? 0)}</small></header>
+      <div className="sd-badges">
+        {(data ?? []).map((b) => {
+          const c = BADGE_COPY[b.id];
+          if (!c) return null;
+          return (
+            <div key={b.id} className={"sd-medal" + (b.earned ? " earned" : "")} title={fa ? c[3] : c[4]}>
+              <span><Icon name={c[0]} size={20} /></span>
+              <b>{fa ? c[1] : c[2]}</b>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function Activity({ data }: { data?: { kind: string; title: string; at: string }[] }) {
+  const { tl, locale } = useApp();
+  const label: Record<string, [string, string, string]> = {
+    material: ["Upload", tl("آپلود جزوه", "Uploaded"), ""],
+    note: ["PenLine", tl("یادداشت", "Note"), ""],
+    quiz: ["CircleCheck", tl("آزمون", "Quiz"), ""],
+    flashcards: ["Layers", tl("ساخت فلش‌کارت", "Flashcards"), ""],
+    session: ["Clock", tl("جلسه مطالعه", "Study session"), ""],
+  };
+  const ago = (iso: string) => {
+    const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+    if (mins < 60) return rtf.format(-mins, "minute");
+    if (mins < 1440) return rtf.format(-Math.round(mins / 60), "hour");
+    return rtf.format(-Math.round(mins / 1440), "day");
+  };
+  return (
+    <section className="panel sd-card">
+      <header><h3><Icon name="Clock" size={18} />{tl("فعالیت‌های اخیر", "Recent activity")}</h3></header>
+      {(data ?? []).slice(0, 5).map((a, i) => {
+        const l = label[a.kind] ?? label.note;
+        return (
+          <div className="sd-row" key={i}>
+            <span className="sd-row-icon"><Icon name={l[0]} size={16} /></span>
+            <span className="sd-row-main"><b>{l[1]}{a.title ? ": " + a.title : ""}</b><small>{ago(a.at)}</small></span>
+          </div>
+        );
+      })}
+      {data && !data.length && <p className="sd-empty">{tl("هنوز فعالیتی ثبت نشده.", "No activity yet.")}</p>}
+    </section>
+  );
+}
+
+/** Platform student card with a QR code that opens the public verification page. Not an official university ID. */
+function StudentIdCard() {
+  const { tl } = useApp();
+  const profile = useSite()?.studentProfile;
+  const [qr, setQr] = useState("");
+  const url = profile?.slug && typeof window !== "undefined" ? `${window.location.origin}/student/${profile.slug}` : "";
+  useEffect(() => {
+    if (!url) return;
+    let alive = true;
+    void import("qrcode").then((QR) => QR.toDataURL(url, { margin: 1, width: 168, color: { dark: "#111111", light: "#ffffff" } })).then((d) => { if (alive) setQr(d); }).catch(() => {});
+    return () => { alive = false; };
+  }, [url]);
+  return (
+    <section className="panel sd-card sd-idcard">
+      <header><h3><Icon name="IdCard" size={18} />{tl("کارت دانشجویی", "Student card")}</h3></header>
+      {profile ? (
+        <div className="sd-id">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {profile.avatar ? <img className="sd-id-avatar" src={profile.avatar} alt="" /> : <span className="sd-id-avatar"><Icon name="UserRound" size={28} /></span>}
+          <div className="sd-id-main">
+            <b>{profile.name || tl("دانشجو", "Student")}</b>
+            <small>AIFekr Student · {profile.slug}</small>
+            <div className="sd-id-actions">
+              <Link className="btn" href={"/student/" + profile.slug}>{tl("مشاهده کارت", "View card")}</Link>
+              {url && <button type="button" className="btn" onClick={() => void navigator.clipboard?.writeText(url)}>{tl("کپی لینک", "Copy link")}</button>}
+            </div>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {qr && <img className="sd-id-qr" src={qr} alt={tl("کد QR تأیید کارت", "Card verification QR code")} />}
+        </div>
+      ) : (
+        <p className="sd-empty">{tl("برای ساخت کارت، پروفایل دانشجویی را کامل کن.", "Complete your student profile to get your card.")} <Link href="/student?view=profile">{tl("تکمیل پروفایل", "Complete profile")}</Link></p>
+      )}
+      <p className="sd-fine">{tl("این کارت عضویت در AIFekr است و جایگزین کارت رسمی دانشگاه نیست.", "This is an AIFekr membership card, not an official university ID.")}</p>
+    </section>
   );
 }

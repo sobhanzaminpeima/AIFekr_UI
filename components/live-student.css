@@ -43,3 +43,26 @@
 .ss-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ss-actions .btn{font-size:11px;padding:6px 10px}.ss-text{white-space:pre-wrap;font-size:12px;line-height:1.9;color:var(--text-secondary);max-height:260px;overflow:auto;margin:0}
 @media(max-width:1000px){.sd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sd-grid,.sq-layout,.sf-layout{grid-template-columns:1fr}.ss-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.sd-welcome img{max-width:100%;opacity:.35}.sd-quick{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-grid{grid-template-columns:1fr}.sq-question legend{font-size:16px}.sd-ask{flex-direction:column;align-items:stretch}}
+/* Phase 2: streak, badges, activity, student card, folders, quiz marks */
+.sd-stats{grid-template-columns:repeat(5,minmax(0,1fr))}.sd-stat.red .sd-stat-icon{background:#ef444426;color:#fb7185}
+.sd-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sd-badges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.sd-medal{display:grid;justify-items:center;gap:6px;padding:12px 4px;border-radius:14px;border:1px solid var(--border);text-align:center;opacity:.45;filter:grayscale(1)}
+.sd-medal span{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--border)}.sd-medal b{font-size:11px;line-height:1.5}
+.sd-medal.earned{opacity:1;filter:none;border-color:#f9731666}.sd-medal.earned span{color:#fff;background:linear-gradient(135deg,#fbbf24,#ea580c);box-shadow:0 6px 18px -6px #f97316}
+.sd-id{display:flex;gap:14px;align-items:center;padding:14px;border-radius:16px;border:1px solid #f9731659;background:linear-gradient(135deg,#f9731626,transparent 70%)}
+.sd-id-avatar{width:64px;height:64px;border-radius:14px;object-fit:cover;flex:none;display:grid;place-items:center;background:var(--border)}
+.sd-id-main{flex:1;min-width:0;display:grid;gap:4px}.sd-id-main b{font-size:15px}.sd-id-main small{font-size:11px;color:var(--text-muted);overflow-wrap:anywhere}
+.sd-id-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.sd-id-actions .btn{font-size:11px;padding:5px 10px}
+.sd-id-qr{width:84px;height:84px;border-radius:10px;flex:none;background:#fff;padding:4px}
+.sd-fine{font-size:10px;color:var(--text-muted);margin:8px 0 0}
+.ss-top{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px;align-items:stretch}
+.ss-folders{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.ss-folders button{display:grid;justify-items:center;gap:4px;min-width:110px;padding:14px 10px;border-radius:16px;border:1px solid var(--border);background:var(--surface-1);color:var(--text-secondary)}
+.ss-folders button svg{color:#fb923c}.ss-folders button b{font-size:12px;color:var(--text-primary);overflow-wrap:anywhere}.ss-folders button small{font-size:10px;color:var(--text-muted)}
+.ss-folders button[aria-pressed=true]{border-color:#f97316;background:#f973161a;box-shadow:0 0 0 1px #f9731640}
+.ss-usage{display:grid;gap:4px;align-content:center}.ss-usage b{font-size:20px}.ss-usage small{font-size:11px;color:var(--text-muted)}
+.ss-move{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-muted)}.ss-move select{flex:1;min-width:0;font-size:12px}
+.sq-grid button.flagged{box-shadow:inset 0 -3px 0 #fbbf24}.btn.sq-flagged{border-color:#fbbf24;color:#fbbf24}
+@media(max-width:1000px){.sd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sd-grid.three,.ss-top{grid-template-columns:1fr}}
+@media(max-width:600px){.sd-badges{grid-template-columns:repeat(2,minmax(0,1fr))}.sd-id{flex-wrap:wrap}}
