@@ -115,6 +115,11 @@ export function LiveLoad({
     <p role="status">{tl("در حال دریافت…", "Loading…")}</p>
   ) : null;
 }
+const STUDENT_TAB_ICONS: Record<string, string> = {
+  overview: "LayoutGrid", courses: "BookOpen", upload: "FolderOpen", notes: "PenLine",
+  practice: "Trophy", review: "Layers", planner: "CalendarDays", groups: "Users",
+  reports: "BarChart3", thesis: "FileText", card: "IdCard", profile: "UserRound", business: "BriefcaseBusiness",
+};
 export function LiveModuleFrame({
   module,
   view,
@@ -128,6 +133,7 @@ export function LiveModuleFrame({
   return (
     <div className={`module-workspace accent-${module.accent}`} data-module={module.id}>
       <div className="module-hero">
+        {module.id === "student" && <img className="module-hero-art" src="/art/student-hero.webp" alt="" aria-hidden="true" />}
         <span className="module-hero-icon" aria-hidden="true"><Icon name={module.icon} size={26} /></span>
         <SectionTitle
           title={tl(module.title[0], module.title[1])}
@@ -141,6 +147,7 @@ export function LiveModuleFrame({
             href={moduleViewHref(module, v)}
             aria-current={v.id === view.id ? "page" : undefined}
           >
+            {module.id === "student" && STUDENT_TAB_ICONS[v.id] && <Icon name={STUDENT_TAB_ICONS[v.id]} size={20} />}
             {tl(v.title[0], v.title[1])}
           </Link>
         ))}

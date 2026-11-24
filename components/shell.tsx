@@ -114,7 +114,9 @@ export function Shell({
     { label: tl("تولید محتوا", "Content creation"), paths: ["/create", "/video-factory"] },
     { label: tl("کسب‌وکار", "Business"), paths: ["/business", "/seo"] },
     { label: tl("یادگیری و سلامت", "Learning & health"), paths: ["/learn", "/fit/dashboard"] },
-  ];
+  // Same rule as the classic sidebar (main sidebarAccess): student and
+  // fitness-only accounts without a CRM plan do not see business tools.
+  ].filter(group => !(live?.access.hideBusiness && group.paths.includes("/business")));
   const primaryDestinations = sidebarItems.filter(item => !live || item.href !== "/fit/dashboard" || live.user.showFitness).map(item => item.href);
   const proTools = uniqueSidebarTools(live?.proTools ?? [], primaryDestinations, live?.user.studentWorkspaceEnabled);
   useEffect(() => {

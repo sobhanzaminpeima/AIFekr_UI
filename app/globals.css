@@ -7165,3 +7165,19 @@ button.panel.stat.selected{border-color:#f97316}
  .public-shell .gaming-feature-hero{width:calc(100% - 24px);margin-top:12px;min-height:0}
 }
 @media(prefers-reduced-motion:reduce){.gaming-feature-banner *{scroll-behavior:auto}}
+
+/* Student workspace redesign (2026-11-24): art hero, icon card tabs, glowing panels */
+[data-module=student] .module-hero{min-height:170px;padding:30px 34px;border-color:#f9731659;background:var(--surface-1);box-shadow:0 18px 40px -24px #f97316aa}
+[data-module=student] .module-hero-art{position:absolute;inset-block:0;inset-inline-end:0;height:100%;width:auto;max-width:70%;object-fit:cover;pointer-events:none}
+[data-module=student] .module-hero::after{opacity:1;background:linear-gradient(to left,var(--surface-1) 36%,color-mix(in srgb,var(--surface-1) 55%,transparent) 58%,transparent 85%)}
+[dir=ltr] [data-module=student] .module-hero::after{background:linear-gradient(to right,var(--surface-1) 36%,color-mix(in srgb,var(--surface-1) 55%,transparent) 58%,transparent 85%)}
+[data-module=student] .module-hero>*:not(.module-hero-art){position:relative;z-index:1}
+[data-module=student] .module-hero h1,[data-module=student] .module-hero h2{font-size:clamp(24px,3vw,38px);font-weight:800}
+[data-module=student] .module-hero-icon{width:62px;height:62px;color:#f97316;background:#f9731624;border-color:#f9731666}
+[data-module=student] .module-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));overflow:visible;gap:8px}
+[data-module=student] .module-tabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:78px;padding:10px 6px;white-space:normal;text-align:center;font-size:13px;line-height:1.4;border-radius:16px;color:var(--text-secondary);background:linear-gradient(160deg,color-mix(in srgb,var(--surface-1) 94%,#f97316 6%),var(--surface-1));transition:border-color .15s,transform .15s}
+[data-module=student] .module-tabs a:hover{color:var(--text-primary);border-color:#f9731680;transform:translateY(-1px)}
+[data-module=student] .module-tabs a[aria-current=page]{color:#f97316;border-color:#f97316;background:linear-gradient(160deg,#f9731633,#f973160d);box-shadow:0 0 0 1px #f9731659,0 10px 24px -12px #f97316b3}
+[data-module=student] .panel{border-radius:20px;border-color:color-mix(in srgb,var(--border) 70%,#f97316 30%);background:linear-gradient(160deg,color-mix(in srgb,var(--surface-1) 90%,#f97316 10%),var(--surface-1) 55%);box-shadow:0 10px 30px -18px #f9731673}
+@media(max-width:767px){[data-module=student] .module-hero{min-height:140px;padding:22px}[data-module=student] .module-hero-art{max-width:100%;opacity:.45}[data-module=student] .module-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}[data-module=student] .module-tabs a{min-height:66px;font-size:11px;padding:8px 2px;overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){[data-module=student] .module-tabs a{transition:none}[data-module=student] .module-tabs a:hover{transform:none}}
