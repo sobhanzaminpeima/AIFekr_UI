@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { captureReferral } from "@/lib/referral-capture";
 import { WebAppInstallProvider } from "./webapp-install";
 import { Toaster, toast } from "sonner";
 import { Locale, TranslationKey, translate, num, money } from "@/lib/i18n";
@@ -39,6 +40,7 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
   const [items, setItems] = useState<GeneratedItem[]>([]);
   const [failure, setFailure] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  useEffect(() => { captureReferral(window.location.search); }, []);
   useEffect(() => {
     try {
       const s = JSON.parse(localStorage.getItem("aifekr-ui") || "{}");

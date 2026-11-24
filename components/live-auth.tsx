@@ -1,4 +1,5 @@
 "use client";
+import { storedReferral } from "@/lib/referral-capture";
 // Sign-in and sign-up on aifekr.com in the new design. Every request, field,
 // rule and redirect is the classic pages' own ((auth)/login and
 // (auth)/register in the main site); only the presentation differs. Wording
@@ -274,10 +275,17 @@ export function LiveRegister() {
   const params = useSearchParams();
   const lang = site.lang;
   const packSlug = params.get("pack") || "";
-  const refCode = params.get("ref") || "";
+  const [storedRef, setStoredRef] = useState("");
+  const refCode = params.get("ref") || storedRef;
   const planCode = params.get("plan") || "";
   const billingPeriod = params.get("period") || "";
   const [promoCode, setPromoCode] = useState(params.get("promo") || params.get("ref") || "");
+  // A code captured on the landing page (campaign link) fills in when /register has none.
+  useEffect(() => {
+    if (params.get("ref") || params.get("promo")) return;
+    const code = storedReferral();
+    if (code) { setStoredRef(code); setPromoCode((current) => current || code); }
+  }, [params]);
   const [form, setForm] = useState({ firstName: "", lastName: "", country: "IR", email: "", phone: "", password: "", confirmPassword: "" });
   const [registerLang, setRegisterLang] = useState<Locale>(lang);
   const [accountType, setAccountType] = useState(accountTypeFor(planCode, packSlug ? "BUSINESS" : "PERSONAL"));
