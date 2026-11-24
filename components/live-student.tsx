@@ -1,4 +1,5 @@
 "use client";
+import "./live-student.css";
 import { AIText } from "./ai-text";
 import { FlashcardDeck, type Flashcard } from "./flashcard-deck";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import Link from "./site-link";
 import { Button } from "./ui";
 import { AcademicProfile } from "./live-academy";
 import { LiveUpload } from "./live-upload";
+import { StudentDashboard } from "./live-student-dashboard";
 import {
   LiveModuleFrame,
   LiveLoad,
@@ -71,9 +73,10 @@ export function LiveStudent({
       <LiveLoad {...courses} />
       {error && <p role="alert">{error}</p>}
       {view.id === "overview" && <StudentSubscription />}
-      {courses.data && (
+      {view.id === "overview" && <StudentDashboard />}
+      {courses.data && view.id !== "overview" && (
         <>
-          <label>
+          <label className="sd-course-select">
             {tl("درس فعال", "Current subject")}
             <select value={course} onChange={(e) => setCourse(e.target.value)}>
               <option value="">{tl("انتخاب درس", "Choose subject")}</option>
@@ -84,7 +87,7 @@ export function LiveStudent({
               ))}
             </select>
           </label>
-          {["overview", "courses", "path"].includes(view.id) && (
+          {["courses", "path"].includes(view.id) && (
             <section className="panel">
               <h2>{tl("درس‌های من", "My subjects")}</h2>
               <LiveForm
@@ -147,10 +150,10 @@ export function LiveStudent({
           {course && view.id === "review" && (
             <Cards key={course} course={course} />
           )}
-          {["planner", "overview"].includes(view.id) && (
+          {view.id === "planner" && (
             <Planner choice={choice} />
           )}
-          {["reports", "overview"].includes(view.id) && (
+          {view.id === "reports" && (
             <StudyTimer course={course} />
           )}
           {["practice", "chat", "assignment", "thesis"].includes(view.id) &&
@@ -204,46 +207,68 @@ export function LiveStudent({
     </LiveModuleFrame>
   );
 }
+const SOURCE_TYPES = ["all", "pdf", "docx", "pptx", "text"] as const;
+const sourceType = (m: LiveRow) => {
+  const ext = /\.(pdf|docx|pptx)$/i.exec(String(m.title))?.[1]?.toLowerCase() || /^(pdf|docx|pptx)$/i.exec(String(m.source ?? ""))?.[1]?.toLowerCase();
+  return ext || "text";
+};
 function Sources({ course, choice }: { course: string; choice: LiveField }) {
-  const { fa, tl } = useApp(),
-    r = useLiveData(API + "materials?courseId=" + enc(course));
+  const { tl, locale } = useApp(),
+    r = useLiveData(API + "materials?courseId=" + enc(course)),
+    [filter, setFilter] = useState<(typeof SOURCE_TYPES)[number]>("all"),
+    [query, setQuery] = useState(""),
+    [open, setOpen] = useState<string | null>(null);
+  const rows = liveRows(r.data?.materials).filter((m) => (filter === "all" || sourceType(m) === filter) && (!query || String(m.title).toLowerCase().includes(query.toLowerCase())));
+  const label = (t: string) => t === "all" ? tl("همه فایل‌ها", "All files") : t === "text" ? tl("متنی", "Text") : t.toUpperCase();
   return (
-    <section className="panel">
+    <div className="ss">
+      <section className="panel ss-drop">
+        <LiveUpload
+          url={API + "materials"}
+          title={tl("آپلود جزوه (PDF، DOCX، PPTX)", "Upload notes (PDF, DOCX, PPTX)")}
+          accept=".pdf,.docx,.pptx"
+          maxBytes={10 * 1024 * 1024}
+          fields={[
+            { ...choice, choices: choice.choices?.filter((c) => c.value === course) },
+            field("title", "عنوان", "Title", "text", true),
+          ]}
+          onDone={r.reload}
+        />
+        <LiveForm
+          title={tl("افزودن منبع متنی", "Add text source")}
+          url={API + "materials"}
+          fields={[field("title", "عنوان", "Title"), field("content", "متن منبع", "Source text", "textarea")]}
+          map={(b) => ({ ...b, courseId: course })}
+          onDone={r.reload}
+        />
+      </section>
+      <div className="ss-toolbar">
+        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tl("جستجو در جزوه‌ها…", "Search sources…")} aria-label={tl("جستجو در جزوه‌ها", "Search sources")} />
+        <div className="ss-chips" role="group" aria-label={tl("نوع فایل", "File type")}>
+          {SOURCE_TYPES.map((t) => <button type="button" key={t} aria-pressed={filter === t} onClick={() => setFilter(t)}>{label(t)}</button>)}
+        </div>
+      </div>
       <LiveLoad {...r} />
-      <LiveUpload
-        url={API + "materials"}
-        title={
-          tl("ارسال جزوه (PDF، DOCX، PPTX)", "Upload course sources (PDF, DOCX, PPTX)")
-        }
-        accept=".pdf,.docx,.pptx"
-        maxBytes={10 * 1024 * 1024}
-        fields={[
-          {
-            ...choice,
-            choices: choice.choices?.filter((c) => c.value === course),
-          },
-          field("title", "عنوان", "Title", "text", true),
-        ]}
-        onDone={r.reload}
-      />
-      <LiveForm
-        title={tl("افزودن منبع متنی", "Add text source")}
-        url={API + "materials"}
-        fields={[
-          field("title", "عنوان", "Title"),
-          field("content", "متن منبع", "Source text", "textarea"),
-        ]}
-        map={(b) => ({ ...b, courseId: course })}
-        onDone={r.reload}
-      />
-      {r.data &&
-        liveRows(r.data.materials).map((m) => (
-          <details key={String(m.id)}>
-            <summary>{String(m.title)}</summary>
-            <p style={{ whiteSpace: "pre-wrap" }}>{String(m.content)}</p>
-          </details>
-        ))}
-    </section>
+      <div className="ss-grid">
+        {rows.map((m) => {
+          const type = sourceType(m), id = String(m.id);
+          return (
+            <article className="panel ss-file" key={id}>
+              <span className={"ss-type " + type}>{type === "text" ? "TXT" : type.toUpperCase()}</span>
+              <h4>{String(m.title)}</h4>
+              <small>{new Date(String(m.createdAt)).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })}</small>
+              <div className="ss-actions">
+                <Link className="btn primary" href="/student?view=practice">{tl("مطالعه هوشمند", "Smart study")}</Link>
+                <Link className="btn" href="/student?view=chat">{tl("پرسش از فایل", "Ask the file")}</Link>
+                <button type="button" className="btn" aria-expanded={open === id} onClick={() => setOpen(open === id ? null : id)}>{open === id ? tl("بستن", "Close") : tl("نمایش متن", "View text")}</button>
+              </div>
+              {open === id && <p className="ss-text">{String(m.content)}</p>}
+            </article>
+          );
+        })}
+      </div>
+      {r.data && !rows.length && <p className="sd-empty">{tl("فایلی پیدا نشد.", "No files found.")}</p>}
+    </div>
   );
 }
 function Notes({ course, choice }: { course: string; choice: LiveField }) {
@@ -284,29 +309,48 @@ function Notes({ course, choice }: { course: string; choice: LiveField }) {
   );
 }
 function Cards({ course }: { course: string }) {
-  const { tl } = useApp(),
+  const { tl, n } = useApp(),
     r = useLiveData(API + "flashcards?courseId=" + enc(course));
+  const cards = liveRows(r.data?.flashcards);
+  const due = cards.filter((c) => !c.nextReviewAt || new Date(String(c.nextReviewAt)).getTime() <= Date.now()).length;
+  const learned = cards.filter((c) => Number(c.masteryLevel ?? 0) >= 3).length;
+  const pct = cards.length ? Math.round((learned / cards.length) * 100) : 0;
   return (
-    <section className="panel">
-      <LiveLoad {...r} />
-      <LiveForm
-        title={tl("افزودن فلش‌کارت", "Add flashcard")}
-        url={API + "flashcards"}
-        fields={[
-          field("question", "پرسش", "Question", "textarea"),
-          field("answer", "پاسخ", "Answer", "textarea"),
-        ]}
-        map={(b) => ({ ...b, courseId: course })}
-        onDone={r.reload}
-      />
-      {r.data && (
-        <FlashcardDeck
-          key={liveRows(r.data.flashcards).map((c) => c.id).join()}
-          cards={liveRows(r.data.flashcards) as unknown as Flashcard[]}
-          url={(id) => API + "flashcards/" + enc(id)}
-        />
-      )}
-    </section>
+    <div className="sf-layout">
+      <section className="panel sf-main">
+        <LiveLoad {...r} />
+        {r.data && (
+          <FlashcardDeck
+            key={cards.map((c) => c.id).join()}
+            cards={cards as unknown as Flashcard[]}
+            url={(id) => API + "flashcards/" + enc(id)}
+          />
+        )}
+      </section>
+      <aside className="sf-side">
+        <div className="panel sf-ring-card">
+          <h3>{tl("پیشرفت این دسته", "Deck progress")}</h3>
+          <div className="sf-ring" style={{ ["--p" as string]: pct }}><strong>{n(pct)}%</strong></div>
+          <ul>
+            <li><i className="green" />{tl("یادگرفته‌شده", "Learned")}<b>{n(learned)}</b></li>
+            <li><i className="orange" />{tl("آمادهٔ مرور", "Due now")}<b>{n(due)}</b></li>
+            <li><i className="muted" />{tl("کل کارت‌ها", "All cards")}<b>{n(cards.length)}</b></li>
+          </ul>
+        </div>
+        <div className="panel">
+          <LiveForm
+            title={tl("افزودن فلش‌کارت", "Add flashcard")}
+            url={API + "flashcards"}
+            fields={[
+              field("question", "پرسش", "Question", "textarea"),
+              field("answer", "پاسخ", "Answer", "textarea"),
+            ]}
+            map={(b) => ({ ...b, courseId: course })}
+            onDone={r.reload}
+          />
+        </div>
+      </aside>
+    </div>
   );
 }
 function Planner({ choice }: { choice: LiveField }) {
@@ -694,57 +738,109 @@ function StudentQuiz({
   id: string;
   attemptToken: string;
 }) {
-  const { fa, tl } = useApp(),
+  const { tl, n } = useApp(),
     r = useLiveData(API + "quizzes/" + enc(id)),
     [answers, setAnswers] = useState<Record<number, number>>({}),
+    [current, setCurrent] = useState(0),
+    [started] = useState(() => Date.now()),
+    [now, setNow] = useState(() => Date.now()),
     [result, setResult] = useState<LiveRow | null>(null);
   const quiz = r.data?.quiz as LiveRow | undefined;
+  const questions = liveRows(quiz?.questions);
+  const limit = Number(quiz?.timeLimitSeconds ?? 0);
+  useEffect(() => {
+    if (!limit || result) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [limit, result]);
+  const left = Math.max(0, limit - Math.floor((now - started) / 1000));
+  const clock = `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`;
+  const answered = Object.keys(answers).length;
+  const q = questions[current];
   return (
-    <section className="panel">
+    <section className="sq">
       <LiveLoad {...r} />
       {quiz && (
         <>
-          <h3>{String(quiz.title)}</h3>
           {quiz.timeLimitSeconds && !attemptToken ? (
             <p role="alert">
               {tl("آزمون زمان‌دار فقط با توکن شروع همان اجرای تولید قابل ثبت است؛ این آزمون را از نتیجه تولید باز کنید.", "A timed quiz requires the original start token. Open it from the generation result.")}
             </p>
           ) : null}
-          {liveRows(quiz.questions).map((q, i) => (
-            <fieldset key={i}>
-              <legend>{String(q.question)}</legend>
-              {(q.options as string[]).map((v, n) => (
-                <label key={n}>
-                  <input
-                    type="radio"
-                    name={"quiz-" + id + "-" + i}
-                    checked={answers[i] === n}
-                    onChange={() => setAnswers((a) => ({ ...a, [i]: n }))}
+          <div className="sq-layout">
+            <div className="panel sq-main">
+              <div className="sq-head">
+                <span className="sd-badge">{tl("سؤال", "Question")} {n(current + 1)} {tl("از", "of")} {n(questions.length)}</span>
+                <h3>{String(quiz.title)}</h3>
+              </div>
+              {q && (
+                <fieldset className="sq-question" key={current}>
+                  <legend>{String(q.question)}</legend>
+                  {(q.options as string[]).map((v, i) => (
+                    <label key={i} className={answers[current] === i ? "selected" : ""}>
+                      <input
+                        type="radio"
+                        name={"quiz-" + id + "-" + current}
+                        checked={answers[current] === i}
+                        onChange={() => setAnswers((a) => ({ ...a, [current]: i }))}
+                      />
+                      <span>{v}</span>
+                    </label>
+                  ))}
+                </fieldset>
+              )}
+              <div className="sq-nav">
+                <Button onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}>{tl("سؤال قبل", "Previous")}</Button>
+                {current < questions.length - 1 ? (
+                  <Button variant="primary" onClick={() => setCurrent((c) => c + 1)}>{tl("سؤال بعد", "Next")}</Button>
+                ) : (
+                  <LiveForm
+                    title={tl("ثبت پاسخ‌ها و دریافت نمره", "Submit answers & get grade")}
+                    url={API + "quizzes/" + enc(id)}
+                    map={() => ({
+                      answers: questions.map((_, i) => answers[i] ?? null),
+                      ...(attemptToken ? { attemptToken } : {}),
+                    })}
+                    onDone={setResult}
                   />
-                  {v}
-                </label>
-              ))}
-            </fieldset>
-          ))}
-          <LiveForm
-            title={
-              tl("ثبت پاسخ‌ها و دریافت نمره", "Submit answers & get grade")
-            }
-            url={API + "quizzes/" + enc(id)}
-            map={() => ({
-              answers: liveRows(quiz.questions).map(
-                (_, i) => answers[i] ?? null,
-              ),
-              ...(attemptToken ? { attemptToken } : {}),
-            })}
-            onDone={setResult}
-          />
+                )}
+              </div>
+            </div>
+            <aside className="sq-side">
+              {limit > 0 && (
+                <div className="panel sq-timer" role="timer" aria-label={tl("زمان باقی‌مانده", "Time left")}>
+                  <small>{tl("زمان باقی‌مانده", "Time left")}</small>
+                  <strong>{clock}</strong>
+                </div>
+              )}
+              <div className="panel">
+                <small>{tl("پیشرفت آزمون", "Progress")}</small>
+                <div className="sq-progress"><i style={{ width: `${questions.length ? (answered / questions.length) * 100 : 0}%` }} /></div>
+                <p>{n(answered)} / {n(questions.length)} {tl("پاسخ داده شده", "answered")}</p>
+              </div>
+              <div className="panel">
+                <small>{tl("سؤالات آزمون", "Questions")}</small>
+                <div className="sq-grid">
+                  {questions.map((_, i) => (
+                    <button
+                      type="button"
+                      key={i}
+                      onClick={() => setCurrent(i)}
+                      aria-current={i === current ? "step" : undefined}
+                      className={answers[i] !== undefined ? "done" : ""}
+                    >
+                      {n(i + 1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          </div>
           {result && (
-            <>
-              <h3>{tl("نتیجه سرور", "Server result")}</h3>
-              <p>
-                {String((result.attempt as LiveRow)?.score ?? "—")} /{" "}
-                {String((result.attempt as LiveRow)?.total ?? "—")}
+            <div className="panel sq-result">
+              <h3>{tl("نتیجه آزمون", "Your result")}</h3>
+              <p className="sq-score">
+                {String((result.attempt as LiveRow)?.score ?? "—")} / {String((result.attempt as LiveRow)?.total ?? "—")}
               </p>
               <LiveTable
                 items={liveRows((result.attempt as LiveRow)?.review)}
@@ -754,7 +850,7 @@ function StudentQuiz({
                   field("explanation", "توضیح", "Explanation"),
                 ]}
               />
-            </>
+            </div>
           )}
         </>
       )}
