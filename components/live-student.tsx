@@ -3,6 +3,7 @@ import "./live-student.css";
 import { AIText } from "./ai-text";
 import { FlashcardDeck, type Flashcard } from "./flashcard-deck";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import Link from "./site-link";
 import { Button, Icon } from "./ui";
@@ -60,11 +61,17 @@ export function LiveStudent({
 }) {
   const { fa, tl } = useApp(),
     courses = useLiveData(API + "courses"),
-    [course, setCourse] = useState(""),
+    [course, setCourseState] = useState(""),
     [error, setError] = useState("");
   const items = liveRows(courses.data?.courses);
+  const router = useRouter();
+  // The current subject is remembered across tabs and visits.
+  const setCourse = (id: string) => { setCourseState(id); try { localStorage.setItem("aifekr-student-course", id); } catch {} };
   useEffect(() => {
-    if (!course && items[0]) setCourse(String(items[0].id));
+    if (course || !items.length) return;
+    let saved = "";
+    try { saved = localStorage.getItem("aifekr-student-course") || ""; } catch {}
+    setCourseState(items.some((c) => String(c.id) === saved) ? saved : String(items[0].id));
   }, [items, course]);
   const choice: LiveField = {
     ...field("courseId", "درس", "Subject"),
@@ -129,9 +136,13 @@ export function LiveStudent({
                 ]}
                 actions={(c) => (
                   <>
-                    <Button onClick={() => setCourse(String(c.id))}>
-                      {tl("انتخاب", "Select")}
-                    </Button>
+                    {course === String(c.id) ? (
+                      <span className="sd-badge">✓ {tl("درس فعال", "Current subject")}</span>
+                    ) : (
+                      <Button onClick={() => { setCourse(String(c.id)); router.push("/student?view=upload"); }}>
+                        {tl("انتخاب و ادامه", "Select and open")}
+                      </Button>
+                    )}
                     <LiveForm
                       title={tl("ویرایش", "Edit")}
                       url={API + "courses/" + enc(String(c.id))}
