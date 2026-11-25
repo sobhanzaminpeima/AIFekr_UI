@@ -300,6 +300,19 @@ function AccessForm({ user, tx, put, planNames, modules, locale, reloadModules, 
   const [form, setForm] = useState({ plan: user.plan, planExpiry: local(user.planExpiry), crmPlan: user.crmPlan || "NONE", crmPlanExpiry: local(user.crmPlanExpiry), commission: user.commissionPercentOverride != null ? String(user.commissionPercentOverride) : "" });
   const [draft, setDraft] = useState<Record<string, boolean | null>>({});
   const [fit, setFit] = useState({ days: "30", reason: "" });
+  const [stu, setStu] = useState({ days: "30", reason: "" });
+  const studentActive = user.plan.startsWith("STUDENT_") && !!user.planExpiry && new Date(user.planExpiry).getTime() > Date.now();
+  async function grantStudent() {
+    const days = Number(stu.days);
+    if (!Number.isInteger(days) || days < 1 || days > 366) return toast.error(tx(["مدت باید بین ۱ تا ۳۶۶ روز باشد", "Days must be between 1 and 366", "Tage müssen zwischen 1 und 366 liegen", "Gün 1 ile 366 arasında olmalı"]));
+    setBusy(true);
+    const res = await fetch("/api/admin/users/" + encodeURIComponent(user.id) + "/student", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ days, ...(stu.reason.trim() ? { reason: stu.reason.trim() } : {}) }) });
+    const out = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) return toast.error(out.error || tx(["فعال‌سازی پکیج دانشجویی انجام نشد", "Student package was not activated", "Studentenpaket nicht aktiviert", "Öğrenci paketi etkinleştirilemedi"]));
+    toast.success(studentActive ? tx(["پکیج دانشجویی تمدید شد", "Student package extended", "Studentenpaket verlängert", "Öğrenci paketi uzatıldı"]) : tx(["پکیج دانشجویی بدون پرداخت فعال شد", "Student package activated without payment", "Studentenpaket ohne Zahlung aktiviert", "Öğrenci paketi ödemesiz etkinleştirildi"]));
+    await reload();
+  }
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
   // Every package an admin can assign (Package table), plus the built-in plans.
@@ -359,6 +372,17 @@ function AccessForm({ user, tx, put, planNames, modules, locale, reloadModules, 
         <label>{tx(["درصد کمیسیون اختصاصی (خالی = پیش‌فرض)", "Custom commission % (empty = default)", "Eigene Provision % (leer = Standard)", "Özel komisyon % (boş = varsayılan)"])}<input type="number" min={0} max={100} step={0.5} dir="ltr" value={form.commission} onChange={set("commission")} /></label>
       </div>
       <p className="fine-print">{tx(["طرح پولی بدون تاریخ انقضا، به‌طور خودکار ۳۰ روز اعتبار می‌گیرد.", "A paid plan without an expiry automatically gets 30 days.", "Ein bezahlter Tarif ohne Ende erhält automatisch 30 Tage.", "Bitişi olmayan ücretli plan otomatik olarak 30 gün alır."])}</p>
+      <div className="admin-fit-access">
+        <h3>{tx(["پکیج دانشجویی بدون پرداخت", "Student package without payment", "Studentenpaket ohne Zahlung", "Ödemesiz öğrenci paketi"])} <span className={"badge " + (studentActive ? "green" : "")}>{studentActive ? tx(["فعال تا ", "Active until ", "Aktiv bis ", "Şu tarihe kadar aktif: "]) + new Date(user.planExpiry!).toLocaleDateString() : tx(["غیرفعال", "Not active", "Inaktiv", "Kapalı"])}</span></h3>
+        <p className="fine-print">{tx(["حساب را دانشجویی می‌کند، ماژول دانشجویی و کردیت پکیج را می‌دهد و در لاگ ادمین ثبت می‌شود. اگر فعال باشد، به همان تعداد روز تمدید می‌شود (بدون کردیت دوباره).", "Makes the account a student account, grants the student module and package credits, and is audited. If already active, it is extended by the given days (no second credit grant).", "Macht das Konto zum Studentenkonto, gewährt Modul und Paket-Credits und wird protokolliert. Ist es aktiv, wird um die Tage verlängert (ohne erneute Credits).", "Hesabı öğrenci hesabı yapar, öğrenci modülünü ve paket kredisini verir, kayda geçer. Aktifse gün kadar uzatılır (ikinci kredi yok)."])}</p>
+        <div className="domain-fields">
+          <label>{tx(["مدت (روز)", "Days", "Tage", "Gün"])}<input type="number" min={1} max={366} dir="ltr" value={stu.days} onChange={(e) => setStu({ ...stu, days: e.target.value })} /></label>
+          <label>{tx(["دلیل (اختیاری)", "Reason (optional)", "Grund (optional)", "Neden (isteğe bağlı)"])}<input value={stu.reason} maxLength={500} onChange={(e) => setStu({ ...stu, reason: e.target.value })} /></label>
+        </div>
+        <div className="domain-actions">
+          <Button variant="primary" disabled={busy} onClick={() => void grantStudent()}>{studentActive ? tx(["تمدید پکیج دانشجویی", "Extend student package", "Studentenpaket verlängern", "Öğrenci paketini uzat"]) : tx(["فعال‌سازی پکیج دانشجویی", "Activate student package", "Studentenpaket aktivieren", "Öğrenci paketini etkinleştir"])}</Button>
+        </div>
+      </div>
       <div className="admin-fit-access">
         <h3>{tx(["دسترسی فیتنس", "FIT access", "FIT-Zugang", "FIT erişimi"])} <span className={"badge " + (fitActive ? "green" : "")}>{fitActive ? tx(["فعال", "Enabled", "Aktiv", "Aktif"]) : tx(["غیرفعال", "Disabled", "Inaktiv", "Kapalı"])}</span></h3>
         <div className="domain-fields">
