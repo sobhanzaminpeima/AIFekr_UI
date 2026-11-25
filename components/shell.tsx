@@ -55,6 +55,7 @@ export function Preferences() {
 function liveNavHref(href: string, _business: boolean, student = false) {
   if(href === "/fit/dashboard") return "/fitness";
   if(href === "/learn" && student) return "/student";
+  if(href === "/academy") return "/learn";
   // Business always opens the business workspace inside the platform; without a business package it offers the packages there (live-crm UpgradeBanner) instead of leaving for the public /industry page.
   return href === "/business" ? "/crm" : href;
 }
@@ -109,11 +110,16 @@ export function Shell({
   if(live && !admin) sidebarItems.splice(4,0,
     {href:"/video-factory",label:tl("کارخانه ویدیو","Video Factory"),icon:"Clapperboard"},
   );
+  // For students "/learn" opens their workspace, so the academy (courses and certificates) needs its own entry.
+  if(live && !admin && live.user.studentWorkspaceEnabled){
+    const at = sidebarItems.findIndex(item => item.href === "/learn");
+    sidebarItems.splice(at + 1, 0, {href:"/academy",label:tl("آکادمی و دوره‌ها","Academy & courses"),icon:"BookOpen"});
+  }
   const navGroups = [
     { label: tl("فضای کار", "Workspace"), paths: ["/home", "/chat", "/live"] },
     { label: tl("تولید محتوا", "Content creation"), paths: ["/create", "/video-factory"] },
     { label: tl("کسب‌وکار", "Business"), paths: ["/business", "/seo"] },
-    { label: tl("یادگیری و سلامت", "Learning & health"), paths: ["/learn", "/fit/dashboard"] },
+    { label: tl("یادگیری و سلامت", "Learning & health"), paths: ["/learn", "/academy", "/fit/dashboard"] },
   // Same rule as the classic sidebar (main sidebarAccess): student and
   // fitness-only accounts without a CRM plan do not see business tools.
   ].filter(group => !(live?.access.hideBusiness && group.paths.includes("/business")));

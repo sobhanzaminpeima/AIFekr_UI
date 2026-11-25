@@ -57,6 +57,7 @@ export function StudentDashboard() {
     ["/student?view=planner", "CalendarDays", tl("برنامه امتحان", "Exam plan")],
     ["/student?view=courses", "Plus", tl("افزودن درس", "Add subject")],
     ["/student?view=groups", "Users", tl("گروه مطالعه", "Study group")],
+    ["/learn", "GraduationCap", tl("آکادمی و گواهی", "Academy & certificates")],
   ];
 
   return (
