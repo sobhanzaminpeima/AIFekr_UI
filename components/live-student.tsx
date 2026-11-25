@@ -604,59 +604,81 @@ function StudyTimer({ course }: { course: string }) {
       setBusy(false);
     }
   }
+  const { n, locale } = useApp();
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const byDay = (r.data?.byDay ?? []) as { day: string; seconds: number }[];
+  const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" });
+  const series = Array.from({ length: days }, (_, i) => {
+    const d = new Date(Date.now() - (days - 1 - i) * 86400000), key = fmt.format(d);
+    return { key, label: days <= 7 ? d.toLocaleDateString(locale, { weekday: "short" }) : d.toLocaleDateString(locale, { day: "numeric" }), seconds: byDay.find((x) => x.day === key)?.seconds ?? 0 };
+  });
+  const today = series[series.length - 1]?.seconds ?? 0;
+  const total = Number(r.data?.totalSeconds ?? 0);
+  const peak = Math.max(1, ...series.map((x) => x.seconds));
+  const mins = (sec: number) => Math.round(sec / 60);
+  const hms = `${Math.floor(seconds / 3600)}:${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  const goal = 25 * 60, ring = Math.min(100, Math.round(((seconds % goal) / goal) * 100));
+  const byCourse = liveRows(r.data?.byCourse).slice(0, 5);
   return (
-    <section className="panel">
-      <h2>
-        {tl("زمان‌سنج و گزارش واقعی مطالعه", "Study timer & recorded progress")}
-      </h2>
-      <LiveLoad {...r} />
-      {error && <p role="alert">{error}</p>}
-      <p role="timer">
-        {Math.floor(seconds / 3600)}:
-        {String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:
-        {String(seconds % 60).padStart(2, "0")}
-      </p>
-      <div className="domain-actions">
-        {active ? (
-          <>
-            <Button
-              disabled={busy}
-              onClick={() => void act(active.pausedAt ? "resume" : "pause")}
-            >
-              {active.pausedAt
-                ? tl("ادامه", "Resume")
-                : tl("توقف موقت", "Pause")}
-            </Button>
-            <Button disabled={busy} onClick={() => void act("stop")}>
-              {tl("پایان و ذخیره", "Finish & save")}
-            </Button>
-          </>
-        ) : (
-          <Button disabled={busy || !r.data} onClick={() => void act("start")}>
-            {tl("شروع مطالعه", "Start studying")}
-          </Button>
+    <div className="st">
+      <section className="panel st-timer">
+        <h3><Icon name="Clock" size={18} />{tl("زمان‌سنج مطالعه", "Study timer")}</h3>
+        <LiveLoad {...r} />
+        {error && <p role="alert" className="sa-error">{error}</p>}
+        <div className={"st-ring" + (active && !active.pausedAt ? " running" : "")} style={{ ["--p" as string]: active ? ring : 0 }}>
+          <div>
+            <strong role="timer" aria-live="off">{hms}</strong>
+            <small>{active ? (active.pausedAt ? tl("متوقف شده", "Paused") : tl("در حال مطالعه", "Studying")) : tl("آماده", "Ready")}</small>
+          </div>
+        </div>
+        <div className="st-actions">
+          {active ? (
+            <>
+              <button type="button" className="st-play" disabled={busy} onClick={() => void act(active.pausedAt ? "resume" : "pause")} aria-label={active.pausedAt ? tl("ادامه", "Resume") : tl("توقف موقت", "Pause")}>
+                <Icon name={active.pausedAt ? "Play" : "Pause"} size={28} />
+              </button>
+              <Button disabled={busy} onClick={() => void act("stop")}>{tl("پایان و ذخیره", "Finish & save")}</Button>
+            </>
+          ) : (
+            <button type="button" className="st-play" disabled={busy || !r.data} onClick={() => void act("start")} aria-label={tl("شروع مطالعه", "Start studying")}>
+              <Icon name="Play" size={30} />
+            </button>
+          )}
+        </div>
+        <p className="st-hint">{tl("هر دور ۲۵ دقیقه؛ حلقه پیشرفت همان دور را نشان می‌دهد.", "Each round is 25 minutes; the ring shows the current round.")}</p>
+      </section>
+      <section className="panel st-report">
+        <header>
+          <h3><Icon name="BarChart3" size={18} />{tl("گزارش مطالعه", "Study report")}</h3>
+          <div className="ss-chips" role="group" aria-label={tl("بازه گزارش", "Report period")}>
+            {[7, 30].map((d) => <button type="button" key={d} aria-pressed={days === d} onClick={() => setDays(d)}>{d === 7 ? tl("این هفته", "This week") : tl("۳۰ روز", "30 days")}</button>)}
+          </div>
+        </header>
+        <div className="st-stats">
+          {[
+            ["Clock", tl("امروز", "Today"), `${n(mins(today))} ${tl("دقیقه", "min")}`],
+            ["CalendarDays", days === 7 ? tl("این هفته", "This week") : tl("۳۰ روز", "30 days"), `${n(Math.round(total / 360) / 10)} ${tl("ساعت", "h")}`],
+            ["CircleCheck", tl("جلسه‌ها", "Sessions"), n(Number(r.data?.sessionCount ?? 0))],
+          ].map(([icon, label, value]) => (
+            <div key={String(label)}><span><Icon name={String(icon)} size={18} /></span><b>{value}</b><small>{label}</small></div>
+          ))}
+        </div>
+        <div className={"st-chart" + (days > 7 ? " dense" : "")} role="img" aria-label={tl("دقیقه‌های مطالعه در هر روز", "Study minutes per day")}>
+          {series.map((x, i) => (
+            <div key={x.key} title={`${x.label}: ${n(mins(x.seconds))} ${tl("دقیقه", "min")}`}>
+              <i style={{ height: `${Math.max(3, (x.seconds / peak) * 100)}%` }} className={(i === series.length - 1 ? "today " : "") + (x.seconds ? "" : "empty")} />
+              {(days <= 7 || i % 5 === 4) && <span>{x.label}</span>}
+            </div>
+          ))}
+        </div>
+        {!total && <p className="sd-empty">{tl("با شروع زمان‌سنج، نمودار مطالعه‌ات پر می‌شود.", "Start the timer and your chart fills in.")}</p>}
+        {byCourse.length > 0 && (
+          <ul className="st-courses">
+            {byCourse.map((c) => <li key={String(c.courseId)}><b>{String(c.courseName)}</b><span><i style={{ width: `${Math.round((Number(c.seconds) / Math.max(1, total)) * 100)}%` }} /></span><small>{n(mins(Number(c.seconds)))} {tl("دقیقه", "min")}</small></li>)}
+          </ul>
         )}
-      </div>
-      <select
-        value={days}
-        onChange={(e) => setDays(Number(e.target.value))}
-        aria-label={tl("بازه گزارش", "Report period")}
-      >
-        <option value={7}>{tl("هفتگی", "Weekly")}</option>
-        <option value={30}>{tl("ماهانه", "Monthly")}</option>
-      </select>
-      <p>
-        {tl("مجموع ثانیه‌های ثبت‌شده: ", "Recorded seconds: ")}
-        {String(r.data?.totalSeconds ?? 0)}
-      </p>
-      <LiveTable
-        items={liveRows(r.data?.byDay)}
-        columns={[
-          field("day", "روز", "Day"),
-          field("seconds", "ثانیه", "Seconds"),
-        ]}
-      />
-    </section>
+      </section>
+    </div>
   );
 }
 function StudyAi({ course, mode }: { course: string; mode: string }) {
