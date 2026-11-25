@@ -9,7 +9,7 @@ import Link from "./site-link";
 import { Button, Icon } from "./ui";
 import { AcademicProfile } from "./live-academy";
 import { LiveUpload } from "./live-upload";
-import { StudentDashboard } from "./live-student-dashboard";
+import { StudentDashboard, StudentProfileHero } from "./live-student-dashboard";
 import { StudentLocked } from "./live-student-locked";
 import { LectureAudioUpload } from "./live-student-audio";
 import { useShell } from "./live-shell-context";
@@ -199,6 +199,7 @@ export function LiveStudent({
           {view.id === "groups" && <Groups choice={choice} />}
           {view.id === "profile" && (
             <>
+              <StudentProfileHero />
               <AcademicProfile />
               <StudentPublicProfile />
             </>
@@ -530,10 +531,12 @@ function Planner({ choice }: { choice: LiveField }) {
             "datetime-local",
           ),
         ]}
-        map={(b) => ({
-          ...b,
-          examAt: new Date(String(b.examAt)).toISOString(),
-        })}
+        map={(b) => {
+          const at = new Date(String(b.examAt));
+          if (Number.isNaN(at.getTime())) throw Error(tl("زمان امتحان را انتخاب کن.", "Choose the exam time."));
+          if (at.getTime() <= Date.now()) throw Error(tl("زمان امتحان باید در آینده باشد؛ برای امتحانی که گذشته برنامه مطالعه ساخته نمی‌شود.", "The exam time must be in the future; a study plan can't be built for a past exam."));
+          return { ...b, examAt: at.toISOString() };
+        }}
         onDone={exams.reload}
       />
       <LiveTable

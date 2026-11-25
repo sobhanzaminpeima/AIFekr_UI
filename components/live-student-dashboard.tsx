@@ -62,7 +62,7 @@ export function StudentDashboard() {
   return (
     <div className="sd">
       <section className="sd-welcome panel">
-        <img src="/art/student-hero.webp" alt="" aria-hidden="true" />
+        <img src={(process.env.NODE_ENV === "production" ? "/_v2/art/" : "/art/") + "student-overview.webp"} alt="" aria-hidden="true" />
         <div>
           <h2>{name ? tl(`سلام ${name}!`, `Hi ${name}!`) : tl("سلام، دانشجوی عزیز!", "Hi there!")} <span aria-hidden="true">👋</span></h2>
           <p>{tl("درس بخوان، جزوه بساز، تمرین کن، آزمون بده و با هوش مصنوعی موفق‌تر باش.", "Study, upload notes, practise, take quizzes and learn faster with AI.")}</p>
@@ -252,5 +252,57 @@ function StudentIdCard() {
       )}
       <p className="sd-fine">{tl("این کارت عضویت در AIFekr است و جایگزین کارت رسمی دانشگاه نیست.", "This is an AIFekr membership card, not an official university ID.")}</p>
     </section>
+  );
+}
+
+/** Student profile header for /student?view=profile, built from the real profile, academic profile, plan and insights. */
+export function StudentProfileHero() {
+  const { tl, n, locale } = useApp();
+  const tz = typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC";
+  const site = useSite()?.studentProfile;
+  const profile = useLiveData("/api/user/profile");
+  const academic = useLiveData("/api/student/academic-profile");
+  const insights = useLiveData(API + "insights?timeZone=" + encodeURIComponent(tz));
+  const user = (profile.data?.user ?? profile.data) as { name?: string | null; email?: string | null; plan?: string; planExpiry?: string | null; credits?: number; createdAt?: string } | null | undefined;
+  const ap = academic.data?.profile as { institution?: string; educationLevel?: string; faculty?: string; major?: { name?: string } | null } | null | undefined;
+  const majors = (academic.data?.majors ?? []) as { id: string; name: string }[];
+  const majorName = ap?.major?.name || majors.find((m) => m.id === (ap as { majorId?: string } | null | undefined)?.majorId)?.name || "";
+  const stats = (insights.data?.stats ?? {}) as Record<string, number>;
+  const left = user?.planExpiry ? Math.max(0, Math.ceil((new Date(user.planExpiry).getTime() - Date.now()) / 86400000)) : 0;
+  const chips = [majorName, ap?.educationLevel, ap?.institution].filter(Boolean) as string[];
+  return (
+    <div className="sp">
+      <section className="panel sp-head">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="sp-cover" src={(process.env.NODE_ENV === "production" ? "/_v2/art/" : "/art/") + "student-profile.webp"} alt="" aria-hidden="true" />
+        <div className="sp-avatar">{site?.avatar ? <img src={site.avatar} alt="" /> : <Icon name="UserRound" size={44} />}</div>
+        <div className="sp-main">
+          <h2>{tl(`سلام ${user?.name || site?.name || ""}`, `Hi ${user?.name || site?.name || ""}`)} <span aria-hidden="true">👋</span></h2>
+          <p>{tl("به داشبورد دانشجویی خودت خوش آمدی", "Welcome to your student dashboard")}</p>
+          <div className="sp-chips">
+            {chips.length ? chips.map((c) => <span key={c}>{c}</span>) : <span className="muted">{tl("رشته و دانشگاهت را پایین همین صفحه ثبت کن", "Add your major and university below")}</span>}
+          </div>
+        </div>
+      </section>
+      <div className="sp-stats">
+        {[
+          ["CalendarDays", tl("روز تا پایان اشتراک", "Days left on plan"), n(left), "orange"],
+          ["Sparkles", tl("کردیت", "Credits"), n(Number(user?.credits ?? 0)), "violet"],
+          ["BookOpen", tl("درس فعال", "Active subjects"), n(Number(stats.courses ?? 0)), "green"],
+          ["FileText", tl("جزوه و فایل", "Notes & files"), n(Number(stats.materials ?? 0)), "blue"],
+          ["CircleCheck", tl("آزمون شرکت‌کرده", "Quizzes taken"), n(Number(stats.quizAttempts ?? 0)), "red"],
+        ].map(([icon, label, value, tone]) => (
+          <div className={`panel sd-stat ${tone}`} key={label}>
+            <span className="sd-stat-icon"><Icon name={icon} size={22} /></span>
+            <div><strong>{value}</strong><small>{label}</small></div>
+          </div>
+        ))}
+      </div>
+      <div className="sd-grid">
+        <StudentIdCard />
+        <Badges data={insights.data?.badges as { id: string; earned: boolean }[] | undefined} />
+      </div>
+      {user?.planExpiry && <p className="sd-fine">{tl("اعتبار اشتراک تا ", "Plan valid until ")}{new Date(user.planExpiry).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })}</p>}
+    </div>
   );
 }

@@ -120,6 +120,13 @@ const STUDENT_TAB_ICONS: Record<string, string> = {
   practice: "Trophy", review: "Layers", planner: "CalendarDays", groups: "Users",
   reports: "BarChart3", thesis: "FileText", card: "IdCard", profile: "UserRound", business: "BriefcaseBusiness",
 };
+/** Per-section hero art (served by the new-design app under /_v2 in production). */
+function heroArt(moduleId: string, viewId: string) {
+  const base = process.env.NODE_ENV === "production" ? "/_v2/art/" : "/art/";
+  if (moduleId === "learn") return base + "student-academy.webp";
+  const byView: Record<string, string> = { overview: "student-overview", profile: "student-profile", practice: "student-practice", review: "student-practice", quiz: "student-practice", flashcards: "student-practice" };
+  return base + (byView[viewId] ?? "student-hero") + ".webp";
+}
 export function LiveModuleFrame({
   module,
   view,
@@ -133,7 +140,7 @@ export function LiveModuleFrame({
   return (
     <div className={`module-workspace accent-${module.accent}`} data-module={module.id}>
       <div className="module-hero">
-        {module.id === "student" && <img className="module-hero-art" src="/art/student-hero.webp" alt="" aria-hidden="true" />}
+        {(module.id === "student" || module.id === "learn") && <img className="module-hero-art" src={heroArt(module.id, view.id)} alt="" aria-hidden="true" />}
         <span className="module-hero-icon" aria-hidden="true"><Icon name={module.icon} size={26} /></span>
         <SectionTitle
           title={tl(module.title[0], module.title[1])}
@@ -382,6 +389,7 @@ export function LiveForm({
                   <input
                     name={f.key}
                     type={f.type ?? "text"}
+                    min={f.type === "datetime-local" && f.key === "examAt" ? new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : undefined}
                     required={!f.optional}
                     defaultValue={String(values[f.key] ?? "")}
                     step={f.type === "number" ? "any" : undefined}

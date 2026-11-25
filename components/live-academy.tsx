@@ -227,7 +227,7 @@ function Catalog({ data, query, setQuery, loading, onOpen }: { data: Record<stri
     <div className="ac">
       <section className="panel ac-hero">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/art/student-hero.webp" alt="" aria-hidden="true" />
+        <img src={(process.env.NODE_ENV === "production" ? "/_v2/art/" : "/art/") + "student-academy.webp"} alt="" aria-hidden="true" />
         <div>
           <span className="sd-badge">{t("آکادمی ای آی فکر", "AIFekr Academy")}</span>
           <h2>{t("آموزش مهارت‌های آینده با هوش مصنوعی", "Learn future skills with AI")}</h2>
