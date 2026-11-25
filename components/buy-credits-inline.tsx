@@ -12,7 +12,7 @@ import { Button, Icon } from "./ui";
 type Tier = { id: string; creditsAmount: number; priceToman: number; badge: string | null };
 type Tx = [string, string, string, string];
 
-export function BuyCreditsInline({ need, balance, returnPath }: { need: number; balance: number; returnPath: "/video-factory" }) {
+export function BuyCreditsInline({ need, balance, returnPath, perMinute }: { need: number; balance: number; returnPath: "/video-factory" | "/voice-studio"; perMinute?: number }) {
   const { locale, n } = useApp();
   const tx = (c: Tx) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];
   const shortfall = Math.max(0, Math.ceil(need - balance));
@@ -43,7 +43,12 @@ export function BuyCreditsInline({ need, balance, returnPath }: { need: number; 
         <strong><Icon name="Wallet" size={16} /> {tx(["اعتبار کافی نیست", "Not enough credits", "Nicht genug Credits", "Yetersiz kredi"])}</strong>
         <span className="muted">{tx(["کمبود: ", "Short by ", "Es fehlen ", "Eksik: "])}{n(shortfall)}</span>
       </div>
-      <p className="muted">{tx([
+      <p className="muted">{returnPath === "/voice-studio" ? tx([
+        "همین‌جا اعتبار بخرید؛ بعد از پرداخت به استودیوی صدا برمی‌گردید و می‌توانید صدا بسازید.",
+        "Buy credits here; after payment you come back to the Voice Studio and can generate.",
+        "Hier kaufen; nach der Zahlung kehren Sie zum Voice Studio zurück.",
+        "Buradan satın alın; ödemeden sonra Ses Stüdyosu'na dönersiniz.",
+      ]) : tx([
         "همین‌جا اعتبار بخرید؛ بعد از پرداخت به کارخانهٔ ویدیو برمی‌گردید و می‌توانید تولید را شروع کنید.",
         "Buy credits here; after payment you come back to the Video Factory and can start.",
         "Hier kaufen; nach der Zahlung kehren Sie zur Video-Fabrik zurück.",
@@ -55,6 +60,7 @@ export function BuyCreditsInline({ need, balance, returnPath }: { need: number; 
             <Button key={t.id} variant={t === shown[0] ? "primary" : undefined} disabled={!!buying} onClick={() => void buy(t)}>
               {buying === t.id ? <Icon name="LoaderCircle" size={16} className="spin" /> : <Icon name="Plus" size={16} />}
               {n(t.creditsAmount)} {tx(["اعتبار", "credits", "Credits", "kredi"])} · {n(t.priceToman)} {tx(["تومان", "Toman", "Toman", "Toman"])}
+              {perMinute ? ` · ${tx(["حدود ", "about ", "ca. ", "yaklaşık "])}${n(Math.floor(t.creditsAmount / perMinute))} ${tx(["دقیقه صدا", "min of audio", "Min. Audio", "dk ses"])}` : ""}
             </Button>
           ))}
         </div>

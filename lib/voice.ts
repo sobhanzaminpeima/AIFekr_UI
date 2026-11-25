@@ -10,6 +10,8 @@ export type VoicePolicy = {
   maxCharacters: number;
   maxDurationSeconds: number;
   creditsPerInterval: number;
+  /** Per-model price; mirrors main lib/voice-studio/domain.ts. */
+  modelCreditsPerInterval?: Record<string, number>;
   billingInterval: number;
   allowedModels: string[];
   allowedVoices: string[];
@@ -24,9 +26,13 @@ export function estimatedSeconds(text: string, language: string) {
   return Math.max(1, (words * 60) / (language === "fa" ? 95 : 110), graphemes(text) / (language === "fa" ? 9 : 12));
 }
 
-export function creditsFor(seconds: number, policy: Pick<VoicePolicy, "creditsPerInterval" | "billingInterval">) {
+export function creditsPerIntervalFor(policy: Pick<VoicePolicy, "creditsPerInterval" | "modelCreditsPerInterval">, modelId?: string) {
+  return (modelId && policy.modelCreditsPerInterval?.[modelId]) || policy.creditsPerInterval;
+}
+
+export function creditsFor(seconds: number, policy: Pick<VoicePolicy, "creditsPerInterval" | "billingInterval" | "modelCreditsPerInterval">, modelId?: string) {
   if (!Number.isFinite(seconds) || seconds <= 0) throw new Error("INVALID_DURATION");
-  return Math.ceil(seconds / policy.billingInterval) * policy.creditsPerInterval;
+  return Math.ceil(seconds / policy.billingInterval) * creditsPerIntervalFor(policy, modelId);
 }
 
 /** Conservative segmentation is a preview, never a guarantee of the synthesized duration. */

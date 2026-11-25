@@ -12,6 +12,7 @@ import Link from "@/components/site-link";
 import { useLocalState } from "@/lib/use-local-state";
 import { fill } from "@/lib/live-app";
 import { creditsFor, estimatedSeconds, graphemes, splitProject, type VoicePolicy } from "@/lib/voice";
+import { BuyCreditsInline } from "./buy-credits-inline";
 import { tools } from "@/mocks/catalog";
 import { useApp } from "./providers";
 import { useShell } from "./live-shell-context";
@@ -114,8 +115,11 @@ function Notices({ v, offline }: { v: VoiceCtx; offline?: boolean }) {
         banner("trial", data.policy.trialFree ? (lang==="fa"?`${a.trialRemaining} نوبت صدای رایگان تا ${a.trialMaxSeconds??30} ثانیه؛ بدون کسر کردیت.`:lang==="de"?`${a.trialRemaining} kostenlose Sprachproben bis ${a.trialMaxSeconds??30} Sekunden.`:lang==="tr"?`${a.trialRemaining} ücretsiz ses denemesi, en fazla ${a.trialMaxSeconds??30} saniye.`:`${a.trialRemaining} free voice samples, up to ${a.trialMaxSeconds??30} seconds. No credits charged.`) : k("You can create {0} short sample(s) of up to {1} seconds. It uses your credits as usual and is refunded if it fails.", { 0: (a.trialRemaining ?? 0).toLocaleString(lang), 1: (a.trialMaxSeconds ?? 30).toLocaleString(lang) }), "Sparkles")}
       {data.policy.enabled && a && !a.planAllowed && !(a.trialRemaining ?? 0) &&
         banner("plan", data.policy.paidAccess
-          ? <>{err("CREDITS_TO_CONTINUE")} <Link href="/credits">{lang === "fa" ? "خرید کردیت" : lang === "de" ? "Credits kaufen" : lang === "tr" ? "Kredi satın al" : "Buy credits"}</Link></>
+          ? <>{err("CREDITS_TO_CONTINUE")} <Link href="/credits">{lang === "fa" ? "همهٔ بسته‌های کردیت" : lang === "de" ? "Alle Credit-Pakete" : lang === "tr" ? "Tüm kredi paketleri" : "All credit packs"}</Link></>
           : <>{err("PLAN_REQUIRED")} <Link href="/pricing">{k("See plans")}</Link></>, "Lock")}
+      {data.policy.enabled && a && !a.planAllowed && !(a.trialRemaining ?? 0) && data.policy.paidAccess && (
+        <BuyCreditsInline need={(data.credits ?? 0) + 1} balance={data.credits ?? 0} returnPath="/voice-studio" perMinute={Math.min(data.policy.creditsPerInterval, ...Object.values(data.policy.modelCreditsPerInterval ?? {})) * (60 / data.policy.billingInterval)} />
+      )}
       {data.policy.enabled && a && !a.storageReady && banner("storage", err("PRIVATE_STORAGE_REQUIRED"))}
       {data.catalogError && banner("catalog", err(data.catalogError), "AlertCircle")}
       {offline && banner("offline", k("You are offline. Your text is kept on this device."), "WifiOff")}
@@ -452,8 +456,8 @@ function GenerateView({ v }: { v: VoiceCtx }) {
   const selected = segments[segment] || "";
   const estimate = estimatedSeconds(selected || " ", language);
   const freeSample = !data!.access?.planAllowed && !!policy.trialFree && (data!.access?.trialRemaining??0)>0;
-  const cost = freeSample ? 0 : creditsFor(estimate, policy);
-  const reserved = freeSample ? 0 : creditsFor(policy.maxDurationSeconds, policy);
+  const cost = freeSample ? 0 : creditsFor(estimate, policy, model?.id);
+  const reserved = freeSample ? 0 : creditsFor(policy.maxDurationSeconds, policy, model?.id);
   const a = data!.access;
   const blockedReason = !policy.enabled ? err("VOICE_STUDIO_DISABLED")
     : a && !a.planAllowed && !(a.trialRemaining ?? 0) ? err(policy.paidAccess ? "CREDITS_TO_CONTINUE" : "PLAN_REQUIRED")
