@@ -186,3 +186,5 @@
 [data-module=learn] .module-hero>*:not(.module-hero-art){position:relative;z-index:1}
 :is([data-module=student],[data-module=learn]) .module-hero-art{object-position:left center;filter:saturate(1.1) contrast(1.05)}
 @media(max-width:767px){[data-module=learn] .module-hero-art{max-width:100%;opacity:.45}}
+.sd-id-brand{font-size:10px;font-weight:800;letter-spacing:.08em;color:#fb923c}.sd-id-qr-empty{display:grid;place-items:center;color:var(--text-muted);background:color-mix(in srgb,var(--border) 60%,transparent)!important;border:1px dashed var(--border)}
+.sd-idcard .sd-id{background:linear-gradient(135deg,#f9731633,#1f1f22 55%,#f973161a);box-shadow:inset 0 0 0 1px #f9731633}

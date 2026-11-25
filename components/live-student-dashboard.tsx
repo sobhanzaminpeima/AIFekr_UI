@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import Link, { useSite } from "./site-link";
 import { Icon } from "./ui";
-import { useLiveData, liveRows, type LiveRow } from "./live-module-kit";
+import { useLiveData, liveRows, LiveLoad, type LiveRow } from "./live-module-kit";
 
 /**
  * Student overview, after the owner's 2026-11-24 mockups. Everything shown is
@@ -217,40 +217,67 @@ function Activity({ data }: { data?: { kind: string; title: string; at: string }
   );
 }
 
-/** Platform student card with a QR code that opens the public verification page. Not an official university ID. */
+/** Platform student card. The QR opens the public profile, which the student publishes here in one step. Not an official university ID. */
 function StudentIdCard() {
-  const { tl } = useApp();
-  const profile = useSite()?.studentProfile;
+  const { tl, locale } = useApp();
+  const r = useLiveData(API + "profile");
+  const acct = useLiveData("/api/user/profile");
+  const p = r.data?.profile as { name?: string | null; avatar?: string | null; studentPublicSlug?: string | null; studentProfilePublic?: boolean } | undefined;
+  const expiry = ((acct.data?.user ?? acct.data) as { planExpiry?: string | null } | null | undefined)?.planExpiry;
+  const slug = p?.studentProfilePublic && p.studentPublicSlug ? p.studentPublicSlug : "";
   const [qr, setQr] = useState("");
-  const url = profile?.slug && typeof window !== "undefined" ? `${window.location.origin}/student/${profile.slug}` : "";
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const url = slug && typeof window !== "undefined" ? `${window.location.origin}/student/${slug}` : "";
   useEffect(() => {
-    if (!url) return;
+    if (!url) { setQr(""); return; }
     let alive = true;
     void import("qrcode").then((QR) => QR.toDataURL(url, { margin: 1, width: 168, color: { dark: "#111111", light: "#ffffff" } })).then((d) => { if (alive) setQr(d); }).catch(() => {});
     return () => { alive = false; };
   }, [url]);
+  async function activate() {
+    const suggestion = (p?.studentPublicSlug || (p?.name || "student").normalize("NFKD").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "student").slice(0, 30);
+    const chosen = window.prompt(tl("یک شناسهٔ انگلیسی برای کارت و صفحهٔ عمومی‌ات انتخاب کن (حروف انگلیسی، عدد و -)", "Choose an English ID for your card and public page (letters, numbers and -)"), suggestion)?.trim().toLowerCase();
+    if (!chosen) return;
+    setBusy(true); setError("");
+    try {
+      const res = await fetch(API + "profile", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: chosen, isPublic: true }) });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw Error(body.error || tl("فعال‌سازی انجام نشد.", "Activation failed."));
+      r.reload();
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
+  }
   return (
     <section className="panel sd-card sd-idcard">
       <header><h3><Icon name="IdCard" size={18} />{tl("کارت دانشجویی", "Student card")}</h3></header>
-      {profile ? (
+      {p ? (
         <div className="sd-id">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {profile.avatar ? <img className="sd-id-avatar" src={profile.avatar} alt="" /> : <span className="sd-id-avatar"><Icon name="UserRound" size={28} /></span>}
+          {p.avatar ? <img className="sd-id-avatar" src={p.avatar} alt="" /> : <span className="sd-id-avatar"><Icon name="UserRound" size={28} /></span>}
           <div className="sd-id-main">
-            <b>{profile.name || tl("دانشجو", "Student")}</b>
-            <small>AIFekr Student · {profile.slug}</small>
+            <span className="sd-id-brand">AIFekr Student ID</span>
+            <b>{p.name || tl("دانشجو", "Student")}</b>
+            <small>{slug ? `ID: ${slug}` : tl("QR هنوز فعال نیست", "QR not active yet")}</small>
+            {expiry && <small>{tl("اعتبار تا ", "Valid until ")}{new Date(expiry).toLocaleDateString(locale, { year: "numeric", month: "2-digit", day: "2-digit" })}</small>}
             <div className="sd-id-actions">
-              <Link className="btn" href={"/student/" + profile.slug}>{tl("مشاهده کارت", "View card")}</Link>
-              {url && <button type="button" className="btn" onClick={() => void navigator.clipboard?.writeText(url)}>{tl("کپی لینک", "Copy link")}</button>}
+              {slug ? (
+                <>
+                  <Link className="btn" href={"/student/" + slug}>{tl("مشاهده کارت", "View card")}</Link>
+                  <button type="button" className="btn" onClick={() => void navigator.clipboard?.writeText(url)}>{tl("کپی لینک", "Copy link")}</button>
+                </>
+              ) : (
+                <button type="button" className="btn primary" disabled={busy} onClick={() => void activate()}>{busy ? tl("در حال فعال‌سازی…", "Activating…") : tl("فعال‌سازی QR کارت", "Activate card QR")}</button>
+              )}
             </div>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {qr && <img className="sd-id-qr" src={qr} alt={tl("کد QR تأیید کارت", "Card verification QR code")} />}
+          {qr ? <img className="sd-id-qr" src={qr} alt={tl("کد QR تأیید کارت", "Card verification QR code")} /> : <span className="sd-id-qr sd-id-qr-empty"><Icon name="IdCard" size={28} /></span>}
         </div>
       ) : (
-        <p className="sd-empty">{tl("برای ساخت کارت، پروفایل دانشجویی را کامل کن.", "Complete your student profile to get your card.")} <Link href="/student?view=profile">{tl("تکمیل پروفایل", "Complete profile")}</Link></p>
+        <LiveLoad {...r} />
       )}
-      <p className="sd-fine">{tl("این کارت عضویت در AIFekr است و جایگزین کارت رسمی دانشگاه نیست.", "This is an AIFekr membership card, not an official university ID.")}</p>
+      {error && <p role="alert" className="sa-error">{error}</p>}
+      <p className="sd-fine">{tl("با فعال‌سازی، نام و عکس تو در یک صفحهٔ عمومی نمایش داده می‌شود. این کارت عضویت AIFekr است و جایگزین کارت رسمی دانشگاه نیست.", "Activating shows your name and photo on a public page. This is an AIFekr membership card, not an official university ID.")}</p>
     </section>
   );
 }
