@@ -130,11 +130,12 @@ function Notices({ v, offline }: { v: VoiceCtx; offline?: boolean }) {
 export function LiveVoice({ view }: { view: string }) {
   const v = useVoice();
   if (!v.data) return v.loadError ? <div className="notice-banner" role="alert"><Icon name="AlertCircle" size={16} /><span>{v.err(v.loadError)}</span></div> : <div className="skeleton" />;
-  if (view === "text") return <ScriptView v={v} />;
+  // Free-sample and purchase notices on every view, not only Library and Generate: the studio opens on the script view.
+  if (view === "text") return <><Notices v={v} /><ScriptView v={v} /></>;
   if (view === "voice" || view === "presets") return <LibraryView v={v} />;
   if (view === "generate") return <GenerateView v={v} />;
-  if (view === "history") return <AudioFiles v={v} />;
-  return <ProjectsView v={v} archived={view === "archive"} />;
+  if (view === "history") return <><Notices v={v} /><AudioFiles v={v} /></>;
+  return <><Notices v={v} /><ProjectsView v={v} archived={view === "archive"} /></>;
 }
 
 /** The design's voice stepper (studio.tsx): script, voice, generate — each step is its tab. */
