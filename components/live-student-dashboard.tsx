@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import Link, { useSite } from "./site-link";
 import { Icon } from "./ui";
+import { StudyCoach, TimerCallout } from "./live-student-coach";
 import { useLiveData, liveRows, LiveLoad, type LiveRow } from "./live-module-kit";
 
 /**
@@ -69,6 +70,9 @@ export function StudentDashboard() {
           <p>{tl("درس بخوان، جزوه بساز، تمرین کن، آزمون بده و با هوش مصنوعی موفق‌تر باش.", "Study, upload notes, practise, take quizzes and learn faster with AI.")}</p>
         </div>
       </section>
+
+      <TimerCallout />
+      <StudyCoach />
 
       <div className="sd-stats">
         {stats.map(([icon, label, value, tone]) => (
