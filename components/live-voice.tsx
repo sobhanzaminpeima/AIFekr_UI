@@ -117,8 +117,8 @@ function Notices({ v, offline }: { v: VoiceCtx; offline?: boolean }) {
         banner("plan", data.policy.paidAccess
           ? <>{err("CREDITS_TO_CONTINUE")} <Link href="/credits">{lang === "fa" ? "همهٔ بسته‌های کردیت" : lang === "de" ? "Alle Credit-Pakete" : lang === "tr" ? "Tüm kredi paketleri" : "All credit packs"}</Link></>
           : <>{err("PLAN_REQUIRED")} <Link href="/pricing">{k("See plans")}</Link></>, "Lock")}
-      {data.policy.enabled && a && !a.planAllowed && !(a.trialRemaining ?? 0) && data.policy.paidAccess && (
-        <BuyCreditsInline need={(data.credits ?? 0) + 1} balance={data.credits ?? 0} returnPath="/voice-studio" perMinute={Math.min(data.policy.creditsPerInterval, ...Object.values(data.policy.modelCreditsPerInterval ?? {})) * (60 / data.policy.billingInterval)} />
+      {data.policy.enabled && a && !a.planAllowed && data.policy.paidAccess && (
+        <BuyCreditsInline optional={(a.trialRemaining ?? 0) > 0} need={(data.credits ?? 0) + 1} balance={data.credits ?? 0} returnPath="/voice-studio" perMinute={Math.min(data.policy.creditsPerInterval, ...Object.values(data.policy.modelCreditsPerInterval ?? {})) * (60 / data.policy.billingInterval)} />
       )}
       {data.policy.enabled && a && !a.storageReady && banner("storage", err("PRIVATE_STORAGE_REQUIRED"))}
       {data.catalogError && banner("catalog", err(data.catalogError), "AlertCircle")}

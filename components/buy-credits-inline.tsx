@@ -12,7 +12,7 @@ import { Button, Icon } from "./ui";
 type Tier = { id: string; creditsAmount: number; priceToman: number; badge: string | null };
 type Tx = [string, string, string, string];
 
-export function BuyCreditsInline({ need, balance, returnPath, perMinute }: { need: number; balance: number; returnPath: "/video-factory" | "/voice-studio"; perMinute?: number }) {
+export function BuyCreditsInline({ need, balance, returnPath, perMinute, optional = false }: { need: number; balance: number; returnPath: "/video-factory" | "/voice-studio"; perMinute?: number; optional?: boolean }) {
   const { locale, n } = useApp();
   const tx = (c: Tx) => c[{ fa: 0, en: 1, de: 2, tr: 3 }[locale] ?? 1];
   const shortfall = Math.max(0, Math.ceil(need - balance));
@@ -40,8 +40,8 @@ export function BuyCreditsInline({ need, balance, returnPath, perMinute }: { nee
   return (
     <section className="panel buy-credits-inline" role="region" aria-label={tx(["خرید اعتبار", "Buy credits", "Credits kaufen", "Kredi satın al"])}>
       <div className="row-between">
-        <strong><Icon name="Wallet" size={16} /> {tx(["اعتبار کافی نیست", "Not enough credits", "Nicht genug Credits", "Yetersiz kredi"])}</strong>
-        <span className="muted">{tx(["کمبود: ", "Short by ", "Es fehlen ", "Eksik: "])}{n(shortfall)}</span>
+        <strong><Icon name="Wallet" size={16} /> {optional ? tx(["نمی‌خواهی منتظر بمانی؟ همین الان بسته بخر", "Skip the samples: buy a pack now", "Gleich ein Paket kaufen", "Hemen paket al"]) : tx(["اعتبار کافی نیست", "Not enough credits", "Nicht genug Credits", "Yetersiz kredi"])}</strong>
+        {!optional && <span className="muted">{tx(["کمبود: ", "Short by ", "Es fehlen ", "Eksik: "])}{n(shortfall)}</span>}
       </div>
       <p className="muted">{returnPath === "/voice-studio" ? tx([
         "همین‌جا اعتبار بخرید؛ بعد از پرداخت به استودیوی صدا برمی‌گردید و می‌توانید صدا بسازید.",
